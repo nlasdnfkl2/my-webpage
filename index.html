@@ -1,621 +1,249 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>나의 홈페이지</title>
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#1b0f2e;
-    --bg2:#241539;
-    --ink:#f1ecfa;
-    --sub:#b9a9d9;
-    --faint:#8f7ab0;
-    --accent:#b98cf2;
-    --accent2:#7c5cc9;
-    --gold:#cba86a;
-    --gold-dim:#9c8354;
-    --line:rgba(255,255,255,0.08);
-  }
-  *{box-sizing:border-box;}
-  html{ scroll-behavior:smooth; }
-  body{
-    margin:0;
-    min-height:100vh;
-    background:radial-gradient(1200px 700px at 50% -10%, var(--bg2) 0%, var(--bg) 60%);
-    font-family:'Nanum Myeongjo','Noto Serif KR','Times New Roman', serif;
-    color:var(--ink);
-    display:flex;
-    justify-content:center;
-    padding:48px 20px 80px;
-  }
-  .wrap{
-    width:100%;
-    max-width:920px;
-  }
-  @keyframes fadeUp{
-    from{ opacity:0; transform:translateY(10px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
-  .wrap > *{
-    animation:fadeUp .7s ease both;
-  }
-  .clock-box{
-    text-align:center;
-    padding:6px 0 30px;
-  }
-  #clock{
-    font-size:clamp(46px,8vw,72px);
-    font-weight:400;
-    letter-spacing:3px;
-    color:var(--ink);
-    line-height:1;
-  }
-  #clock .colon{ color:var(--gold); }
-  #date{
-    margin-top:12px;
-    font-size:15px;
-    color:var(--sub);
-    letter-spacing:1px;
-  }
-  .search-card{
-    max-width:640px;
-    margin:0 auto 40px;
-    padding:8px 6px 16px;
-    display:flex;
-    gap:10px;
-    align-items:center;
-    border-bottom:1px solid var(--line);
-  }
-  #searchInput{
-    flex:1;
-    font-family:inherit;
-    font-size:16px;
-    border:none;
-    outline:none;
-    background:transparent;
-    color:var(--ink);
-    padding:9px 6px;
-    letter-spacing:.3px;
-  }
-  #searchInput::placeholder{ color:var(--faint); }
-  .search-btns{ display:flex; gap:8px; }
-  .search-btn{
-    border:1px solid var(--line);
-    background:transparent;
-    color:var(--sub);
-    font-family:inherit;
-    font-weight:700;
-    padding:9px 15px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:13px;
-    letter-spacing:.4px;
-    transition:background .2s, color .2s, border-color .2s;
-  }
-  .search-btn.google:hover, .search-btn.google:focus-visible{
-    background:var(--accent2); border-color:var(--accent2); color:#fff;
-  }
-  .search-btn.naver:hover, .search-btn.naver:focus-visible{
-    background:#2f9e46; border-color:#2f9e46; color:#fff;
-  }
-  .section-label{
-    font-size:12px;
-    color:var(--faint);
-    letter-spacing:1.5px;
-    margin:0 2px 14px;
-    text-transform:uppercase;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
-  .news-refresh{
-    background:none; border:none; color:var(--faint);
-    font-family:inherit; font-size:12px; letter-spacing:.3px;
-    cursor:pointer; text-decoration:underline; text-transform:none;
-  }
-  .news-refresh:hover{ color:var(--gold); }
-  /* 주요 뉴스 */
-  .news-block{ margin-bottom:38px; }
-  .news-grid{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:16px;
-  }
-  @media(max-width:760px){ .news-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:520px){ .news-grid{ grid-template-columns:1fr; } }
-  .news-card{
-    display:flex;
-    flex-direction:column;
-    border:1px solid var(--line);
-    border-radius:14px;
-    overflow:hidden;
-    text-decoration:none;
-    color:var(--ink);
-    background:rgba(255,255,255,0.02);
-    transition:transform .18s ease, border-color .2s ease, box-shadow .2s ease;
-  }
-  .news-card:hover{
-    transform:translateY(-3px);
-    border-color:var(--gold-dim);
-    box-shadow:0 10px 20px rgba(0,0,0,0.28);
-  }
-  .news-thumb{
-    width:100%;
-    aspect-ratio:16/9;
-    background:var(--bg2);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-  }
-  .news-thumb img{
-    width:100%; height:100%; object-fit:cover;
-  }
-  .news-thumb .fallback-icon{ width:34px; height:34px; color:var(--faint); }
-  .news-body{ padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; }
-  .news-title{
-    font-size:14.5px;
-    line-height:1.4;
-    font-weight:700;
-    color:var(--ink);
-  }
-  .news-desc{
-    font-size:12.5px;
-    color:var(--sub);
-    line-height:1.5;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-  }
-  .news-src{ font-size:11px; color:var(--faint); margin-top:2px; }
-  .news-empty{ color:var(--faint); font-size:13px; padding:10px 2px; }
-  .grid2{
-    display:grid;
-    grid-template-columns:1.15fr 1fr;
-    gap:0;
-    margin-bottom:8px;
-  }
-  @media(max-width:680px){ .grid2{grid-template-columns:1fr;} }
-  .section{ padding:6px 24px 28px; }
-  .section:first-child{ padding-left:6px; }
-  .section:last-child{ padding-right:6px; }
-  .section + .section{ border-left:1px solid var(--line); }
-  @media(max-width:680px){
-    .section{ padding-left:6px !important; padding-right:6px !important; }
-    .section + .section{ border-left:none; border-top:1px solid var(--line); padding-top:26px; }
-  }
-  /* 날씨 */
-  #weatherBody{ display:flex; align-items:center; gap:16px; }
-  #weatherIcon{ width:32px; height:32px; flex-shrink:0; color:var(--gold); }
-  #weatherIcon svg{ width:100%; height:100%; }
-  #weatherTemp{ font-size:32px; font-weight:400; letter-spacing:1px; }
-  #weatherDesc{ color:var(--sub); font-size:14px; margin-top:3px; }
-  #weatherExtra{ font-size:12px; color:var(--faint); margin-top:8px; }
-  /* 할일목록 */
-  .todo-input-row{ display:flex; gap:8px; margin-bottom:14px; }
-  #todoInput{
-    flex:1; font-family:inherit; font-size:14px; padding:9px 12px;
-    background:rgba(255,255,255,0.03); color:var(--ink);
-    border:1px solid var(--line); border-radius:10px; outline:none;
-    transition:border-color .2s;
-  }
-  #todoInput:focus{ border-color:var(--accent2); }
-  #todoInput::placeholder{ color:var(--faint); }
-  #todoAddBtn{
-    border:none; background:var(--gold); color:#1b0f2e; font-weight:700;
-    padding:0 18px; border-radius:10px; font-family:inherit; font-size:14px;
-    cursor:pointer; transition:background .2s;
-  }
-  #todoAddBtn:hover{ background:#dabb7d; }
-  #todoList{ list-style:none; margin:0; padding:0; max-height:250px; overflow-y:auto; }
-  #todoList li{
-    display:flex; align-items:center; gap:10px; padding:9px 2px;
-    border-bottom:1px solid var(--line); font-size:14px;
-  }
-  #todoList li:last-child{ border-bottom:none; }
-  #todoList li input[type=checkbox]{ width:15px; height:15px; accent-color:var(--gold); }
-  #todoList li.done span.txt{ text-decoration:line-through; color:var(--faint); }
-  .todo-del{
-    margin-left:auto; background:none; border:none; color:var(--faint);
-    cursor:pointer; font-size:15px; line-height:1; transition:color .2s;
-  }
-  .todo-del:hover{ color:#d98fa0; }
-  .todo-empty{ color:var(--faint); font-size:13px; padding:8px 2px; }
-  /* 뉴스/바로가기 아이콘 타일 */
-  .shortcut-grid{
-    display:grid;
-    grid-template-columns:repeat(6, 1fr);
-    gap:12px;
-  }
-  @media(max-width:680px){ .shortcut-grid{ grid-template-columns:repeat(4,1fr); } }
-  @media(max-width:420px){ .shortcut-grid{ grid-template-columns:repeat(3,1fr); } }
-  .tile{
-    position:relative;
-    aspect-ratio:1/1;
-    background:rgba(255,255,255,0.02);
-    border:1px solid var(--line);
-    border-radius:14px;
-    text-decoration:none;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    padding:8px;
-    transition:background .22s ease, transform .18s ease, border-color .22s ease, box-shadow .22s ease;
-  }
-  .tile:hover{
-    background:rgba(203,168,106,0.07);
-    border-color:var(--gold-dim);
-    transform:translateY(-3px);
-    box-shadow:0 8px 18px rgba(0,0,0,0.25);
-  }
-  .tile-label{ font-size:10.5px; color:var(--faint); letter-spacing:.3px; }
-  .tile-icon{
-    align-self:center;
-    width:36px;
-    height:36px;
-    color:var(--gold);
-  }
-  .tile-icon svg{ width:100%; height:100%; }
-  .section-block{ margin-bottom:30px; }
-  footer{
-    text-align:center; color:var(--faint); font-size:12px;
-    margin-top:20px; letter-spacing:.5px;
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#1b0f2e">
+  <title>태양의 홈</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#1b0f2e; --bg-soft:#261742; --ink:#f4effd; --muted:#baaed0;
+      --faint:#8d7aa9; --gold:#c8a465; --gold-soft:#dfc58f;
+      --violet:#8f70cf; --line:rgba(244,239,253,.10); --tile:rgba(255,255,255,.025);
+      --shadow:0 14px 30px rgba(4,1,12,.25);
+    }
+    body.light{
+      --bg:#f7f1e8; --bg-soft:#eee3d6; --ink:#31263f; --muted:#6f607d;
+      --faint:#9a879e; --gold:#9e7538; --gold-soft:#795724;
+      --violet:#7651ad; --line:rgba(49,38,63,.13); --tile:rgba(49,38,63,.025);
+      --shadow:0 14px 30px rgba(73,56,86,.12);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      min-height:100vh; margin:0; padding:42px 20px 70px; color:var(--ink);
+      background:radial-gradient(900px 520px at 50% -120px,var(--bg-soft),var(--bg) 66%);
+      font-family:"Nanum Myeongjo","Times New Roman",serif; transition:background .25s,color .25s;
+    }
+    button,input{font:inherit}
+    button{cursor:pointer}
+    .page{width:min(100%,940px);margin:auto}
+    .fade{animation:up .55s ease both}
+    @keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .topbar{display:flex;justify-content:flex-end;height:25px}
+    .theme-toggle{
+      display:flex;align-items:center;gap:7px;border:0;background:transparent;color:var(--faint);
+      font-size:12px;padding:3px 0;letter-spacing:.4px
+    }
+    .theme-toggle svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6}
+    .hero{text-align:center;padding:4px 0 30px}
+    #clock{font-size:clamp(48px,8vw,74px);font-weight:400;letter-spacing:3px;line-height:1}
+    #clock i{color:var(--gold);font-style:normal}
+    #dateLine{margin-top:12px;font-size:14px;color:var(--muted);letter-spacing:1px}
+    .search-row{
+      max-width:650px;margin:0 auto 38px;display:flex;gap:8px;align-items:center;
+      padding:7px 4px 14px;border-bottom:1px solid var(--line)
+    }
+    #searchInput{flex:1;min-width:0;padding:9px 7px;border:0;outline:0;background:transparent;color:var(--ink);font-size:16px}
+    #searchInput::placeholder{color:var(--faint)}
+    .search-btn{padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:12px;transition:.2s}
+    .search-btn:hover,.search-btn:focus-visible{color:#fff;border-color:var(--violet);background:var(--violet);outline:0}
+    .search-btn.naver:hover,.search-btn.naver:focus-visible{background:#2d9b47;border-color:#2d9b47}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 13px;color:var(--faint);font-size:12px;letter-spacing:1.45px}
+    .plain-btn{border:0;border-bottom:1px solid currentColor;background:transparent;padding:0;color:var(--faint);font-size:11px}
+    .plain-btn:hover{color:var(--gold)}
+    .news-wrap{margin-bottom:36px}
+    .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .news-card{display:flex;flex-direction:column;min-height:100%;overflow:hidden;border:1px solid var(--line);border-radius:15px;background:var(--tile);color:var(--ink);text-decoration:none;transition:.2s}
+    .news-card:hover{transform:translateY(-3px);border-color:rgba(200,164,101,.65);box-shadow:var(--shadow)}
+    .news-image{height:126px;background:var(--bg-soft);display:grid;place-items:center;overflow:hidden}
+    .news-image img{width:100%;height:100%;object-fit:cover}
+    .news-image svg{width:35px;height:35px;color:var(--faint);fill:none;stroke:currentColor;stroke-width:1.35}
+    .news-content{display:flex;flex:1;flex-direction:column;padding:12px 13px 14px;gap:7px}
+    .news-title{font-size:14px;font-weight:700;line-height:1.45}
+    .news-summary{color:var(--muted);font-size:12px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .news-source{margin-top:auto;color:var(--faint);font-size:10.5px;word-break:break-all}
+    .notice{grid-column:1/-1;color:var(--faint);font-size:13px;padding:14px 2px}
+    .notice a{color:var(--gold)}
+    .utility{display:grid;grid-template-columns:1.1fr 1fr;margin:4px 0 34px}
+    .utility>section{padding:7px 24px 8px}
+    .utility>section:first-child{padding-left:4px}
+    .utility>section:last-child{padding-right:4px;border-left:1px solid var(--line)}
+    .weather-main{display:flex;align-items:center;gap:16px}
+    #weatherIcon{width:34px;height:34px;color:var(--gold);flex:0 0 auto}
+    #weatherIcon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.4}
+    #temperature{font-size:33px;letter-spacing:1px;line-height:1}
+    #weatherText{margin-top:5px;color:var(--muted);font-size:13px}
+    #weatherMeta{margin-top:8px;color:var(--faint);font-size:11.5px}
+    .todo-form{display:flex;gap:7px;margin-bottom:10px}
+    #todoInput{width:100%;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:10px;outline:0;background:var(--tile);color:var(--ink);font-size:13px}
+    #todoInput:focus{border-color:var(--violet)}
+    #todoAdd{border:0;border-radius:10px;padding:0 15px;background:var(--gold);color:#21152f;font-weight:700;font-size:13px}
+    #todoAdd:hover{background:var(--gold-soft)}
+    .todo-status{margin-bottom:6px;color:var(--faint);font-size:10.5px}
+    #todoList{margin:0;padding:0;list-style:none;max-height:190px;overflow:auto}
+    #todoList li{display:flex;align-items:center;gap:9px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:13px}
+    #todoList li:last-child{border:0}
+    #todoList input{accent-color:var(--gold)}
+    #todoList .done{text-decoration:line-through;color:var(--faint)}
+    .delete{margin-left:auto;border:0;background:transparent;color:var(--faint);font-size:15px}.delete:hover{color:#db8798}
+    .links-block{margin:0 0 29px}
+    .shortcuts{display:grid;grid-template-columns:repeat(6,1fr);gap:11px}
+    .shortcut{aspect-ratio:1;display:flex;flex-direction:column;justify-content:space-between;padding:9px;border:1px solid var(--line);border-radius:14px;background:var(--tile);color:var(--ink);text-decoration:none;transition:.2s}
+    .shortcut:hover{transform:translateY(-2px);border-color:rgba(200,164,101,.65);background:rgba(200,164,101,.07)}
+    .shortcut span{font-size:10px;color:var(--faint)}
+    .shortcut svg{align-self:center;width:38px;height:38px;color:var(--gold);fill:none;stroke:currentColor;stroke-width:1.35}
+    footer{text-align:center;color:var(--faint);font-size:11px;letter-spacing:.5px;padding-top:2px}
+    @media(max-width:760px){.news-grid{grid-template-columns:repeat(2,1fr)}.shortcuts{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:620px){body{padding:28px 15px 55px}.utility{grid-template-columns:1fr}.utility>section{padding:10px 4px 25px}.utility>section:last-child{padding-bottom:0;border:0;border-top:1px solid var(--line);padding-top:25px}.search-row{margin-bottom:31px}.news-image{height:145px}}
+    @media(max-width:410px){.news-grid{grid-template-columns:1fr}.shortcuts{grid-template-columns:repeat(3,1fr)}.search-btn{padding:8px 10px;font-size:11px}}
+  </style>
 </head>
 <body>
-<div class="wrap">
+  <main class="page fade">
+    <div class="topbar"><button class="theme-toggle" id="themeToggle" aria-label="테마 전환"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>테마</span></button></div>
+    <header class="hero">
+      <div id="clock">00<i>:</i>00<i>:</i>00</div>
+      <div id="dateLine">-</div>
+    </header>
 
-  <div class="clock-box">
-    <div id="clock">00<span class="colon">:</span>00<span class="colon">:</span>00</div>
-    <div id="date">-</div>
-  </div>
+    <form class="search-row" id="searchForm">
+      <input id="searchInput" autocomplete="off" placeholder="검색어를 입력하세요" aria-label="검색어">
+      <button type="button" class="search-btn" data-engine="google">Google</button>
+      <button type="button" class="search-btn naver" data-engine="naver">Naver</button>
+    </form>
 
-  <div class="search-card">
-    <input id="searchInput" type="text" placeholder="검색어를 입력하세요" onkeydown="if(event.key==='Enter') doSearch('google')">
-    <div class="search-btns">
-      <button class="search-btn google" onclick="doSearch('google')">Google</button>
-      <button class="search-btn naver" onclick="doSearch('naver')">Naver</button>
-    </div>
-  </div>
+    <section class="news-wrap" aria-labelledby="newsHeading">
+      <div class="section-head"><span id="newsHeading">주요 뉴스</span><button class="plain-btn" id="newsRefresh">새로고침</button></div>
+      <div class="news-grid" id="newsGrid"><div class="notice">뉴스를 불러오는 중...</div></div>
+    </section>
 
-  <div class="news-block">
-    <div class="section-label">
-      <span>주요 뉴스</span>
-      <button class="news-refresh" id="newsRefresh">새로고침</button>
-    </div>
-    <div class="news-grid" id="newsGrid">
-      <div class="news-empty">뉴스를 불러오는 중...</div>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="section">
-      <div class="section-label">오늘의 날씨</div>
-      <div id="weatherBody">
-        <div id="weatherIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.2M12 19.8V22M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2 12h2.2M19.8 12H22M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg></div>
-        <div>
-          <div id="weatherTemp">--°C</div>
-          <div id="weatherDesc">날씨 정보를 불러오는 중...</div>
-          <div id="weatherExtra"></div>
+    <div class="utility">
+      <section>
+        <div class="section-head"><span>오늘의 날씨</span></div>
+        <div class="weather-main">
+          <div id="weatherIcon"></div>
+          <div><div id="temperature">--°C</div><div id="weatherText">날씨 정보를 불러오는 중...</div><div id="weatherMeta"></div></div>
         </div>
+      </section>
+      <section>
+        <div class="section-head"><span>오늘 할 일</span></div>
+        <div class="todo-form"><input id="todoInput" placeholder="할 일을 입력하세요"><button id="todoAdd" type="button">추가</button></div>
+        <div class="todo-status" id="todoStatus"></div><ul id="todoList"></ul>
+      </section>
+    </div>
+
+    <section class="links-block">
+      <div class="section-head"><span>뉴스 포털 바로가기</span></div>
+      <div class="shortcuts">
+        <a class="shortcut" href="https://news.naver.com" target="_blank" rel="noopener"><span>네이버</span><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M7 8.2h10M7 11.6h10M7 15h6.5"/></svg></a>
+        <a class="shortcut" href="https://news.google.com/home?hl=ko&gl=KR&ceid=KR:ko" target="_blank" rel="noopener"><span>구글뉴스</span><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M7 8.2h10M7 11.6h10M7 15h6.5"/></svg></a>
+        <a class="shortcut" href="https://news.daum.net" target="_blank" rel="noopener"><span>다음</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M8.5 12h7M12 8.5v7"/></svg></a>
+        <a class="shortcut" href="https://www.yna.co.kr" target="_blank" rel="noopener"><span>연합뉴스</span><svg viewBox="0 0 24 24"><path d="M4 10.5 12 5l8 5.5M5.5 10.5V19h13v-8.5M9.5 19v-4.5h5V19"/></svg></a>
+        <a class="shortcut" href="https://sports.news.naver.com" target="_blank" rel="noopener"><span>스포츠</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M12 2.8v18.4M4 8.5h16M4 15.5h16"/></svg></a>
+        <a class="shortcut" href="https://www.youtube.com/results?search_query=오늘의+뉴스" target="_blank" rel="noopener"><span>영상</span><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10.5 9.2v5.6l5-2.8z" fill="currentColor" stroke="none"/></svg></a>
       </div>
-    </div>
+    </section>
 
-    <div class="section">
-      <div class="section-label">오늘 할 일</div>
-      <div class="todo-input-row">
-        <input id="todoInput" type="text" placeholder="할 일을 입력하세요" onkeydown="if(event.key==='Enter') addTodo()">
-        <button id="todoAddBtn" onclick="addTodo()">추가</button>
+    <section class="links-block">
+      <div class="section-head"><span>바로가기</span></div>
+      <div class="shortcuts">
+        <a class="shortcut" href="https://github.com" target="_blank" rel="noopener"><span>GitHub</span><svg viewBox="0 0 24 24"><path d="m9 8-4 4 4 4m6-8 4 4-4 4"/></svg></a>
+        <a class="shortcut" href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener"><span>Sheets</span><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M3.5 9.5h17M9.5 9.5v10.5M15 9.5v10.5"/></svg></a>
+        <a class="shortcut" href="https://mail.google.com" target="_blank" rel="noopener"><span>Gmail</span><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="m3 6.5 9 6.5 9-6.5"/></svg></a>
+        <a class="shortcut" href="https://drive.google.com" target="_blank" rel="noopener"><span>Drive</span><svg viewBox="0 0 24 24"><path d="m8 4 8 0 6 10-3 6H5l-3-6zM8 4l6 10m2-10-3 6M5 20l3-6h8"/></svg></a>
       </div>
-      <ul id="todoList"></ul>
-    </div>
-  </div>
-
-  <div class="section-block">
-    <div class="section-label" style="margin:0 2px 14px;">뉴스 포털 바로가기</div>
-    <div class="shortcut-grid">
-      <a class="tile" href="https://news.naver.com" target="_blank" rel="noopener">
-        <span class="tile-label">네이버</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M7 8.2h10M7 11.6h10M7 15h6.5"/></svg></span>
-      </a>
-      <a class="tile" href="https://news.google.com/home?hl=ko&gl=KR&ceid=KR:ko" target="_blank" rel="noopener">
-        <span class="tile-label">구글뉴스</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M7 8.2h10M7 11.6h10M7 15h6.5"/></svg></span>
-      </a>
-      <a class="tile" href="https://news.daum.net" target="_blank" rel="noopener">
-        <span class="tile-label">다음</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9.2"/><path d="M8.5 12h7M12 8.5v7"/></svg></span>
-      </a>
-      <a class="tile" href="https://www.yna.co.kr" target="_blank" rel="noopener">
-        <span class="tile-label">연합뉴스</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 10.5L12 5l8 5.5"/><path d="M5.5 10.5V19h13v-8.5"/><path d="M9.5 19v-4.5h5V19"/></svg></span>
-      </a>
-      <a class="tile" href="https://sports.news.naver.com" target="_blank" rel="noopener">
-        <span class="tile-label">스포츠</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9.2"/><path d="M12 2.8v18.4M4 8.5h16M4 15.5h16"/></svg></span>
-      </a>
-      <a class="tile" href="https://www.youtube.com/results?search_query=오늘의+뉴스" target="_blank" rel="noopener">
-        <span class="tile-label">영상</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10.5 9.2v5.6l5-2.8z" fill="currentColor" stroke="none"/></svg></span>
-      </a>
-    </div>
-  </div>
-
-  <div class="section-block">
-    <div class="section-label" style="margin:0 2px 14px;">바로가기</div>
-    <div class="shortcut-grid">
-      <a class="tile" href="https://github.com" target="_blank" rel="noopener">
-        <span class="tile-label">GitHub</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 8l-4 4 4 4M15 8l4 4-4 4"/></svg></span>
-      </a>
-      <a class="tile" href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener">
-        <span class="tile-label">Sheets</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M3.5 9.5h17M9.5 9.5v10.5M15 9.5v10.5"/></svg></span>
-      </a>
-      <a class="tile" href="https://mail.google.com" target="_blank" rel="noopener">
-        <span class="tile-label">Gmail</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 6.5l9 6.5 9-6.5"/></svg></span>
-      </a>
-      <a class="tile" href="https://drive.google.com" target="_blank" rel="noopener">
-        <span class="tile-label">Drive</span>
-        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 4h8l6 10-3 6H5l-3-6z"/><path d="M8 4l6 10M16 4l-3 6M5 20l3-6h8"/></svg></span>
-      </a>
-    </div>
-  </div>
-
-  <footer>나만의 홈페이지 · 문태양</footer>
-</div>
+    </section>
+    <footer>태양의 홈 · <span id="footerYear"></span></footer>
+  </main>
 
 <script>
-function pad(n){ return String(n).padStart(2,'0'); }
-function updateClock(){
-  const now = new Date();
-  document.getElementById('clock').innerHTML =
-    pad(now.getHours()) + '<span class="colon">:</span>' +
-    pad(now.getMinutes()) + '<span class="colon">:</span>' +
-    pad(now.getSeconds());
-  const days=['일','월','화','수','목','금','토'];
-  const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
-  document.getElementById('date').textContent = dateStr;
-}
-setInterval(updateClock,1000);
-updateClock();
+  const $ = s => document.querySelector(s);
+  const FALLBACK = '<svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M7 8.2h10M7 11.6h10M7 15h6.5"/></svg>';
+  const WEATHER_ICONS={
+    sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.2M12 19.8V22M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2 12h2.2M19.8 12H22M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>',
+    cloud:'<svg viewBox="0 0 24 24"><path d="M7 17.5a4.2 4.2 0 0 1-.5-8.37 5.2 5.2 0 0 1 9.9-1.9A4.5 4.5 0 0 1 17 17.5H7z"/></svg>',
+    rain:'<svg viewBox="0 0 24 24"><path d="M7 15.5a4.2 4.2 0 0 1-.5-8.37 5.2 5.2 0 0 1 9.9-1.9A4.5 4.5 0 0 1 17 15.5H7zM8 18.5l-1 2.2M12 18.5l-1 2.2M16 18.5l-1 2.2"/></svg>',
+    snow:'<svg viewBox="0 0 24 24"><path d="M7 14.5a4.2 4.2 0 0 1-.5-8.37 5.2 5.2 0 0 1 9.9-1.9A4.5 4.5 0 0 1 17 14.5H7zM9 18v3m-1.6-2.4L9 18.6l1.6 1M15 18v3m-1.6-2.4 1.6 0 1.6 1"/></svg>'
+  };
 
-function doSearch(engine){
-  const q = document.getElementById('searchInput').value.trim();
-  if(!q) return;
-  const url = engine==='google'
-    ? `https://www.google.com/search?q=${encodeURIComponent(q)}`
-    : `https://search.naver.com/search.naver?query=${encodeURIComponent(q)}`;
-  window.open(url,'_blank');
-}
-
-function loadTodos(){
-  try{ return JSON.parse(localStorage.getItem('todos_v1') || '[]'); }
-  catch(e){ return []; }
-}
-function saveTodos(list){ localStorage.setItem('todos_v1', JSON.stringify(list)); }
-function renderTodos(){
-  const list = loadTodos();
-  const ul = document.getElementById('todoList');
-  ul.innerHTML='';
-  if(list.length===0){
-    const p = document.createElement('div');
-    p.className='todo-empty';
-    p.textContent='할 일이 없습니다.';
-    ul.appendChild(p);
-    return;
+  function clock(){
+    const d=new Date(), p=n=>String(n).padStart(2,'0'), days=['일','월','화','수','목','금','토'];
+    $('#clock').innerHTML=`${p(d.getHours())}<i>:</i>${p(d.getMinutes())}<i>:</i>${p(d.getSeconds())}`;
+    $('#dateLine').textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
   }
-  list.forEach((item, idx)=>{
-    const li = document.createElement('li');
-    if(item.done) li.classList.add('done');
-    const cb = document.createElement('input');
-    cb.type='checkbox';
-    cb.checked = item.done;
-    cb.onchange = ()=>{ toggleTodo(idx); };
-    const span = document.createElement('span');
-    span.className='txt';
-    span.textContent = item.text;
-    const del = document.createElement('button');
-    del.className='todo-del';
-    del.textContent='✕';
-    del.onclick = ()=>{ deleteTodo(idx); };
-    li.appendChild(cb); li.appendChild(span); li.appendChild(del);
-    ul.appendChild(li);
-  });
-}
-function addTodo(){
-  const input = document.getElementById('todoInput');
-  const val = input.value.trim();
-  if(!val) return;
-  const list = loadTodos();
-  list.push({text:val, done:false});
-  saveTodos(list);
-  input.value='';
-  renderTodos();
-}
-function toggleTodo(idx){
-  const list = loadTodos();
-  list[idx].done = !list[idx].done;
-  saveTodos(list);
-  renderTodos();
-}
-function deleteTodo(idx){
-  const list = loadTodos();
-  list.splice(idx,1);
-  saveTodos(list);
-  renderTodos();
-}
-renderTodos();
+  clock(); setInterval(clock,1000); $('#footerYear').textContent=new Date().getFullYear();
 
-const weatherCodeMap = {
-  0:['맑음','SUN'], 1:['대체로 맑음','SUN'], 2:['부분적으로 흐림','CLOUD'], 3:['흐림','CLOUD'],
-  45:['안개','CLOUD'], 48:['짙은 안개','CLOUD'],
-  51:['약한 이슬비','RAIN'], 53:['이슬비','RAIN'], 55:['강한 이슬비','RAIN'],
-  61:['약한 비','RAIN'], 63:['비','RAIN'], 65:['강한 비','RAIN'],
-  71:['약한 눈','SNOW'], 73:['눈','SNOW'], 75:['강한 눈','SNOW'],
-  80:['소나기','RAIN'], 81:['강한 소나기','RAIN'], 82:['매우 강한 소나기','RAIN'],
-  95:['뇌우','RAIN'], 96:['우박 동반 뇌우','RAIN'], 99:['강한 우박 동반 뇌우','RAIN']
-};
-const weatherIcons = {
-  SUN:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.2M12 19.8V22M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2 12h2.2M19.8 12H22M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>',
-  CLOUD:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 17.5a4.2 4.2 0 0 1-.5-8.37 5.2 5.2 0 0 1 9.9-1.9A4.5 4.5 0 0 1 17 17.5H7z"/></svg>',
-  RAIN:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 15.5a4.2 4.2 0 0 1-.5-8.37 5.2 5.2 0 0 1 9.9-1.9A4.5 4.5 0 0 1 17 15.5H7z"/><path d="M8 18.5l-1 2.2M12 18.5l-1 2.2M16 18.5l-1 2.2"/></svg>',
-  SNOW:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 14.5a4.2 4.2 0 0 1-.5-8.37 5.2 5.2 0 0 1 9.9-1.9A4.5 4.5 0 0 1 17 14.5H7z"/><path d="M9 18v3M9 18.6l-1.6 1M9 18.6l1.6 1M15 18v3M15 18.6l-1.6 1M15 18.6l1.6 1"/></svg>'
-};
-async function fetchWeather(lat, lon){
-  try{
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const c = data.current;
-    const info = weatherCodeMap[c.weather_code] || ['알 수 없음','SUN'];
-    document.getElementById('weatherIcon').innerHTML = weatherIcons[info[1]] || weatherIcons.SUN;
-    document.getElementById('weatherTemp').textContent = `${Math.round(c.temperature_2m)}°C`;
-    document.getElementById('weatherDesc').textContent = `${info[0]} · 체감 ${Math.round(c.apparent_temperature)}°C`;
-    document.getElementById('weatherExtra').textContent = `습도 ${c.relative_humidity_2m}% · 풍속 ${c.wind_speed_10m}m/s`;
-  }catch(e){
-    document.getElementById('weatherDesc').textContent = '날씨 정보를 불러올 수 없습니다.';
+  function search(engine){
+    const q=$('#searchInput').value.trim(); if(!q)return $('#searchInput').focus();
+    const url=engine==='naver'?`https://search.naver.com/search.naver?query=${encodeURIComponent(q)}`:`https://www.google.com/search?q=${encodeURIComponent(q)}`;
+    window.open(url,'_blank','noopener');
   }
-}
-if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(
-    pos=> fetchWeather(pos.coords.latitude, pos.coords.longitude),
-    ()=> fetchWeather(37.5665, 126.9780)
-  );
-}else{
-  fetchWeather(37.5665, 126.9780);
-}
+  document.querySelectorAll('[data-engine]').forEach(b=>b.addEventListener('click',()=>search(b.dataset.engine)));
+  $('#searchForm').addEventListener('submit',e=>{e.preventDefault();search('google')});
 
-/* ---------- 주요 뉴스 (구글 뉴스 RSS, 무제한/키 불필요) ---------- */
-const FALLBACK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="fallback-icon"><rect x="3.5" y="4" width="17" height="16" rx="1.6"/><path d="M7 8.2h10M7 11.6h10M7 15h6.5"/></svg>';
-
-function domainOf(url){
-  try{ return new URL(url).hostname.replace('www.',''); }catch(e){ return ''; }
-}
-function stripHtml(html){
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html || '';
-  return (tmp.textContent || tmp.innerText || '').trim();
-}
-function extractImage(item){
-  if(item.thumbnail) return item.thumbnail;
-  if(item.enclosure && item.enclosure.link) return item.enclosure.link;
-  const m = (item.description||'').match(/<img[^>]+src="([^">]+)"/i);
-  if(m) return m[1];
-  return null;
-}
-
-function renderNewsItems(items){
-  const grid = document.getElementById('newsGrid');
-  grid.innerHTML = '';
-  items.slice(0, 6).forEach(item => {
-    const domain = domainOf(item.link);
-    const img = extractImage(item);
-    const desc = stripHtml(item.description).slice(0, 90);
-    const a = document.createElement('a');
-    a.className = 'news-card';
-    a.href = item.link;
-    a.target = '_blank';
-    a.rel = 'noopener';
-
-    const thumb = document.createElement('div');
-    thumb.className = 'news-thumb';
-    if(img){
-      const im = document.createElement('img');
-      im.src = img;
-      im.loading = 'lazy';
-      im.onerror = () => { thumb.innerHTML = FALLBACK_ICON; };
-      thumb.appendChild(im);
-    }else if(domain){
-      const im = document.createElement('img');
-      im.src = `https://www.google.com/s2/favicons?sz=128&domain=${domain}`;
-      im.style.width='40px'; im.style.height='40px'; im.style.objectFit='contain';
-      thumb.style.background = 'var(--bg2)';
-      thumb.appendChild(im);
-    }else{
-      thumb.innerHTML = FALLBACK_ICON;
-    }
-
-    const body = document.createElement('div');
-    body.className = 'news-body';
-    const title = document.createElement('div');
-    title.className = 'news-title';
-    title.textContent = item.title;
-    const descEl = document.createElement('div');
-    descEl.className = 'news-desc';
-    descEl.textContent = desc;
-    const src = document.createElement('div');
-    src.className = 'news-src';
-    src.textContent = domain;
-    body.appendChild(title);
-    if(desc) body.appendChild(descEl);
-    body.appendChild(src);
-
-    a.appendChild(thumb);
-    a.appendChild(body);
-    grid.appendChild(a);
-  });
-}
-
-function parseRssXml(xmlText){
-  const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
-  const items = Array.from(doc.querySelectorAll('item'));
-  if(!items.length) throw new Error('no items');
-  return items.map(node => {
-    const get = (tag) => {
-      const el = node.querySelector(tag);
-      return el ? el.textContent : '';
-    };
-    return {
-      title: get('title'),
-      link: get('link'),
-      description: get('description')
-    };
-  });
-}
-
-/* 1순위: allOrigins CORS 프록시로 구글 뉴스 RSS를 직접 받아 파싱 (키 불필요, 무제한) */
-function loadNewsViaAllOrigins(){
-  const rssUrl = 'https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko';
-  const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(rssUrl);
-  return fetch(proxyUrl)
-    .then(r => { if(!r.ok) throw new Error('proxy fail'); return r.text(); })
-    .then(xmlText => parseRssXml(xmlText));
-}
-
-/* 2순위: rss2json (예비용, 무료 한도 낮음) */
-function loadNewsViaRss2Json(){
-  const rssUrl = 'https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko';
-  const apiUrl = 'https://api.rss2json.com/v1/api.json?rssurl=' + encodeURIComponent(rssUrl);
-  return fetch(apiUrl)
-    .then(r => r.json())
-    .then(data => {
-      if(!data.items || !data.items.length) throw new Error('empty');
-      return data.items;
+  const todoKey='taeyang-home-todos-v2';
+  const todos=()=>{try{return JSON.parse(localStorage.getItem(todoKey)||'[]')}catch{return[]}};
+  const save=list=>localStorage.setItem(todoKey,JSON.stringify(list));
+  function renderTodos(){
+    const list=todos(), ul=$('#todoList'), done=list.filter(x=>x.done).length;
+    $('#todoStatus').textContent=list.length?`${done} / ${list.length} 완료`:'오늘의 할 일을 추가해 보세요.'; ul.innerHTML='';
+    list.forEach((item,i)=>{
+      const li=document.createElement('li'), check=document.createElement('input'), text=document.createElement('span'), del=document.createElement('button');
+      check.type='checkbox';check.checked=item.done;check.onchange=()=>{const a=todos();a[i].done=check.checked;save(a);renderTodos()};
+      text.textContent=item.text;text.className=item.done?'done':'';del.className='delete';del.textContent='×';del.title='삭제';del.onclick=()=>{const a=todos();a.splice(i,1);save(a);renderTodos()};
+      li.append(check,text,del);ul.append(li);
     });
-}
+  }
+  function addTodo(){const input=$('#todoInput'),text=input.value.trim();if(!text)return input.focus();const a=todos();a.push({text,done:false,created:Date.now()});save(a);input.value='';renderTodos()}
+  $('#todoAdd').addEventListener('click',addTodo);$('#todoInput').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo()});renderTodos();
 
-function loadNews(){
-  const grid = document.getElementById('newsGrid');
-  grid.innerHTML = '<div class="news-empty">뉴스를 불러오는 중...</div>';
-  loadNewsViaAllOrigins()
-    .then(items => renderNewsItems(items))
-    .catch(() => {
-      loadNewsViaRss2Json()
-        .then(items => renderNewsItems(items))
-        .catch(() => {
-          grid.innerHTML = '<div class="news-empty">뉴스를 불러올 수 없습니다. <a href="https://news.google.com/home?hl=ko&gl=KR&ceid=KR:ko" target="_blank" rel="noopener" style="color:var(--gold);">구글 뉴스에서 보기</a></div>';
-        });
+  const weatherMap={0:['맑음','sun'],1:['대체로 맑음','sun'],2:['부분적으로 흐림','cloud'],3:['흐림','cloud'],45:['안개','cloud'],48:['짙은 안개','cloud'],51:['약한 이슬비','rain'],53:['이슬비','rain'],55:['강한 이슬비','rain'],61:['약한 비','rain'],63:['비','rain'],65:['강한 비','rain'],71:['약한 눈','snow'],73:['눈','snow'],75:['강한 눈','snow'],80:['소나기','rain'],81:['강한 소나기','rain'],82:['강한 소나기','rain'],95:['뇌우','rain'],96:['우박 동반 뇌우','rain'],99:['강한 우박 동반 뇌우','rain']};
+  async function weather(lat=37.5665,lon=126.9780){
+    try{
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`;
+      const c=(await (await fetch(url)).json()).current, info=weatherMap[c.weather_code]||['알 수 없음','cloud'];
+      $('#weatherIcon').innerHTML=WEATHER_ICONS[info[1]];$('#temperature').textContent=`${Math.round(c.temperature_2m)}°C`;
+      $('#weatherText').textContent=`${info[0]} · 체감 ${Math.round(c.apparent_temperature)}°C`;$('#weatherMeta').textContent=`습도 ${c.relative_humidity_2m}% · 풍속 ${c.wind_speed_10m}m/s`;
+    }catch{$('#weatherText').textContent='날씨 정보를 불러올 수 없습니다.'}
+  }
+  if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>weather(p.coords.latitude,p.coords.longitude),()=>weather(),{timeout:5000});else weather();
+
+  const domain=url=>{try{return new URL(url).hostname.replace('www.','')}catch{return''}};
+  const text=html=>{const e=document.createElement('div');e.innerHTML=html||'';return(e.textContent||'').trim()};
+  function xmlItems(xml){
+    const doc=new DOMParser().parseFromString(xml,'text/xml'), list=[...doc.querySelectorAll('item')]; if(!list.length)throw Error('empty RSS');
+    return list.map(i=>({title:i.querySelector('title')?.textContent||'',link:i.querySelector('link')?.textContent||'',description:i.querySelector('description')?.textContent||''}));
+  }
+  function renderNews(items){
+    const grid=$('#newsGrid');grid.innerHTML='';
+    items.slice(0,6).forEach(item=>{
+      const a=document.createElement('a'),image=document.createElement('div'),body=document.createElement('div'),title=document.createElement('div'),summary=document.createElement('div'),source=document.createElement('div');
+      const host=domain(item.link),desc=text(item.description).slice(0,110);a.className='news-card';a.href=item.link;a.target='_blank';a.rel='noopener';
+      image.className='news-image'; const icon=document.createElement('img');icon.src=`https://www.google.com/s2/favicons?sz=128&domain=${encodeURIComponent(host)}`;icon.alt='';icon.style.cssText='width:42px;height:42px;object-fit:contain';icon.onerror=()=>image.innerHTML=FALLBACK;image.append(icon);
+      body.className='news-content';title.className='news-title';title.textContent=item.title;summary.className='news-summary';summary.textContent=desc||'기사 내용을 보려면 카드를 선택하세요.';source.className='news-source';source.textContent=host||'Google News';body.append(title,summary,source);a.append(image,body);grid.append(a);
     });
-}
-loadNews();
-document.getElementById('newsRefresh').addEventListener('click', loadNews);
+  }
+  async function news(){
+    const grid=$('#newsGrid');grid.innerHTML='<div class="notice">뉴스를 불러오는 중...</div>';
+    const rss='https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko';
+    const sources=[
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(rss)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rss)}`
+    ];
+    for(const url of sources){try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error();const items=xmlItems(await r.text());renderNews(items);localStorage.setItem('taeyang-news-cache',JSON.stringify({time:Date.now(),items}));return}catch(e){}}
+    try{const cache=JSON.parse(localStorage.getItem('taeyang-news-cache')||'null');if(cache?.items?.length){renderNews(cache.items);return}}catch(e){}
+    grid.innerHTML='<div class="notice">뉴스를 불러오지 못했습니다. 잠시 후 새로고침하거나 <a href="https://news.google.com/home?hl=ko&gl=KR&ceid=KR:ko" target="_blank" rel="noopener">구글 뉴스</a>에서 확인해 주세요.</div>';
+  }
+  $('#newsRefresh').addEventListener('click',news);news();
+
+  const themeKey='taeyang-home-theme';
+  function setTheme(light){document.body.classList.toggle('light',light);localStorage.setItem(themeKey,light?'light':'dark')}
+  setTheme(localStorage.getItem(themeKey)==='light');$('#themeToggle').addEventListener('click',()=>setTheme(!document.body.classList.contains('light')));
+  document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();$('#searchInput').focus()}if(e.key==='Escape')document.activeElement.blur()});
 </script>
 </body>
 </html>
