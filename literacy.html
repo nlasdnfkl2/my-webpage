@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>디지털 리터러시 다각형 평가 차트 - 실습 9</title>
-    <!-- 폰트 및 아이콘, 차트 라이브러리 로드 -->
+    <!-- 폰트, 아이콘, 차트 라이브러리 로드 -->
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -32,7 +32,7 @@
         }
 
         .wrap {
-            max-width: 960px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -82,16 +82,16 @@
         header p {
             color: var(--muted);
             font-size: 1.02rem;
-            max-width: 42em;
+            max-width: 45em;
         }
 
         .dashboard {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.1fr 0.9fr;
             gap: 2rem;
         }
 
-        @media (max-width: 860px) {
+        @media (max-width: 900px) {
             .dashboard { grid-template-columns: 1fr; }
         }
 
@@ -129,21 +129,25 @@
             border: 1px solid var(--line);
         }
 
-        .indicator-name {
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .indicator-name-input {
             font-weight: 700;
             font-size: 0.92rem;
             color: var(--ink);
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
+            background: #fff;
+            border: 1px solid var(--line);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            width: 70%;
+            font-family: inherit;
         }
-
-        .indicator-name span {
-            font-size: 0.78rem;
-            color: var(--muted);
-            font-weight: 400;
-        }
+        .indicator-name-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
 
         .inputs-container {
             display: grid;
@@ -178,7 +182,7 @@
             font-family: inherit;
         }
 
-        input:focus {
+        input[type="number"]:focus {
             outline: 2px solid var(--accent);
             border-color: transparent;
         }
@@ -263,93 +267,111 @@
 
 <div class="wrap">
     <div class="top-nav">
-        <b>문태양 · 디지털 리터러시 평가 툴</b>
+        <b>문태양 · 디지털 리터러시 5대 역량 평가 툴</b>
         <a href="index.html"><i class="ph ph-arrow-left"></i> 포트폴리오 메인으로</a>
     </div>
 
     <header>
-        <p class="label">Practical Task 09</p>
-        <h1>디지털 리터러시 다각형 평가 차트</h1>
-        <p>학생들의 역량 지표 사전 및 사후 평가 점수를 입력받아 다각형 레이더 차트로 겹쳐 렌더링하고, 역량 변화와 성장 정도를 시각적으로 분석합니다.</p>
+        <p class="label">Practical Task 09 - Expanded</p>
+        <h1>디지털 리터러시 다각형 평가 차트 (5대 역량)</h1>
+        <p>정보검색, 창의적 문제해결, 비판적 사고, 디지털 도구 활용, 협업 능력 5가지 핵심 영역(100점 만점)의 사전·사후 평가 수치를 기입하고 다각형 차트로 성장을 비교합니다. 항목명을 직접 수정할 수도 있습니다.</p>
     </header>
 
     <div class="dashboard">
         <!-- 좌측 입력 패널 -->
         <div class="panel">
             <div class="panel-title">
-                <span>역량 지표 데이터 입력</span>
-                <span style="font-size: 0.8rem; color: var(--muted); font-weight: normal;">점수 범위: 0 ~ 10점</span>
+                <span>역량 지표 및 점수 입력</span>
+                <span style="font-size: 0.8rem; color: var(--muted); font-weight: normal;">점수 범위: 0 ~ 100점</span>
             </div>
             
             <div class="input-grid" id="inputContainer">
                 <!-- 지표 1 -->
                 <div class="indicator-row">
-                    <div class="indicator-name">
-                        ① 전통적 문해 및 독서 리터러시
-                        <span>인쇄 매체 해독 및 비판적 수용</span>
+                    <div class="indicator-header">
+                        <input type="text" class="indicator-name-input" value="정보검색 능력" oninput="updateChart()">
+                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ①</span>
                     </div>
                     <div class="inputs-container">
                         <div class="input-group">
                             <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                         <div class="input-group">
                             <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                     </div>
                 </div>
 
                 <!-- 지표 2 -->
                 <div class="indicator-row">
-                    <div class="indicator-name">
-                        ② 디지털 및 미디어 리터러시
-                        <span>미디어 필터링 및 소통 윤리</span>
+                    <div class="indicator-header">
+                        <input type="text" class="indicator-name-input" value="창의적 문제해결" oninput="updateChart()">
+                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ②</span>
                     </div>
                     <div class="inputs-container">
                         <div class="input-group">
                             <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                         <div class="input-group">
                             <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                     </div>
                 </div>
 
                 <!-- 지표 3 -->
                 <div class="indicator-row">
-                    <div class="indicator-name">
-                        ③ 지식 정보 처리 리터러시
-                        <span>데이터 탐색·분석·재구성 역량</span>
+                    <div class="indicator-header">
+                        <input type="text" class="indicator-name-input" value="비판적 사고" oninput="updateChart()">
+                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ③</span>
                     </div>
                     <div class="inputs-container">
                         <div class="input-group">
                             <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                         <div class="input-group">
                             <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                     </div>
                 </div>
 
                 <!-- 지표 4 -->
                 <div class="indicator-row">
-                    <div class="indicator-name">
-                        ④ AI 인공지능 탐구 리터러시
-                        <span>생성 결과 검증 및 기술 제어</span>
+                    <div class="indicator-header">
+                        <input type="text" class="indicator-name-input" value="디지털 도구 활용" oninput="updateChart()">
+                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ④</span>
                     </div>
                     <div class="inputs-container">
                         <div class="input-group">
                             <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                         <div class="input-group">
                             <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="10" step="0.5" value="" placeholder="0" oninput="updateChart()">
+                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 지표 5 -->
+                <div class="indicator-row">
+                    <div class="indicator-header">
+                        <input type="text" class="indicator-name-input" value="협업 능력" oninput="updateChart()">
+                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ⑤</span>
+                    </div>
+                    <div class="inputs-container">
+                        <div class="input-group">
+                            <label class="label-pre">사전 점수</label>
+                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
+                        </div>
+                        <div class="input-group">
+                            <label class="label-post">사후 점수</label>
+                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
                         </div>
                     </div>
                 </div>
@@ -373,7 +395,7 @@
                     <button class="btn-danger" onclick="saveChartImage()">차트 이미지 저장</button>
                 </div>
                 <div class="report-content" id="reportContent">
-                    좌측 인풋창에 점수를 기입하거나 [분석 리포트 생성] 버튼을 누르면 실시간 성장 통계 및 맞춤형 진단 결과가 작성됩니다.
+                    좌측 인풋창에 점수(0~100점)를 기입하거나 항목명을 수정한 후 [분석 리포트 생성] 버튼을 누르면 실시간 성장 통계가 작성됩니다.
                 </div>
             </div>
         </div>
@@ -382,22 +404,21 @@
 
 <script>
     let myChart = null;
-    const labels = [
-        '전통적 문해 및 독서',
-        '디지털 및 미디어',
-        '지식 정보 처리',
-        'AI 인공지능 탐구'
-    ];
+
+    function getLabels() {
+        const nameInputs = document.querySelectorAll('.indicator-name-input');
+        return Array.from(nameInputs).map(input => input.value || '미정 영역');
+    }
 
     function initChart() {
         const ctx = document.getElementById('radarChart').getContext('2d');
         
         const data = {
-            labels: labels,
+            labels: getLabels(),
             datasets: [
                 {
                     label: '사전 평가 (Pre)',
-                    data: [0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0],
                     fill: true,
                     backgroundColor: 'rgba(37, 99, 235, 0.12)',
                     borderColor: '#2563eb',
@@ -407,7 +428,7 @@
                 },
                 {
                     label: '사후 평가 (Post)',
-                    data: [0, 0, 0, 0],
+                    data: [0, 0, 0, 0, 0],
                     fill: true,
                     backgroundColor: 'rgba(179, 71, 0, 0.15)',
                     borderColor: '#b34700',
@@ -429,8 +450,8 @@
                         angleLines: { display: true, color: '#d8d2c4' },
                         grid: { color: '#e5e1d8' },
                         suggestedMin: 0,
-                        suggestedMax: 10,
-                        ticks: { stepSize: 2, color: '#6b6557', font: { size: 10 } },
+                        suggestedMax: 100,
+                        ticks: { stepSize: 20, color: '#6b6557', font: { size: 10 } },
                         pointLabels: {
                             font: { size: 11, weight: '700', family: 'Noto Sans KR' },
                             color: '#17150f'
@@ -447,26 +468,29 @@
     }
 
     function updateChart() {
+        if (!myChart) return;
         const preInputs = document.querySelectorAll('.pre-val');
         const postInputs = document.querySelectorAll('.post-val');
         
         const preData = [];
         const postData = [];
+        const currentLabels = getLabels();
 
-        for(let i=0; i<labels.length; i++) {
+        for(let i=0; i<currentLabels.length; i++) {
             let preVal = parseFloat(preInputs[i].value);
             let postVal = parseFloat(postInputs[i].value);
 
             if (isNaN(preVal)) preVal = 0;
             if (isNaN(postVal)) postVal = 0;
 
-            if (preVal > 10) preVal = 10; if (preVal < 0) preVal = 0;
-            if (postVal > 10) postVal = 10; if (postVal < 0) postVal = 0;
+            if (preVal > 100) preVal = 100; if (preVal < 0) preVal = 0;
+            if (postVal > 100) postVal = 100; if (postVal < 0) postVal = 0;
 
             preData.push(preVal);
             postData.push(postVal);
         }
 
+        myChart.data.labels = currentLabels;
         myChart.data.datasets[0].data = preData;
         myChart.data.datasets[1].data = postData;
         myChart.update();
@@ -484,15 +508,17 @@
     }
 
     function generateAnalysisReport() {
+        updateChart();
         const preData = myChart.data.datasets[0].data;
         const postData = myChart.data.datasets[1].data;
+        const currentLabels = getLabels();
 
         let totalPre = 0;
         let totalPost = 0;
         let highestGrowthIndex = 0;
-        let maxGrowth = -100;
+        let maxGrowth = -1000;
 
-        for(let i=0; i<labels.length; i++) {
+        for(let i=0; i<currentLabels.length; i++) {
             totalPre += preData[i];
             totalPost += postData[i];
             let growth = postData[i] - preData[i];
@@ -502,23 +528,23 @@
             }
         }
 
-        const avgPre = (totalPre / labels.length).toFixed(2);
-        const avgPost = (totalPost / labels.length).toFixed(2);
+        const avgPre = (totalPre / currentLabels.length).toFixed(1);
+        const avgPost = (totalPost / currentLabels.length).toFixed(1);
         const growthRate = (((avgPost - avgPre) / (avgPre == 0 ? 1 : avgPre)) * 100).toFixed(1);
 
-        let reportText = `[역량 성장 종합 진단 결과]\n`;
-        reportText += `• 전체 리터러시 지표 평균 점수: 사전 ${avgPre}점 → 사후 ${avgPost}점\n`;
+        let reportText = `[5대 역량 종합 진단 리포트]\n`;
+        reportText += `• 전체 리터러시 평균 점수: 사전 ${avgPre}점 → 사후 ${avgPost}점 (100점 만점)\n`;
         reportText += `• 교육 프로그램 투입 전후 대비 종합 향상 폭: 약 ${growthRate}%\n\n`;
         reportText += `[핵심 도약 영역]\n`;
-        reportText += `• 가장 높은 성장률을 기록한 분야는 [${labels[highestGrowthIndex]} 리터러시]이며, 이전 대비 +${maxGrowth.toFixed(1)}점 향상되었습니다.\n\n`;
-        reportText += `[교수·학습 처방 제언]\n`;
+        reportText += `• 가장 가파른 성장을 기록한 분야는 [${currentLabels[highestGrowthIndex]}]이며, 이전 대비 +${maxGrowth.toFixed(1)}점 상승했습니다.\n\n`;
+        reportText += `[맞춤형 교수·학습 처방 제언]\n`;
 
         if (avgPost == 0) {
-            reportText += `• 입력된 데이터가 없습니다. 각 항목별 평가 수치를 입력한 뒤 리포트를 생성해 주세요.`;
-        } else if (avgPost < 6) {
-            reportText += `• 디지털 필터링 및 AI 도구 비판적 검증 영역에 대한 추가적인 심화 학습과 교과 융합 피드백이 권장됩니다.`;
+            reportText += `• 입력된 데이터가 없습니다. 각 항목별 평가 점수를 입력한 뒤 리포트를 생성해 주세요.`;
+        } else if (avgPost < 60) {
+            reportText += `• 전반적인 기초 역량 강화 및 실습 위주의 밀착형 피드백 세션 추가 편성이 권장됩니다.`;
         } else {
-            reportText += `• 전반적인 핵심 역량과 다각적 정보 해독 능력이 균형 있게 발달하였습니다. 고차원 협력 프로젝트 연계 확장을 제언합니다.`;
+            reportText += `• 5대 핵심 영역 전반에서 우수한 성취도와 고른 균형 발달을 보이고 있습니다. 프로젝트 기반 심화 과업 수행을 제언합니다.`;
         }
 
         document.getElementById('reportContent').innerText = reportText;
@@ -528,7 +554,7 @@
         if (!myChart) return;
         const imageURI = myChart.toBase64Image();
         const link = document.createElement('a');
-        link.download = '디지털_리터러시_역량평가_차트.png';
+        link.download = '디지털_리터러시_5대역량평가_차트.png';
         link.href = imageURI;
         document.body.appendChild(link);
         link.click();
