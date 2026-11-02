@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D 공간 도형 실험실</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        :root {
+            --ink: #17150f;
+            --paper: #f4f1ea;
+            --line: #d8d2c4;
+            --accent: #b34700;
+            --muted: #6b6557;
+            --panel-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--paper);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--ink);
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        /* 3D 캔버스 영역 */
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(to bottom, #f4f1ea 0%, #e8e4da 100%);
+            cursor: grab;
+        }
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+
+        /* 조작 패널 */
+        .control-panel {
+            width: 320px;
+            background-color: var(--panel-bg);
+            border-left: 1px solid var(--line);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .control-group h3 {
+            font-size: 0.95rem;
+            margin: 0 0 1rem 0;
+            color: var(--muted);
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* 도형 선택 버튼 */
+        .shape-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .btn {
+            background: none;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 0.8rem 0.5rem;
+            cursor: pointer;
+            font-family: inherit;
+            color: var(--ink);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(179, 71, 0, 0.03);
+        }
+        
+        .btn.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn i { font-size: 1.5rem; }
+
+        /* 변형 컨트롤 버튼 (실습 7 핵심 기능)[cite: 4] */
+        .transform-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .btn-action {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            padding: 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--ink);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-action:hover {
+            background: var(--line);
+        }
+
+        .btn-danger { color: #d32f2f; }
+
+        /* 파일 업로드 스타일 */
+        .upload-area {
+            border: 2px dashed var(--line);
+            border-radius: 8px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            background: var(--paper);
+        }
+        .upload-area:hover { border-color: var(--accent); }
+        .upload-area i { font-size: 2rem; color: var(--muted); margin-bottom: 0.5rem; }
+        .upload-area p { font-size: 0.8rem; margin: 0; color: var(--muted); }
+        input[type="file"] { display: none; }
+
+        /* 로딩 오버레이 */
+        #loading {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(244, 241, 234, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: var(--accent);
+            z-index: 20;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            main { flex-direction: column; }
+            .control-panel { width: 100%; border-left: none; border-top: 1px solid var(--line); max-height: 40vh; }
+        }
+    </style>
+
+    <!-- Three.js 모듈 임포트 맵 -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>3D 공간 도형 실험실</h1>
+            <div class="subtitle">마우스로 회전하고 확대하며 도형의 공간지각력을 기릅니다.</div>
+        </div>
+        <a href="index.html" style="text-decoration: none; color: var(--ink); font-size: 0.9rem; font-weight: 500; border: 1px solid var(--line); padding: 0.4rem 1rem; border-radius: 20px;">포트폴리오로 돌아가기</a>
+    </header>
+
+    <main>
+        <div id="canvas-container">
+            <div id="loading">모델을 불러오는 중입니다...</div>
+        </div>
+
+        <aside class="control-panel">
+            
+            <div class="control-group">
+                <h3><i class="ph ph-shapes"></i> 기본 도형 선택</h3>
+                <div class="shape-grid">
+                    <button class="btn active" id="btn-cube" data-shape="cube">
+                        <i class="ph ph-cube"></i> 정육면체
+                    </button>
+                    <button class="btn" id="btn-pyramid" data-shape="pyramid">
+                        <i class="ph ph-triangle"></i> 삼각뿔
+                    </button>
+                    <button class="btn" id="btn-sphere" data-shape="sphere">
+                        <i class="ph ph-circle"></i> 구(원)
+                    </button>
+                    <button class="btn" id="btn-cylinder" data-shape="cylinder">
+                        <i class="ph ph-cylinder"></i> 원기둥
+                    </button>
+                    <button class="btn" id="btn-torus" data-shape="torus">
+                        <i class="ph ph-circle-dashed"></i> 도넛
+                    </button>
+                </div>
+            </div>
+
+            <!-- 회전 및 뒤집기 조작부[cite: 4] -->
+            <div class="control-group">
+                <h3><i class="ph ph-arrows-out-cardinal"></i> 도형 조작 (회전 / 뒤집기)</h3>
+                <div class="transform-grid">
+                    <button class="btn-action" id="rot-x"><i class="ph ph-arrows-clockwise"></i> X축 회전</button>
+                    <button class="btn-action" id="rot-y"><i class="ph ph-arrows-clockwise"></i> Y축 회전</button>
+                    <button class="btn-action" id="rot-z"><i class="ph ph-arrows-clockwise"></i> Z축 회전</button>
+                    <button class="btn-action" id="flip-x"><i class="ph ph-arrows-left-right"></i> 좌우 뒤집기</button>
+                    <button class="btn-action" style="grid-column: span 2;" id="flip-y"><i class="ph ph-arrows-down-up"></i> 상하 뒤집기</button>
+                </div>
+                <button class="btn-action btn-danger" id="reset-transform" style="width: 100%; margin-top: 0.8rem;">
+                    <i class="ph ph-arrow-counter-clockwise"></i> 원래대로 복구
+                </button>
+            </div>
+
+            <div class="control-group">
+                <h3><i class="ph ph-upload-simple"></i> 사용자 3D 모델 불러오기</h3>
+                <label class="upload-area" for="file-upload">
+                    <i class="ph ph-file-arrow-up"></i>
+                    <p>여기를 클릭하여 <strong>.glb</strong> 또는 <strong>.gltf</strong> 파일을<br>업로드하고 탐색해보세요.</p>
+                </label>
+                <input type="file" id="file-upload" accept=".glb,.gltf">
+            </div>
+
+        </aside>
+    </main>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // 1. 기본 Scene 셋업
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(4, 3, 5);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // 마우스로 화면을 돌려볼 수 있는 컨트롤
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // 조명 설정
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 10, 7);
+        scene.add(directionalLight);
+
+        // 기준을 잡아주는 그리드 및 축 도우미
+        const gridHelper = new THREE.GridHelper(10, 10, 0xd8d2c4, 0xd8d2c4);
+        scene.add(gridHelper);
+        const axesHelper = new THREE.AxesHelper(3); // Red:X, Green:Y, Blue:Z
+        scene.add(axesHelper);
+
+        // 2. 도형 관리
+        let currentObject = null;
+        
+        // 시인성을 높이는 공통 머티리얼 (오렌지 포인트 색상 적용)
+        const baseMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0xb34700, 
+            roughness: 0.4,
+            metalness: 0.1,
+            flatShading: true 
+        });
+
+        // 엣지(윤곽선)를 그려주는 헬퍼 함수
+        function addEdges(mesh) {
+            const edges = new THREE.EdgesGeometry(mesh.geometry);
+            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x17150f, linewidth: 2 }));
+            mesh.add(line);
+            return mesh;
+        }
+
+        // 씬에서 기존 도형 제거
+        function clearObject() {
+            if (currentObject) {
+                scene.remove(currentObject);
+                currentObject = null;
+            }
+        }
+
+        // 기본 도형 생성 함수들
+        const shapes = {
+            cube: () => addEdges(new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), baseMaterial)),
+            pyramid: () => addEdges(new THREE.Mesh(new THREE.TetrahedronGeometry(2), baseMaterial)),
+            sphere: () => addEdges(new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 12), baseMaterial)),
+            cylinder: () => addEdges(new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 2.5, 16), baseMaterial)),
+            torus: () => addEdges(new THREE.Mesh(new THREE.TorusGeometry(1, 0.4, 16, 32), baseMaterial))
+        };
+
+        function loadBasicShape(shapeName) {
+            clearObject();
+            currentObject = shapes[shapeName]();
+            scene.add(currentObject);
+        }
+
+        // 초기 시작 시 정육면체 로드
+        loadBasicShape('cube');
+
+        // 3. UI 이벤트 리스너 연결
+        
+        // 도형 버튼 클릭
+        document.querySelectorAll('.shape-grid .btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.shape-grid .btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                loadBasicShape(btn.dataset.shape);
+            });
+        });
+
+        // 도형 변형 (회전, 뒤집기)[cite: 4]
+        document.getElementById('rot-x').addEventListener('click', () => { if(currentObject) currentObject.rotation.x += Math.PI / 2; });
+        document.getElementById('rot-y').addEventListener('click', () => { if(currentObject) currentObject.rotation.y += Math.PI / 2; });
+        document.getElementById('rot-z').addEventListener('click', () => { if(currentObject) currentObject.rotation.z += Math.PI / 2; });
+        
+        // Scale을 음수로 곱해 뒤집기 효과 구현[cite: 4]
+        document.getElementById('flip-x').addEventListener('click', () => { if(currentObject) currentObject.scale.x *= -1; });
+        document.getElementById('flip-y').addEventListener('click', () => { if(currentObject) currentObject.scale.y *= -1; });
+        
+        document.getElementById('reset-transform').addEventListener('click', () => {
+            if(currentObject) {
+                currentObject.rotation.set(0,0,0);
+                currentObject.scale.set(1,1,1);
+                controls.reset();
+                camera.position.set(4, 3, 5);
+            }
+        });
+
+        // 4. 외부 GLTF/GLB 파일 업로드 처리
+        const fileUpload = document.getElementById('file-upload');
+        const loadingOverlay = document.getElementById('loading');
+        
+        fileUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            loadingOverlay.style.display = 'flex';
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const contents = event.target.result;
+                const loader = new GLTFLoader();
+                
+                loader.parse(contents, '', function(gltf) {
+                    clearObject();
+                    
+                    // UI 버튼 비활성화
+                    document.querySelectorAll('.shape-grid .btn').forEach(b => b.classList.remove('active'));
+
+                    currentObject = gltf.scene;
+                    
+                    // 모델 크기를 보기 좋게 자동 정규화
+                    const box = new THREE.Box3().setFromObject(currentObject);
+                    const size = box.getSize(new THREE.Vector3()).length();
+                    const center = box.getCenter(new THREE.Vector3());
+                    
+                    currentObject.position.x += (currentObject.position.x - center.x);
+                    currentObject.position.y += (currentObject.position.y - center.y);
+                    currentObject.position.z += (currentObject.position.z - center.z);
+                    
+                    // 크기를 3 단위 정도로 조정
+                    currentObject.scale.multiplyScalar(3 / size);
+                    
+                    scene.add(currentObject);
+                    loadingOverlay.style.display = 'none';
+                }, function(error) {
+                    console.error(error);
+                    alert("파일을 불러오는 중 오류가 발생했습니다.");
+                    loadingOverlay.style.display = 'none';
+                });
+            };
+            // 파일을 ArrayBuffer로 읽음
+            reader.readAsArrayBuffer(file);
+        });
+
+        // 5. 렌더링 루프 및 반응형 처리
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    </script>
+</body>
+</html>
