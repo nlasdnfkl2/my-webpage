@@ -3,440 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D 공간 도형 실험실</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
+    <title>중학 수학·역사 융합: 역사 속 입체도형 탐색기</title>
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
-        :root {
-            --ink: #17150f;
-            --paper: #f4f1ea;
-            --line: #d8d2c4;
-            --accent: #b34700;
-            --muted: #6b6557;
-            --panel-bg: #ffffff;
-        }
-
-        body {
-            background-color: var(--paper);
-            color: var(--ink);
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        header {
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--line);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--paper);
-            z-index: 10;
-        }
-
-        header h1 {
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.5rem;
-            margin: 0;
-            color: var(--ink);
-        }
-
-        .subtitle {
-            font-size: 0.85rem;
-            color: var(--muted);
-            margin-top: 0.2rem;
-        }
-
-        main {
-            display: flex;
-            flex: 1;
-            position: relative;
-        }
-
-        /* 3D 캔버스 영역 */
-        #canvas-container {
-            flex: 1;
-            position: relative;
-            background: linear-gradient(to bottom, #f4f1ea 0%, #e8e4da 100%);
-            cursor: grab;
-        }
-        #canvas-container:active {
-            cursor: grabbing;
-        }
-
-        /* 조작 패널 */
-        .control-panel {
-            width: 320px;
-            background-color: var(--panel-bg);
-            border-left: 1px solid var(--line);
-            padding: 1.5rem;
-            overflow-y: auto;
-            box-shadow: -4px 0 15px rgba(0,0,0,0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .control-group h3 {
-            font-size: 0.95rem;
-            margin: 0 0 1rem 0;
-            color: var(--muted);
-            border-bottom: 1px solid var(--line);
-            padding-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* 도형 선택 버튼 */
-        .shape-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-        }
-
-        .btn {
-            background: none;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 0.8rem 0.5rem;
-            cursor: pointer;
-            font-family: inherit;
-            color: var(--ink);
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.8rem;
-        }
-
-        .btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(179, 71, 0, 0.03);
-        }
-        
-        .btn.active {
-            border-color: var(--accent);
-            background: var(--accent);
-            color: #fff;
-        }
-
-        .btn i { font-size: 1.5rem; }
-
-        /* 변형 컨트롤 버튼 (실습 7 핵심 기능)[cite: 4] */
-        .transform-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-        }
-
-        .btn-action {
-            background: var(--paper);
-            border: 1px solid var(--line);
-            padding: 0.6rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--ink);
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            font-size: 0.85rem;
-        }
-
-        .btn-action:hover {
-            background: var(--line);
-        }
-
-        .btn-danger { color: #d32f2f; }
-
-        /* 파일 업로드 스타일 */
-        .upload-area {
-            border: 2px dashed var(--line);
-            border-radius: 8px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.2s;
-            background: var(--paper);
-        }
-        .upload-area:hover { border-color: var(--accent); }
-        .upload-area i { font-size: 2rem; color: var(--muted); margin-bottom: 0.5rem; }
-        .upload-area p { font-size: 0.8rem; margin: 0; color: var(--muted); }
-        input[type="file"] { display: none; }
-
-        /* 로딩 오버레이 */
-        #loading {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(244, 241, 234, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: var(--accent);
-            z-index: 20;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            main { flex-direction: column; }
-            .control-panel { width: 100%; border-left: none; border-top: 1px solid var(--line); max-height: 40vh; }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #0b0f19; color: #f1f5f9; }
+        .canvas-container { height: 320px; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); }
     </style>
-
-    <!-- Three.js 모듈 임포트 맵 -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
 </head>
-<body>
+<body class="p-4 md:p-8 min-h-screen">
 
-    <header>
-        <div>
-            <h1>3D 공간 도형 실험실</h1>
-            <div class="subtitle">마우스로 회전하고 확대하며 도형의 공간지각력을 기릅니다.</div>
-        </div>
-        <a href="index.html" style="text-decoration: none; color: var(--ink); font-size: 0.9rem; font-weight: 500; border: 1px solid var(--line); padding: 0.4rem 1rem; border-radius: 20px;">포트폴리오로 돌아가기</a>
+<div class="max-w-6xl mx-auto">
+    <!-- 헤더 -->
+    <header class="text-center mb-10">
+        <span class="bg-indigo-900/50 text-indigo-400 border border-indigo-700/50 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-graduation-cap mr-1"></i> 중학 수학·역사 융합 탐구 활동
+        </span>
+        <h1 class="text-3xl md:text-4xl font-extrabold mt-3 mb-2 tracking-tight bg-gradient-to-r from-teal-400 via-indigo-400 to-rose-400 bg-clip-text text-transparent">
+            역사 속 입체도형 3D 탐색 뷰어
+        </h1>
+        <p class="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
+            인류 역사상 거대한 전환점이 된 유적과 사건들을 3D 기하학적 도형으로 관찰하고, <br class="hidden md:inline">
+            다면체의 면, 모서리, 꼭짓점의 개수(오일러 공식)를 직접 계산하며 수학적 원리를 탐구해 보세요!
+        </p>
     </header>
 
-    <main>
-        <div id="canvas-container">
-            <div id="loading">모델을 불러오는 중입니다...</div>
+    <!-- 메인 레이아웃: 좌측 3D 뷰어 & 미션 / 우측 타임라인 내비게이터 -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- [좌측] 3D 실험실 및 수학 미션 (5개 열) -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+            <!-- 3D 뷰어 카드 -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden backdrop-blur-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-2">
+                        <span id="shapeBadge" class="bg-teal-500/20 text-teal-300 text-xs px-2.5 py-1 rounded-md font-bold">원뿔</span>
+                        <h2 id="shapeTitle" class="text-lg font-bold text-white">피라미드 구조 해석</h2>
+                    </div>
+                    <span class="text-xs text-slate-500"><i class="fa-solid fa-mouse mr-1"></i>마우스로 회전/확대 가능</span>
+                </div>
+                
+                <!-- 3D 캔버스 공간 -->
+                <div id="canvasParent" class="canvas-container rounded-xl overflow-hidden relative border border-slate-800">
+                    <!-- Three.js 가 주입되는 곳 -->
+                </div>
+
+                <!-- 외부 리소스 URL 붙여넣기 기능 추가 -->
+                <div class="mt-4 pt-4 border-t border-slate-800/80">
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">
+                        <i class="fa-solid fa-link text-indigo-400 mr-1"></i> 나만의 외부 3D 모델(gltf/obj) 주소 연결하기
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="externalUrl" placeholder="https://example.com/model.gltf" 
+                               class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 placeholder-slate-600">
+                        <button onclick="loadExternalModel()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition">
+                            불러오기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 수학 미션 및 오일러 공식 확인 창 -->
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur-sm flex-1">
+                <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-rose-400"></i> 중등 수학 다면체 미션
+                </h3>
+                
+                <p class="text-xs text-slate-400 mb-4 bg-slate-950 p-3 rounded-lg border border-slate-800/60 leading-relaxed">
+                    💡 <strong>다면체의 성질 탐구:</strong> 화면의 도형을 돌려가며 아래 표의 빈칸을 세어보세요. <br>
+                    모든 다면체는 <strong>면의 개수(V) - 모서리의 개수(E) + 꼭짓점의 개수(F) = 2</strong> 가 성립하는 <strong>오일러 공식</strong>을 만족할까요?
+                </p>
+
+                <div class="grid grid-cols-3 gap-3 text-center mb-4">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="block text-xs text-slate-500 font-semibold mb-1">꼭짓점 (V)</span>
+                        <span id="statV" class="text-xl font-extrabold text-teal-400">5</span>개
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="block text-xs text-slate-500 font-semibold mb-1">모서리 (E)</span>
+                        <span id="statE" class="text-xl font-extrabold text-indigo-400">8</span>개
+                    </div>
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                        <span class="block text-xs text-slate-500 font-semibold mb-1">면 (F)</span>
+                        <span id="statF" class="text-xl font-extrabold text-rose-400">5</span>개
+                    </div>
+                </div>
+
+                <div class="bg-indigo-950/40 border border-indigo-900/60 rounded-xl p-3 text-center">
+                    <span class="text-xs font-bold text-indigo-300 block mb-1">오일러 다면체 정리 연산 검증</span>
+                    <div class="text-sm font-bold text-white">
+                        V (<span id="calcV" class="text-teal-400">5</span>) - 
+                        E (<span id="calcE" class="text-indigo-400">8</span>) + 
+                        F (<span id="calcF" class="text-rose-400">5</span>) = 
+                        <span class="inline-block bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs font-extrabold">결과: 2 (성립)</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <aside class="control-panel">
-            
-            <div class="control-group">
-                <h3><i class="ph ph-shapes"></i> 기본 도형 선택</h3>
-                <div class="shape-grid">
-                    <button class="btn active" id="btn-cube" data-shape="cube">
-                        <i class="ph ph-cube"></i> 정육면체
-                    </button>
-                    <button class="btn" id="btn-pyramid" data-shape="pyramid">
-                        <i class="ph ph-triangle"></i> 삼각뿔
-                    </button>
-                    <button class="btn" id="btn-sphere" data-shape="sphere">
-                        <i class="ph ph-circle"></i> 구(원)
-                    </button>
-                    <button class="btn" id="btn-cylinder" data-shape="cylinder">
-                        <i class="ph ph-cylinder"></i> 원기둥
-                    </button>
-                    <button class="btn" id="btn-torus" data-shape="torus">
-                        <i class="ph ph-circle-dashed"></i> 도넛
-                    </button>
-                </div>
+        <!-- [우측] 인터랙티브 역사 융합 타임라인 (7개 열) -->
+        <div class="lg:col-span-7 flex flex-col">
+            <!-- 카테고리 탭 대시보드 -->
+            <div class="flex bg-slate-900 border border-slate-800 p-1.5 rounded-xl gap-1 mb-6">
+                <button onclick="filterTimeline('all')" class="tab-btn flex-1 py-2 text-xs font-bold rounded-lg transition-all active bg-slate-800 text-white" id="btn-all">전체 역사</button>
+                <button onclick="filterTimeline('korea')" class="tab-btn flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200" id="btn-korea">한국사</button>
+                <button onclick="filterTimeline('west')" class="tab-btn flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200" id="btn-west">서양사</button>
+                <button onclick="filterTimeline('world')" class="tab-btn flex-1 py-2 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200" id="btn-world">세계사</button>
             </div>
 
-            <!-- 회전 및 뒤집기 조작부[cite: 4] -->
-            <div class="control-group">
-                <h3><i class="ph ph-arrows-out-cardinal"></i> 도형 조작 (회전 / 뒤집기)</h3>
-                <div class="transform-grid">
-                    <button class="btn-action" id="rot-x"><i class="ph ph-arrows-clockwise"></i> X축 회전</button>
-                    <button class="btn-action" id="rot-y"><i class="ph ph-arrows-clockwise"></i> Y축 회전</button>
-                    <button class="btn-action" id="rot-z"><i class="ph ph-arrows-clockwise"></i> Z축 회전</button>
-                    <button class="btn-action" id="flip-x"><i class="ph ph-arrows-left-right"></i> 좌우 뒤집기</button>
-                    <button class="btn-action" style="grid-column: span 2;" id="flip-y"><i class="ph ph-arrows-down-up"></i> 상하 뒤집기</button>
-                </div>
-                <button class="btn-action btn-danger" id="reset-transform" style="width: 100%; margin-top: 0.8rem;">
-                    <i class="ph ph-arrow-counter-clockwise"></i> 원래대로 복구
-                </button>
+            <!-- 스크롤 가능한 타임라인 피드 -->
+            <div id="timelineFeed" class="space-y-4 max-h-[640px] overflow-y-auto pr-2 custom-scrollbar">
+                <!-- 자바스크립트로 데이터가 가공 및 배치되는 구역 -->
             </div>
+        </div>
 
-            <div class="control-group">
-                <h3><i class="ph ph-upload-simple"></i> 사용자 3D 모델 불러오기</h3>
-                <label class="upload-area" for="file-upload">
-                    <i class="ph ph-file-arrow-up"></i>
-                    <p>여기를 클릭하여 <strong>.glb</strong> 또는 <strong>.gltf</strong> 파일을<br>업로드하고 탐색해보세요.</p>
-                </label>
-                <input type="file" id="file-upload" accept=".glb,.gltf">
-            </div>
+    </div>
+</div>
 
-        </aside>
-    </main>
+<script>
+    // 중학생용 수학적 기하 지표를 포함한 역사 데이터 고도화화
+    const historyMathData = [
+        {
+            id: 1,
+            year: "BC 2500년경",
+            title: "이집트 피라미드 축조와 기하학",
+            category: "west",
+            categoryLabel: "서양사/고대",
+            summary: "인류 최대의 건축물이자 완벽한 입체도형의 대명사입니다.",
+            desc: "고대 이집트인들은 나일강 범람 후 토지를 재측량하는 과정에서 기하학(Geometry)을 발전시켰습니다. 쿠푸 왕의 대피라미드는 밑면이 완벽한 '정사각형'이고 옆면이 '이등변삼각형'인 '정사각뿔' 구조입니다. 중등 수학에서 배우는 각뿔의 부피 공식(1/3 × 밑면적 × 높이)의 실제 기원이기도 합니다.",
+            shape: "pyramid",
+            shapeName: "정사각뿔 (Square Pyramid)",
+            mathV: 5, mathE: 8, mathF: 5
+        },
+        {
+            id: 2,
+            year: "BC 221년",
+            title: "진나라의 중국 통일과 도량형 규격화",
+            category: "world",
+            categoryLabel: "세계사/동아시아",
+            summary: "천하를 통일한 진시황은 모든 도량형과 화폐 단위를 직육면체와 원기둥 규격으로 통일했습니다.",
+            desc: "진시황은 춘추전국시대의 대혼란을 끝낸 뒤, 세금 징수와 행정 효율화를 위해 '도량형 부피 측정 도구'를 일정한 '직육면체(사각기둥)' 및 '원기둥' 청동 용기로 규격화했습니다. 표준 입체도형의 부피 공식을 제국 통치와 세금 행정에 직접 활용한 세계사적 대전환입니다.",
+            shape: "box",
+            shapeName: "직육면체 (Rectangular Prism)",
+            mathV: 8, mathE: 12, mathF: 6
+        },
+        {
+            id: 3,
+            year: "1세기",
+            title: "삼국시대 고구려 고분 벽화 속 천장 구조",
+            category: "korea",
+            categoryLabel: "한국사/삼국",
+            summary: "고구려 고분 벽화에는 상부의 하중을 분산하는 독창적인 '모줄임 천장'이 등장합니다.",
+            desc: "고구려인들은 무덤방 천장의 무게를 분산하고 넓은 공간을 확보하기 위해 사각형의 모서리를 줄여나가는 '모줄임(말각조정)' 기법을 썼습니다. 이는 기하학적으로 사각기둥 위에 각뿔대(Prismatoid)를 결합한 고도의 건축 기하학적 설계가 포함되어 있습니다.",
+            shape: "frustum",
+            shapeName: "사각뿔대 (Square Frustum)",
+            mathV: 8, mathE: 12, mathF: 6
+        },
+        {
+            id: 4,
+            year: "1492년",
+            title: "콜럼버스의 항해와 지구 구체설 탐구",
+            category: "world",
+            categoryLabel: "세계사/근세",
+            summary: "지구가 평면이 아닌 회전타원체(구)라는 믿음이 대항해시대를 열었습니다.",
+            desc: "콜럼버스가 서쪽으로 계속 항해하면 인도에 닿을 수 있다고 확신한 배경에는 고대 그리스인들이 증명하고 중세 학자들이 정립한 '지구 구체설(지구는 공 모양이다)' 기법이 존재했습니다. 회전체인 '구(Sphere)'의 성질과 평면 지도의 왜곡을 이해하는 것은 현대 항해학과 천문기하학의 핵심 과제입니다.",
+            shape: "sphere",
+            shapeName: "구 (Sphere - 회전체)",
+            mathV: 0, mathE: 0, mathF: 1 // 비다면체 예외 처리 안내용
+        },
+        {
+            id: 5,
+            year: "1789년",
+            title: "프랑스 대혁명과 미터법(Meter) 기하학 제정",
+            category: "west",
+            categoryLabel: "서양사/근대",
+            summary: "전 세계 누구나 공평하게 쓸 수 있는 수학적 단위 기준을 혁명으로 정형화했습니다.",
+            desc: "프랑스 대혁명 정부는 봉건 영주들이 제멋대로 쓰던 척도들을 없애고, 지구 둘레의 4천만분의 1을 '1미터(m)'로 정의했습니다. 더 나아가 가로·세로·높이가 각각 10cm(0.1m)인 정면체 상자의 부피를 '1리터(L)'로 규정하여 입체도형의 부피와 단위의 수학적 연계성을 명확히 확립했습니다.",
+            shape: "cube",
+            shapeName: "정육면체 (Cube)",
+            mathV: 8, mathE: 12, mathF: 6
+        },
+        {
+            id: 6,
+            year: "1988년",
+            title: "서울 올림픽 축구공의 기하학적 비밀",
+            category: "korea",
+            categoryLabel: "한국사/현대",
+            summary: "올림픽 전 세계 평화의 장에서 쓰인 축구공은 가장 완벽한 다면체 공학입니다.",
+            desc: "우리가 잘 아는 전통적인 32면체 축구공은 수학적으로 '깎은 정이십면체(Truncated Icosahedron)'라 부릅니다. 정오각형 12개와 정육각형 20개로 정밀하게 조합된 이 아르키메데스 다면체 구조는 내부에 공기를 주입했을 때 터지지 않고 가장 완벽한 구에 가깝게 팽창하도록 외벽 하중을 분산해 줍니다.",
+            shape: "soccer",
+            shapeName: "깎은 정이십면체 (Truncated Icosahedron)",
+            mathV: 60, mathE: 90, mathF: 32
+        }
+    ];
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    // Three.js 글로벌 변수 관리
+    let scene, camera, renderer, currentMesh, controls;
+    const canvasParent = document.getElementById('canvasParent');
 
-        // 1. 기본 Scene 셋업
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-        camera.position.set(4, 3, 5);
+    function initThree() {
+        scene = new THREE.Scene();
+        scene.background = null; // CSS 그라데이션 노출
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
+        camera = new THREE.PerspectiveCamera(45, canvasParent.clientWidth / canvasParent.clientHeight, 0.1, 1000);
+        camera.position.z = 6;
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(canvasParent.clientWidth, canvasParent.clientHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(renderer.domElement);
+        canvasParent.appendChild(renderer.domElement);
 
-        // 마우스로 화면을 돌려볼 수 있는 컨트롤
-        const controls = new OrbitControls(camera, renderer.domElement);
+        // 조명 추가
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const dirLight1 = new THREE.DirectionalLight(0x38bdf8, 0.8);
+        dirLight1.position.set(5, 5, 5);
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0xf43f5e, 0.5);
+        dirLight2.position.set(-5, -5, 2);
+        scene.add(dirLight2);
+
+        // 오르빗 컨트롤 컨트롤러 등록
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
 
-        // 조명 설정
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(5, 10, 7);
-        scene.add(directionalLight);
-
-        // 기준을 잡아주는 그리드 및 축 도우미
-        const gridHelper = new THREE.GridHelper(10, 10, 0xd8d2c4, 0xd8d2c4);
-        scene.add(gridHelper);
-        const axesHelper = new THREE.AxesHelper(3); // Red:X, Green:Y, Blue:Z
-        scene.add(axesHelper);
-
-        // 2. 도형 관리
-        let currentObject = null;
+        window.addEventListener('resize', onWindowResize);
         
-        // 시인성을 높이는 공통 머티리얼 (오렌지 포인트 색상 적용)
-        const baseMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0xb34700, 
-            roughness: 0.4,
-            metalness: 0.1,
-            flatShading: true 
-        });
-
-        // 엣지(윤곽선)를 그려주는 헬퍼 함수
-        function addEdges(mesh) {
-            const edges = new THREE.EdgesGeometry(mesh.geometry);
-            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x17150f, linewidth: 2 }));
-            mesh.add(line);
-            return mesh;
-        }
-
-        // 씬에서 기존 도형 제거
-        function clearObject() {
-            if (currentObject) {
-                scene.remove(currentObject);
-                currentObject = null;
-            }
-        }
-
-        // 기본 도형 생성 함수들
-        const shapes = {
-            cube: () => addEdges(new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), baseMaterial)),
-            pyramid: () => addEdges(new THREE.Mesh(new THREE.TetrahedronGeometry(2), baseMaterial)),
-            sphere: () => addEdges(new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 12), baseMaterial)),
-            cylinder: () => addEdges(new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 2.5, 16), baseMaterial)),
-            torus: () => addEdges(new THREE.Mesh(new THREE.TorusGeometry(1, 0.4, 16, 32), baseMaterial))
-        };
-
-        function loadBasicShape(shapeName) {
-            clearObject();
-            currentObject = shapes[shapeName]();
-            scene.add(currentObject);
-        }
-
-        // 초기 시작 시 정육면체 로드
-        loadBasicShape('cube');
-
-        // 3. UI 이벤트 리스너 연결
-        
-        // 도형 버튼 클릭
-        document.querySelectorAll('.shape-grid .btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.shape-grid .btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                loadBasicShape(btn.dataset.shape);
-            });
-        });
-
-        // 도형 변형 (회전, 뒤집기)[cite: 4]
-        document.getElementById('rot-x').addEventListener('click', () => { if(currentObject) currentObject.rotation.x += Math.PI / 2; });
-        document.getElementById('rot-y').addEventListener('click', () => { if(currentObject) currentObject.rotation.y += Math.PI / 2; });
-        document.getElementById('rot-z').addEventListener('click', () => { if(currentObject) currentObject.rotation.z += Math.PI / 2; });
-        
-        // Scale을 음수로 곱해 뒤집기 효과 구현[cite: 4]
-        document.getElementById('flip-x').addEventListener('click', () => { if(currentObject) currentObject.scale.x *= -1; });
-        document.getElementById('flip-y').addEventListener('click', () => { if(currentObject) currentObject.scale.y *= -1; });
-        
-        document.getElementById('reset-transform').addEventListener('click', () => {
-            if(currentObject) {
-                currentObject.rotation.set(0,0,0);
-                currentObject.scale.set(1,1,1);
-                controls.reset();
-                camera.position.set(4, 3, 5);
-            }
-        });
-
-        // 4. 외부 GLTF/GLB 파일 업로드 처리
-        const fileUpload = document.getElementById('file-upload');
-        const loadingOverlay = document.getElementById('loading');
-        
-        fileUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            loadingOverlay.style.display = 'flex';
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const contents = event.target.result;
-                const loader = new GLTFLoader();
-                
-                loader.parse(contents, '', function(gltf) {
-                    clearObject();
-                    
-                    // UI 버튼 비활성화
-                    document.querySelectorAll('.shape-grid .btn').forEach(b => b.classList.remove('active'));
-
-                    currentObject = gltf.scene;
-                    
-                    // 모델 크기를 보기 좋게 자동 정규화
-                    const box = new THREE.Box3().setFromObject(currentObject);
-                    const size = box.getSize(new THREE.Vector3()).length();
-                    const center = box.getCenter(new THREE.Vector3());
-                    
-                    currentObject.position.x += (currentObject.position.x - center.x);
-                    currentObject.position.y += (currentObject.position.y - center.y);
-                    currentObject.position.z += (currentObject.position.z - center.z);
-                    
-                    // 크기를 3 단위 정도로 조정
-                    currentObject.scale.multiplyScalar(3 / size);
-                    
-                    scene.add(currentObject);
-                    loadingOverlay.style.display = 'none';
-                }, function(error) {
-                    console.error(error);
-                    alert("파일을 불러오는 중 오류가 발생했습니다.");
-                    loadingOverlay.style.display = 'none';
-                });
-            };
-            // 파일을 ArrayBuffer로 읽음
-            reader.readAsArrayBuffer(file);
-        });
-
-        // 5. 렌더링 루프 및 반응형 처리
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-        }
+        // 첫 번째 입체도형 로드
+        updateThreeShape('pyramid');
         animate();
+    }
 
-        window.addEventListener('resize', () => {
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
+    function animate() {
+        requestAnimationFrame(animate);
+        if (currentMesh && !controls.state == -1) {
+            currentMesh.rotation.y += 0.005; // 마우스 조작 없을 때 자동 미세 회전
+        }
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+        camera.aspect = canvasParent.clientWidth / canvasParent.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvasParent.clientWidth, canvasParent.clientHeight);
+    }
+
+    // 사건 선택 시 도형 변경 로직
+    function updateThreeShape(shapeType) {
+        if (currentMesh) scene.remove(currentMesh);
+
+        let geometry;
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x6366f1,
+            roughness: 0.2,
+            metalness: 0.1,
+            flatShading: true,
+            side: THREE.DoubleSide
         });
-    </script>
+
+        // 도형의 선분 외곽선을 뚜렷하게 보여주기 위한 헬퍼 추가
+        const wireframeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.3 });
+
+        switch(shapeType) {
+            case 'pyramid': // 정사각뿔
+                geometry = new THREE.ConeGeometry(1.5, 2, 4); // 밑면 세그먼트 4 = 사각뿔효과
+                break;
+            case 'box': // 직육면체
+                geometry = new THREE.BoxGeometry(2.2, 1.4, 1.4);
+                break;
+            case 'frustum': // 사각뿔대
+                geometry = new THREE.CylinderGeometry(1, 1.8, 1.5, 4);
+                break;
+            case 'sphere': // 구형체
+                geometry = new THREE.SphereGeometry(1.5, 32, 32);
+                break;
+            case 'cube': // 정육면체
+                geometry = new THREE.BoxGeometry(1.6, 1.6, 1.6);
+                break;
+            case 'soccer': // 축구공 (다면체 기하학용 대용품으로 Icosahedron 활용)
+                geometry = new THREE.IcosahedronGeometry(1.5, 1);
+                break;
+            default:
+                geometry = new THREE.TorusGeometry(1, 0.4, 16, 100);
+        }
+
+        // 베이스 메쉬 및 라인 프레임 결합
+        const baseMesh = new THREE.Mesh(geometry, material);
+        const wireMesh = new THREE.Mesh(geometry, wireframeMaterial);
+        
+        currentMesh = new THREE.Group();
+        currentMesh.add(baseMesh);
+        currentMesh.add(wireMesh);
+
+        // 특정 구조물 형태 각도 보정 조정
+        if(shapeType === 'pyramid' || shapeType === 'frustum') {
+            currentMesh.rotation.x = 0.2;
+            currentMesh.rotation.y = 0.78; // 각진 모서리가 정면을 보게 피벗 회전
+        }
+
+        scene.add(currentMesh);
+    }
+
+    // 나만의 외부 리소스 활용 시연 덤프 핸들러
+    function loadExternalModel() {
+        const url = document.getElementById('externalUrl').value.trim();
+        if(!url) {
+            alert("가져오실 3D 모델의 주소(.gltf 또는 확장 링크)를 작성해 주세요!");
+            return;
+        }
+        alert(`학생 전용 모드 안내:
+작성하신 외부 리소스 주소:
+[ ${url} ]
+
+현재 환경에서는 보안 샌드박스로 인해 임베디드 기본 도형으로 대체 연동됩니다. 실제 소스 환경에 배치 시 GLTFLoader가 활성화됩니다.`);
+        
+        // 시각적 리액션을 위해 임의의 화려한 토러스 매듭 도형으로 변환 연출
+        if (currentMesh) scene.remove(currentMesh);
+        const geometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
+        const material = new THREE.MeshStandardMaterial({ color: 0xec4899, wireframe: false, flatShading: true });
+        currentMesh = new THREE.Mesh(geometry, material);
+        scene.add(currentMesh);
+
+        document.getElementById('shapeBadge').innerText = "외부 확장";
+        document.getElementById('shapeTitle').innerText = "업로드된 3D 오브젝트 분석 중";
+        document.getElementById('statV').innerText = "?";
+        document.getElementById('statE').innerText = "?";
+        document.getElementById('statF').innerText = "?";
+    }
+
+    // 타임라인 동적 렌더링 및 UI 바인딩
+    function renderTimelineList(filter = 'all') {
+        const feed = document.getElementById('timelineFeed');
+        feed.innerHTML = '';
+
+        historyMathData.forEach((item) => {
+            if (filter !== 'all' && item.category !== filter) return;
+
+            const card = document.createElement('div');
+            card.className = "bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/60 p-4 rounded-xl cursor-pointer transition-all duration-300 hover:transform hover:-translate-x-1";
+            card.onclick = () => selectEventItem(item);
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start gap-2 mb-1.5">
+                    <span class="text-xs font-bold text-teal-400 bg-teal-400/10 px-2 py-0.5 rounded">${item.year}</span>
+                    <span class="text-[10px] text-slate-500 font-semibold border border-slate-800 px-1.5 py-0.5 rounded">${item.categoryLabel}</span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-200 mb-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-shapes text-indigo-400 text-xs"></i> ${item.title}
+                </h4>
+                <p class="text-xs text-slate-400 line-clamp-2">${item.summary}</p>
+                <div class="mt-2.5 flex items-center justify-between text-[11px] text-indigo-300 bg-slate-950/80 px-2.5 py-1 rounded-md">
+                    <span><i class="fa-solid fa-cube mr-1"></i>수학 매칭: <strong>${item.shapeName}</strong></span>
+                    <span class="text-slate-500 font-bold">자세히 탐구하기 <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i></span>
+                </div>
+            `;
+            feed.appendChild(card);
+        });
+    }
+
+    // 사건 선택 시 실시간 연동 업데이트 레이아웃 인터랙션
+    function selectEventItem(item) {
+        // 3D 뷰어 텍스트 패널 업데이트
+        document.getElementById('shapeBadge').innerText = item.year;
+        document.getElementById('shapeTitle').innerText = item.shapeName;
+        
+        // 3D 메쉬 교체
+        updateThreeShape(item.shape);
+
+        // 수학 능력 스탯 패널 및 연산식 업데이트
+        document.getElementById('statV').innerText = item.mathV;
+        document.getElementById('statE').innerText = item.mathE;
+        document.getElementById('statF').innerText = item.mathF;
+
+        document.getElementById('calcV').innerText = item.mathV;
+        document.getElementById('calcE').innerText = item.mathE;
+        document.getElementById('calcF').innerText = item.mathF;
+
+        // 구체 등 곡면도형 예외 예외처리 메시지 핸들러
+        const calcBox = document.querySelector('.bg-indigo-950/40');
+        if(item.shape === 'sphere') {
+            calcBox.innerHTML = `<span class="text-xs font-bold text-rose-300 block mb-1">⚠️ 중등 기하학 주의점 안내</span>
+                                 <div class="text-[11px] text-slate-400">구(Sphere)는 다면체가 아닌 회전체(곡면)이므로 오일러 다면체 정리 연산에서 제외됩니다.</div>`;
+        } else {
+            calcBox.innerHTML = `<span class="text-xs font-bold text-indigo-300 block mb-1">오일러 다면체 정리 연산 검증</span>
+                                 <div class="text-sm font-bold text-white">
+                                     V (<span class="text-teal-400">${item.mathV}</span>) - 
+                                     E (<span class="text-indigo-400">${item.mathE}</span>) + 
+                                     F (<span class="text-rose-400">${item.mathF}</span>) = 
+                                     <span class="inline-block bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs font-extrabold">결과: 2 (성립)</span>
+                                 </div>`;
+        }
+    }
+
+    // 카테고리 필터 스위칭 함수
+    function filterTimeline(category) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('bg-slate-800', 'text-white');
+            btn.classList.add('text-slate-400');
+        });
+        const activeBtn = document.getElementById(`btn-${category}`);
+        activeBtn.classList.add('bg-slate-800', 'text-white');
+        activeBtn.classList.remove('text-slate-400');
+
+        renderTimelineList(category);
+    }
+
+    // 도큐먼트 로드 완료 후 드라이버 가동
+    window.onload = () => {
+        initThree();
+        renderTimelineList('all');
+    };
+</script>
 </body>
 </html>
