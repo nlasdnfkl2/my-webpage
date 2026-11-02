@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인터랙티브 역사 연표</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        :root {
+            --ink: #17150f;
+            --paper: #f4f1ea;
+            --line: #d8d2c4;
+            --accent: #b34700;
+            --muted: #6b6557;
+            --panel-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--paper);
+            color: var(--ink);
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--paper);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--ink);
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 0.2rem;
+        }
+
+        /* 컨트롤 바 */
+        .toolbar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: var(--panel-bg);
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid var(--line);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .tool-btn:hover { background: var(--paper); color: var(--accent); }
+
+        /* 타임라인 메인 캔버스 영역 */
+        .timeline-viewport {
+            flex: 1;
+            position: relative;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            padding: 0 100px;
+            cursor: grab;
+            background-image: radial-gradient(var(--line) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .timeline-viewport:active { cursor: grabbing; }
+
+        .timeline-track {
+            position: relative;
+            height: 4px;
+            background: var(--ink);
+            display: flex;
+            align-items: center;
+            transition: width 0.3s ease;
+        }
+
+        /* 사건 노드 스폿 */
+        .node {
+            position: absolute;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .node:hover { transform: translateX(-50%) scale(1.15); }
+
+        .node-dot {
+            width: 14px; height: 14px;
+            background: var(--paper);
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--paper);
+            z-index: 2;
+        }
+
+        .node-label {
+            position: absolute;
+            top: 22px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            width: 140px;
+            white-space: normal;
+            word-break: keep-all;
+            color: var(--ink);
+        }
+
+        .node-year {
+            position: absolute;
+            bottom: 22px;
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        /* 줌 레벨별 레이어 가시성 조절 */
+        .timeline-track.zoom-macro .node.detail-only { display: none; }
+        .timeline-track.zoom-meso .node.micro-only { opacity: 0.6; }
+
+        /* 상세 설명 팝업[cite: 5] */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(23, 21, 15, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            z-index: 100;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-card {
+            background: var(--panel-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            max-width: 450px; width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .modal-card h3 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.4rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--accent);
+        }
+        .modal-card .category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .modal-card p { font-size: 0.95rem; color: #3d392f; line-height: 1.6; margin: 0 0 1.5rem 0; word-break: keep-all; }
+        .close-btn {
+            background: var(--paper); border: 1px solid var(--line); padding: 0.5rem 1.2rem;
+            border-radius: 8px; font-weight: 600; cursor: pointer; float: right; font-family: inherit;
+        }
+        .close-btn:hover { background: var(--line); }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>인터랙티브 역사 연표 (한국사·세계사·서양사)</h1>
+            <div class="subtitle">확대/축소 및 노드 클릭을 통해 시대적 흐름을 탐색하세요[cite: 5].</div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="zoom-out" title="축소"><i class="ph ph-magnifying-glass-minus"></i></button>
+            <span id="zoom-level-text" style="font-size: 0.85rem; font-weight: 700; color: var(--muted);">중간 보기</span>
+            <button class="tool-btn" id="zoom-in" title="확대"><i class="ph ph-magnifying-glass-plus"></i></button>
+            <div style="width: 1px; height: 16px; background: var(--line);"></div>
+            <a href="index.html" class="tool-btn" title="포트폴리오로 돌아가기"><i class="ph ph-house"></i></a>
+        </div>
+    </header>
+
+    <main class="timeline-viewport" id="viewport">
+        <div class="timeline-track zoom-meso" id="track">
+            <!-- 자바스크립트로 연표 노드가 동적으로 생성됩니다 -->
+        </div>
+    </main>
+
+    <!-- 상세 설명 팝업[cite: 5] -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <span class="category" id="modalCategory">한국사 / 시대 구분</span>
+            <h3 id="modalTitle">사건 제목</h3>
+            <p id="modalDesc">사건 상세 설명이 이곳에 표시됩니다.</p>
+            <button class="close-btn" id="closeModal">닫기</button>
+        </div>
+    </div>
+
+<script>
+    // 한국사, 세계사, 서양사 통합 데이터베이스 (연도 순 정렬)
+    const historyData = [
+        { year: -2333, display: "BC 2333", title: "고조선 건국", category: "한국사", level: "macro", desc: "단군왕검이 홍익인간의 이념으로 우리나라 최초의 국가인 고조선을 건국했습니다." },
+        { year: -500, display: "BC 500", title: "그리스 민주주의 발전", category: "서양사", level: "meso", desc: "아테네를 중심으로 시민들이 직접 정치에 참여하는 민주주의 제도가 틀을 잡기 시작했습니다." },
+        { year: -221, display: "BC 221", title: "진나라의 중국 통일", category: "세계사", level: "meso", desc: "진시황이 중국 전역을 무력으로 통일하고 중앙집권 체제를 확립했습니다." },
+        { year: 1, display: "1세기", title: "삼국시대 전개 (고구려·백제·신라)", category: "한국사", level: "macro", desc: "한반도에 고구려, 백제, 신라가 틀을 갖추고 치열한 발전과 경쟁을 시작했습니다." },
+        { year: 476, display: "476년", title: "로마 제국 멸망", category: "서양사", level: "macro", desc: "서로마 제국이 게르만 민족의 침략으로 멸망하며 고대 유럽사가 막을 내리고 중세로 진입했습니다." },
+        { year: 676, display: "676년", title: "신라 삼국 통일", category: "한국사", level: "meso", desc: "당나라와의 연합 및 대결을 거쳐 신라가 한반도 대다수를 통일하고 문화적 번영의 기틀을 마련했습니다." },
+        { year: 1215, display: "1215년", title: "영국 마그나 카르타 (대헌장)", category: "서양사", level: "detail", desc: "국왕의 권력을 제한하고 법치의 원칙을 세워 현대 입헌민주주의의 초석이 된 문서입니다." },
+        { year: 1392, display: "1392년", title: "조선 건국", category: "한국사", level: "macro", desc: "성계가 이끄는 신진 사대부 세력이 조선을 건국하고 유교 중심의 통치 체제를 정비했습니다." },
+        { year: 1492, display: "1492년", title: "콜럼버스의 아메리카 대륙 도달", category: "세계사", level: "macro", desc: "콜럼버스가 대서양을 건너 아메리카 신대륙에 도착하면서 전 세계가 하나로 연결되는 대항해시대가 열렸습니다." },
+        { year: 1789, display: "1789년", title: "프랑스 혁명", category: "서양사", level: "macro", desc: "'자유, 평등, 박애'의 이념 아래 절대왕정을 무너뜨리고 근대 시민사회를 이룩한 역사적 사건입니다." },
+        { year: 1919, display: "1919년", title: "3·1 운동 및 대한민국 임시정부 수립", category: "한국사", level: "macro", desc: "일제강점기 전 민족이 거리에 나와 독립을 외쳤으며, 이를 계기로 민주 공화제를 표방하는 임시정부가 수립되었습니다." },
+        { year: 1939, display: "1939년", title: "제2차 세계 대전 발발", category: "세계사", level: "macro", desc: "나치 독일의 폴란드 침공으로 시작되어 전 세계 수많은 인명 피해를 남긴 인류 최대의 비극이자 전환점입니다." },
+        { year: 1969, display: "1969년", title: "아폴로 11호 달 착륙", category: "세계사", level: "detail", desc: "인류가 처음으로 지구를 벗어나 달 표면에 발을 디디며 과학 기술의 새로운 지평을 열었습니다." },
+        { year: 1988, display: "1988년", title: "서울 올림픽 개최", category: "한국사", level: "detail", desc: "대한민국이 국제사회에 도약했음을 알리고 전 세계에 평화와 화합의 메시지를 전한 메가 이벤트입니다." }
+    ];
+
+    const track = document.getElementById('track');
+    const viewport = document.getElementById('viewport');
+    let currentZoom = 1; // 0: Macro(전체), 1: Meso(중간), 2: Micro(상세)
+
+    // 연도 데이터를 타임라인상의 X 좌표 퍼센트로 변환 (-3000년 ~ 2000년 기준)
+    function yearToPercent(year) {
+        const minYear = -2500;
+        const maxYear = 2026;
+        return ((year - minYear) / (maxYear - minYear)) * 100;
+    }
+
+    // 연표 노드 렌더링
+    function renderTimeline() {
+        track.innerHTML = '';
+        // 전체 트랙 길이 동적 설정 (줌 레벨에 따라 늘어남)
+        const trackWidth = 1200 * (currentZoom + 1);
+        track.style.width = `${trackWidth}px`;
+
+        historyData.forEach(item => {
+            const node = document.createElement('div');
+            node.className = 'node';
+            
+            // 줌 레벨에 따른 가시성 분류 클래스 부여
+            if (item.level === 'detail') node.classList.add('detail-only', 'micro-only');
+            if (item.level === 'meso') node.classList.add('micro-only');
+
+            const percent = ((item.year - (-2500)) / (2026 - (-2500)));
+            node.style.left = `${percent * 100}%`;
+
+            node.innerHTML = `
+                <div class="node-year">${item.display}</div>
+                <div class="node-dot"></div>
+                <div class="node-label">${item.title}</div>
+            `;
+
+            node.addEventListener('click', () => openModal(item));
+            track.appendChild(node);
+        });
+    }
+
+    // 팝업 제어
+    const modalOverlay = document.getElementById('modalOverlay');
+    function openModal(item) {
+        document.getElementById('modalCategory').textContent = `${item.category} 관점`;
+        document.getElementById('modalTitle').textContent = item.title;
+        document.getElementById('modalDesc').textContent = item.desc;
+        modalOverlay.classList.add('active');
+    }
+    document.getElementById('closeModal').addEventListener('click', () => modalOverlay.classList.remove('active'));
+    modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
+
+    // 줌 버튼 제어
+    const zoomText = document.getElementById('zoom-level-text');
+    function updateZoomLevel() {
+        track.classList.remove('zoom-macro', 'zoom-meso');
+        if (currentZoom === 0) {
+            track.classList.add('zoom-macro');
+            zoomText.textContent = "전체 보기 (핵심 흐름)";
+        } else if (currentZoom === 1) {
+            track.classList.add('zoom-meso');
+            zoomText.textContent = "중간 보기 (표준)";
+        } else {
+            zoomText.textContent = "상세 보기 (모든 사건)";
+        }
+        renderTimeline();
+    }
+
+    document.getElementById('zoom-in').addEventListener('click', () => {
+        if (currentZoom < 2) { currentZoom++; updateZoomLevel(); }
+    });
+    document.getElementById('zoom-out').addEventListener('click', () => {
+        if (currentZoom > 0) { currentZoom--; updateZoomLevel(); }
+    });
+
+    // 마우스 드래그 스크롤 구현
+    let isDown = false;
+    let startX, scrollLeft;
+
+    viewport.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - viewport.offsetLeft;
+        scrollLeft = viewport.scrollLeft;
+    });
+    viewport.addEventListener('mouseleave', () => { isDown = false; });
+    viewport.addEventListener('mouseup', () => { isDown = false; });
+    viewport.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - viewport.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        viewport.scrollLeft = scrollLeft - walk;
+    });
+
+    // 초기 실행
+    renderTimeline();
+</script>
+</body>
+</html>
