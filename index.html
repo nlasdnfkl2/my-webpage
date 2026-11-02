@@ -191,7 +191,7 @@
   }
 
   @media (max-width:800px) {
-    .nav-assistant { display: none; /* 모바일 화면에서는 공간 확보를 위해 숨김 */ }
+    .nav-assistant { display: none; }
   }
 
   @media (max-width:680px){
@@ -224,7 +224,8 @@
     </nav>
   </div>
 
-  <header class="hero section-target" id="sec-top">
+  <!-- 관측을 위해 id를 명확히 분리 -->
+  <header class="hero scroll-section" id="intro">
     <p class="small">상업정보교육과 · 문헌정보교육과 복수전공</p>
     <h1>배우고, 엮어내어<br>작은 것을 <span>만들어</span> 봅니다.</h1>
     <p>
@@ -237,7 +238,7 @@
     </div>
   </header>
 
-  <section id="about" class="section-target">
+  <section id="about" class="scroll-section">
     <p class="label">About</p>
     <h2>지금 관심 있는 것</h2>
     <p class="lead">
@@ -255,7 +256,7 @@
     </div>
   </section>
 
-  <section id="work" class="section-target">
+  <section id="work" class="scroll-section">
     <p class="label">Activities</p>
     <h2>해본 것</h2>
     <p class="lead">관심사를 바탕으로 도전했던 공모전 기획과 다양한 시각 디자인, 그리고 직접 코드를 짜서 만든 웹/하드웨어 프로젝트 기록입니다.</p>
@@ -450,7 +451,7 @@
     </div>
   </section>
 
-  <section id="contact" class="contact section-target">
+  <section id="contact" class="scroll-section">
     <p class="label">Contact</p>
     <h2>이야기하고 싶은 것이 있다면</h2>
     <a href="mailto:nn80300@naver.com">nn80300@naver.com</a>
@@ -462,16 +463,17 @@
 
 </div>
 
-<!-- Scroll Spy 스크립트 -->
+<!-- Scroll Spy 스크립트 수정 적용 -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const sections = document.querySelectorAll('.section-target');
+    const sections = document.querySelectorAll('.scroll-section');
     const navDots = document.querySelectorAll('.nav-dot');
 
     const observerOptions = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.4 // 섹션이 40% 이상 보일 때 활성화
+      // 화면 상단 10%부터 하단 50% 사이의 영역에 걸칠 때 활성화되도록 설정하여 3, 4번째 섹션 구분을 명확히 함
+      rootMargin: '-10% 0px -40% 0px',
+      threshold: 0 
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -480,8 +482,9 @@
           const id = entry.target.getAttribute('id');
           navDots.forEach(dot => {
             dot.classList.remove('active');
-            // header태그의 id가 sec-top이므로 dot-top과 매칭
-            if (dot.getAttribute('id') === `dot-${id === 'sec-top' ? 'top' : id}`) {
+            // #intro(Intro)는 id가 intro이므로 dot-top과 매칭
+            const targetDotId = id === 'intro' ? 'dot-top' : `dot-${id}`;
+            if (dot.getAttribute('id') === targetDotId) {
               dot.classList.add('active');
             }
           });
