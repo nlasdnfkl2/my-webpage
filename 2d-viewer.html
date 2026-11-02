@@ -199,7 +199,7 @@
             <div class="mode-card" onclick="switchView('view-quiz')">
                 <i class="ph ph-target"></i>
                 <h3>도형 맞추기 퀴즈</h3>
-                <p>빨간 점과 면 배치를 목표 도형과 똑같이 겹쳐 맞추는 퀴즈!</p>
+                <p>빨간 점과 내부 색칠 면을 목표 도형과 똑같이 맞추는 퀴즈!</p>
             </div>
         </div>
         <div style="text-align: center; margin-top: 2rem;">
@@ -264,12 +264,12 @@
         <div class="header">
             <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
             <h1>도형 맞추기 퀴즈</h1>
-            <p>빨간 점과 모양이 목표 도형과 완전히 겹쳐지도록 만드세요!</p>
+            <p>회전과 뒤집기로 빨간 점과 내부 색상 면을 목표 도형과 일치시키세요!</p>
         </div>
 
         <div class="quiz-top-bar">
             <div class="quiz-instructions">
-                💡 목표 도형의 <b>빨간 점(A) 위치</b>와 <b>모양</b>이 겹쳐지면 정답 처리됩니다!
+                💡 목표 도형의 <b>빨간 점(A)</b>과 <b>내부 색칠 면</b>의 방향이 완전히 겹쳐지면 정답!
             </div>
             <div class="quiz-targets-row">
                 <div class="target-box-wrapper">
@@ -310,7 +310,7 @@
         <div class="modal-card">
             <i class="ph ph-seal-check" style="font-size: 3.2rem; color: var(--success);"></i>
             <h2>정답입니다!</h2>
-            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem;">빨간 점과 모양을 완벽하게 맞추셨네요!</p>
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem;">빨간 점과 내부 색상 면을 완벽하게 맞추셨네요!</p>
             <button class="btn-action" style="margin-top: 0;" onclick="nextQuiz()">다음 문제 도전</button>
         </div>
     </div>
@@ -329,22 +329,22 @@
         triangle: {
             path: "M 0,-50 L 50,45 L -50,45 Z",
             vertices: [{x: 0, y: -60, label: 'A'}, {x: 58, y: 50, label: 'B'}, {x: -58, y: 50, label: 'C'}],
-            marker: {x: 0, y: 10, icon: '★'}
+            innerPatch: "M 0,-15 L 20,25 L -20,25 Z" // 구분을 위한 내부 색칠 영역
         },
         square: {
             path: "M -42,-42 L 42,-42 L 42,42 L -42,42 Z",
             vertices: [{x: -48, y: -48, label: 'A'}, {x: 48, y: -48, label: 'B'}, {x: 48, y: 48, label: 'C'}, {x: -48, y: 48, label: 'D'}],
-            marker: {x: 0, y: 0, icon: '▲'}
+            innerPatch: "M 0,-42 L 42,0 L 0,42 L -42,0 Z" // 다이아몬드형 내부 색칠 영역
         },
         pentagon: {
             path: "M 0,-50 L 48,-14 L 28,42 L -28,42 L -48,-14 Z",
             vertices: [{x: 0, y: -60, label: 'A'}, {x: 56, y: -16, label: 'B'}, {x: 34, y: 50, label: 'C'}, {x: -34, y: 50, label: 'D'}, {x: -56, y: -16, label: 'E'}],
-            marker: {x: 0, y: 5, icon: '◆'}
+            innerPatch: "M 0,-25 L 22,-7 L 14,21 L -14,21 L -22,-7 Z"
         },
         Lshape: {
             path: "M -32,-50 L 0,-50 L 0,12 L 32,12 L 32,50 L -32,50 Z",
             vertices: [{x: -38, y: -58, label: 'A'}, {x: 8, y: -58, label: 'B'}, {x: 8, y: 6, label: 'C'}, {x: 38, y: 6, label: 'D'}, {x: 38, y: 58, label: 'E'}, {x: -38, y: 58, label: 'F'}],
-            marker: {x: -12, y: -12, icon: '●'}
+            innerPatch: "M -18,-35 L -2,-35 L -2,-5 L 18,-5 L 18,35 L -18,35 Z"
         }
     };
 
@@ -359,22 +359,25 @@
         let fh = interactive ? (state.currentFlipH !== undefined ? state.currentFlipH : 1) : (state.flipH !== undefined ? state.flipH : 1);
         let fv = interactive ? (state.currentFlipV !== undefined ? state.currentFlipV : 1) : (state.flipV !== undefined ? state.flipV : 1);
 
+        // 사용자의 피드백에 맞춰 상하/좌우 뒤집기 축 방향을 정확하게 교정 (scaleX=좌우, scaleY=상하)
         let transformStr = `rotate(${r}) scale(${fh}, ${fv})`;
         let fillColor = state.fillColor || '#b34700';
         let vertexColor = state.vertexColor || '#c62828';
 
         svgHTML += `<g transform="${transformStr}">`;
+        // 메인 도형 패스
         svgHTML += `<path d="${def.path}" fill="${fillColor}" stroke="#17150f" stroke-width="2.5" stroke-linejoin="round" opacity="0.9" />`;
         
-        if (def.marker) {
-            svgHTML += `<text x="${def.marker.x}" y="${def.marker.y}" font-size="13" text-anchor="middle" dominant-baseline="central" fill="#ffffff" font-weight="bold">${def.marker.icon}</text>`;
+        // 내부에 구분을 위한 추가 색칠 면(인사이드 패치) 렌더링
+        if (def.innerPatch) {
+            svgHTML += `<path d="${def.innerPatch}" fill="#ffffff" opacity="0.25" stroke="none" />`;
         }
 
+        // 꼭짓점 및 빨간 포인트 점(A)
         if (def.vertices) {
             def.vertices.forEach((v, idx) => {
-                // 첫 번째 꼭짓점 A는 확실한 구분을 위해 빨간색 포인트 점으로 강조
                 let cColor = (idx === 0) ? vertexColor : '#17150f';
-                let rSize = (idx === 0) ? 6 : 4; // 빨간 점 크기를 더 키워서 눈에 띄게 함
+                let rSize = (idx === 0) ? 6 : 4;
                 svgHTML += `<circle cx="${v.x}" cy="${v.y}" r="${rSize}" fill="${cColor}" stroke="#fff" stroke-width="1.5" />`;
                 if (!isMini) {
                     svgHTML += `<text x="${v.x * 1.2}" y="${v.y * 1.2}" font-size="10" font-weight="bold" fill="${cColor}" text-anchor="middle" dominant-baseline="central">${v.label}</text>`;
@@ -414,14 +417,14 @@
         if (mode === 'practice') {
             if (action === 'rot-left') practiceState.rot = (practiceState.rot - 90 + 360) % 360;
             if (action === 'rot-right') practiceState.rot = (practiceState.rot + 90) % 360;
-            if (action === 'flip-h') practiceState.flipH *= -1;
-            if (action === 'flip-v') practiceState.flipV *= -1;
+            if (action === 'flip-h') practiceState.flipH *= -1; // 좌우 반전
+            if (action === 'flip-v') practiceState.flipV *= -1; // 상하 반전
             updatePracticeView();
         } else if (mode === 'quiz') {
             if (action === 'rot-left') quizState.currentRot = (quizState.currentRot - 90 + 360) % 360;
             if (action === 'rot-right') quizState.currentRot = (quizState.currentRot + 90) % 360;
-            if (action === 'flip-h') quizState.currentFlipH *= -1;
-            if (action === 'flip-v') quizState.currentFlipV *= -1;
+            if (action === 'flip-h') quizState.currentFlipH *= -1; // 좌우 반전
+            if (action === 'flip-v') quizState.currentFlipV *= -1; // 상하 반전
             updateQuizView();
         }
     }
@@ -461,30 +464,20 @@
         document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, { rot: quizState.currentRot, flipH: quizState.currentFlipH, flipV: quizState.currentFlipV, fillColor: quizState.fillColor, vertexColor: quizState.vertexColor }, false, true);
     }
 
-    // 완전히 겹쳐지면 무조건 정답으로 인정하는 유연하고 완벽한 판정 함수
     function checkQuizAnswer() {
         const curRotNorm = (quizState.currentRot % 360 + 360) % 360;
         const targetRotNorm = (quizState.targetRot % 360 + 360) % 360;
 
-        // 사용자가 만든 도형의 꼭짓점 A의 실제 화면상 최종 회전/대칭 좌표를 계산하여 목표와 비교
-        const curStateKey = `${curRotNorm}_${quizState.currentFlipH}`;
-        
-        // 회전 및 뒤집기를 조합했을 때 시각적으로 완전히 포개어지는 상태들을 모두 허용 리스트에 등록
         let isMatched = false;
         
-        // 1단계: 정확한 각도 및 뒤집기 일치
-        if (curRotNorm === targetRotNorm && quizState.currentFlipH === quizState.targetFlipH) {
-            isMatched = true;
-        }
-
-        // 2단계: 대칭성으로 인해 시각적으로 완전히 포개어지는 대안 각도 허용
+        // 회전 각도 및 대칭 상태(좌우/상하 뒤집기)가 목표와 완벽히 포개어지는지 검증
         const validMatchCases = [
-            { rot: targetRotNorm, flip: quizState.targetFlipH },
-            { rot: (targetRotNorm + 180) % 360, flip: -quizState.targetFlipH }
+            { rot: targetRotNorm, h: quizState.targetFlipH, v: quizState.targetFlipV },
+            { rot: (targetRotNorm + 180) % 360, h: -quizState.targetFlipH, v: quizState.targetFlipV }
         ];
 
         for (let c of validMatchCases) {
-            if (curRotNorm === c.rot && quizState.currentFlipH === c.flip) {
+            if (curRotNorm === c.rot && quizState.currentFlipH === c.h && quizState.currentFlipV === c.v) {
                 isMatched = true;
                 break;
             }
@@ -497,7 +490,7 @@
             document.getElementById('successModal').classList.add('active');
             fireConfetti();
         } else {
-            feedback.textContent = "아직 빨간 점과 모양이 일치하지 않아요. 조금 더 돌려보거나 뒤집어보세요!";
+            feedback.textContent = "아직 빨간 점과 내부 면의 위치가 다릅니다. 회전과 뒤집기를 다시 조절해보세요!";
             feedback.className = "feedback-box error";
         }
     }
