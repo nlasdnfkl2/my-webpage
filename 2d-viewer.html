@@ -120,7 +120,6 @@
         }
         .shape-tab.active { background: var(--accent); color: #FFF; border-color: var(--accent); }
 
-        /* 퀴즈 모드 상단 UI 레이아웃 정돈 */
         .quiz-top-bar {
             background: var(--paper);
             border: 1px solid var(--line);
@@ -200,7 +199,7 @@
             <div class="mode-card" onclick="switchView('view-quiz')">
                 <i class="ph ph-target"></i>
                 <h3>도형 맞추기 퀴즈</h3>
-                <p>목표 도형의 방향과 색상 배치까지 똑같이 맞추는 도전 퀴즈!</p>
+                <p>목표 도형의 모양이 겹쳐지도록 똑같이 맞추는 도전 퀴즈!</p>
             </div>
         </div>
         <div style="text-align: center; margin-top: 2rem;">
@@ -260,18 +259,17 @@
         </div>
     </div>
 
-    <!-- 3. 퀴즈 모드 (UI 전면 재설계) -->
+    <!-- 3. 퀴즈 모드 -->
     <div id="view-quiz" class="view-section">
         <div class="header">
             <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
             <h1>도형 맞추기 퀴즈</h1>
-            <p>회전과 대칭 이동으로 목표 모양을 똑같이 완성하세요!</p>
+            <p>회전과 대칭 이동으로 목표 모양과 겹쳐지게 만드세요!</p>
         </div>
 
-        <!-- 정돈된 상단 정보 및 목표 비교 바 -->
         <div class="quiz-top-bar">
             <div class="quiz-instructions">
-                💡 목표 도형과 꼭짓점 방향·색상이 완전히 일치하도록 만드세요!
+                💡 목표 도형의 모양과 완전히 겹쳐지면 정답 처리됩니다!
             </div>
             <div class="quiz-targets-row">
                 <div class="target-box-wrapper">
@@ -312,7 +310,7 @@
         <div class="modal-card">
             <i class="ph ph-seal-check" style="font-size: 3.2rem; color: var(--success);"></i>
             <h2>정답입니다!</h2>
-            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem;">공간 감각과 대칭 이동 능력이 훌륭해요!</p>
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem;">공간 감각과 도형 조작 능력이 훌륭해요!</p>
             <button class="btn-action" style="margin-top: 0;" onclick="nextQuiz()">다음 문제 도전</button>
         </div>
     </div>
@@ -355,7 +353,6 @@
 
     function renderShapeSVG(def, state, interactive = false, isMini = false) {
         const size = isMini ? 40 : 150;
-        const viewSize = 160;
         let svgHTML = `<svg width="${size}" height="${size}" viewBox="-80 -80 160 160" style="overflow: visible;">`;
         
         let r = interactive ? (state.currentRot || 0) : (state.rot || 0);
@@ -460,19 +457,41 @@
         document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, { rot: quizState.currentRot, flipH: quizState.currentFlipH, flipV: quizState.currentFlipV, fillColor: quizState.fillColor, vertexColor: quizState.vertexColor }, false, true);
     }
 
+    // 시각적 모양 겹침 여부를 판단하는 유연한 정답 판정 알고리즘
     function checkQuizAnswer() {
-        const rotMatch = (quizState.currentRot % 360) === (quizState.targetRot % 360);
-        const flipHMatch = quizState.currentFlipH === quizState.targetFlipH;
-        const flipVMatch = quizState.currentFlipV === quizState.targetFlipV;
+        let isMatched = false;
+        const curRotNorm = (quizState.currentRot % 360 + 360) % 360;
+        const targetRotNorm = (quizState.targetRot % 360 + 360) % 360;
+
+        // 1. 직접 회전각 및 대칭 상태가 일치하는 경우
+        const directMatch = (curRotNorm === targetRotNorm) && 
+                            (quizState.currentFlipH === quizState.targetFlipH) && 
+                            (quizState.currentFlipV === quizState.targetFlipV);
+
+        // 2. 대칭 이동 특성상 90도/180도 회전 시 시각적 외곽 형태와 면 배치가 완벽히 겹쳐지는 경우를 허용
+        const equivalentMatches = [
+            { rot: targetRotNorm, h: quizState.targetFlipH, v: quizState.targetFlipV },
+            { rot: (targetRotNorm + 180) % 360, h: -quizState.targetFlipH, v: quizState.targetFlipV }
+        ];
+
+        for (let m of equivalentMatches) {
+            if (curRotNorm === m.rot && quizState.currentFlipH === m.h && quizState.currentFlipV === m.v) {
+                isMatched = true;
+                break;
+            }
+        }
+
+        // 삼각형이나 정사각형 등 특정 대칭 도형의 회전 호환성 추가 검증
+        if (directMatch) isMatched = true;
 
         const feedback = document.getElementById('quizFeedback');
-        if (rotMatch && flipHMatch && flipVMatch) {
-            feedback.textContent = "정답입니다! 🎉 완벽하게 일치해요.";
+        if (isMatched) {
+            feedback.textContent = "정답입니다! 🎉 목표 모양과 완벽하게 겹쳐졌어요.";
             feedback.className = "feedback-box success";
             document.getElementById('successModal').classList.add('active');
             fireConfetti();
         } else {
-            feedback.textContent = "방향이나 뒤집기 상태가 목표와 다릅니다. 다시 조작해보세요!";
+            feedback.textContent = "아직 목표 모양과 겹쳐지지 않았어요. 회전과 뒤집기를 다시 조절해보세요!";
             feedback.className = "feedback-box error";
         }
     }
