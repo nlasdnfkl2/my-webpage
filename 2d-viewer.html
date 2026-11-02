@@ -329,12 +329,12 @@
         triangle: {
             path: "M 0,-50 L 50,45 L -50,45 Z",
             vertices: [{x: 0, y: -60, label: 'A'}, {x: 58, y: 50, label: 'B'}, {x: -58, y: 50, label: 'C'}],
-            innerPatch: "M 0,-15 L 20,25 L -20,25 Z" // 구분을 위한 내부 색칠 영역
+            innerPatch: "M 0,-15 L 20,25 L -20,25 Z"
         },
         square: {
             path: "M -42,-42 L 42,-42 L 42,42 L -42,42 Z",
             vertices: [{x: -48, y: -48, label: 'A'}, {x: 48, y: -48, label: 'B'}, {x: 48, y: 48, label: 'C'}, {x: -48, y: 48, label: 'D'}],
-            innerPatch: "M 0,-42 L 42,0 L 0,42 L -42,0 Z" // 다이아몬드형 내부 색칠 영역
+            innerPatch: "M 0,-42 L 42,0 L 0,42 L -42,0 Z"
         },
         pentagon: {
             path: "M 0,-50 L 48,-14 L 28,42 L -28,42 L -48,-14 Z",
@@ -359,21 +359,18 @@
         let fh = interactive ? (state.currentFlipH !== undefined ? state.currentFlipH : 1) : (state.flipH !== undefined ? state.flipH : 1);
         let fv = interactive ? (state.currentFlipV !== undefined ? state.currentFlipV : 1) : (state.flipV !== undefined ? state.flipV : 1);
 
-        // 사용자의 피드백에 맞춰 상하/좌우 뒤집기 축 방향을 정확하게 교정 (scaleX=좌우, scaleY=상하)
+        // 상하 뒤집기(fv)는 Y축 기준 스케일(scaleY), 좌우 뒤집기(fh)는 X축 기준 스케일(scaleX)로 정확하게 매칭
         let transformStr = `rotate(${r}) scale(${fh}, ${fv})`;
         let fillColor = state.fillColor || '#b34700';
         let vertexColor = state.vertexColor || '#c62828';
 
         svgHTML += `<g transform="${transformStr}">`;
-        // 메인 도형 패스
         svgHTML += `<path d="${def.path}" fill="${fillColor}" stroke="#17150f" stroke-width="2.5" stroke-linejoin="round" opacity="0.9" />`;
         
-        // 내부에 구분을 위한 추가 색칠 면(인사이드 패치) 렌더링
         if (def.innerPatch) {
             svgHTML += `<path d="${def.innerPatch}" fill="#ffffff" opacity="0.25" stroke="none" />`;
         }
 
-        // 꼭짓점 및 빨간 포인트 점(A)
         if (def.vertices) {
             def.vertices.forEach((v, idx) => {
                 let cColor = (idx === 0) ? vertexColor : '#17150f';
@@ -417,14 +414,14 @@
         if (mode === 'practice') {
             if (action === 'rot-left') practiceState.rot = (practiceState.rot - 90 + 360) % 360;
             if (action === 'rot-right') practiceState.rot = (practiceState.rot + 90) % 360;
-            if (action === 'flip-h') practiceState.flipH *= -1; // 좌우 반전
-            if (action === 'flip-v') practiceState.flipV *= -1; // 상하 반전
+            if (action === 'flip-h') practiceState.flipH *= -1; // 좌우 뒤집기 (scaleX)
+            if (action === 'flip-v') practiceState.flipV *= -1; // 상하 뒤집기 (scaleY)
             updatePracticeView();
         } else if (mode === 'quiz') {
             if (action === 'rot-left') quizState.currentRot = (quizState.currentRot - 90 + 360) % 360;
             if (action === 'rot-right') quizState.currentRot = (quizState.currentRot + 90) % 360;
-            if (action === 'flip-h') quizState.currentFlipH *= -1; // 좌우 반전
-            if (action === 'flip-v') quizState.currentFlipV *= -1; // 상하 반전
+            if (action === 'flip-h') quizState.currentFlipH *= -1; // 좌우 뒤집기 (scaleX)
+            if (action === 'flip-v') quizState.currentFlipV *= -1; // 상하 뒤집기 (scaleY)
             updateQuizView();
         }
     }
@@ -442,7 +439,7 @@
         
         quizState.targetRot = [0, 90, 180, 270][Math.floor(Math.random() * 4)];
         quizState.targetFlipH = Math.random() > 0.5 ? 1 : -1;
-        quizState.targetFlipV = 1;
+        quizState.targetFlipV = Math.random() > 0.5 ? 1 : -1;
 
         quizState.currentRot = 0;
         quizState.currentFlipH = 1;
@@ -470,10 +467,17 @@
 
         let isMatched = false;
         
-        // 회전 각도 및 대칭 상태(좌우/상하 뒤집기)가 목표와 완벽히 포개어지는지 검증
+        // 회전 각도 및 좌우/상하 뒤집기 상태가 목표와 완벽히 포개어지는지 검증
+        if (curRotNorm === targetRotNorm && 
+            quizState.currentFlipH === quizState.targetFlipH && 
+            quizState.currentFlipV === quizState.targetFlipV) {
+            isMatched = true;
+        }
+
+        // 회전 대칭을 고려한 허용 케이스 검증
         const validMatchCases = [
             { rot: targetRotNorm, h: quizState.targetFlipH, v: quizState.targetFlipV },
-            { rot: (targetRotNorm + 180) % 360, h: -quizState.targetFlipH, v: quizState.targetFlipV }
+            { rot: (targetRotNorm + 180) % 360, h: -quizState.targetFlipH, v: -quizState.targetFlipV }
         ];
 
         for (let c of validMatchCases) {
