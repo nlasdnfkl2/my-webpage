@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KDC 십진분류법 짝맞추기</title>
+    <!-- 에디토리얼 테마 폰트 및 아이콘 -->
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- 정답 완성 시 폭죽 파티클 연출을 위한 외부 라이브러리[cite: 2] -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #FCFAF8;
+            --text-main: #2C2C2C;
+            --text-muted: #888888;
+            --accent-color: #E65100;
+            --border-color: #E5E0D8;
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        /* 난이도 변경 및 점수판[cite: 2] */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        select {
+            padding: 0.4rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+            color: var(--text-main);
+            background-color: var(--bg-color);
+            cursor: pointer;
+        }
+
+        .score-board {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent-color);
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-icon:hover {
+            color: var(--accent-color);
+        }
+        
+        .btn-icon i {
+            font-size: 1.2rem;
+        }
+
+        /* 카드 그리드 및 뒤집기 애니메이션[cite: 2] */
+        .game-board {
+            display: grid;
+            gap: 10px;
+            max-width: 600px;
+            width: 100%;
+            perspective: 1000px; /* 3D 효과 */
+        }
+
+        .card {
+            aspect-ratio: 1 / 1.2;
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+
+        .card.flipped, .card.matched {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-align: center;
+            padding: 0.5rem;
+            box-sizing: border-box;
+            word-break: keep-all;
+        }
+
+        .card-front {
+            background-color: var(--card-bg);
+            transform: rotateY(180deg);
+        }
+
+        /* 분류기호(숫자)와 주제(텍스트) 스타일 구분 */
+        .card-front[data-type="num"] {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.8rem;
+            color: var(--accent-color);
+        }
+
+        .card-back {
+            background-color: var(--bg-color);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(230, 81, 0, 0.03) 10px, rgba(230, 81, 0, 0.03) 20px);
+        }
+
+        .card-back i {
+            font-size: 2rem;
+            color: var(--border-color);
+        }
+
+        /* 완료 모달 안내[cite: 2] */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(252, 250, 248, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .modal-content h2 {
+            font-family: 'Nanum Myeongjo', serif;
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 480px) {
+            .game-board { grid-template-columns: repeat(4, 1fr) !important; }
+            .card-front { font-size: 0.9rem; }
+            .card-front[data-type="num"] { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>KDC 분류 짝맞추기</h1>
+        <div class="dashboard">
+            <div class="controls">
+                <!-- 난이도 변경[cite: 2] -->
+                <select id="difficultySelect">
+                    <option value="4">초급 (4쌍)</option>
+                    <option value="6" selected>중급 (6쌍)</option>
+                    <option value="10">고급 (10쌍)</option>
+                </select>
+                <div class="score-board">점수: <span id="scoreDisplay">0</span></div>
+            </div>
+            <!-- 다시 시작 버튼[cite: 2] -->
+            <button class="btn-icon" id="restartBtn">
+                <i class="ph ph-arrow-counter-clockwise"></i> 리셋
+            </button>
+        </div>
+    </header>
+
+    <!-- 카드 배치 영역 -->
+    <main class="game-board" id="gameBoard"></main>
+
+    <!-- 정답 완성 안내 모달[cite: 2] -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <i class="ph ph-frog" style="font-size: 3rem; color: var(--accent-color);"></i>
+            <h2>모든 짝을 맞췄습니다!</h2>
+            <p>최종 점수: <span id="finalScore">0</span>점</p>
+            <button class="btn-icon" id="modalRestartBtn" style="margin: 2rem auto 0; font-size: 1rem; color: var(--text-main);">
+                <i class="ph ph-play-circle"></i> 다시 도전하기
+            </button>
+        </div>
+    </div>
+
+<script>
+    // KDC 주류 데이터 (000 ~ 900)[cite: 2]
+    const kdcData = [
+        { id: 0, num: '000', desc: '총류' },
+        { id: 1, num: '100', desc: '철학' },
+        { id: 2, num: '200', desc: '종교' },
+        { id: 3, num: '300', desc: '사회과학' },
+        { id: 4, num: '400', desc: '자연과학' },
+        { id: 5, num: '500', desc: '기술과학' },
+        { id: 6, num: '600', desc: '예술' },
+        { id: 7, num: '700', desc: '언어' },
+        { id: 8, num: '800', desc: '문학' },
+        { id: 9, num: '900', desc: '역사' }
+    ];
+
+    const gameBoard = document.getElementById('gameBoard');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const difficultySelect = document.getElementById('difficultySelect');
+    const successModal = document.getElementById('successModal');
+    
+    let cards = [];
+    let flippedCards = [];
+    let matchedPairs = 0;
+    let score = 0;
+    let isLocked = false;
+    let totalPairs = 6;
+
+    // 효과음 생성기 (외부 오디오 파일 깨짐 방지를 위해 Web Audio API 사용)[cite: 2]
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (type === 'match') {
+            // 정답 시 맑은 소리[cite: 2]
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        } else if (type === 'error') {
+            // 오답 시 둔탁한 소리[cite: 2]
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        }
+    }
+
+    // 게임 초기화
+    function initGame() {
+        gameBoard.innerHTML = '';
+        flippedCards = [];
+        matchedPairs = 0;
+        score = 0;
+        isLocked = false;
+        scoreDisplay.textContent = score;
+        successModal.classList.remove('active');
+        
+        totalPairs = parseInt(difficultySelect.value);
+        
+        // 그리드 열 설정 (모바일 대응 포함)
+        let cols = totalPairs === 10 ? 5 : 4; 
+        gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+        // 데이터 섞기 및 선택
+        const shuffledKdc = [...kdcData].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
+        
+        // 숫자 카드와 설명 카드 분리 생성
+        let deck = [];
+        shuffledKdc.forEach(item => {
+            deck.push({ id: item.id, type: 'num', text: item.num });
+            deck.push({ id: item.id, type: 'desc', text: item.desc });
+        });
+
+        // 덱 최종 섞기
+        deck.sort(() => 0.5 - Math.random());
+
+        // DOM 요소 생성
+        deck.forEach((cardData, index) => {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('card');
+            cardElement.dataset.id = cardData.id;
+            cardElement.dataset.index = index;
+
+            cardElement.innerHTML = `
+                <div class="card-face card-back"><i class="ph ph-books"></i></div>
+                <div class="card-face card-front" data-type="${cardData.type}">${cardData.text}</div>
+            `;
+            
+            cardElement.addEventListener('click', () => flipCard(cardElement));
+            gameBoard.appendChild(cardElement);
+        });
+    }
+
+    // 카드 뒤집기 로직
+    function flipCard(card) {
+        if (isLocked) return;
+        if (card === flippedCards[0]) return;
+        if (card.classList.contains('matched')) return;
+
+        card.classList.add('flipped');
+        flippedCards.push(card);
+
+        if (flippedCards.length === 2) {
+            checkMatch();
+        }
+    }
+
+    // 짝 일치 판정[cite: 2]
+    function checkMatch() {
+        isLocked = true;
+        const [card1, card2] = flippedCards;
+        const isMatch = card1.dataset.id === card2.dataset.id;
+
+        if (isMatch) {
+            // 두 카드가 일치할 경우 점수 획득[cite: 2]
+            playSound('match');
+            card1.classList.add('matched');
+            card2.classList.add('matched');
+            score += 10;
+            scoreDisplay.textContent = score;
+            matchedPairs++;
+            resetBoard();
+
+            // 완료 확인
+            if (matchedPairs === totalPairs) {
+                setTimeout(gameWin, 500);
+            }
+        } else {
+            // 불일치 시 1초 뒤 재뒤집기[cite: 2]
+            playSound('error');
+            score = Math.max(0, score - 2); // 오답 시 감점
+            scoreDisplay.textContent = score;
+            setTimeout(() => {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                resetBoard();
+            }, 1000);
+        }
+    }
+
+    function resetBoard() {
+        [flippedCards, isLocked] = [[], false];
+    }
+
+    // 게임 완료 및 폭죽 파티클 연출[cite: 2]
+    function gameWin() {
+        document.getElementById('finalScore').textContent = score;
+        successModal.classList.add('active');
+        
+        // canvas-confetti 라이브러리 실행[cite: 2]
+        var duration = 3 * 1000;
+        var end = Date.now() + duration;
+
+        (function frame() {
+            confetti({
+                particleCount: 5,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#E65100', '#2C2C2C', '#FCFAF8']
+            });
+            confetti({
+                particleCount: 5,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#E65100', '#2C2C2C', '#FCFAF8']
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
+    }
+
+    // 이벤트 리스너
+    document.getElementById('restartBtn').addEventListener('click', initGame);
+    document.getElementById('modalRestartBtn').addEventListener('click', initGame);
+    difficultySelect.addEventListener('change', initGame);
+
+    // 초기 시작
+    initGame();
+</script>
+</body>
+</html>
