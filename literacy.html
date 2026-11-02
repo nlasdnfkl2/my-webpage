@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>디지털 리터러시 자기평가 레이더 차트 메이커</title>
     <!-- Chart.js CDN 라이브러리 로드 -->
-    <script src="https://jsdelivr.net"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #f8fafc;
@@ -59,7 +59,6 @@
             margin: 0 auto;
         }
 
-        /* 메인 대시보드 레이아웃 */
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -70,7 +69,6 @@
             .dashboard { grid-template-columns: 1fr; }
         }
 
-        /* 컨트롤 패널 */
         .panel {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -90,7 +88,6 @@
             padding-bottom: 0.5rem;
         }
 
-        /* 입력 폼 그리드 */
         .input-grid {
             display: flex;
             flex-direction: column;
@@ -154,7 +151,6 @@
             outline: 2px solid #93c5fd;
         }
 
-        /* 공통 버튼 */
         .btn-group {
             display: flex;
             gap: 0.75rem;
@@ -179,7 +175,6 @@
         .btn-danger { background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
         .btn-danger:hover { background-color: #fee2e2; }
 
-        /* 시각화 및 결과 패널 */
         .visual-panel {
             display: flex;
             flex-direction: column;
@@ -198,7 +193,6 @@
             min-height: 400px;
         }
 
-        /* 요약 보고서 상자 */
         .report-box {
             background: #fff;
             border: 1px solid var(--border-color);
@@ -218,7 +212,6 @@
             border-left: 4px solid #3b82f6;
         }
 
-        /* 가이드 뱃지 */
         .q-badge {
             background-color: #f1f5f9;
             padding: 1rem;
@@ -239,7 +232,6 @@
     </header>
 
     <div class="dashboard">
-        <!-- 좌측: 데이터 변수 입력부 -->
         <div class="panel">
             <div class="panel-title">
                 <span>📊 역량 지표 데이터 입력</span>
@@ -253,59 +245,6 @@
                         <span>인쇄 매체 해독, 복합양식 비판적 수용 역량</span>
                     </div>
                     <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="10" step="0.1" value="4.5" onchange="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="10" step="0.1" value="7.8" onchange="updateChart()">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="indicator-row" data-index="1">
-                    <div class="indicator-name">
-                        ② 디지털 및 미디어 리터러시
-                        <span>미디어 필터링, 윤리 의식 및 소통 주체성</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="10" step="0.1" value="5.0" onchange="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="10" step="0.1" value="8.5" onchange="updateChart()">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="indicator-row" data-index="2">
-                    <div class="indicator-name">
-                        ③ 지식 정보 리터러시
-                        <span>문제 해결을 위한 데이터 탐색·분석·재구성 역량</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="10" step="0.1" value="3.8" onchange="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="10" step="0.1" value="6.5" onchange="updateChart()">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="indicator-row" data-index="3">
-                    <div class="indicator-name">
-                        ④ AI 인공지능 리터러시
-                        <span>생성 결과물 검증, 인간 중심 윤리 및 기술 제어</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
                         <div class="input-group">
                             <label class="label-pre">사전 점수</label>
                             <input type="number" class="pre-val" min="0" max="10" step="0.1" value="4.5" onchange="updateChart()">
@@ -408,7 +347,6 @@
         'AI 인공지능 탐구'
     ];
 
-    // 차트 로드 파이프라인
     function initChart() {
         const ctx = document.getElementById('radarChart').getContext('2d');
         
@@ -468,7 +406,6 @@
         generateAnalysisReport();
     }
 
-    // 입력 데이터 변동 즉시 차트 수정 동기화 장치
     function updateChart() {
         const preInputs = document.querySelectorAll('.pre-val');
         const postInputs = document.querySelectorAll('.post-val');
@@ -480,7 +417,6 @@
             let preVal = parseFloat(preInputs[i].value);
             let postVal = parseFloat(postInputs[i].value);
 
-            // 검토 질문 ② 대응 인터셉터 설계: 값이 지워져서 NaN이 되면 0점으로 자동 전처리 제어
             if (isNaN(preVal)) preVal = 0;
             if (isNaN(postVal)) postVal = 0;
 
@@ -496,7 +432,6 @@
         myChart.update();
     }
 
-    // 검토 질문 ① 대응: 데이터 초기화 핸들러
     function resetForm() {
         const preInputs = document.querySelectorAll('.pre-val');
         const postInputs = document.querySelectorAll('.post-val');
@@ -508,7 +443,6 @@
         document.getElementById('reportContent').innerText = "데이터가 초기화되었습니다. 새로운 역량 수치를 기입한 후 리포트를 생성해 보세요.";
     }
 
-    // 텍스트 출력 요약 엔진 연산 장치
     function generateAnalysisReport() {
         const preData = myChart.data.datasets[0].data;
         const postData = myChart.data.datasets[1].data;
@@ -540,7 +474,7 @@
         reportText += `[2022 개정 교육과정 매칭 교수·학습 처방 고도화 제언]\n`;
         
         if (avgPost < 6) {
-            reportText += `• 정보 필터링 및 미디어, AI 활용 문해력의 추가적 처방이 지지부안됩니다. 가짜 정보 식별 및 생성형 AI 도구의 원리를 비판적으로 추론해보는 교과 간 에듀테크 융합 탐구 활동 투입을 적극 제언합니다.`;
+            reportText += `• 정보 필터링 및 미디어, AI 활용 문해력의 추가적 처방이 지지부진합니다. 가짜 정보 식별 및 생성형 AI 도구의 원리를 비판적으로 추론해보는 교과 간 에듀테크 융합 탐구 활동 투입을 적극 제언합니다.`;
         } else {
             reportText += `• 전반적인 지식정보처리 핵심 역량과 미디어 해석 역량이 매우 균형 있게 조화를 이루는 고무적인 상태입니다. 이제는 단순 해독 단계를 넘어서 학급 내 디지털 윤리 확립 프로젝트나 고차원 소통 리더십 툴 메이킹 과업을 부여해도 좋습니다.`;
         }
@@ -548,7 +482,6 @@
         document.getElementById('reportContent').innerText = reportText;
     }
 
-    // 완성된 그래픽 대시보드 스크린샷 PNG 내보내기 세션
     function saveChartImage() {
         if (!myChart) return;
         const imageURI = myChart.toBase64Image();
@@ -564,4 +497,3 @@
 </script>
 </body>
 </html>
-
