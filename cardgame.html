@@ -156,7 +156,6 @@
             transform: rotateY(180deg);
         }
 
-        /* 오답 시 흔들림 효과 */
         @keyframes wiggle {
             0%, 100% { transform: rotateY(180deg) rotateZ(0); }
             25% { transform: rotateY(180deg) rotateZ(-5deg); }
@@ -186,6 +185,7 @@
 
         .card-front {
             transform: rotateY(180deg);
+            position: relative; /* 로딩 스피너 위치 기준 */
         }
 
         .card-back {
@@ -199,7 +199,48 @@
             color: rgba(230, 81, 0, 0.4);
         }
 
-        /* 짝맞춤 완료 및 결과 안내[cite: 2] */
+        /* 실제 그림 이미지 및 로딩 스피너 스타일 */
+        .card-image {
+            width: 3.5rem;
+            height: 3.5rem;
+            object-fit: contain;
+            margin-bottom: 0.3rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .card-image.loaded {
+            opacity: 1;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 텍스트 스타일 */
+        .card-text { font-size: 1.1rem; }
+        .card-text.kdc-num { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--accent-color); }
+        .card-text.kdc-desc { font-size: 1rem; }
+
+        @media (max-width: 480px) {
+            .card-image { width: 2.5rem; height: 2.5rem; }
+            .card-text { font-size: 0.9rem; }
+            .card-text.kdc-num { font-size: 1.3rem; }
+            .card-text.kdc-desc { font-size: 0.8rem; }
+        }
+
+        /* 모달 디자인 */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -233,19 +274,6 @@
             color: var(--accent-color);
             margin-bottom: 0.5rem;
         }
-
-        /* 텍스트/아이콘 크기 동적 조절 */
-        .card-icon { font-size: 2.5rem; margin-bottom: 0.3rem; color: var(--text-main); }
-        .card-text { font-size: 1.1rem; }
-        .card-text.kdc-num { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--accent-color); }
-        .card-text.kdc-desc { font-size: 1rem; }
-
-        @media (max-width: 480px) {
-            .card-icon { font-size: 1.8rem; }
-            .card-text { font-size: 0.9rem; }
-            .card-text.kdc-num { font-size: 1.3rem; }
-            .card-text.kdc-desc { font-size: 0.8rem; }
-        }
     </style>
 </head>
 <body>
@@ -257,7 +285,7 @@
                 <!-- 주제 및 난이도 변경[cite: 2] -->
                 <div style="display: flex; gap: 0.5rem;">
                     <select id="themeSelect">
-                        <option value="animal">동물 친구들 (초등 저학년)</option>
+                        <option value="animal">동물 그림 (초등 저학년)</option>
                         <option value="kdc">도서관 탐험 (KDC 분류법)</option>
                     </select>
                     <select id="difficultySelect">
@@ -275,6 +303,9 @@
                 <div class="stats">
                     <div class="score-board">점수: <span id="scoreDisplay">0</span></div>
                     <div class="combo-board" id="comboDisplay">2 COMBO! 🔥</div>
+                </div>
+                <div id="loadingText" style="font-size: 0.85rem; color: var(--accent-color); display: none;">
+                    그림을 불러오는 중...
                 </div>
             </div>
             <!-- 암기 시간 진행바 -->
@@ -298,19 +329,19 @@
     </div>
 
 <script>
-    // 주제 1: 초등 저학년용 동물 그림 (동물 이름 텍스트와 아이콘 짝맞추기)[cite: 2]
+    // 주제 1: 아이콘 폰트 대신 실제 Twemoji SVG(컬러 그림) URL 사용[cite: 2]
     const animalData = [
-        { id: 1, pair1: { icon: 'ph-dog', text: '' }, pair2: { icon: '', text: '강아지' } },
-        { id: 2, pair1: { icon: 'ph-cat', text: '' }, pair2: { icon: '', text: '고양이' } },
-        { id: 3, pair1: { icon: 'ph-bird', text: '' }, pair2: { icon: '', text: '새' } },
-        { id: 4, pair1: { icon: 'ph-fish', text: '' }, pair2: { icon: '', text: '물고기' } },
-        { id: 5, pair1: { icon: 'ph-rabbit', text: '' }, pair2: { icon: '', text: '토끼' } },
-        { id: 6, pair1: { icon: 'ph-tortoise', text: '' }, pair2: { icon: '', text: '거북이' } },
-        { id: 7, pair1: { icon: 'ph-bug', text: '' }, pair2: { icon: '', text: '무당벌레' } },
-        { id: 8, pair1: { icon: 'ph-butterfly', text: '' }, pair2: { icon: '', text: '나비' } }
+        { id: 1, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f436.svg', text: '' }, pair2: { text: '강아지' } },
+        { id: 2, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f431.svg', text: '' }, pair2: { text: '고양이' } },
+        { id: 3, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f426.svg', text: '' }, pair2: { text: '새' } },
+        { id: 4, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f41f.svg', text: '' }, pair2: { text: '물고기' } },
+        { id: 5, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f430.svg', text: '' }, pair2: { text: '토끼' } },
+        { id: 6, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f422.svg', text: '' }, pair2: { text: '거북이' } },
+        { id: 7, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f41e.svg', text: '' }, pair2: { text: '무당벌레' } },
+        { id: 8, pair1: { image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f98b.svg', text: '' }, pair2: { text: '나비' } }
     ];
 
-    // 주제 2: 도서관 KDC 주류 (아이들이 이해하기 쉬운 텍스트로 가공)
+    // 주제 2: 도서관 KDC 주류
     const kdcData = [
         { id: 1, pair1: { text: '000', type: 'kdc-num' }, pair2: { text: '백과사전\n(총류)', type: 'kdc-desc' } },
         { id: 2, pair1: { text: '100', type: 'kdc-num' }, pair2: { text: '생각/마음\n(철학)', type: 'kdc-desc' } },
@@ -330,20 +361,18 @@
     const successModal = document.getElementById('successModal');
     const progressContainer = document.getElementById('progressContainer');
     const progressBar = document.getElementById('progressBar');
+    const loadingText = document.getElementById('loadingText');
     
     let flippedCards = [];
     let matchedPairs = 0;
     let score = 0;
     let combo = 0;
-    let isLocked = true; // 암기 시간 동안 클릭 방지
+    let isLocked = true;
     let totalPairs = 6;
-
-    // 효과음 처리[cite: 2]
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
     function playSound(type) {
-        if (!audioCtx) audioCtx = new AudioContext();
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
@@ -352,7 +381,7 @@
 
         if (type === 'match') {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25 + (combo * 50), audioCtx.currentTime); // 콤보 시 음이 높아짐
+            osc.frequency.setValueAtTime(523.25 + (combo * 50), audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(880 + (combo * 50), audioCtx.currentTime + 0.1);
             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
@@ -366,10 +395,13 @@
         }
     }
 
-    // 카드 내용 생성 유틸리티
     function createCardHTML(cardData) {
         let html = '';
-        if (cardData.icon) html += `<i class="${cardData.icon} card-icon"></i>`;
+        // 실제 그림 이미지가 있는 경우 스피너와 함께 렌더링
+        if (cardData.image) {
+            html += `<div class="loading-spinner"></div>`;
+            html += `<img src="${cardData.image}" class="card-image" alt="그림">`;
+        }
         if (cardData.text) {
             const cssClass = cardData.type ? `card-text ${cardData.type}` : 'card-text';
             html += `<span class="${cssClass}">${cardData.text.replace('\n', '<br>')}</span>`;
@@ -391,10 +423,9 @@
         
         totalPairs = parseInt(difficultySelect.value);
         let cols = totalPairs === 8 ? 4 : (totalPairs === 4 ? 4 : 4); 
-        if (totalPairs === 6) cols = 4; // 3x4 grid
+        if (totalPairs === 6) cols = 4;
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
-        // 데이터 선택
         const baseData = themeSelect.value === 'animal' ? animalData : kdcData;
         const selectedData = [...baseData].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
         
@@ -406,10 +437,9 @@
 
         deck.sort(() => 0.5 - Math.random());
 
-        // DOM 렌더링
         deck.forEach((cardData, index) => {
             const cardElement = document.createElement('div');
-            cardElement.classList.add('card', 'flipped'); // 초기에 앞면(flipped)으로 렌더링
+            cardElement.classList.add('card', 'flipped'); 
             cardElement.dataset.id = cardData.id;
 
             cardElement.innerHTML = `
@@ -421,23 +451,58 @@
             gameBoard.appendChild(cardElement);
         });
 
-        startMemorizePhase();
+        checkImagesLoaded();
     }
 
-    // 시작 전 카드 암기 시간 (3초간 보여주기)
+    // 그림 이미지가 모두 로딩되었는지 확인 후 타이머 시작
+    function checkImagesLoaded() {
+        const images = gameBoard.querySelectorAll('.card-image');
+        let loadedCount = 0;
+        
+        if (images.length === 0) {
+            startMemorizePhase();
+            return;
+        }
+
+        loadingText.style.display = 'block';
+
+        images.forEach(img => {
+            if (img.complete) {
+                imageLoaded(img);
+            } else {
+                img.addEventListener('load', () => imageLoaded(img));
+                img.addEventListener('error', () => imageLoaded(img)); // 오류 시에도 진행
+            }
+        });
+
+        function imageLoaded(img) {
+            img.classList.add('loaded');
+            
+            // 로딩 스피너 제거
+            const spinner = img.previousElementSibling;
+            if(spinner && spinner.classList.contains('loading-spinner')) {
+                spinner.style.display = 'none';
+            }
+
+            loadedCount++;
+            if (loadedCount === images.length) {
+                loadingText.style.display = 'none';
+                startMemorizePhase();
+            }
+        }
+    }
+
     function startMemorizePhase() {
         progressContainer.style.display = 'block';
         progressBar.style.width = '100%';
         progressBar.style.transition = 'none';
 
-        // 다음 프레임에서 애니메이션 시작
         setTimeout(() => {
             progressBar.style.transition = 'width 3s linear';
             progressBar.style.width = '0%';
         }, 50);
 
         setTimeout(() => {
-            // 모든 카드를 다시 뒷면으로
             document.querySelectorAll('.card').forEach(card => card.classList.remove('flipped'));
             progressContainer.style.display = 'none';
             isLocked = false;
@@ -452,12 +517,9 @@
         card.classList.add('flipped');
         flippedCards.push(card);
 
-        if (flippedCards.length === 2) {
-            checkMatch();
-        }
+        if (flippedCards.length === 2) checkMatch();
     }
 
-    // 일치 판정 및 콤보/점수 시스템[cite: 2]
     function checkMatch() {
         isLocked = true;
         const [card1, card2] = flippedCards;
@@ -469,10 +531,9 @@
             card2.classList.add('matched');
             
             combo++;
-            let earned = 10 * combo; // 콤보에 따른 점수 증가
-            score += earned;
-            
+            score += 10 * combo;
             scoreDisplay.textContent = score;
+            
             if (combo > 1) {
                 comboDisplay.textContent = `${combo} COMBO! 🔥`;
                 comboDisplay.classList.add('active');
@@ -492,7 +553,6 @@
             score = Math.max(0, score - 2);
             scoreDisplay.textContent = score;
             
-            // 불일치 시 1초 뒤 뒤집기[cite: 2]
             setTimeout(() => {
                 card1.classList.remove('flipped', 'error');
                 card2.classList.remove('flipped', 'error');
@@ -505,7 +565,6 @@
         [flippedCards, isLocked] = [[], false];
     }
 
-    // 완료 및 폭죽 연출[cite: 2]
     function gameWin() {
         document.getElementById('finalScore').textContent = score;
         successModal.classList.add('active');
@@ -514,15 +573,8 @@
         var end = Date.now() + duration;
 
         (function frame() {
-            confetti({
-                particleCount: 5, angle: 60, spread: 55, origin: { x: 0 },
-                colors: ['#E65100', '#2C2C2C', '#FCFAF8']
-            });
-            confetti({
-                particleCount: 5, angle: 120, spread: 55, origin: { x: 1 },
-                colors: ['#E65100', '#2C2C2C', '#FCFAF8']
-            });
-
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#E65100', '#2C2C2C', '#FCFAF8'] });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#E65100', '#2C2C2C', '#FCFAF8'] });
             if (Date.now() < end) requestAnimationFrame(frame);
         }());
     }
