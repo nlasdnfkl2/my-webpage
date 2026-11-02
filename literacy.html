@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>디지털 리터러시 다각형 평가 차트 (동적 항목 제어)</title>
+    <title>디지털 리터러시 다각형 평가 차트 (5대 역량 기본 구성)</title>
     <!-- 폰트, 아이콘, 차트 라이브러리 로드 -->
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -301,7 +301,7 @@
     <header>
         <span class="label">Neo-Brutalism Edition</span>
         <h1>디지털 리터러시 역량 진단 다각형 차트</h1>
-        <p>5대 핵심 영역(100점 만점)을 중심으로 사전·사후 성취도를 비교합니다. 항목 추가 및 삭제 버튼을 눌러 평가 지표를 자유롭게 커스텀해 보세요.</p>
+        <p>기본 구성된 5대 핵심 영역(정보검색 능력, 창의적 문제해결, 비판적 사고, 디지털 도구 활용, 협업 능력)을 중심으로 사전·사후 성취도를 비교합니다. 필요시 항목을 추가하거나 삭제할 수 있습니다.</p>
     </header>
 
     <div class="dashboard">
@@ -314,21 +314,10 @@
             
             <button class="btn btn-add" onclick="addIndicatorRow()">＋ 새로운 평가 항목 추가</button>
 
-            <div class="input-grid" id="inputContainer">
-                <!-- 기본 5대 항목 -->
-                <script>
-                    const defaultItems = [
-                        { name: "정보검색 능력", pre: "", post: "" },
-                        { name: "창의적 문제해결", pre: "", post: "" },
-                        { name: "비판적 사고", pre: "", post: "" },
-                        { name: "디지털 도구 활용", pre: "", post: "" },
-                        { name: "협업 능력", pre: "", post: "" }
-                    ];
-                </script>
-            </div>
+            <div class="input-grid" id="inputContainer"></div>
 
             <div class="btn-group">
-                <button class="btn btn-secondary" onclick="resetForm()">전체 초기화</button>
+                <button class="btn btn-secondary" onclick="resetForm()">기본 5대 항목으로 초기화</button>
                 <button class="btn btn-primary" onclick="generateAnalysisReport()">분석 리포트 생성</button>
             </div>
         </div>
@@ -355,6 +344,14 @@
 <script>
     let myChart = null;
 
+    const defaultItems = [
+        { name: "정보검색 능력", pre: "", post: "" },
+        { name: "창의적 문제해결", pre: "", post: "" },
+        { name: "비판적 사고", pre: "", post: "" },
+        { name: "디지털 도구 활용", pre: "", post: "" },
+        { name: "협업 능력", pre: "", post: "" }
+    ];
+
     function renderInitialRows() {
         const container = document.getElementById('inputContainer');
         container.innerHTML = '';
@@ -365,7 +362,7 @@
 
     function addRowToDOM(name = '', pre = '', post = '') {
         const container = document.getElementById('inputContainer');
-        const rowId = 'row_' + Math.random().toString(36.substring(2, 9));
+        const rowId = 'row_' + Math.random().toString(36).substring(2, 9);
         
         const row = document.createElement('div');
         row.className = 'indicator-row';
@@ -496,7 +493,7 @@
 
     function resetForm() {
         renderInitialRows();
-        document.getElementById('reportContent').innerText = "모든 데이터가 초기화되었습니다. 새로운 항목과 점수를 기입해 보세요.";
+        document.getElementById('reportContent').innerText = "기본 5대 항목으로 초기화되었습니다. 점수를 기입해 보세요.";
     }
 
     function generateAnalysisReport() {
