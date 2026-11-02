@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>크리에이티브 평면도형 스튜디오 (고도화 최종)</title>
+    <title>크리에이티브 평면도형 스튜디오</title>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -35,12 +35,12 @@
 
         .app-container {
             width: 100%;
-            max-width: 780px;
+            max-width: 800px;
             background: var(--panel-bg);
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.06);
             border: 1px solid var(--line);
-            padding: 2rem;
+            padding: 2.2rem;
             position: relative;
             overflow: hidden;
         }
@@ -53,14 +53,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .header { text-align: center; margin-bottom: 1.5rem; position: relative; }
+        .header { text-align: center; margin-bottom: 1.8rem; position: relative; }
         .header h1 { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; margin: 0 0 0.4rem 0; color: var(--ink); }
         .header p { color: var(--muted); margin: 0; font-size: 0.95rem; }
 
         .btn-back {
             position: absolute; left: 0; top: 50%; transform: translateY(-50%);
             background: none; border: none; font-size: 1.4rem; color: var(--muted);
-            cursor: pointer; transition: color 0.2s;
+            cursor: pointer; transition: color 0.2s; display: flex; align-items: center;
         }
         .btn-back:hover { color: var(--accent); }
 
@@ -77,7 +77,7 @@
         .workspace {
             display: grid; grid-template-columns: 1fr 290px; gap: 1.5rem; align-items: start;
         }
-        @media(max-width: 680px) {
+        @media(max-width: 720px) {
             .workspace { grid-template-columns: 1fr; }
         }
 
@@ -96,44 +96,78 @@
 
         .control-panel { display: flex; flex-direction: column; gap: 0.8rem; }
         .control-group {
-            background: var(--paper); border: 1px solid var(--line); padding: 0.9rem; border-radius: 12px;
+            background: var(--paper); border: 1px solid var(--line); padding: 1rem; border-radius: 12px;
         }
         .control-group h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.6rem; }
 
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
         .ctrl-btn {
             background: #FFF; border: 1px solid var(--line); border-radius: 8px;
-            padding: 0.55rem 0.3rem; font-size: 0.8rem; font-family: inherit; color: var(--ink);
+            padding: 0.6rem 0.4rem; font-size: 0.82rem; font-family: inherit; color: var(--ink);
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.3rem; font-weight: 500;
             transition: all 0.2s;
         }
         .ctrl-btn:hover { border-color: var(--accent); background: rgba(179, 71, 0, 0.04); color: var(--accent); }
         .ctrl-btn i { font-size: 1.05rem; }
 
-        .color-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.4rem; }
-        .color-row input[type="color"] { border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; background: none; }
+        .color-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.5rem; }
+        .color-row input[type="color"] { border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; background: none; }
 
-        .shape-tabs { display: flex; gap: 0.4rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+        .shape-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
         .shape-tab {
-            background: var(--paper); border: 1px solid var(--line); padding: 0.3rem 0.7rem;
-            border-radius: 20px; font-size: 0.78rem; cursor: pointer; font-weight: 500; font-family: inherit;
+            background: var(--paper); border: 1px solid var(--line); padding: 0.35rem 0.8rem;
+            border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: 500; font-family: inherit;
         }
         .shape-tab.active { background: var(--accent); color: #FFF; border-color: var(--accent); }
 
-        .quiz-info-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--paper); padding: 0.7rem 1.rem; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 0.8rem;
-            font-size: 0.9rem;
+        /* 퀴즈 모드 상단 UI 레이아웃 정돈 */
+        .quiz-top-bar {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
-        .preview-box { width: 40px; height: 40px; background: #FFF; border: 1px solid var(--line); border-radius: 6px; display: flex; justify-content: center; align-items: center; }
+        .quiz-instructions {
+            font-size: 0.9rem;
+            color: var(--muted);
+            text-align: center;
+            font-weight: 500;
+        }
+        .quiz-targets-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px dashed var(--line);
+            padding-top: 0.8rem;
+        }
+        .target-box-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .preview-box {
+            width: 48px; height: 48px;
+            background: #FFF;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
 
         .btn-action {
-            background: var(--accent); color: #FFF; border: none; padding: 0.75rem; border-radius: 10px;
+            background: var(--accent); color: #FFF; border: none; padding: 0.8rem; border-radius: 10px;
             font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.2s; font-family: inherit;
         }
         .btn-action:hover { background: #963b00; }
 
-        .feedback-box { text-align: center; font-weight: 700; font-size: 0.95rem; min-height: 1.4rem; margin-top: 0.5rem; }
+        .feedback-box { text-align: center; font-weight: 700; font-size: 0.95rem; min-height: 1.4rem; margin-top: 0.8rem; }
         .feedback-box.success { color: var(--success); }
         .feedback-box.error { color: var(--error); }
 
@@ -161,7 +195,7 @@
             <div class="mode-card" onclick="switchView('view-practice')">
                 <i class="ph ph-shapes"></i>
                 <h3>자유 연습 모드</h3>
-                <p>초·중학생 모두 쉽게 도형 색상을 바꾸고 자유롭게 회전·뒤집어봐요.</p>
+                <p>도형 색상을 바꾸고 자유롭게 회전·뒤집어보며 성질을 관찰해요.</p>
             </div>
             <div class="mode-card" onclick="switchView('view-quiz')">
                 <i class="ph ph-target"></i>
@@ -176,7 +210,7 @@
         </div>
     </div>
 
-    <!-- 2. 자유 연습 모드 (초중학생 친화형 UI 단순화) -->
+    <!-- 2. 자유 연습 모드 -->
     <div id="view-practice" class="view-section">
         <div class="header">
             <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
@@ -208,45 +242,52 @@
                 </div>
 
                 <div class="control-group">
-                    <h4>색상 및 표시 설정</h4>
+                    <h4>색상 설정</h4>
                     <div class="color-row">
-                        <span>전체 배경 색상</span>
+                        <span>도형 채우기 색상</span>
                         <input type="color" id="fillColorPicker" value="#b34700" onchange="updatePracticeCustom()">
                     </div>
                     <div class="color-row">
-                        <span>특정 꼭짓점(A) 색상</span>
+                        <span>꼭짓점(A) 포인트 색상</span>
                         <input type="color" id="vertexColorPicker" value="#c62828" onchange="updatePracticeCustom()">
                     </div>
                 </div>
                 
-                <button class="ctrl-btn" style="width: 100%; padding: 0.5rem;" onclick="resetShape('practice')">
+                <button class="ctrl-btn" style="width: 100%; padding: 0.6rem;" onclick="resetShape('practice')">
                     <i class="ph ph-arrow-counter-clockwise"></i> 처음 위치로 초기화
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 3. 퀴즈 모드 -->
+    <!-- 3. 퀴즈 모드 (UI 전면 재설계) -->
     <div id="view-quiz" class="view-section">
         <div class="header">
             <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
             <h1>도형 맞추기 퀴즈</h1>
-            <p>목표 도형과 꼭짓점 방향·색상이 완전히 일치하도록 만드세요!</p>
+            <p>회전과 대칭 이동으로 목표 모양을 똑같이 완성하세요!</p>
         </div>
 
-        <div class="quiz-info-bar">
-            <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <span>🎯 목표 모양:</span>
-                <div class="preview-box" id="targetPreview"></div>
+        <!-- 정돈된 상단 정보 및 목표 비교 바 -->
+        <div class="quiz-top-bar">
+            <div class="quiz-instructions">
+                💡 목표 도형과 꼭짓점 방향·색상이 완전히 일치하도록 만드세요!
             </div>
-            <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <span>🛠️ 나의 도형:</span>
-                <div class="preview-box" id="currentPreview"></div>
+            <div class="quiz-targets-row">
+                <div class="target-box-wrapper">
+                    <span>🎯 목표 도형</span>
+                    <div class="preview-box" id="targetPreview"></div>
+                </div>
+                <div style="font-size: 1.2rem; color: var(--muted); font-weight: bold;">VS</div>
+                <div class="target-box-wrapper">
+                    <span>🛠️ 나의 도형</span>
+                    <div class="preview-box" id="currentPreview"></div>
+                </div>
             </div>
         </div>
 
         <div class="workspace">
-            <div class="canvas-box" style="height: 270px;">
+            <div class="canvas-box" style="height: 280px;">
                 <div class="shape-wrapper" id="quizShapeView"></div>
             </div>
 
@@ -286,26 +327,25 @@
         if (viewId === 'view-quiz') initQuizMode();
     }
 
-    // 도형 기본 정의 (좌표, 꼭짓점 배열, 비대칭 판정용 보조 요소 포함)
     const shapeDefinitions = {
         triangle: {
-            path: "M 0,-55 L 55,45 L -55,45 Z",
-            vertices: [{x: 0, y: -65, label: 'A'}, {x: 65, y: 50, label: 'B'}, {x: -65, y: 50, label: 'C'}],
+            path: "M 0,-50 L 50,45 L -50,45 Z",
+            vertices: [{x: 0, y: -60, label: 'A'}, {x: 58, y: 50, label: 'B'}, {x: -58, y: 50, label: 'C'}],
             marker: {x: 0, y: 10, icon: '★'}
         },
         square: {
-            path: "M -45,-45 L 45,-45 L 45,45 L -45,45 Z",
-            vertices: [{x: -52, y: -52, label: 'A'}, {x: 52, y: -52, label: 'B'}, {x: 52, y: 52, label: 'C'}, {x: -52, y: 52, label: 'D'}],
+            path: "M -42,-42 L 42,-42 L 42,42 L -42,42 Z",
+            vertices: [{x: -48, y: -48, label: 'A'}, {x: 48, y: -48, label: 'B'}, {x: 48, y: 48, label: 'C'}, {x: -48, y: 48, label: 'D'}],
             marker: {x: 0, y: 0, icon: '▲'}
         },
         pentagon: {
-            path: "M 0,-55 L 52,-16 L 32,48 L -32,48 L -52,-16 Z",
-            vertices: [{x: 0, y: -65, label: 'A'}, {x: 62, y: -18, label: 'B'}, {x: 38, y: 56, label: 'C'}, {x: -38, y: 56, label: 'D'}, {x: -62, y: -18, label: 'E'}],
+            path: "M 0,-50 L 48,-14 L 28,42 L -28,42 L -48,-14 Z",
+            vertices: [{x: 0, y: -60, label: 'A'}, {x: 56, y: -16, label: 'B'}, {x: 34, y: 50, label: 'C'}, {x: -34, y: 50, label: 'D'}, {x: -56, y: -16, label: 'E'}],
             marker: {x: 0, y: 5, icon: '◆'}
         },
         Lshape: {
-            path: "M -35,-55 L 0,-55 L 0,15 L 35,15 L 35,55 L -35,55 Z",
-            vertices: [{x: -42, y: -62, label: 'A'}, {x: 8, y: -62, label: 'B'}, {x: 8, y: 8, label: 'C'}, {x: 42, y: 8, label: 'D'}, {x: 42, y: 62, label: 'E'}, {x: -42, y: 62, label: 'F'}],
+            path: "M -32,-50 L 0,-50 L 0,12 L 32,12 L 32,50 L -32,50 Z",
+            vertices: [{x: -38, y: -58, label: 'A'}, {x: 8, y: -58, label: 'B'}, {x: 8, y: 6, label: 'C'}, {x: 38, y: 6, label: 'D'}, {x: 38, y: 58, label: 'E'}, {x: -38, y: 58, label: 'F'}],
             marker: {x: -12, y: -12, icon: '●'}
         }
     };
@@ -313,8 +353,10 @@
     let practiceState = { shape: 'triangle', rot: 0, flipH: 1, flipV: 1, fillColor: '#b34700', vertexColor: '#c62828' };
     let quizState = { shape: 'triangle', currentRot: 0, currentFlipH: 1, currentFlipV: 1, targetRot: 0, targetFlipH: 1, targetFlipV: 1, fillColor: '#b34700', vertexColor: '#c62828' };
 
-    function renderShapeSVG(def, state, interactive = false) {
-        let svgHTML = `<svg width="170" height="170" viewBox="-85 -85 170 170" style="overflow: visible;">`;
+    function renderShapeSVG(def, state, interactive = false, isMini = false) {
+        const size = isMini ? 40 : 150;
+        const viewSize = 160;
+        let svgHTML = `<svg width="${size}" height="${size}" viewBox="-80 -80 160 160" style="overflow: visible;">`;
         
         let r = interactive ? (state.currentRot || 0) : (state.rot || 0);
         let fh = interactive ? (state.currentFlipH !== undefined ? state.currentFlipH : 1) : (state.flipH !== undefined ? state.flipH : 1);
@@ -327,17 +369,15 @@
         svgHTML += `<g transform="${transformStr}">`;
         svgHTML += `<path d="${def.path}" fill="${fillColor}" stroke="#17150f" stroke-width="2.5" stroke-linejoin="round" opacity="0.9" />`;
         
-        // 방향 판정을 위한 중앙 마커
-        if (def.marker) {
-            svgHTML += `<text x="${def.marker.x}" y="${def.marker.y}" font-size="14" text-anchor="middle" dominant-baseline="central" fill="#ffffff" font-weight="bold">${def.marker.icon}</text>`;
+        if (!isMini && def.marker) {
+            svgHTML += `<text x="${def.marker.x}" y="${def.marker.y}" font-size="13" text-anchor="middle" dominant-baseline="central" fill="#ffffff" font-weight="bold">${def.marker.icon}</text>`;
         }
 
-        // 꼭짓점 라벨 (첫 번째 꼭짓점 A는 지정된 특수 색상으로 강조하여 대칭 상태 구별 용이)
-        if (def.vertices) {
+        if (!isMini && def.vertices) {
             def.vertices.forEach((v, idx) => {
                 let cColor = (idx === 0) ? vertexColor : '#17150f';
-                svgHTML += `<circle cx="${v.x}" cy="${v.y}" r="4.5" fill="${cColor}" stroke="#fff" stroke-width="1" />`;
-                svgHTML += `<text x="${v.x * 1.18}" y="${v.y * 1.18}" font-size="11" font-weight="bold" fill="${cColor}" text-anchor="middle" dominant-baseline="central">${v.label}</text>`;
+                svgHTML += `<circle cx="${v.x}" cy="${v.y}" r="4" fill="${cColor}" stroke="#fff" stroke-width="1" />`;
+                svgHTML += `<text x="${v.x * 1.2}" y="${v.y * 1.2}" font-size="10" font-weight="bold" fill="${cColor}" text-anchor="middle" dominant-baseline="central">${v.label}</text>`;
             });
         }
 
@@ -345,7 +385,6 @@
         return svgHTML;
     }
 
-    // 연습 모드
     function initPracticeMode() {
         document.querySelectorAll('#practiceTabs .shape-tab').forEach(tab => {
             tab.onclick = (e) => {
@@ -370,7 +409,6 @@
         document.getElementById('practiceShapeView').innerHTML = renderShapeSVG(def, practiceState);
     }
 
-    // 공통 변형 함수
     function transformShape(mode, action) {
         if (mode === 'practice') {
             if (action === 'rot-left') practiceState.rot = (practiceState.rot - 90 + 360) % 360;
@@ -394,7 +432,6 @@
         }
     }
 
-    // 퀴즈 모드
     function initQuizMode() {
         const shapes = Object.keys(shapeDefinitions);
         quizState.shape = shapes[Math.floor(Math.random() * shapes.length)];
@@ -412,15 +449,15 @@
         document.getElementById('quizFeedback').textContent = '';
         
         const def = shapeDefinitions[quizState.shape];
-        document.getElementById('targetPreview').innerHTML = renderShapeSVG(def, { rot: quizState.targetRot, flipH: quizState.targetFlipH, flipV: quizState.targetFlipV, fillColor: '#3182ce', vertexColor: '#c62828' });
+        document.getElementById('targetPreview').innerHTML = renderShapeSVG(def, { rot: quizState.targetRot, flipH: quizState.targetFlipH, flipV: quizState.targetFlipV, fillColor: '#2563eb', vertexColor: '#c62828' }, false, true);
         
         updateQuizView();
     }
 
     function updateQuizView() {
         const def = shapeDefinitions[quizState.shape];
-        document.getElementById('quizShapeView').innerHTML = renderShapeSVG(def, quizState, true);
-        document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, { rot: quizState.currentRot, flipH: quizState.currentFlipH, flipV: quizState.currentFlipV, fillColor: quizState.fillColor, vertexColor: quizState.vertexColor });
+        document.getElementById('quizShapeView').innerHTML = renderShapeSVG(def, quizState, true, false);
+        document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, { rot: quizState.currentRot, flipH: quizState.currentFlipH, flipV: quizState.currentFlipV, fillColor: quizState.fillColor, vertexColor: quizState.vertexColor }, false, true);
     }
 
     function checkQuizAnswer() {
@@ -429,7 +466,6 @@
         const flipVMatch = quizState.currentFlipV === quizState.targetFlipV;
 
         const feedback = document.getElementById('quizFeedback');
-        // 회전 각도와 대칭 상태(flip)가 목표와 완벽히 일치할 때만 정답 인정
         if (rotMatch && flipHMatch && flipVMatch) {
             feedback.textContent = "정답입니다! 🎉 완벽하게 일치해요.";
             feedback.className = "feedback-box success";
