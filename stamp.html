@@ -2,218 +2,421 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>디지털 도장 생성기</title>
-    <!-- 구글 웹폰트 로드 (도장 스타일용 한글 폰트) -->
-    <link href="https://googleapis.com" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>서명 및 도장 생성기</title>
+    <!-- 폰트 로드: UI용 Noto Sans, 도장용 한글 폰트들 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Nanum+Myeongjo:wght@700&family=Noto+Sans+KR:wght@500;700&family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
+        /* 변수 설정: 네오 브루탈리즘 테마 */
+        :root {
+            --bg-color: #f0f0f0;
+            --main-color: #000000;
+            --white: #ffffff;
+            --stamp-color: #ff0000;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 40px 20px;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--main-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            box-sizing: border-box;
+            padding: 20px;
         }
-        .container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+
+        .app-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
+            background-color: var(--bg-color);
+        }
+
+        /* 탭 버튼 스타일 */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            background-color: var(--white);
+            color: var(--main-color);
+            border: var(--border-width) solid var(--main-color);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--main-color);
+            cursor: pointer;
+            transition: all 0.1s ease;
             text-align: center;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 25px;
-            font-size: 24px;
+
+        .tab-btn.active {
+            background-color: var(--main-color);
+            color: var(--white);
+            box-shadow: 2px 2px 0px var(--main-color);
+            transform: translate(4px, 4px);
         }
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+
+        /* 콘텐츠 영역 컨테이너 */
+        .content-box {
+            background-color: var(--white);
+            border: var(--border-width) solid var(--main-color);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--main-color);
+            padding: 25px;
+            display: none;
         }
-        label {
+
+        .content-box.active {
             display: block;
+        }
+
+        /* 컨트롤 입력창 스타일 */
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 700;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
             font-size: 14px;
         }
-        input[type="text"], select {
+
+        .brutal-input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
             font-size: 16px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
+            border: var(--border-width) solid var(--main-color);
+            background-color: #fff;
+            color: var(--main-color);
+            border-radius: 0; /* 각진 스타일 */
+            appearance: none;
         }
-        input[type="text"]:focus, select:focus {
-            border-color: #ff4d4d;
+
+        .brutal-input:focus {
             outline: none;
+            background-color: #e8e8e8;
         }
-        .preview-box {
-            background-color: #fafafa;
-            border: 1px dashed #ccc;
-            border-radius: 8px;
-            padding: 30px;
-            margin: 25px 0;
+
+        /* 캔버스 영역 */
+        .canvas-wrapper {
+            border: var(--border-width) solid var(--main-color);
+            background-color: var(--white);
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 20px 0;
+            position: relative;
+            /* 터치 스크롤 방지 */
+            touch-action: none; 
         }
+
+        /* 캔버스 체커보드 배경(투명도 확인용) */
+        .canvas-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            background-image: 
+                linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
         canvas {
-            background-color: transparent;
-            max-width: 100%;
-            height: auto;
+            position: relative;
+            z-index: 1;
+            cursor: crosshair;
         }
-        .btn-download {
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 14px 28px;
+
+        /* 버튼 그룹 및 액션 버튼 */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 14px;
             font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
+            font-weight: 700;
+            border: var(--border-width) solid var(--main-color);
+            background-color: var(--white);
+            color: var(--main-color);
+            box-shadow: 4px 4px 0px var(--main-color);
             cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
+            transition: all 0.1s ease;
+            text-align: center;
         }
-        .btn-download:hover {
-            background-color: #e63939;
+
+        .btn-action.primary {
+            background-color: var(--main-color);
+            color: var(--white);
+        }
+
+        .btn-action:active {
+            box-shadow: 0px 0px 0px var(--main-color);
+            transform: translate(4px, 4px);
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>디지털 도장 생성기</h1>
-    
-    <!-- 이름 입력 -->
-    <div class="form-group">
-        <label for="stampText">도장 문구 (2~4자 추천)</label>
-        <input type="text" id="stampText" value="홍길동" maxlength="4" placeholder="이름을 입력하세요">
-    </div>
-    
-    <!-- 글꼴 선택 -->
-    <div class="form-group">
-        <label for="stampFont">글꼴 선택</label>
-        <select id="stampFont">
-            <option value="'Nanum Myeongjo', serif">나눔명조 (기본형)</option>
-            <option value="'Gowun Batang', serif">고운바탕 (부드러운 서체)</option>
-            <option value="'Noto Serif KR', serif">노토세리프 (진중한 서체)</option>
-            <option value="'East Sea Dokdo', cursive">독도체 (캘리그라피 스타일)</option>
-        </select>
+<div class="app-container">
+    <!-- 탭 네비게이션 -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('signature')">서명</button>
+        <button class="tab-btn" onclick="switchTab('stamp')">도장</button>
     </div>
 
-    <!-- 모양 선택 -->
-    <div class="form-group">
-        <label for="stampShape">도장 모양</label>
-        <select id="stampShape">
-            <option value="circle">원형 (둥근 도장)</option>
-            <option value="square">사각형 (직인 스타일)</option>
-        </select>
+    <!-- 서명 탭 콘텐츠 -->
+    <div id="tab-signature" class="content-box active">
+        <div class="control-group">
+            <label>서명을 그려주세요</label>
+            <div class="canvas-wrapper">
+                <canvas id="sigCanvas" width="350" height="200"></canvas>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button class="btn-action" onclick="clearSignature()">지우기</button>
+            <button class="btn-action primary" onclick="downloadImage('sigCanvas', 'signature')">다운로드</button>
+        </div>
     </div>
 
-    <!-- 실시간 미리보기 영역 -->
-    <div class="preview-box">
-        <canvas id="stampCanvas" width="200" height="200"></canvas>
-    </div>
+    <!-- 도장 탭 콘텐츠 -->
+    <div id="tab-stamp" class="content-box">
+        <div class="control-group">
+            <label for="stampText">도장 문구 (2~4자 추천)</label>
+            <input type="text" id="stampText" class="brutal-input" value="홍길동" maxlength="4" placeholder="이름 입력">
+        </div>
+        
+        <div class="control-group">
+            <label for="stampFont">글꼴 선택</label>
+            <select id="stampFont" class="brutal-input">
+                <option value="'Nanum Myeongjo', serif">나눔명조</option>
+                <option value="'Gowun Batang', serif">고운바탕</option>
+                <option value="'Noto Serif KR', serif">노토세리프</option>
+            </select>
+        </div>
 
-    <!-- 다운로드 버튼 -->
-    <button class="btn-download" id="downloadBtn">도장 이미지 다운로드</button>
+        <div class="control-group">
+            <label for="stampShape">도장 모양</label>
+            <select id="stampShape" class="brutal-input">
+                <option value="square">사각형 (직인)</option>
+                <option value="circle">원형 (둥근 도장)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <div class="canvas-wrapper">
+                <canvas id="stampCanvas" width="200" height="200"></canvas>
+            </div>
+        </div>
+
+        <button class="btn-action primary" style="width:100%" onclick="downloadImage('stampCanvas', 'stamp')">다운로드</button>
+    </div>
 </div>
 
 <script>
-    const canvas = document.getElementById('stampCanvas');
-    const ctx = canvas.getContext('2d');
+    /* ==============================
+       1. 탭 전환 로직
+    ============================== */
+    function switchTab(tabId) {
+        // 모든 탭 컨텐츠 숨기기
+        document.querySelectorAll('.content-box').forEach(el => el.classList.remove('active'));
+        // 모든 탭 버튼 비활성화
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        // 선택된 탭 보이기
+        document.getElementById(`tab-${tabId}`).classList.add('active');
+        // 선택된 버튼 활성화
+        event.target.classList.add('active');
+    }
 
-    const stampText = document.getElementById('stampText');
-    const stampFont = document.getElementById('stampFont');
-    const stampShape = document.getElementById('stampShape');
-    const downloadBtn = document.getElementById('downloadBtn');
+    /* ==============================
+       2. 서명(Signature) 캔버스 로직
+    ============================== */
+    const sigCanvas = document.getElementById('sigCanvas');
+    const sigCtx = sigCanvas.getContext('2d');
+    let isDrawing = false;
 
-    // 도장 그리기 함수
-    function drawStamp() {
-        const text = stampText.value.trim() || "이름";
-        const font = stampFont.value;
-        const shape = stampShape.value;
+    // 펜 스타일 설정
+    sigCtx.lineWidth = 4;
+    sigCtx.lineCap = 'round';
+    sigCtx.lineJoin = 'round';
+    sigCtx.strokeStyle = '#000000'; // 서명은 검은색
+
+    // 마우스/터치 위치 좌표 구하기
+    function getPointerPos(e) {
+        const rect = sigCanvas.getBoundingClientRect();
+        // 터치 이벤트인지 마우스 이벤트인지 구분
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         
-        // 캔버스 초기화 (투명 배경)
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        const size = canvas.width;
-        const center = size / 2;
-        const color = "#ff4d4d"; // 인절미/도장 붉은색
-        
-        ctx.strokeStyle = color;
-        ctx.fillStyle = color;
-        
-        // 1. 테두리 선 그리기
-        if (shape === 'circle') {
-            ctx.lineWidth = 6;
-            ctx.beginPath();
-            ctx.arc(center, center, center - 10, 0, Math.PI * 2);
-            ctx.stroke();
-        } else if (shape === 'square') {
-            ctx.lineWidth = 8;
-            ctx.strokeRect(10, 10, size - 20, size - 20);
-        }
-        
-        // 2. 텍스트 배치 및 그리기
-        ctx.textBaseline = 'middle';
-        ctx.textAlign = 'center';
-        
-        if (text.length === 1) {
-            ctx.font = `bold 90px ${font}`;
-            ctx.fillText(text, center, center);
-        } 
-        else if (text.length === 2) {
-            ctx.font = `bold 65px ${font}`;
-            ctx.fillText(text[0], center - 35, center);
-            ctx.fillText(text[1], center + 35, center);
-        } 
-        else if (text.length === 3) {
-            // 3글자일 경우 일반적으로 오른쪽에 성, 왼쪽에 이름 위아래 배치 or 일렬 배치
-            // 여기서는 깔끔한 가로/세로 균형을 위해 폰트 크기 조정 후 중앙 배치
-            ctx.font = `bold 45px ${font}`;
-            ctx.fillText(text[0], center - 45, center);
-            ctx.fillText(text[1], center, center);
-            ctx.fillText(text[2], center + 45, center);
-        } 
-        else if (text.length === 4) {
-            // 4글자 (우상 -> 우하 -> 좌상 -> 좌하 전통 배열 순서 배치)
-            ctx.font = `bold 50px ${font}`;
-            ctx.fillText(text[0], center + 35, center - 35); // 성 (우상)
-            ctx.fillText(text[1], center + 35, center + 35); // 이름1 (우하)
-            ctx.fillText(text[2], center - 35, center - 35); // 이름2 (좌상)
-            ctx.fillText(text[3], center - 35, center + 35); // '인' 또는 이름3 (좌하)
+        // 캔버스 내부 스케일 비율 계산
+        const scaleX = sigCanvas.width / rect.width;
+        const scaleY = sigCanvas.height / rect.height;
+
+        return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+        };
+    }
+
+    // 그리기 시작
+    function startDrawing(e) {
+        e.preventDefault(); // 스크롤 방지
+        isDrawing = true;
+        const pos = getPointerPos(e);
+        sigCtx.beginPath();
+        sigCtx.moveTo(pos.x, pos.y);
+    }
+
+    // 그리는 중
+    function draw(e) {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const pos = getPointerPos(e);
+        sigCtx.lineTo(pos.x, pos.y);
+        sigCtx.stroke();
+    }
+
+    // 그리기 종료
+    function stopDrawing() {
+        if (isDrawing) {
+            sigCtx.closePath();
+            isDrawing = false;
         }
     }
 
-    // 이벤트 리스너 등록 (입력 변경 시 실시간 반영)
-    stampText.addEventListener('input', drawStamp);
-    stampFont.addEventListener('change', drawStamp);
-    stampShape.addEventListener('change', drawStamp);
+    // 마우스 이벤트 리스너
+    sigCanvas.addEventListener('mousedown', startDrawing);
+    sigCanvas.addEventListener('mousemove', draw);
+    sigCanvas.addEventListener('mouseup', stopDrawing);
+    sigCanvas.addEventListener('mouseout', stopDrawing);
 
-    // 웹폰트가 로드된 후 도장을 다시 그려주기 위한 처리
+    // 터치 이벤트 리스너 (모바일 지원)
+    sigCanvas.addEventListener('touchstart', startDrawing, {passive: false});
+    sigCanvas.addEventListener('touchmove', draw, {passive: false});
+    sigCanvas.addEventListener('touchend', stopDrawing);
+    sigCanvas.addEventListener('touchcancel', stopDrawing);
+
+    // 서명 지우기
+    function clearSignature() {
+        sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    }
+
+    /* ==============================
+       3. 도장(Stamp) 캔버스 로직
+    ============================== */
+    const stampCanvas = document.getElementById('stampCanvas');
+    const stampCtx = stampCanvas.getContext('2d');
+    
+    const stampTextEl = document.getElementById('stampText');
+    const stampFontEl = document.getElementById('stampFont');
+    const stampShapeEl = document.getElementById('stampShape');
+
+    function drawStamp() {
+        const text = stampTextEl.value.trim() || "이름";
+        const font = stampFontEl.value;
+        const shape = stampShapeEl.value;
+        
+        // 초기화
+        stampCtx.clearRect(0, 0, stampCanvas.width, stampCanvas.height);
+        
+        const size = stampCanvas.width;
+        const center = size / 2;
+        const color = "var(--stamp-color)"; // 테마 컬러 사용 (빨간색 #ff0000)
+        
+        // CSS 변수 값을 직접 가져와서 설정
+        const computedColor = getComputedStyle(document.body).getPropertyValue('--stamp-color').trim();
+        stampCtx.strokeStyle = computedColor;
+        stampCtx.fillStyle = computedColor;
+        
+        // 1. 테두리
+        if (shape === 'circle') {
+            stampCtx.lineWidth = 6;
+            stampCtx.beginPath();
+            stampCtx.arc(center, center, center - 10, 0, Math.PI * 2);
+            stampCtx.stroke();
+        } else if (shape === 'square') {
+            stampCtx.lineWidth = 8;
+            stampCtx.strokeRect(10, 10, size - 20, size - 20);
+        }
+        
+        // 2. 텍스트 배치
+        stampCtx.textBaseline = 'middle';
+        stampCtx.textAlign = 'center';
+        
+        if (text.length === 1) {
+            stampCtx.font = `bold 90px ${font}`;
+            stampCtx.fillText(text, center, center);
+        } 
+        else if (text.length === 2) {
+            stampCtx.font = `bold 65px ${font}`;
+            stampCtx.fillText(text[0], center - 35, center);
+            stampCtx.fillText(text[1], center + 35, center);
+        } 
+        else if (text.length === 3) {
+            stampCtx.font = `bold 45px ${font}`;
+            stampCtx.fillText(text[0], center - 45, center);
+            stampCtx.fillText(text[1], center, center);
+            stampCtx.fillText(text[2], center + 45, center);
+        } 
+        else if (text.length === 4) {
+            stampCtx.font = `bold 50px ${font}`;
+            stampCtx.fillText(text[0], center + 35, center - 35); // 우상
+            stampCtx.fillText(text[1], center + 35, center + 35); // 우하
+            stampCtx.fillText(text[2], center - 35, center - 35); // 좌상
+            stampCtx.fillText(text[3], center - 35, center + 35); // 좌하
+        }
+    }
+
+    // 도장 컨트롤 이벤트 바인딩
+    stampTextEl.addEventListener('input', drawStamp);
+    stampFontEl.addEventListener('change', drawStamp);
+    stampShapeEl.addEventListener('change', drawStamp);
+
+    // 폰트 로드 후 자동 렌더링 보장
     document.fonts.ready.then(drawStamp);
 
-    // 이미지 다운로드 기능 (배경이 투명한 PNG 파일로 저장)
-    downloadBtn.addEventListener('click', () => {
+    /* ==============================
+       4. 공통 다운로드 함수
+    ============================== */
+    function downloadImage(canvasId, fileNamePrefix) {
+        const canvas = document.getElementById(canvasId);
+        // 다운로드할 파일명 동적 생성 (서명 또는 도장 텍스트)
+        const name = canvasId === 'stampCanvas' 
+                        ? (stampTextEl.value || '도장') 
+                        : '서명';
+                        
         const link = document.createElement('a');
-        link.download = `${stampText.value || '디지털도장'}.png`;
+        link.download = `커스텀_${fileNamePrefix}_${name}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-    });
+    }
 
-    // 초기 실행
+    // 초기 도장 그리기 실행
     drawStamp();
-</script>
 
+</script>
 </body>
 </html>
