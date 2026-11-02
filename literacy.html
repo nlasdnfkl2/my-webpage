@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>디지털 리터러시 다각형 평가 차트 - 실습 9</title>
+    <title>디지털 리터러시 다각형 평가 차트 (동적 항목 제어)</title>
     <!-- 폰트, 아이콘, 차트 라이브러리 로드 -->
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
             --ink: #17150f;
             --paper: #f4f1ea;
-            --line: #d8d2c4;
-            --accent: #b34700;
-            --muted: #6b6557;
-            --panel-bg: #ffffff;
-            --success: #2e7d32;
-            --pre-color: #2563eb;
-            --post-color: #b34700;
+            --yellow: #ffde59;
+            --blue: #2563eb;
+            --accent: #ff5722;
+            --muted: #555044;
+            --card-bg: #ffffff;
+            --shadow: 4px 4px 0px #17150f;
+            --shadow-sm: 2px 2px 0px #17150f;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,11 +28,11 @@
             color: var(--ink);
             font-family: 'Noto Sans KR', sans-serif;
             padding: 2.5rem 1rem;
-            line-height: 1.7;
+            line-height: 1.6;
         }
 
         .wrap {
-            max-width: 1000px;
+            max-width: 1060px;
             margin: 0 auto;
         }
 
@@ -42,47 +42,57 @@
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 2px solid var(--ink);
         }
 
         .top-nav a {
             text-decoration: none;
-            color: var(--muted);
+            color: var(--ink);
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: color 0.2s;
+            background: #fff;
+            padding: 0.4rem 0.8rem;
+            border: 2px solid var(--ink);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.1s;
         }
-        .top-nav a:hover { color: var(--accent); }
+        .top-nav a:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px #17150f; }
 
         header {
             margin-bottom: 2.5rem;
+            background: var(--yellow);
+            border: 3px solid var(--ink);
+            padding: 2rem;
+            box-shadow: var(--shadow);
         }
 
         header .label {
             font-size: 0.8rem;
-            letter-spacing: 0.22em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 8px;
+            background: var(--ink);
+            color: #fff;
+            padding: 0.2rem 0.6rem;
+            display: inline-block;
+            margin-bottom: 10px;
             font-weight: 700;
         }
 
         header h1 {
             font-family: 'Nanum Myeongjo', serif;
-            font-size: clamp(2rem, 4vw, 2.6rem);
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
             font-weight: 800;
             color: var(--ink);
             margin-bottom: 0.6rem;
-            letter-spacing: -0.02em;
         }
 
         header p {
             color: var(--muted);
-            font-size: 1.02rem;
-            max-width: 45em;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .dashboard {
@@ -91,28 +101,27 @@
             gap: 2rem;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .dashboard { grid-template-columns: 1fr; }
         }
 
         .panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--line);
-            border-radius: 16px;
+            background: var(--card-bg);
+            border: 3px solid var(--ink);
+            border-radius: 12px;
             padding: 2rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow);
         }
 
         .panel-title {
             font-size: 1.15rem;
-            font-weight: 700;
+            font-weight: 900;
             margin-bottom: 1.25rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 2px solid var(--ink);
             padding-bottom: 0.75rem;
-            color: var(--ink);
         }
 
         .input-grid {
@@ -120,34 +129,54 @@
             flex-direction: column;
             gap: 1rem;
             margin-bottom: 1.5rem;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 4px;
         }
 
         .indicator-row {
-            background: var(--paper);
+            background: #fff;
             padding: 1rem;
-            border-radius: 10px;
-            border: 1px solid var(--line);
+            border-radius: 8px;
+            border: 2px solid var(--ink);
+            box-shadow: var(--shadow-sm);
+            position: relative;
         }
 
         .indicator-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
+            gap: 0.5rem;
         }
 
         .indicator-name-input {
             font-weight: 700;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             color: var(--ink);
-            background: #fff;
-            border: 1px solid var(--line);
+            background: var(--paper);
+            border: 2px solid var(--ink);
             padding: 0.3rem 0.6rem;
             border-radius: 6px;
-            width: 70%;
+            width: 100%;
             font-family: inherit;
         }
-        .indicator-name-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+        .indicator-name-input:focus { outline: none; background: #fff; }
+
+        .btn-delete-row {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid var(--ink);
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 2px 2px 0px #17150f;
+            flex-shrink: 0;
+        }
+        .btn-delete-row:hover { background: #fca5a5; }
 
         .inputs-container {
             display: grid;
@@ -163,67 +192,51 @@
 
         .input-group label {
             font-size: 0.78rem;
-            font-weight: 600;
+            font-weight: 800;
         }
 
-        .label-pre { color: var(--pre-color); }
-        .label-post { color: var(--post-color); }
+        .label-pre { color: var(--blue); }
+        .label-post { color: var(--accent); }
 
         input[type="number"] {
             width: 100%;
-            padding: 0.5rem;
-            border: 1px solid var(--line);
+            padding: 0.45rem;
+            border: 2px solid var(--ink);
             border-radius: 6px;
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 700;
             text-align: center;
             background-color: #fff;
             color: var(--ink);
             font-family: inherit;
         }
-
-        input[type="number"]:focus {
-            outline: 2px solid var(--accent);
-            border-color: transparent;
-        }
+        input[type="number"]:focus { outline: none; background: #fffbeb; }
 
         .btn-group {
             display: flex;
             gap: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .btn {
             flex: 1;
             padding: 0.7rem 1rem;
             border-radius: 8px;
-            font-weight: 600;
+            font-weight: 800;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid var(--line);
+            transition: transform 0.1s;
+            border: 2px solid var(--ink);
             text-align: center;
             font-family: inherit;
+            box-shadow: var(--shadow-sm);
         }
+        .btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px #17150f; }
 
-        .btn-primary { background-color: var(--ink); color: var(--paper); border-color: var(--ink); }
-        .btn-primary:hover { background-color: var(--accent); border-color: var(--accent); }
-        .btn-secondary { background-color: #fff; color: var(--muted); }
-        .btn-secondary:hover { background-color: var(--paper); color: var(--ink); }
-        
-        .btn-danger {
-            background-color: transparent;
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 0.35rem 0.7rem;
-            font-size: 0.78rem;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .btn-danger:hover {
-            background: var(--accent);
-            color: #fff;
-        }
+        .btn-primary { background-color: var(--yellow); color: var(--ink); }
+        .btn-secondary { background-color: #fff; color: var(--ink); }
+        .btn-add { background-color: #dcfce7; color: #166534; width: 100%; margin-bottom: 1rem; }
+        .btn-add:hover { background-color: #bbf7d0; }
 
         .visual-panel {
             display: flex;
@@ -232,11 +245,11 @@
         }
 
         .chart-box {
-            background: var(--panel-bg);
-            border: 1px solid var(--line);
-            border-radius: 16px;
+            background: var(--card-bg);
+            border: 3px solid var(--ink);
+            border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -244,141 +257,78 @@
         }
 
         .report-box {
-            background: var(--panel-bg);
-            border: 1px solid var(--line);
-            border-radius: 16px;
+            background: var(--card-bg);
+            border: 3px solid var(--ink);
+            border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow);
         }
 
         .report-content {
             font-size: 0.92rem;
-            color: #3d392f;
+            color: var(--ink);
             white-space: pre-line;
             line-height: 1.7;
             background: var(--paper);
             padding: 1rem 1.2rem;
             border-radius: 8px;
-            border-left: 3px solid var(--accent);
+            border: 2px solid var(--ink);
+            box-shadow: var(--shadow-sm);
         }
+
+        .btn-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 2px solid var(--ink);
+            padding: 0.35rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px #17150f;
+        }
+        .btn-danger:hover { background-color: #fca5a5; }
     </style>
 </head>
 <body>
 
 <div class="wrap">
     <div class="top-nav">
-        <b>문태양 · 디지털 리터러시 5대 역량 평가 툴</b>
-        <a href="index.html"><i class="ph ph-arrow-left"></i> 포트폴리오 메인으로</a>
+        <b>문태양 · 디지털 리터러시 역량 평가 스튜디오</b>
+        <a href="index.html"><i class="ph ph-arrow-left"></i> 포트폴리오 메인</a>
     </div>
 
     <header>
-        <p class="label">Practical Task 09 - Expanded</p>
-        <h1>디지털 리터러시 다각형 평가 차트 (5대 역량)</h1>
-        <p>정보검색, 창의적 문제해결, 비판적 사고, 디지털 도구 활용, 협업 능력 5가지 핵심 영역(100점 만점)의 사전·사후 평가 수치를 기입하고 다각형 차트로 성장을 비교합니다. 항목명을 직접 수정할 수도 있습니다.</p>
+        <span class="label">Neo-Brutalism Edition</span>
+        <h1>디지털 리터러시 역량 진단 다각형 차트</h1>
+        <p>5대 핵심 영역(100점 만점)을 중심으로 사전·사후 성취도를 비교합니다. 항목 추가 및 삭제 버튼을 눌러 평가 지표를 자유롭게 커스텀해 보세요.</p>
     </header>
 
     <div class="dashboard">
         <!-- 좌측 입력 패널 -->
         <div class="panel">
             <div class="panel-title">
-                <span>역량 지표 및 점수 입력</span>
-                <span style="font-size: 0.8rem; color: var(--muted); font-weight: normal;">점수 범위: 0 ~ 100점</span>
+                <span>평가 항목 및 점수 제어</span>
+                <span style="font-size: 0.8rem; font-weight: 700;">0 ~ 100점</span>
             </div>
             
+            <button class="btn btn-add" onclick="addIndicatorRow()">＋ 새로운 평가 항목 추가</button>
+
             <div class="input-grid" id="inputContainer">
-                <!-- 지표 1 -->
-                <div class="indicator-row">
-                    <div class="indicator-header">
-                        <input type="text" class="indicator-name-input" value="정보검색 능력" oninput="updateChart()">
-                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ①</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 지표 2 -->
-                <div class="indicator-row">
-                    <div class="indicator-header">
-                        <input type="text" class="indicator-name-input" value="창의적 문제해결" oninput="updateChart()">
-                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ②</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 지표 3 -->
-                <div class="indicator-row">
-                    <div class="indicator-header">
-                        <input type="text" class="indicator-name-input" value="비판적 사고" oninput="updateChart()">
-                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ③</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 지표 4 -->
-                <div class="indicator-row">
-                    <div class="indicator-header">
-                        <input type="text" class="indicator-name-input" value="디지털 도구 활용" oninput="updateChart()">
-                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ④</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 지표 5 -->
-                <div class="indicator-row">
-                    <div class="indicator-header">
-                        <input type="text" class="indicator-name-input" value="협업 능력" oninput="updateChart()">
-                        <span style="font-size: 0.75rem; color: var(--muted);">영역 ⑤</span>
-                    </div>
-                    <div class="inputs-container">
-                        <div class="input-group">
-                            <label class="label-pre">사전 점수</label>
-                            <input type="number" class="pre-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                        <div class="input-group">
-                            <label class="label-post">사후 점수</label>
-                            <input type="number" class="post-val" min="0" max="100" step="1" value="" placeholder="0" oninput="updateChart()">
-                        </div>
-                    </div>
-                </div>
+                <!-- 기본 5대 항목 -->
+                <script>
+                    const defaultItems = [
+                        { name: "정보검색 능력", pre: "", post: "" },
+                        { name: "창의적 문제해결", pre: "", post: "" },
+                        { name: "비판적 사고", pre: "", post: "" },
+                        { name: "디지털 도구 활용", pre: "", post: "" },
+                        { name: "협업 능력", pre: "", post: "" }
+                    ];
+                </script>
             </div>
 
             <div class="btn-group">
-                <button class="btn btn-secondary" onclick="resetForm()">입력값 비우기</button>
+                <button class="btn btn-secondary" onclick="resetForm()">전체 초기화</button>
                 <button class="btn btn-primary" onclick="generateAnalysisReport()">분석 리포트 생성</button>
             </div>
         </div>
@@ -395,7 +345,7 @@
                     <button class="btn-danger" onclick="saveChartImage()">차트 이미지 저장</button>
                 </div>
                 <div class="report-content" id="reportContent">
-                    좌측 인풋창에 점수(0~100점)를 기입하거나 항목명을 수정한 후 [분석 리포트 생성] 버튼을 누르면 실시간 성장 통계가 작성됩니다.
+                    좌측 항목과 점수를 입력한 후 [분석 리포트 생성] 버튼을 누르면 실시간 다각도 역량 분석문이 빌드됩니다.
                 </div>
             </div>
         </div>
@@ -405,12 +355,60 @@
 <script>
     let myChart = null;
 
+    function renderInitialRows() {
+        const container = document.getElementById('inputContainer');
+        container.innerHTML = '';
+        defaultItems.forEach(item => {
+            addRowToDOM(item.name, item.pre, item.post);
+        });
+    }
+
+    function addRowToDOM(name = '', pre = '', post = '') {
+        const container = document.getElementById('inputContainer');
+        const rowId = 'row_' + Math.random().toString(36.substring(2, 9));
+        
+        const row = document.createElement('div');
+        row.className = 'indicator-row';
+        row.id = rowId;
+        row.innerHTML = `
+            <div class="indicator-header">
+                <input type="text" class="indicator-name-input" value="${name}" placeholder="평가 항목 이름 입력" oninput="updateChart()">
+                <button class="btn-delete-row" onclick="removeRow('${rowId}')">삭제</button>
+            </div>
+            <div class="inputs-container">
+                <div class="input-group">
+                    <label class="label-pre">사전 점수</label>
+                    <input type="number" class="pre-val" min="0" max="100" step="1" value="${pre}" placeholder="0" oninput="updateChart()">
+                </div>
+                <div class="input-group">
+                    <label class="label-post">사후 점수</label>
+                    <input type="number" class="post-val" min="0" max="100" step="1" value="${post}" placeholder="0" oninput="updateChart()">
+                </div>
+            </div>
+        `;
+        container.appendChild(row);
+        updateChart();
+    }
+
+    function addIndicatorRow() {
+        addRowToDOM('새로운 역량 영역', '', '');
+    }
+
+    function removeRow(rowId) {
+        const row = document.getElementById(rowId);
+        if (row) {
+            row.remove();
+            updateChart();
+        }
+    }
+
     function getLabels() {
         const nameInputs = document.querySelectorAll('.indicator-name-input');
-        return Array.from(nameInputs).map(input => input.value || '미정 영역');
+        return Array.from(nameInputs).map(input => input.value.trim() || '미정 영역');
     }
 
     function initChart() {
+        renderInitialRows();
         const ctx = document.getElementById('radarChart').getContext('2d');
         
         const data = {
@@ -420,21 +418,21 @@
                     label: '사전 평가 (Pre)',
                     data: [0, 0, 0, 0, 0],
                     fill: true,
-                    backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
                     borderColor: '#2563eb',
                     pointBackgroundColor: '#2563eb',
-                    pointBorderColor: '#fff',
-                    borderWidth: 2
+                    pointBorderColor: '#17150f',
+                    borderWidth: 2.5
                 },
                 {
                     label: '사후 평가 (Post)',
                     data: [0, 0, 0, 0, 0],
                     fill: true,
-                    backgroundColor: 'rgba(179, 71, 0, 0.15)',
-                    borderColor: '#b34700',
-                    pointBackgroundColor: '#b34700',
-                    pointBorderColor: '#fff',
-                    borderWidth: 2
+                    backgroundColor: 'rgba(255, 87, 34, 0.25)',
+                    borderColor: '#ff5722',
+                    pointBackgroundColor: '#ff5722',
+                    pointBorderColor: '#17150f',
+                    borderWidth: 2.5
                 }
             ]
         };
@@ -447,19 +445,19 @@
                 maintainAspectRatio: false,
                 scales: {
                     r: {
-                        angleLines: { display: true, color: '#d8d2c4' },
-                        grid: { color: '#e5e1d8' },
+                        angleLines: { display: true, color: '#17150f', lineWidth: 1 },
+                        grid: { color: '#d8d2c4', lineWidth: 1 },
                         suggestedMin: 0,
                         suggestedMax: 100,
-                        ticks: { stepSize: 20, color: '#6b6557', font: { size: 10 } },
+                        ticks: { stepSize: 20, color: '#555044', font: { size: 10, weight: 'bold' }, backdropColor: 'transparent' },
                         pointLabels: {
-                            font: { size: 11, weight: '700', family: 'Noto Sans KR' },
+                            font: { size: 11, weight: '900', family: 'Noto Sans KR' },
                             color: '#17150f'
                         }
                     }
                 },
                 plugins: {
-                    legend: { position: 'top', labels: { boxWidth: 14, font: { weight: '600', family: 'Noto Sans KR' }, color: '#17150f' } }
+                    legend: { position: 'top', labels: { boxWidth: 14, font: { weight: '800', family: 'Noto Sans KR' }, color: '#17150f' } }
                 }
             }
         };
@@ -477,8 +475,8 @@
         const currentLabels = getLabels();
 
         for(let i=0; i<currentLabels.length; i++) {
-            let preVal = parseFloat(preInputs[i].value);
-            let postVal = parseFloat(postInputs[i].value);
+            let preVal = preInputs[i] ? parseFloat(preInputs[i].value) : 0;
+            let postVal = postInputs[i] ? parseFloat(postInputs[i].value) : 0;
 
             if (isNaN(preVal)) preVal = 0;
             if (isNaN(postVal)) postVal = 0;
@@ -497,14 +495,8 @@
     }
 
     function resetForm() {
-        const preInputs = document.querySelectorAll('.pre-val');
-        const postInputs = document.querySelectorAll('.post-val');
-        
-        preInputs.forEach(input => input.value = '');
-        postInputs.forEach(input => input.value = '');
-        
-        updateChart();
-        document.getElementById('reportContent').innerText = "입력값이 초기화되었습니다. 새로운 역량 수치를 기입해 보세요.";
+        renderInitialRows();
+        document.getElementById('reportContent').innerText = "모든 데이터가 초기화되었습니다. 새로운 항목과 점수를 기입해 보세요.";
     }
 
     function generateAnalysisReport() {
@@ -512,6 +504,11 @@
         const preData = myChart.data.datasets[0].data;
         const postData = myChart.data.datasets[1].data;
         const currentLabels = getLabels();
+
+        if (currentLabels.length === 0) {
+            document.getElementById('reportContent').innerText = "평가 항목이 없습니다. 최소 1개 이상의 항목을 추가해 주세요.";
+            return;
+        }
 
         let totalPre = 0;
         let totalPost = 0;
@@ -532,19 +529,19 @@
         const avgPost = (totalPost / currentLabels.length).toFixed(1);
         const growthRate = (((avgPost - avgPre) / (avgPre == 0 ? 1 : avgPre)) * 100).toFixed(1);
 
-        let reportText = `[5대 역량 종합 진단 리포트]\n`;
-        reportText += `• 전체 리터러시 평균 점수: 사전 ${avgPre}점 → 사후 ${avgPost}점 (100점 만점)\n`;
-        reportText += `• 교육 프로그램 투입 전후 대비 종합 향상 폭: 약 ${growthRate}%\n\n`;
+        let reportText = `[역량 성장 종합 진단 리포트]\n`;
+        reportText += `• 전체 리터러시 평균 점수: 사전 ${avgPre}점 → 사후 ${avgPost}점 (100점 만점 기준)\n`;
+        reportText += `• 프로그램 참여 전후 종합 향상 비율: 약 ${growthRate}%\n\n`;
         reportText += `[핵심 도약 영역]\n`;
-        reportText += `• 가장 가파른 성장을 기록한 분야는 [${currentLabels[highestGrowthIndex]}]이며, 이전 대비 +${maxGrowth.toFixed(1)}점 상승했습니다.\n\n`;
-        reportText += `[맞춤형 교수·학습 처방 제언]\n`;
+        reportText += `• 가장 가파른 성장을 보인 지표는 [${currentLabels[highestGrowthIndex]}]이며, 이전 대비 +${maxGrowth.toFixed(1)}점 향상되었습니다.\n\n`;
+        reportText += `[교수·학습 피드백 처방]\n`;
 
         if (avgPost == 0) {
-            reportText += `• 입력된 데이터가 없습니다. 각 항목별 평가 점수를 입력한 뒤 리포트를 생성해 주세요.`;
+            reportText += `• 입력된 점수 데이터가 없습니다. 항목별 수치를 입력한 뒤 리포트를 생성해 주세요.`;
         } else if (avgPost < 60) {
-            reportText += `• 전반적인 기초 역량 강화 및 실습 위주의 밀착형 피드백 세션 추가 편성이 권장됩니다.`;
+            reportText += `• 전반적인 기초 소양 보완 및 맞춤형 밀착형 실습 피드백 세션 추가 편성을 권장합니다.`;
         } else {
-            reportText += `• 5대 핵심 영역 전반에서 우수한 성취도와 고른 균형 발달을 보이고 있습니다. 프로젝트 기반 심화 과업 수행을 제언합니다.`;
+            reportText += `• 설정된 다각도 역량 영역 전반에서 균형 잡힌 성취도를 보이고 있습니다. 프로젝트 연계 심화 과업 수행을 제언합니다.`;
         }
 
         document.getElementById('reportContent').innerText = reportText;
@@ -554,7 +551,7 @@
         if (!myChart) return;
         const imageURI = myChart.toBase64Image();
         const link = document.createElement('a');
-        link.download = '디지털_리터러시_5대역량평가_차트.png';
+        link.download = '디지털_리터러시_역량평가_차트.png';
         link.href = imageURI;
         document.body.appendChild(link);
         link.click();
