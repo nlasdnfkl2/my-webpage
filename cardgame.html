@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KDC 십진분류법 짝맞추기</title>
-    <!-- 에디토리얼 테마 폰트 및 아이콘 -->
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>기억력 짝맞추기 게임</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- 정답 완성 시 폭죽 파티클 연출을 위한 외부 라이브러리[cite: 2] -->
+    <!-- 폭죽 파티클 라이브러리[cite: 2] -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -15,7 +14,7 @@
             --bg-color: #FCFAF8;
             --text-main: #2C2C2C;
             --text-muted: #888888;
-            --accent-color: #E65100;
+            --accent-color: #E65100; /* 오렌지 포인트 */
             --border-color: #E5E0D8;
             --card-bg: #FFFFFF;
         }
@@ -31,54 +30,79 @@
             min-height: 100vh;
             padding: 2rem 1rem;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         header {
             text-align: center;
-            margin-bottom: 2rem;
             width: 100%;
             max-width: 600px;
+            margin-bottom: 1.5rem;
         }
 
         h1 {
             font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.5rem;
-            margin: 0 0 0.5rem 0;
+            font-size: 1.8rem;
+            margin: 0 0 1rem 0;
+            color: var(--text-main);
         }
 
+        /* 글래스모피즘 스타일의 대시보드 */
         .dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 224, 216, 0.5);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .controls-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-
-        /* 난이도 변경 및 점수판[cite: 2] */
-        .controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         select {
-            padding: 0.4rem;
+            padding: 0.5rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px;
             font-family: inherit;
             color: var(--text-main);
-            background-color: var(--bg-color);
+            background-color: #FFF;
             cursor: pointer;
+            font-weight: 600;
+        }
+
+        .stats {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
         }
 
         .score-board {
+            font-size: 1.2rem;
             font-weight: 700;
-            font-size: 1.1rem;
+        }
+        
+        .score-board span { color: var(--accent-color); }
+        
+        .combo-board {
+            font-size: 0.9rem;
             color: var(--accent-color);
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.2s;
+        }
+        
+        .combo-board.active {
+            opacity: 1;
+            transform: scale(1.1);
         }
 
         .btn-icon {
@@ -89,39 +113,56 @@
             display: flex;
             align-items: center;
             gap: 0.3rem;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             transition: color 0.2s;
-            font-family: inherit;
+            font-weight: 600;
+        }
+        .btn-icon:hover { color: var(--accent-color); }
+
+        /* 타이머 진행바 */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 100%;
+            transition: width 1s linear;
         }
 
-        .btn-icon:hover {
-            color: var(--accent-color);
-        }
-        
-        .btn-icon i {
-            font-size: 1.2rem;
-        }
-
-        /* 카드 그리드 및 뒤집기 애니메이션[cite: 2] */
+        /* 게임 보드 및 카드 애니메이션[cite: 2] */
         .game-board {
             display: grid;
-            gap: 10px;
+            gap: 12px;
             max-width: 600px;
             width: 100%;
-            perspective: 1000px; /* 3D 효과 */
+            perspective: 1000px;
         }
 
         .card {
-            aspect-ratio: 1 / 1.2;
+            aspect-ratio: 1 / 1.1;
             position: relative;
             cursor: pointer;
             transform-style: preserve-3d;
-            transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
         }
 
         .card.flipped, .card.matched {
             transform: rotateY(180deg);
         }
+
+        /* 오답 시 흔들림 효과 */
+        @keyframes wiggle {
+            0%, 100% { transform: rotateY(180deg) rotateZ(0); }
+            25% { transform: rotateY(180deg) rotateZ(-5deg); }
+            75% { transform: rotateY(180deg) rotateZ(5deg); }
+        }
+        .card.error { animation: wiggle 0.4s; }
 
         .card-face {
             position: absolute;
@@ -129,46 +170,41 @@
             height: 100%;
             backface-visibility: hidden;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            font-size: 1.2rem;
-            font-weight: 500;
+            font-weight: 700;
             text-align: center;
             padding: 0.5rem;
             box-sizing: border-box;
+            background-color: var(--card-bg);
             word-break: keep-all;
         }
 
         .card-front {
-            background-color: var(--card-bg);
             transform: rotateY(180deg);
-        }
-
-        /* 분류기호(숫자)와 주제(텍스트) 스타일 구분 */
-        .card-front[data-type="num"] {
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.8rem;
-            color: var(--accent-color);
         }
 
         .card-back {
             background-color: var(--bg-color);
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(230, 81, 0, 0.03) 10px, rgba(230, 81, 0, 0.03) 20px);
+            background-image: radial-gradient(var(--border-color) 2px, transparent 2px);
+            background-size: 15px 15px;
         }
 
         .card-back i {
-            font-size: 2rem;
-            color: var(--border-color);
+            font-size: 2.5rem;
+            color: rgba(230, 81, 0, 0.4);
         }
 
-        /* 완료 모달 안내[cite: 2] */
+        /* 짝맞춤 완료 및 결과 안내[cite: 2] */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(252, 250, 248, 0.9);
+            background: rgba(252, 250, 248, 0.85);
+            backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -185,93 +221,129 @@
 
         .modal-content {
             background: var(--card-bg);
-            padding: 3rem;
+            padding: 2.5rem;
             border: 1px solid var(--border-color);
             text-align: center;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
         }
 
         .modal-content h2 {
             font-family: 'Nanum Myeongjo', serif;
             color: var(--accent-color);
+            margin-bottom: 0.5rem;
         }
 
+        /* 텍스트/아이콘 크기 동적 조절 */
+        .card-icon { font-size: 2.5rem; margin-bottom: 0.3rem; color: var(--text-main); }
+        .card-text { font-size: 1.1rem; }
+        .card-text.kdc-num { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--accent-color); }
+        .card-text.kdc-desc { font-size: 1rem; }
+
         @media (max-width: 480px) {
-            .game-board { grid-template-columns: repeat(4, 1fr) !important; }
-            .card-front { font-size: 0.9rem; }
-            .card-front[data-type="num"] { font-size: 1.3rem; }
+            .card-icon { font-size: 1.8rem; }
+            .card-text { font-size: 0.9rem; }
+            .card-text.kdc-num { font-size: 1.3rem; }
+            .card-text.kdc-desc { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>KDC 분류 짝맞추기</h1>
+        <h1>짝맞추기 탐험대</h1>
         <div class="dashboard">
-            <div class="controls">
-                <!-- 난이도 변경[cite: 2] -->
-                <select id="difficultySelect">
-                    <option value="4">초급 (4쌍)</option>
-                    <option value="6" selected>중급 (6쌍)</option>
-                    <option value="10">고급 (10쌍)</option>
-                </select>
-                <div class="score-board">점수: <span id="scoreDisplay">0</span></div>
+            <div class="controls-row">
+                <!-- 주제 및 난이도 변경[cite: 2] -->
+                <div style="display: flex; gap: 0.5rem;">
+                    <select id="themeSelect">
+                        <option value="animal">동물 친구들 (초등 저학년)</option>
+                        <option value="kdc">도서관 탐험 (KDC 분류법)</option>
+                    </select>
+                    <select id="difficultySelect">
+                        <option value="4">쉬움 (4쌍)</option>
+                        <option value="6" selected>보통 (6쌍)</option>
+                        <option value="8">어려움 (8쌍)</option>
+                    </select>
+                </div>
+                <button class="btn-icon" id="restartBtn">
+                    <i class="ph ph-arrow-counter-clockwise"></i> 다시 시작
+                </button>
             </div>
-            <!-- 다시 시작 버튼[cite: 2] -->
-            <button class="btn-icon" id="restartBtn">
-                <i class="ph ph-arrow-counter-clockwise"></i> 리셋
-            </button>
+            
+            <div class="controls-row" style="margin-top: 0.5rem;">
+                <div class="stats">
+                    <div class="score-board">점수: <span id="scoreDisplay">0</span></div>
+                    <div class="combo-board" id="comboDisplay">2 COMBO! 🔥</div>
+                </div>
+            </div>
+            <!-- 암기 시간 진행바 -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
         </div>
     </header>
 
-    <!-- 카드 배치 영역 -->
     <main class="game-board" id="gameBoard"></main>
 
-    <!-- 정답 완성 안내 모달[cite: 2] -->
     <div class="modal-overlay" id="successModal">
         <div class="modal-content">
-            <i class="ph ph-frog" style="font-size: 3rem; color: var(--accent-color);"></i>
-            <h2>모든 짝을 맞췄습니다!</h2>
-            <p>최종 점수: <span id="finalScore">0</span>점</p>
-            <button class="btn-icon" id="modalRestartBtn" style="margin: 2rem auto 0; font-size: 1rem; color: var(--text-main);">
-                <i class="ph ph-play-circle"></i> 다시 도전하기
+            <i class="ph ph-medal" style="font-size: 3.5rem; color: var(--accent-color);"></i>
+            <h2>성공! 참 잘했어요!</h2>
+            <p style="font-size: 1.2rem; margin-top: 0.5rem;">최종 점수: <strong style="color: var(--accent-color);" id="finalScore">0</strong>점</p>
+            <button class="btn-icon" id="modalRestartBtn" style="margin: 2rem auto 0; font-size: 1.1rem; color: var(--text-main);">
+                <i class="ph ph-play-circle"></i> 한 번 더 하기
             </button>
         </div>
     </div>
 
 <script>
-    // KDC 주류 데이터 (000 ~ 900)[cite: 2]
+    // 주제 1: 초등 저학년용 동물 그림 (동물 이름 텍스트와 아이콘 짝맞추기)[cite: 2]
+    const animalData = [
+        { id: 1, pair1: { icon: 'ph-dog', text: '' }, pair2: { icon: '', text: '강아지' } },
+        { id: 2, pair1: { icon: 'ph-cat', text: '' }, pair2: { icon: '', text: '고양이' } },
+        { id: 3, pair1: { icon: 'ph-bird', text: '' }, pair2: { icon: '', text: '새' } },
+        { id: 4, pair1: { icon: 'ph-fish', text: '' }, pair2: { icon: '', text: '물고기' } },
+        { id: 5, pair1: { icon: 'ph-rabbit', text: '' }, pair2: { icon: '', text: '토끼' } },
+        { id: 6, pair1: { icon: 'ph-tortoise', text: '' }, pair2: { icon: '', text: '거북이' } },
+        { id: 7, pair1: { icon: 'ph-bug', text: '' }, pair2: { icon: '', text: '무당벌레' } },
+        { id: 8, pair1: { icon: 'ph-butterfly', text: '' }, pair2: { icon: '', text: '나비' } }
+    ];
+
+    // 주제 2: 도서관 KDC 주류 (아이들이 이해하기 쉬운 텍스트로 가공)
     const kdcData = [
-        { id: 0, num: '000', desc: '총류' },
-        { id: 1, num: '100', desc: '철학' },
-        { id: 2, num: '200', desc: '종교' },
-        { id: 3, num: '300', desc: '사회과학' },
-        { id: 4, num: '400', desc: '자연과학' },
-        { id: 5, num: '500', desc: '기술과학' },
-        { id: 6, num: '600', desc: '예술' },
-        { id: 7, num: '700', desc: '언어' },
-        { id: 8, num: '800', desc: '문학' },
-        { id: 9, num: '900', desc: '역사' }
+        { id: 1, pair1: { text: '000', type: 'kdc-num' }, pair2: { text: '백과사전\n(총류)', type: 'kdc-desc' } },
+        { id: 2, pair1: { text: '100', type: 'kdc-num' }, pair2: { text: '생각/마음\n(철학)', type: 'kdc-desc' } },
+        { id: 3, pair1: { text: '300', type: 'kdc-num' }, pair2: { text: '사회/직업\n(사회과학)', type: 'kdc-desc' } },
+        { id: 4, pair1: { text: '400', type: 'kdc-num' }, pair2: { text: '자연/과학\n(자연과학)', type: 'kdc-desc' } },
+        { id: 5, pair1: { text: '500', type: 'kdc-num' }, pair2: { text: '기술/컴퓨터\n(기술과학)', type: 'kdc-desc' } },
+        { id: 6, pair1: { text: '600', type: 'kdc-num' }, pair2: { text: '예술/체육\n(예술)', type: 'kdc-desc' } },
+        { id: 7, pair1: { text: '800', type: 'kdc-num' }, pair2: { text: '동화/시\n(문학)', type: 'kdc-desc' } },
+        { id: 8, pair1: { text: '900', type: 'kdc-num' }, pair2: { text: '역사/인물\n(역사)', type: 'kdc-desc' } }
     ];
 
     const gameBoard = document.getElementById('gameBoard');
     const scoreDisplay = document.getElementById('scoreDisplay');
+    const comboDisplay = document.getElementById('comboDisplay');
+    const themeSelect = document.getElementById('themeSelect');
     const difficultySelect = document.getElementById('difficultySelect');
     const successModal = document.getElementById('successModal');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
     
-    let cards = [];
     let flippedCards = [];
     let matchedPairs = 0;
     let score = 0;
-    let isLocked = false;
+    let combo = 0;
+    let isLocked = true; // 암기 시간 동안 클릭 방지
     let totalPairs = 6;
 
-    // 효과음 생성기 (외부 오디오 파일 깨짐 방지를 위해 Web Audio API 사용)[cite: 2]
+    // 효과음 처리[cite: 2]
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioContext();
+    let audioCtx;
 
     function playSound(type) {
+        if (!audioCtx) audioCtx = new AudioContext();
         if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
@@ -279,15 +351,13 @@
         gainNode.connect(audioCtx.destination);
 
         if (type === 'match') {
-            // 정답 시 맑은 소리[cite: 2]
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(523.25 + (combo * 50), audioCtx.currentTime); // 콤보 시 음이 높아짐
+            osc.frequency.exponentialRampToValueAtTime(880 + (combo * 50), audioCtx.currentTime + 0.1);
             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
             osc.start(); osc.stop(audioCtx.currentTime + 0.2);
         } else if (type === 'error') {
-            // 오답 시 둔탁한 소리[cite: 2]
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(150, audioCtx.currentTime);
             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
@@ -296,53 +366,84 @@
         }
     }
 
-    // 게임 초기화
+    // 카드 내용 생성 유틸리티
+    function createCardHTML(cardData) {
+        let html = '';
+        if (cardData.icon) html += `<i class="${cardData.icon} card-icon"></i>`;
+        if (cardData.text) {
+            const cssClass = cardData.type ? `card-text ${cardData.type}` : 'card-text';
+            html += `<span class="${cssClass}">${cardData.text.replace('\n', '<br>')}</span>`;
+        }
+        return html;
+    }
+
     function initGame() {
         gameBoard.innerHTML = '';
         flippedCards = [];
         matchedPairs = 0;
         score = 0;
-        isLocked = false;
+        combo = 0;
+        isLocked = true;
+        
         scoreDisplay.textContent = score;
+        comboDisplay.classList.remove('active');
         successModal.classList.remove('active');
         
         totalPairs = parseInt(difficultySelect.value);
-        
-        // 그리드 열 설정 (모바일 대응 포함)
-        let cols = totalPairs === 10 ? 5 : 4; 
+        let cols = totalPairs === 8 ? 4 : (totalPairs === 4 ? 4 : 4); 
+        if (totalPairs === 6) cols = 4; // 3x4 grid
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
-        // 데이터 섞기 및 선택
-        const shuffledKdc = [...kdcData].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
+        // 데이터 선택
+        const baseData = themeSelect.value === 'animal' ? animalData : kdcData;
+        const selectedData = [...baseData].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
         
-        // 숫자 카드와 설명 카드 분리 생성
         let deck = [];
-        shuffledKdc.forEach(item => {
-            deck.push({ id: item.id, type: 'num', text: item.num });
-            deck.push({ id: item.id, type: 'desc', text: item.desc });
+        selectedData.forEach(item => {
+            deck.push({ id: item.id, ...item.pair1 });
+            deck.push({ id: item.id, ...item.pair2 });
         });
 
-        // 덱 최종 섞기
         deck.sort(() => 0.5 - Math.random());
 
-        // DOM 요소 생성
+        // DOM 렌더링
         deck.forEach((cardData, index) => {
             const cardElement = document.createElement('div');
-            cardElement.classList.add('card');
+            cardElement.classList.add('card', 'flipped'); // 초기에 앞면(flipped)으로 렌더링
             cardElement.dataset.id = cardData.id;
-            cardElement.dataset.index = index;
 
             cardElement.innerHTML = `
-                <div class="card-face card-back"><i class="ph ph-books"></i></div>
-                <div class="card-face card-front" data-type="${cardData.type}">${cardData.text}</div>
+                <div class="card-face card-back"><i class="ph ph-star"></i></div>
+                <div class="card-face card-front">${createCardHTML(cardData)}</div>
             `;
             
             cardElement.addEventListener('click', () => flipCard(cardElement));
             gameBoard.appendChild(cardElement);
         });
+
+        startMemorizePhase();
     }
 
-    // 카드 뒤집기 로직
+    // 시작 전 카드 암기 시간 (3초간 보여주기)
+    function startMemorizePhase() {
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '100%';
+        progressBar.style.transition = 'none';
+
+        // 다음 프레임에서 애니메이션 시작
+        setTimeout(() => {
+            progressBar.style.transition = 'width 3s linear';
+            progressBar.style.width = '0%';
+        }, 50);
+
+        setTimeout(() => {
+            // 모든 카드를 다시 뒷면으로
+            document.querySelectorAll('.card').forEach(card => card.classList.remove('flipped'));
+            progressContainer.style.display = 'none';
+            isLocked = false;
+        }, 3000);
+    }
+
     function flipCard(card) {
         if (isLocked) return;
         if (card === flippedCards[0]) return;
@@ -356,34 +457,45 @@
         }
     }
 
-    // 짝 일치 판정[cite: 2]
+    // 일치 판정 및 콤보/점수 시스템[cite: 2]
     function checkMatch() {
         isLocked = true;
         const [card1, card2] = flippedCards;
         const isMatch = card1.dataset.id === card2.dataset.id;
 
         if (isMatch) {
-            // 두 카드가 일치할 경우 점수 획득[cite: 2]
             playSound('match');
             card1.classList.add('matched');
             card2.classList.add('matched');
-            score += 10;
+            
+            combo++;
+            let earned = 10 * combo; // 콤보에 따른 점수 증가
+            score += earned;
+            
             scoreDisplay.textContent = score;
+            if (combo > 1) {
+                comboDisplay.textContent = `${combo} COMBO! 🔥`;
+                comboDisplay.classList.add('active');
+            }
+
             matchedPairs++;
             resetBoard();
 
-            // 완료 확인
-            if (matchedPairs === totalPairs) {
-                setTimeout(gameWin, 500);
-            }
+            if (matchedPairs === totalPairs) setTimeout(gameWin, 500);
         } else {
-            // 불일치 시 1초 뒤 재뒤집기[cite: 2]
             playSound('error');
-            score = Math.max(0, score - 2); // 오답 시 감점
+            card1.classList.add('error');
+            card2.classList.add('error');
+            
+            combo = 0;
+            comboDisplay.classList.remove('active');
+            score = Math.max(0, score - 2);
             scoreDisplay.textContent = score;
+            
+            // 불일치 시 1초 뒤 뒤집기[cite: 2]
             setTimeout(() => {
-                card1.classList.remove('flipped');
-                card2.classList.remove('flipped');
+                card1.classList.remove('flipped', 'error');
+                card2.classList.remove('flipped', 'error');
                 resetBoard();
             }, 1000);
         }
@@ -393,43 +505,33 @@
         [flippedCards, isLocked] = [[], false];
     }
 
-    // 게임 완료 및 폭죽 파티클 연출[cite: 2]
+    // 완료 및 폭죽 연출[cite: 2]
     function gameWin() {
         document.getElementById('finalScore').textContent = score;
         successModal.classList.add('active');
         
-        // canvas-confetti 라이브러리 실행[cite: 2]
         var duration = 3 * 1000;
         var end = Date.now() + duration;
 
         (function frame() {
             confetti({
-                particleCount: 5,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
+                particleCount: 5, angle: 60, spread: 55, origin: { x: 0 },
                 colors: ['#E65100', '#2C2C2C', '#FCFAF8']
             });
             confetti({
-                particleCount: 5,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
+                particleCount: 5, angle: 120, spread: 55, origin: { x: 1 },
                 colors: ['#E65100', '#2C2C2C', '#FCFAF8']
             });
 
-            if (Date.now() < end) {
-                requestAnimationFrame(frame);
-            }
+            if (Date.now() < end) requestAnimationFrame(frame);
         }());
     }
 
-    // 이벤트 리스너
     document.getElementById('restartBtn').addEventListener('click', initGame);
     document.getElementById('modalRestartBtn').addEventListener('click', initGame);
+    themeSelect.addEventListener('change', initGame);
     difficultySelect.addEventListener('change', initGame);
 
-    // 초기 시작
     initGame();
 </script>
 </body>
