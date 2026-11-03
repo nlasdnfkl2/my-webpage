@@ -1,631 +1,693 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도서관 지식 라운지 (Pro)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+    <title>도서관 지식 라운지 Pro - Neo Brutalism</title>
     <style>
+        /* Neo Brutalism Base Theme */
         :root {
-            --bg-color: #F4F6F8;
-            --text-main: #2D3748;
-            --text-muted: #718096;
-            --primary-color: #3182CE;
-            --accent-color: #DD6B20;
-            --card-bg: #FFFFFF;
-            --border-color: #E2E8F0;
-            --success-color: #38A169;
-            --error-color: #E53E3E;
-            --timer-color: #D69E2E;
+            --bg-color: #f4f0ea;
+            --main-yellow: #ffde00;
+            --main-pink: #ff007b;
+            --main-cyan: #00f0ff;
+            --main-green: #00ff66;
+            --main-purple: #9d4edd;
+            --dark: #000000;
+            --border-size: 4px;
+            --shadow-offset: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Black', ui-sans-serif, system-ui, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
+            color: var(--dark);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .brutal-header {
+            background: var(--main-yellow);
+            border: var(--border-size) solid var(--dark);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            transform: rotate(-0.5deg);
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .brutal-header h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .brutal-card {
+            background: #ffffff;
+            border: var(--border-size) solid var(--dark);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+            padding: 25px;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-weight: bold;
+            border: 2px solid var(--dark);
+            background: var(--main-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        /* Buttons */
+        .brutal-btn {
+            background: #ffffff;
+            border: var(--border-size) solid var(--dark);
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--dark);
+            transition: all 0.1s ease;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .brutal-btn:active, .brutal-btn.active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--dark);
+        }
+
+        .brutal-btn.pink { background: var(--main-pink); color: white; }
+        .brutal-btn.cyan { background: var(--main-cyan); }
+        .brutal-btn.green { background: var(--main-green); }
+        .brutal-btn.yellow { background: var(--main-yellow); }
+
+        /* Navigation Tabs */
+        .tab-menu {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 5px;
+        }
+
+        /* Card Matching Game Styles */
+        .game-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--dark);
+            color: #fff;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .memory-card {
+            height: 110px;
+            background: #ffffff;
+            border: var(--border-size) solid var(--dark);
+            box-shadow: 4px 4px 0px var(--dark);
+            cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 2rem 1rem;
-            box-sizing: border-box;
-            overflow-x: hidden;
+            text-align: center;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            user-select: none;
+            transition: transform 0.1s;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 700px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            padding: 2.5rem;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
+        .memory-card.flipped {
+            background: var(--main-yellow);
+            transform: scale(1.02);
         }
 
-        /* 뷰 전환 */
-        .view-section { display: none; animation: fadeIn 0.4s ease; }
-        .view-section.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .memory-card.matched {
+            background: var(--main-green);
+            cursor: default;
+            box-shadow: 0px 0px 0px var(--dark);
+            transform: translate(4px, 4px);
+            opacity: 0.8;
         }
 
-        /* 공통 헤더 */
-        .header { text-align: center; margin-bottom: 2rem; position: relative; }
-        .header h1 { font-family: 'Nanum Myeongjo', serif; font-size: 2rem; margin: 0 0 0.5rem 0; color: var(--text-main); }
-        .header p { color: var(--text-muted); margin: 0; }
-        
-        .btn-back {
-            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            background: none; border: none; font-size: 1.5rem; color: var(--text-muted);
-            cursor: pointer; transition: color 0.2s;
-        }
-        .btn-back:hover { color: var(--primary-color); }
-
-        /* 메인 메뉴 */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
-        .menu-card {
-            background: var(--bg-color); border: 2px solid var(--border-color);
-            border-radius: 16px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s ease;
-        }
-        .menu-card:hover { border-color: var(--primary-color); transform: translateY(-5px); box-shadow: 0 8px 20px rgba(49, 130, 206, 0.15); }
-        .menu-card i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 1rem; }
-        .menu-card h3 { margin: 0 0 0.5rem 0; font-size: 1.25rem; }
-        .menu-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; word-break: keep-all; }
-
-        /* 공통 타이머/진행바 */
+        /* Golden Bell Styles */
         .timer-container {
-            width: 100%; height: 8px; background-color: var(--border-color);
-            border-radius: 4px; overflow: hidden; margin-bottom: 1.5rem; display: none;
+            width: 100%;
+            background: #eee;
+            border: 3px solid var(--dark);
+            height: 25px;
+            margin-bottom: 20px;
+            position: relative;
         }
+
         .timer-bar {
-            height: 100%; width: 100%; background-color: var(--accent-color);
-            transition: width 0.1s linear, background-color 0.3s;
+            height: 100%;
+            background: var(--main-pink);
+            width: 100%;
+            transition: width 0.1s linear;
         }
 
-        /* ===== KDC 짝맞추기 ===== */
-        .game-dashboard {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--bg-color); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 700;
-        }
-        .game-board { display: grid; gap: 12px; perspective: 1000px; }
-        .card { aspect-ratio: 1 / 1.1; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); }
-        .card.flipped, .card.matched { transform: rotateY(180deg); }
-        .card.error { animation: wiggle 0.4s; }
-        
-        @keyframes wiggle {
-            0%, 100% { transform: rotateY(180deg) rotateZ(0); }
-            25% { transform: rotateY(180deg) rotateZ(-5deg); }
-            75% { transform: rotateY(180deg) rotateZ(5deg); }
+        .quiz-question {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            background: #fff;
+            padding: 20px;
+            border: var(--border-size) solid var(--dark);
         }
 
-        .card-face {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; border-radius: 12px; border: 2px solid var(--border-color);
-            background-color: var(--card-bg); text-align: center; padding: 0.5rem; box-sizing: border-box; word-break: keep-all;
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
-        .card-front { transform: rotateY(180deg); }
-        .card-back { background-color: var(--primary-color); border-color: var(--primary-color); color: #FFF; }
-        .card-back i { font-size: 2.5rem; }
-        .kdc-num { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--primary-color); font-weight: 800; }
-        .kdc-desc { font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
-        .kdc-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem; }
-
-        /* ===== 골든벨 퀴즈 ===== */
-        .quiz-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .quiz-score-board { font-size: 1.2rem; font-weight: 900; color: var(--primary-color); }
-        .quiz-count { font-weight: 700; color: var(--text-muted); font-size: 1.1rem; }
-        
-        .question-box {
-            background: var(--bg-color); padding: 2rem; border-radius: 12px; font-size: 1.3rem; font-weight: 700;
-            text-align: center; margin-bottom: 1.5rem; word-break: keep-all; line-height: 1.5; position: relative;
-        }
-
-        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .option-btn {
-            background: #FFF; border: 2px solid var(--border-color); border-radius: 10px; padding: 1.2rem 1rem;
-            font-size: 1.05rem; font-family: inherit; color: var(--text-main); cursor: pointer; transition: all 0.2s; font-weight: 500; word-break: keep-all;
-        }
-        .option-btn:hover:not(:disabled) { border-color: var(--primary-color); background: rgba(49, 130, 206, 0.05); }
-        .option-btn.correct { background: var(--success-color); color: #FFF; border-color: var(--success-color); }
-        .option-btn.wrong { background: var(--error-color); color: #FFF; border-color: var(--error-color); }
-
-        .feedback-msg { text-align: center; margin-top: 1rem; font-size: 1.1rem; font-weight: 700; min-height: 1.5rem; display: flex; justify-content: center; gap: 10px; align-items: center; }
-        .feedback-msg.error { color: var(--error-color); }
-        .feedback-msg.success { color: var(--success-color); }
-        .time-bonus { font-size: 0.9rem; background: var(--timer-color); color: #FFF; padding: 2px 8px; border-radius: 12px; animation: pop 0.3s ease; }
-
-        @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
-
-        /* 커스텀 퀴즈 불러오기 버튼 */
-        .btn-import {
-            background: none; border: 1px dashed var(--primary-color); color: var(--primary-color);
-            padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;
-        }
-        .btn-import:hover { background: rgba(49, 130, 206, 0.1); }
-
-        /* 모달 스타일 (결과 & 외부데이터) */
-        .modal-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 100; border-radius: 20px;
-        }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { text-align: center; width: 80%; max-width: 500px; }
-        .modal-content h2 { color: var(--primary-color); font-size: 1.8rem; margin: 0 0 1rem 0; }
-        
-        textarea.import-area {
-            width: 100%; height: 150px; padding: 1rem; border: 2px solid var(--border-color); border-radius: 8px;
-            font-family: inherit; font-size: 0.9rem; resize: none; box-sizing: border-box; margin-bottom: 1rem;
-        }
-        
-        .btn-primary {
-            background: var(--primary-color); color: #FFF; border: none; padding: 0.8rem 2rem; border-radius: 8px;
-            font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: background 0.2s;
-        }
-        .btn-primary:hover { background: #2B6CB0; }
 
         @media (max-width: 600px) {
-            .menu-grid { grid-template-columns: 1fr; }
-            .options-grid { grid-template-columns: 1fr; }
-            .app-container { padding: 1.5rem; }
+            .quiz-options { grid-template-columns: 1fr; }
+        }
+
+        .option-btn {
+            background: #fff;
+            text-align: left;
+            font-size: 1.05rem;
+        }
+
+        .option-btn:hover {
+            background: var(--main-cyan);
+        }
+
+        /* Overlay views */
+        .screen-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        /* Custom Quiz Input */
+        textarea {
+            width: 100%;
+            height: 150px;
+            border: var(--border-size) solid var(--dark);
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        textarea:focus {
+            background: #ffffea;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            background: var(--main-purple);
+            color: white;
+            padding: 12px 25px;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            font-weight: bold;
+            z-index: 100;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <!-- 메인 메뉴 -->
-    <div id="view-menu" class="view-section active">
-        <div class="header">
-            <h1>도서관 지식 라운지</h1>
-            <p>원하는 탐험을 선택하세요 (중등부)</p>
-        </div>
-        <div class="menu-grid">
-            <div class="menu-card" onclick="switchView('view-matching')">
-                <i class="ph ph-cards"></i>
-                <h3>KDC 강목 짝맞추기</h3>
-                <p>한국문학은 몇 번일까? 세부 분류 기호를 찾아 짝을 맞춰보세요. (시작 시 3초 암기)</p>
-            </div>
-            <div class="menu-card" onclick="switchView('view-quiz')">
-                <i class="ph ph-timer"></i>
-                <h3>도서관 스피드 골든벨</h3>
-                <p>시간 제한 15초! 빨리 풀수록 더 높은 보너스 점수를 획득합니다.</p>
-            </div>
-        </div>
+    <div class="brutal-header">
+        <h1>Library Knowledge Lounge Pro</h1>
     </div>
 
-    <!-- 1. KDC 짝맞추기 화면 -->
-    <div id="view-matching" class="view-section">
-        <div class="header">
-            <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
-            <h1>KDC 강목 짝맞추기</h1>
-        </div>
+    <!-- Tab Control Hierarchy -->
+    <div class="tab-menu">
+        <button class="brutal-btn active" id="tab-match-btn" onclick="switchView('match')">KDC 강목 짝맞추기</button>
+        <button class="brutal-btn" id="tab-bell-btn" onclick="switchView('bell')">스피드 골든벨</button>
+    </div>
+
+    <div class="container">
         
-        <!-- 암기시간 진행바 -->
-        <div class="timer-container" id="matchTimerContainer">
-            <div class="timer-bar" id="matchTimerBar" style="background-color: var(--accent-color);"></div>
-        </div>
+        <!-- MODULE 1: KDC MATCHING GAME -->
+        <div id="view-match" class="brutal-card">
+            <div class="badge" style="background: var(--main-purple); color: white;">중등 문헌정보 교육과정</div>
+            <h2>KDC 강목 짝맞추기 (10단위 분류)</h2>
+            <p style="margin-bottom: 20px; font-size: 0.95rem;">시작 시 3초 동안 전체 카드가 암기용으로 공개됩니다! 분류 기호와 해당하는 학문 주제를 올바르게 짝지어보세요.</p>
 
-        <div class="game-dashboard">
-            <div>난이도: 8쌍 (강목 10단위)</div>
-            <div style="color: var(--primary-color);">점수: <span id="matchScore">0</span></div>
-        </div>
-        <div class="game-board" id="matchBoard"></div>
-    </div>
+            <div id="match-start-screen" class="screen-overlay" style="background: #fff; border: 3px dashed #000;">
+                <h3 style="font-size: 1.5rem; margin-bottom: 15px;">KDC 10단위 분류법 탐험</h3>
+                <p style="margin-bottom: 20px;">무작위 배치된 총 8쌍(16장)의 카드 매칭 게임을 시작합니다.</p>
+                <button class="brutal-btn yellow" onclick="startMatchGame()">탐험 시작하기</button>
+            </div>
 
-    <!-- 2. 골든벨 퀴즈 화면 -->
-    <div id="view-quiz" class="view-section">
-        <div class="header">
-            <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
-            <h1>스피드 골든벨 퀴즈</h1>
-        </div>
-        
-        <div class="quiz-header-row">
-            <button class="btn-import" onclick="openImportModal()">
-                <i class="ph ph-microsoft-excel-logo"></i> 퀴즈 불러오기
-            </button>
-            <div class="quiz-score-board">SCORE: <span id="quizScoreDisplay">0</span></div>
-        </div>
+            <div id="match-game-area" style="display: none;">
+                <div class="game-status-bar">
+                    <div>🔥 SCORE: <span id="match-score">0</span></div>
+                    <div>⏱ STATUS: <span id="match-timer-text">준비 중</span></div>
+                </div>
+                <div class="card-grid" id="card-container"></div>
+            </div>
 
-        <div class="quiz-header-row" style="justify-content: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
-            <span class="quiz-count">Q. <span id="currentQNum">1</span> / <span id="totalQNum">10</span></span>
-        </div>
-
-        <!-- 퀴즈 타이머 (15초) -->
-        <div class="timer-container" id="quizTimerContainer" style="display: block;">
-            <div class="timer-bar" id="quizTimerBar" style="background-color: var(--primary-color);"></div>
-        </div>
-
-        <div class="question-box" id="questionText">문제 불러오는 중...</div>
-        <div class="options-grid" id="optionsContainer"></div>
-        <div class="feedback-msg" id="quizFeedback"></div>
-    </div>
-
-    <!-- 결과 모달 -->
-    <div class="modal-overlay" id="resultModal">
-        <div class="modal-content">
-            <i class="ph ph-trophy" style="font-size: 4rem; color: var(--accent-color);"></i>
-            <h2 id="modalTitle">완료!</h2>
-            <p style="font-size: 1.2rem; font-weight: 700;" id="modalDesc">최종 점수: 100점</p>
-            <button class="btn-primary" id="modalBtn">다시 하기</button>
-        </div>
-    </div>
-
-    <!-- 커스텀 퀴즈 불러오기 모달 -->
-    <div class="modal-overlay" id="importModal">
-        <div class="modal-content" style="text-align: left;">
-            <h2>커스텀 퀴즈 불러오기</h2>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; word-break: keep-all;">
-                엑셀이나 구글 스프레드시트에서 <strong>[문제, 보기1, 보기2, 보기3, 보기4, 정답번호(1~4)]</strong> 열을 드래그하여 복사한 후 아래에 붙여넣으세요.
-            </p>
-            <textarea class="import-area" id="importDataText" placeholder="여기에 붙여넣기 (Ctrl+V)"></textarea>
-            <div style="display: flex; gap: 1rem; justify-content: center;">
-                <button class="btn-primary" style="background: var(--text-muted);" onclick="closeImportModal()">취소</button>
-                <button class="btn-primary" onclick="applyImportData()">퀴즈 적용하기</button>
+            <div id="match-complete-screen" class="screen-overlay" style="display: none;">
+                <span style="font-size: 3rem; margin-bottom: 10px;">🎉 CLEAR!</span>
+                <p style="font-size: 1.2rem; margin-bottom: 20px;">KDC 분류 체계를 완벽하게 매칭하셨습니다.</p>
+                <button class="brutal-btn green" onclick="startMatchGame()">다시 도전하기</button>
             </div>
         </div>
+
+        <!-- MODULE 2: SPEED GOLDEN BELL -->
+        <div id="view-bell" class="brutal-card" style="display: none;">
+            <div class="badge" style="background: var(--main-pink); color: white;">스피드 제한 15초</div>
+            <h2>도서관 스피드 골든벨</h2>
+            <p style="margin-bottom: 20px; font-size: 0.95rem;">제한 시간 내에 정답을 맞추세요! 남은 시간이 많을수록 타임 보너스 스코어가 추가 누적됩니다.</p>
+
+            <div id="bell-start-screen" class="screen-overlay" style="background: #fff; border: 3px dashed #000;">
+                <h3 style="font-size: 1.5rem; margin-bottom: 15px;">도서관 상식 총점 배틀</h3>
+                <p style="margin-bottom: 20px;">총 10문제의 문헌정보 및 독서 상식 퀴즈가 무작위로 출제됩니다.</p>
+                <button class="brutal-btn pink" onclick="startGoldenBell()">골든벨 스타트</button>
+            </div>
+
+            <div id="bell-game-area" style="display: none;">
+                <div class="game-status-bar" style="background: var(--main-pink); color: #000; border-bottom: 4px solid #000;">
+                    <div>🎯 SCORE: <span id="bell-score">0</span></div>
+                    <div>📋 QUESTION: <span id="bell-progress">1 / 10</span></div>
+                </div>
+                <div class="timer-container">
+                    <div class="timer-bar" id="bell-timer-bar"></div>
+                </div>
+                <div class="quiz-question" id="bell-question-text">문제 불러오는 중...</div>
+                <div class="quiz-options" id="bell-options-container"></div>
+            </div>
+
+            <div id="bell-complete-screen" class="screen-overlay" style="display: none;">
+                <span style="font-size: 3rem; margin-bottom: 10px;">🏆 FINISH!</span>
+                <h3 style="font-size: 1.8rem; margin-bottom: 15px;">최종 점수: <span id="bell-final-score">0</span>점</h3>
+                <button class="brutal-btn cyan" onclick="startGoldenBell()">처음부터 다시 하기</button>
+            </div>
+
+            <!-- Custom Quiz TSV Spreadsheet Parser Section -->
+            <div style="margin-top: 40px; border-top: 4px solid #000; padding-top: 25px;">
+                <h3 style="font-size: 1.3rem; margin-bottom: 10px;">📋 데이터 커스텀 확장 패널</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 15px; color:#444;">엑셀이나 구글 스프레드시트에서 <strong>[문제, 보기1, 보기2, 보기3, 보기4, 정답번호(1~4)]</strong> 구조의 데이터 영역을 드래그 복사(Ctrl+C)한 후 아래에 붙여넣기(Ctrl+V) 하시면 나만의 전용 퀴즈 셋으로 즉시 변환됩니다.</p>
+                <textarea id="custom-tsv-input" placeholder="여기에 복사한 데이터를 붙여넣으세요...&#10;예시: 한국문학의 분류 코드는?&#9;KDC 810&#9;KDC 710&#9;KDC 610&#9;KDC 510&#9;1"></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button class="brutal-btn green" onclick="importCustomQuiz()">커스텀 퀴즈 빌드 및 적용</button>
+                    <button class="brutal-btn" onclick="resetDefaultQuiz()">기본 퀴즈셋 복원</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-</div>
+    <div class="toast" id="toast-msg">시스템 브로드캐스트 메시지</div>
 
-<script>
-    // ===== 공통 오디오 처리 =====
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
-    let currentTimerInterval = null; // 공통 타이머 제어용
-    
-    function playSound(type) {
-        if (!audioCtx) audioCtx = new AudioContext();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+    <script>
+        // Core KDC Dataset Master (Middle school standard)
+        const kdcMasterPool = [
+            { code: "000", name: "총류 (백과사전, 저널리즘)" },
+            { code: "100", name: "철학 (심리학, 윤리학)" },
+            { code: "200", name: "종교 (불교, 기독교, 신화)" },
+            { code: "300", name: "사회과학 (정치, 경제, 교육)" },
+            { code: "400", name: "자연과학 (수학, 물리, 천문)" },
+            { code: "500", name: "기술과학 (의학, 공학, 요리)" },
+            { code: "600", name: "예술 (음악, 미술, 체육)" },
+            { code: "700", name: "어학 (국어, 영어, 한자)" },
+            { code: "800", name: "문학 (소설, 시, 희곡)" },
+            { code: "900", name: "역사 (지리, 전기, 세계사)" },
+            { code: "810", name: "한국문학 (춘향전, 구운몽)" },
+            { code: "740", name: "영어 (영문법, 회화)" }
+        ];
 
-        if (type === 'correct') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(659.25, audioCtx.currentTime); osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        } else if (type === 'wrong') {
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        } else if (type === 'tick') {
-            osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-        }
-    }
+        // Default Speed Golden Bell Quiz Database
+        const defaultQuizSet = [
+            { q: "KDC 분류 체계에서 '한국문학'에 부여된 세부 분류 기호는 무엇일까요?", a: ["KDC 810", "KDC 820", "KDC 710", "KDC 910"], c: 1 },
+            { q: "도서관에서 책의 위치를 나타내기 위해 책날개 또는 책등에 부착하는 라벨의 명칭은?", a: ["청구기호 (Call Number)", "등록번호", "국제표준도서번호", "바코드"], c: 1 },
+            { q: "KDC 분류표 상 '수학, 물리, 화학, 생물학'이 속해 있는 대분류는?", a: ["기술과학 (500)", "자연과학 (400)", "총류 (000)", "예술 (600)"], c: 2 },
+            { q: "도서관에 직접 방문하지 않고 전자책을 대출하여 읽을 수 있는 시스템은?", a: ["상호대차", "오프라인 서고", "디지털 전자도서관", "북드라이브"], c: 3 },
+            { q: "전 세계 모든 출판물에 부여되는 고유한 국제 표준 도서 번호의 약칭은?", a: ["ISSN", "ISBN", "URL", "DPI"], c: 2 },
+            { q: "한국 문학의 대표적인 고전 소설 '구운몽'과 '춘향전'은 KDC 기준 몇 번 항목 근처에서 찾을 수 있을까요?", a: ["810번 항목", "100번 항목", "300번 항목", "900번 항목"], c: 1 },
+            { q: "삼국유사, 조선왕조실록 등 우리나라의 역사적인 서적들이 분류되는 KDC 코드는?", a: ["910번대 항목", "000번대 항목", "200번대 항목", "500번대 항목"], c: 1 },
+            { q: "도서관의 책 배열 규칙 중 올바른 설명은 무엇입니까?", a: ["청구기호 순서대로 왼쪽에서 오른쪽, 위에서 아래로 배열한다.", "책 크기가 큰 순서대로만 무조건 배열한다.", "도서 가격이 비싼 서적 순서로 배열한다.", "기증된 날짜 순서대로 정렬한다."], c: 1 },
+            { q: "심리학, 윤리학, 세계의 사상가들을 다룬 책들이 모여 있는 KDC 분류 번호는?", a: ["100 (철학)", "600 (예술)", "400 (자연과학)", "700 (어학)"], c: 1 },
+            { q: "백과사전이나 신문, 잡지 등 특정 주제에 한정되지 않고 전반적인 지식을 다루는 분류는?", a: ["총류 (000)", "역사 (900)", "종교 (200)", "사회과학 (300)"], c: 1 }
+        ];
 
-    function switchView(viewId) {
-        clearInterval(currentTimerInterval); // 뷰 전환 시 모든 타이머 정지
-        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
+        let activeQuizSet = JSON.parse(JSON.stringify(defaultQuizSet));
+
+        // State variables
+        let activeTab = 'match';
         
-        if (viewId === 'view-matching') initMatchGame();
-        if (viewId === 'view-quiz') initQuizGame();
-    }
+        // Matching game states
+        let matchCards = [];
+        let firstCard = null;
+        let secondCard = null;
+        let lockMatchBoard = false;
+        let matchScoreValue = 0;
+        let matchTimerInterval = null;
 
+        // Golden bell states
+        let currentQuestionIndex = 0;
+        let bellScoreValue = 0;
+        let bellTimeLeft = 150; // 15 seconds (counted in tenths)
+        let bellTimerInterval = null;
 
-    // ==========================================
-    // 1. KDC 강목 짝맞추기 로직 (암기 시간 포함)
-    // ==========================================
-    const kdcGangmokData = [
-        { id: 1, pair1: { text: '070', type: 'kdc-num' }, pair2: { text: '신문 / 언론', sub: '총류', type: 'kdc-desc' } },
-        { id: 2, pair1: { text: '320', type: 'kdc-num' }, pair2: { text: '경제학', sub: '사회과학', type: 'kdc-desc' } },
-        { id: 3, pair1: { text: '410', type: 'kdc-num' }, pair2: { text: '수학', sub: '자연과학', type: 'kdc-desc' } },
-        { id: 4, pair1: { text: '510', type: 'kdc-num' }, pair2: { text: '의학', sub: '기술과학', type: 'kdc-desc' } },
-        { id: 5, pair1: { text: '690', type: 'kdc-num' }, pair2: { text: '오락 / 스포츠', sub: '예술', type: 'kdc-desc' } },
-        { id: 6, pair1: { text: '740', type: 'kdc-num' }, pair2: { text: '사진예술', sub: '언어', type: 'kdc-desc' } },
-        { id: 7, pair1: { text: '810', type: 'kdc-num' }, pair2: { text: '한국문학', sub: '문학', type: 'kdc-desc' } },
-        { id: 8, pair1: { text: '910', type: 'kdc-num' }, pair2: { text: '아시아 (역사)', sub: '역사', type: 'kdc-desc' } }
-    ];
-
-    let flippedCards = [], matchedPairs = 0, matchScore = 0, isMatchLocked = true;
-    
-    function initMatchGame() {
-        const board = document.getElementById('matchBoard');
-        board.innerHTML = ''; board.style.gridTemplateColumns = 'repeat(4, 1fr)';
-        flippedCards = []; matchedPairs = 0; matchScore = 0; isMatchLocked = true;
-        document.getElementById('matchScore').textContent = matchScore;
-
-        let deck = [];
-        kdcGangmokData.forEach(item => { deck.push({ id: item.id, ...item.pair1 }); deck.push({ id: item.id, ...item.pair2 }); });
-        deck.sort(() => 0.5 - Math.random());
-
-        deck.forEach(data => {
-            const card = document.createElement('div');
-            card.className = 'card flipped'; // 처음에 모두 앞면으로 생성
-            card.dataset.id = data.id;
-            
-            let contentHTML = `<span class="${data.type}">${data.text}</span>`;
-            if (data.sub) contentHTML += `<span class="kdc-sub">(${data.sub})</span>`;
-
-            card.innerHTML = `<div class="card-face card-back"><i class="ph ph-books"></i></div><div class="card-face card-front">${contentHTML}</div>`;
-            card.addEventListener('click', () => flipCard(card));
-            board.appendChild(card);
-        });
-
-        // 3.5초 암기 시간 실행
-        runMemorizeTimer();
-    }
-
-    function runMemorizeTimer() {
-        const container = document.getElementById('matchTimerContainer');
-        const bar = document.getElementById('matchTimerBar');
-        container.style.display = 'block';
-        bar.style.transition = 'none'; bar.style.width = '100%';
-        
-        setTimeout(() => {
-            bar.style.transition = 'width 3.5s linear';
-            bar.style.width = '0%';
-        }, 50);
-
-        setTimeout(() => {
-            document.querySelectorAll('#matchBoard .card').forEach(c => c.classList.remove('flipped'));
-            container.style.display = 'none';
-            isMatchLocked = false;
-        }, 3550);
-    }
-
-    function flipCard(card) {
-        if (isMatchLocked || card === flippedCards[0] || card.classList.contains('matched')) return;
-        card.classList.add('flipped');
-        flippedCards.push(card);
-
-        if (flippedCards.length === 2) {
-            isMatchLocked = true;
-            if (flippedCards[0].dataset.id === flippedCards[1].dataset.id) {
-                playSound('correct');
-                flippedCards.forEach(c => c.classList.add('matched'));
-                matchScore += 10; matchedPairs++;
-                document.getElementById('matchScore').textContent = matchScore;
-                flippedCards = []; isMatchLocked = false;
-                
-                if (matchedPairs === kdcGangmokData.length) setTimeout(() => showResult('KDC 마스터!', matchScore, initMatchGame), 500);
-            } else {
-                playSound('wrong');
-                flippedCards.forEach(c => c.classList.add('error'));
-                matchScore = Math.max(0, matchScore - 2);
-                document.getElementById('matchScore').textContent = matchScore;
-                
-                setTimeout(() => {
-                    flippedCards.forEach(c => c.classList.remove('flipped', 'error'));
-                    flippedCards = []; isMatchLocked = false;
-                }, 1000);
-            }
-        }
-    }
-
-
-    // ==========================================
-    // 2. 골든벨 퀴즈 로직 (타이머 & 외부연동)
-    // ==========================================
-    let defaultQuizData = [
-        { q: "도서관에서 책의 위치를 알려주는 고유 번호를 무엇이라고 할까요?", options: ["청구기호", "바코드", "ISBN", "등록번호"], ans: 0 },
-        { q: "KDC(한국십진분류법)에서 '한국 문학(소설, 시 등)'을 찾으려면 몇 번대로 가야 할까요?", options: ["400번대", "810번대", "910번대", "100번대"], ans: 1 },
-        { q: "다음 중 KDC 분류 중 '자연과학(400)'에 속하지 않는 것은?", options: ["우주의 이해", "식물 도감", "파이썬 프로그래밍", "미적분학"], ans: 2 },
-        { q: "대한민국 영토인 독도의 날은 언제일까요?", options: ["8월 15일", "10월 9일", "10월 25일", "3월 1일"], ans: 2 },
-        { q: "우리나라 최초의 한글 소설은 무엇일까요?", options: ["구운몽", "홍길동전", "춘향전", "심청전"], ans: 1 }
-    ];
-    let currentQuizData = [...defaultQuizData];
-    let currentQuizList = [];
-    let qIndex = 0;
-    let quizScore = 0;
-    let quizLocked = false;
-    let timeRemaining = 15;
-    const MAX_TIME = 15;
-
-    function initQuizGame() {
-        clearInterval(currentTimerInterval);
-        currentQuizList = [...currentQuizData].sort(() => 0.5 - Math.random());
-        qIndex = 0; quizScore = 0;
-        document.getElementById('totalQNum').textContent = currentQuizList.length;
-        updateQuizScoreUI();
-        loadQuestion();
-    }
-
-    function loadQuestion() {
-        if (qIndex >= currentQuizList.length) {
-            showResult('퀴즈 완료!', quizScore, initQuizGame);
-            return;
+        function showToast(msg) {
+            const toast = document.getElementById('toast-msg');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2500);
         }
 
-        quizLocked = false;
-        const qData = currentQuizList[qIndex];
-        
-        document.getElementById('currentQNum').textContent = qIndex + 1;
-        document.getElementById('questionText').textContent = qData.q;
-        
-        const feedback = document.getElementById('quizFeedback');
-        feedback.innerHTML = ''; feedback.className = 'feedback-msg';
-
-        const container = document.getElementById('optionsContainer');
-        container.innerHTML = '';
-
-        qData.options.forEach((optText, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn'; btn.textContent = optText;
-            btn.onclick = () => selectAnswer(btn, i, qData.ans);
-            container.appendChild(btn);
-        });
-
-        startQuizTimer();
-    }
-
-    function startQuizTimer() {
-        clearInterval(currentTimerInterval);
-        timeRemaining = MAX_TIME;
-        const bar = document.getElementById('quizTimerBar');
-        
-        currentTimerInterval = setInterval(() => {
-            timeRemaining -= 0.1;
-            let percent = (timeRemaining / MAX_TIME) * 100;
-            bar.style.width = `${percent}%`;
-
-            // 색상 변화 (안전 -> 경고 -> 위험)
-            if (percent > 50) bar.style.backgroundColor = 'var(--primary-color)';
-            else if (percent > 20) bar.style.backgroundColor = 'var(--timer-color)';
-            else {
-                bar.style.backgroundColor = 'var(--error-color)';
-                if (Math.floor(timeRemaining * 10) % 10 === 0 && timeRemaining > 0) playSound('tick'); // 2초 미만 틱톡 소리
-            }
-
-            if (timeRemaining <= 0) {
-                clearInterval(currentTimerInterval);
-                timeRemaining = 0;
-                handleQuizTimeout();
-            }
-        }, 100);
-    }
-
-    function handleQuizTimeout() {
-        if (quizLocked) return;
-        quizLocked = true;
-        playSound('wrong');
-        
-        const feedback = document.getElementById('quizFeedback');
-        feedback.textContent = '⏰ 시간 초과!'; feedback.className = 'feedback-msg error';
-        
-        // 정답 보여주기
-        const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(b => b.disabled = true);
-        btns[currentQuizList[qIndex].ans].classList.add('correct');
-
-        setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
-    }
-
-    function selectAnswer(btn, selectedIdx, correctIdx) {
-        if (quizLocked) return;
-        quizLocked = true;
-        clearInterval(currentTimerInterval); // 정답 시 타이머 정지
-        
-        const isCorrect = (selectedIdx === correctIdx);
-        const feedback = document.getElementById('quizFeedback');
-        const allBtns = document.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.disabled = true);
-
-        if (isCorrect) {
-            playSound('correct');
-            btn.classList.add('correct');
+        function switchView(target) {
+            activeTab = target;
+            document.getElementById('tab-match-btn').classList.toggle('active', target === 'match');
+            document.getElementById('tab-bell-btn').classList.toggle('active', target === 'bell');
             
-            // 점수 계산: 기본 10점 + 남은 시간 비례 보너스 (최대 15점)
-            let baseScore = 10;
-            let bonus = Math.floor(timeRemaining);
-            let earned = baseScore + bonus;
-            quizScore += earned;
-            updateQuizScoreUI();
-
-            feedback.innerHTML = `정답! <span class="time-bonus">+${earned}점 (보너스 ${bonus}점)</span>`;
-            feedback.className = 'feedback-msg success';
+            document.getElementById('view-match').style.display = target === 'match' ? 'block' : 'none';
+            document.getElementById('view-bell').style.display = target === 'bell' ? 'block' : 'none';
             
-            setTimeout(() => { qIndex++; loadQuestion(); }, 1200);
-        } else {
-            playSound('wrong');
-            btn.classList.add('wrong');
-            allBtns[correctIdx].classList.add('correct'); // 정답도 표시
-            
-            feedback.textContent = '앗, 틀렸습니다.';
-            feedback.className = 'feedback-msg error';
-            
-            setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
+            // Clean intervals on view shift
+            clearInterval(matchTimerInterval);
+            clearInterval(bellTimerInterval);
         }
-    }
 
-    function updateQuizScoreUI() {
-        document.getElementById('quizScoreDisplay').textContent = quizScore;
-    }
-
-
-    // ==========================================
-    // 3. 외부 퀴즈 연동 기능 (Excel, Kahoot 텍스트 파싱)
-    // ==========================================
-    function openImportModal() {
-        clearInterval(currentTimerInterval); // 모달 열 때 타이머 정지
-        document.getElementById('importModal').classList.add('active');
-        document.getElementById('importDataText').value = '';
-    }
-
-    function closeImportModal() {
-        document.getElementById('importModal').classList.remove('active');
-        if(currentQuizList.length > 0) startQuizTimer(); // 다시 타이머 재개
-    }
-
-    function applyImportData() {
-        const text = document.getElementById('importDataText').value.trim();
-        if (!text) { alert("데이터를 입력해주세요."); return; }
-
-        const lines = text.split('\n');
-        const newQuizzes = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
+        /* --- MODULE 1: KDC MATCHING LOGIC --- */
+        function startMatchGame() {
+            document.getElementById('match-start-screen').style.display = 'none';
+            document.getElementById('match-complete-screen').style.display = 'none';
+            document.getElementById('match-game-area').style.display = 'block';
             
-            // 탭(\t) 또는 쉼표(,) 기준으로 분리 (엑셀/CSV 호환)
-            const separator = line.includes('\t') ? '\t' : ',';
-            const parts = line.split(separator).map(p => p.trim());
+            matchScoreValue = 0;
+            document.getElementById('match-score').textContent = matchScoreValue;
+            
+            // Pick 8 random pairs from pool
+            const shuffledPool = [...kdcMasterPool].sort(() => 0.5 - Math.random());
+            const selectedPairs = shuffledPool.slice(0, 8);
+            
+            matchCards = [];
+            selectedPairs.forEach((item, index) => {
+                matchCards.push({ id: index, type: 'code', text: item.code, pairId: index });
+                matchCards.push({ id: index, type: 'name', text: item.name, pairId: index });
+            });
+            
+            // Shuffle final card layout array
+            matchCards.sort(() => 0.5 - Math.random());
+            
+            const container = document.getElementById('card-container');
+            container.innerHTML = '';
+            
+            matchCards.forEach((card, idx) => {
+                const cardEl = document.createElement('div');
+                cardEl.classList.add('memory-card', 'flipped'); // Start flipped for 3s preview
+                cardEl.dataset.index = idx;
+                cardEl.textContent = card.text;
+                cardEl.addEventListener('click', handleCardClick);
+                container.appendChild(cardEl);
+            });
 
-            if (parts.length >= 6) {
-                const ansNum = parseInt(parts[5]);
-                if (isNaN(ansNum) || ansNum < 1 || ansNum > 4) {
-                    alert(`${i+1}번째 줄의 정답 번호가 잘못되었습니다. (1~4 사이 숫자여야 함)`);
-                    return;
+            // 3 Seconds Absolute Memory Phase
+            lockMatchBoard = true;
+            let previewSeconds = 3;
+            document.getElementById('match-timer-text').textContent = `👀 암기 시간: ${previewSeconds}초 남음`;
+            
+            let previewInterval = setInterval(() => {
+                previewSeconds--;
+                if (previewSeconds <= 0) {
+                    clearInterval(previewInterval);
+                    // Hide cards
+                    const cards = document.querySelectorAll('.memory-card');
+                    cards.forEach(c => c.classList.remove('flipped'));
+                    lockMatchBoard = false;
+                    document.getElementById('match-timer-text').textContent = "🎯 매칭 진행 중!";
+                } else {
+                    document.getElementById('match-timer-text').textContent = `👀 암기 시간: ${previewSeconds}초 남음`;
                 }
-                newQuizzes.push({
-                    q: parts[0],
-                    options: [parts[1], parts[2], parts[3], parts[4]],
-                    ans: ansNum - 1 // 0-based index로 변환
-                });
-            } else {
-                alert(`${i+1}번째 줄 형식이 맞지 않습니다. (항목 부족)`);
+            }, 1000);
+        }
+
+        function handleCardClick() {
+            if (lockMatchBoard) return;
+            const clickedCardEl = this;
+            
+            if (clickedCardEl.classList.contains('matched') || clickedCardEl.classList.contains('flipped')) {
                 return;
             }
+
+            clickedCardEl.classList.add('flipped');
+            const cardIndex = clickedCardEl.dataset.index;
+            const cardData = matchCards[cardIndex];
+
+            if (!firstCard) {
+                firstCard = { el: clickedCardEl, data: cardData };
+            } else {
+                secondCard = { el: clickedCardEl, data: cardData };
+                checkCardMatch();
+            }
         }
 
-        if (newQuizzes.length > 0) {
-            currentQuizData = newQuizzes;
-            alert(`${newQuizzes.length}개의 퀴즈가 성공적으로 불러와졌습니다!`);
-            document.getElementById('importModal').classList.remove('active');
-            initQuizGame();
+        function checkCardMatch() {
+            // Prevent clicking others during analytical verification
+            if (firstCard.data.text === secondCard.data.text) {
+                // Clicked exact same element twice fallback guard
+                firstCard.el.classList.remove('flipped');
+                firstCard = null;
+                secondCard = null;
+                return;
+            }
+
+            lockMatchBoard = true;
+            if (firstCard.data.pairId === secondCard.data.pairId) {
+                // Success Match detected
+                setTimeout(() => {
+                    firstCard.el.classList.add('matched');
+                    secondCard.el.classList.add('matched');
+                    matchScoreValue += 10;
+                    document.getElementById('match-score').textContent = matchScoreValue;
+                    
+                    firstCard = null;
+                    secondCard = null;
+                    lockMatchBoard = false;
+                    
+                    // Check Victory conditions
+                    const totalMatched = document.querySelectorAll('.memory-card.matched').length;
+                    if (totalMatched === matchCards.length) {
+                        endMatchGameWithSuccess();
+                    }
+                }, 300);
+            } else {
+                // Match Failed
+                setTimeout(() => {
+                    firstCard.el.classList.remove('flipped');
+                    secondCard.el.classList.remove('flipped');
+                    firstCard = null;
+                    secondCard = null;
+                    lockMatchBoard = false;
+                }, 800);
+            }
         }
-    }
+
+        function endMatchGameWithSuccess() {
+            document.getElementById('match-game-area').style.display = 'none';
+            document.getElementById('match-complete-screen').style.display = 'flex';
+        }
 
 
-    // ==========================================
-    // 공통 결과 모달
-    // ==========================================
-    function showResult(title, finalScore, restartCallback) {
-        clearInterval(currentTimerInterval);
-        const modal = document.getElementById('resultModal');
-        document.getElementById('modalTitle').textContent = title;
-        document.getElementById('modalDesc').textContent = `최종 점수: ${finalScore}점`;
-        
-        const btn = document.getElementById('modalBtn');
-        btn.onclick = () => {
-            modal.classList.remove('active');
-            restartCallback();
-        };
+        /* --- MODULE 2: SPEED GOLDEN BELL QUIZ LOGIC --- */
+        function startGoldenBell() {
+            if (activeQuizSet.length === 0) {
+                alert("불러온 퀴즈 리스트 항목 데이터가 존재하지 않습니다.");
+                return;
+            }
+            document.getElementById('bell-start-screen').style.display = 'none';
+            document.getElementById('bell-complete-screen').style.display = 'none';
+            document.getElementById('bell-game-area').style.display = 'block';
+            
+            currentQuestionIndex = 0;
+            bellScoreValue = 0;
+            document.getElementById('bell-score').textContent = bellScoreValue;
+            
+            loadGoldenBellQuestion();
+        }
 
-        modal.classList.add('active');
-        
-        var duration = 2.5 * 1000;
-        var end = Date.now() + duration;
-        (function frame() {
-            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#3182CE', '#DD6B20', '#FFFFFF'] });
-            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#3182CE', '#DD6B20', '#FFFFFF'] });
-            if (Date.now() < end) requestAnimationFrame(frame);
-        }());
-    }
+        function loadGoldenBellQuestion() {
+            clearInterval(bellTimerInterval);
+            
+            if (currentQuestionIndex >= activeQuizSet.length) {
+                endGoldenBellGame();
+                return;
+            }
 
-</script>
+            document.getElementById('bell-progress').textContent = `${currentQuestionIndex + 1} / ${activeQuizSet.length}`;
+            
+            const questionData = activeQuizSet[currentQuestionIndex];
+            document.getElementById('bell-question-text').textContent = `Q. ${questionData.q}`;
+            
+            const optionsContainer = document.getElementById('bell-options-container');
+            optionsContainer.innerHTML = '';
+            
+            questionData.a.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.classList.add('brutal-btn', 'option-btn');
+                btn.textContent = `${index + 1}. ${optText}`;
+                btn.onclick = () => submitGoldenBellAnswer(index + 1);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Start countdown metrics (15 seconds total)
+            bellTimeLeft = 150;
+            const timerBar = document.getElementById('bell-timer-bar');
+            timerBar.style.width = '100%';
+            timerBar.style.backgroundColor = 'var(--main-green)';
+
+            bellTimerInterval = setInterval(() => {
+                bellTimeLeft--;
+                const percentage = (bellTimeLeft / 150) * 100;
+                timerBar.style.width = `${percentage}%`;
+
+                if (bellTimeLeft < 50) {
+                    timerBar.style.backgroundColor = 'var(--main-pink)';
+                } else if (bellTimeLeft < 100) {
+                    timerBar.style.backgroundColor = 'var(--main-yellow)';
+                }
+
+                if (bellTimeLeft <= 0) {
+                    clearInterval(bellTimerInterval);
+                    showToast("⏰ 시간 초과! 다음 문제로 강제 진행합니다.");
+                    currentQuestionIndex++;
+                    setTimeout(loadGoldenBellQuestion, 1200);
+                }
+            }, 100);
+        }
+
+        function submitGoldenBellAnswer(selectedNum) {
+            clearInterval(bellTimerInterval);
+            const questionData = activeQuizSet[currentQuestionIndex];
+            
+            if (selectedNum === questionData.c) {
+                // Correct match calculations with time bonus parameters
+                const timeBonus = Math.floor(bellTimeLeft / 10);
+                const earnedPoints = 10 + timeBonus;
+                bellScoreValue += earnedPoints;
+                document.getElementById('bell-score').textContent = bellScoreValue;
+                showToast(`정답입니다! +${earnedPoints}점 (타임보너스 포함)`);
+            } else {
+                showToast(`❌ 오답입니다! 정답은 ${questionData.c}번이었습니다.`);
+            }
+
+            currentQuestionIndex++;
+            setTimeout(loadGoldenBellQuestion, 1200);
+        }
+
+        function endGoldenBellGame() {
+            document.getElementById('bell-game-area').style.display = 'none';
+            document.getElementById('bell-complete-screen').style.display = 'flex';
+            document.getElementById('bell-final-score').textContent = bellScoreValue;
+        }
+
+        /* --- MODULE 3: SPREADSHEET TSV PARSER EXTENSION --- */
+        function importCustomQuiz() {
+            const rawText = document.getElementById('custom-tsv-input').value.trim();
+            if (!rawText) {
+                alert("스프레드시트에서 복사한 텍스트 데이터 영역이 공백 상태입니다.");
+                return;
+            }
+
+            const lines = rawText.split('\n');
+            const newQuizArray = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                // Excel spreadsheet default structural copying splits rows via horizontal tabs
+                const columns = lines[i].split('\t');
+                
+                if (columns.length < 6) {
+                    alert(`행 구조 검증 오류 (${i + 1}번째 줄): 최소 6개의 열이 요구됩니다.\n[문제, 보기1, 보기2, 보기3, 보기4, 정답번호] 순서인지 정밀 점검하십시오.`);
+                    return;
+                }
+
+                const qText = columns[0].trim();
+                const opt1 = columns[1].trim();
+                const opt2 = columns[2].trim();
+                const opt3 = columns[3].trim();
+                const opt4 = columns[4].trim();
+                const correctNum = parseInt(columns[5].trim());
+
+                if (isNaN(correctNum) || correctNum < 1 || correctNum > 4) {
+                    alert(`정답 번호 유효성 실패 (${i + 1}번째 줄): 정답 영역 숫자는 1부터 4 사이의 정수 포맷만 매핑 가능합니다.`);
+                    return;
+                }
+
+                newQuizArray.push({
+                    q: qText,
+                    a: [opt1, opt2, opt3, opt4],
+                    c: correctNum
+                });
+            }
+
+            if (newQuizArray.length > 0) {
+                activeQuizSet = newQuizArray;
+                showToast(`✅ 성공! 총 ${activeQuizSet.length}개의 맞춤형 컴파일 문제 세트 로드 완료.`);
+                if (activeTab === 'bell') {
+                    startGoldenBell();
+                }
+            }
+        }
+
+        function resetDefaultQuiz() {
+            activeQuizSet = JSON.parse(JSON.stringify(defaultQuizSet));
+            document.getElementById('custom-tsv-input').value = '';
+            showToast("기본 도서관 데이터셋 인스턴스로 원상 복원되었습니다.");
+            if (activeTab === 'bell') {
+                startGoldenBell();
+            }
+        }
+    </script>
 </body>
 </html>
