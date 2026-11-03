@@ -1,42 +1,570 @@
-<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>문태양 - Portfolio</title><style>  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');  :root{    --ink:#17150f;    --paper:#f4f1ea;    --line:#d8d2c4;    --accent:#b34700;    --muted:#6b6557;  }  *{box-sizing:border-box;margin:0;padding:0}  html{scroll-behavior:smooth}  body{    font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;    background:var(--paper); color:var(--ink); line-height:1.75;    -webkit-font-smoothing:antialiased;    position: relative;  }  .wrap{max-width:880px;margin:0 auto;padding:0 24px}  a{color:inherit; transition: color 0.2s;}    .top{    display:flex;justify-content:space-between;align-items:baseline;    padding:22px 0;border-bottom:1px solid var(--line);    font-size:.92rem;color:var(--muted);  }  .top b{color:var(--ink);letter-spacing:.04em}  .top nav{display:flex;gap:18px}  .top nav a{text-decoration:none}  .top nav a:hover{color:var(--accent)}
-  .hero{padding:96px 0 72px;border-bottom:1px solid var(--line)}  .hero .small{font-size:.95rem;color:var(--muted);margin-bottom:18px}  .hero h1{    font-size:clamp(2.6rem,7vw,4.4rem);    line-height:1.08;letter-spacing:-.03em;font-weight:800;  }  .hero h1 span{color:var(--accent)}  .hero p{max-width:34em;margin-top:26px;font-size:1.08rem}  .hero .meta{    margin-top:34px;display:flex;flex-wrap:wrap;gap:10px 26px;    font-size:.95rem;color:var(--muted)  }
-  section{padding:72px 0;border-bottom:1px solid var(--line)}  .label{    font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;    color:var(--accent);margin-bottom:18px;font-weight:700  }  h2{font-size:1.7rem;letter-spacing:-.02em;margin-bottom:22px}  .lead{max-width:36em;color:#3d392f}
-  .two{    display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:34px  }  .two h3{font-size:1.12rem;margin-bottom:8px}  .two p{color:#4a453a;font-size:.98rem}
-  /* Work Section Styles */  .work-group {    margin-top: 48px;  }  .work-group-title {    font-size: 1.05rem;    color: var(--muted);    border-bottom: 1px solid var(--line);    padding-bottom: 8px;    margin-bottom: 24px;    font-weight: 600;  }    .work{margin-top:40px;padding-top:0;}  .work h3{font-size:1.25rem;letter-spacing:-.01em; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}  .work .when{font-size:.88rem;color:var(--muted);margin:4px 0 12px}  .work p{max-width:38em;color:#3d392f}  .work ul{margin:14px 0 0 18px;color:#4a453a;font-size:.97rem}  .work li+li{margin-top:4px}    .project-link {    font-size: 0.85rem;    background: var(--line);    padding: 2px 10px;    border-radius: 12px;    text-decoration: none;    color: var(--ink);    font-weight: 500;  }  .project-link:hover {    background: var(--accent);    color: var(--paper);  }  .project-link.disabled {    background: transparent;    border: 1px solid var(--line);    color: var(--muted);    pointer-events: none;  }
-  /* Image Gallery Styles */  .gallery {    display: grid;    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));    gap: 16px;    margin-top: 20px;  }  .gallery img {    width: 100%;    height: auto;    object-fit: cover;    border-radius: 6px;    border: 1px solid var(--line);    box-shadow: 0 2px 4px rgba(0,0,0,0.05);    transition: transform 0.2s ease, box-shadow 0.2s ease;  }  .gallery img:hover {    transform: translateY(-2px);    box-shadow: 0 4px 12px rgba(0,0,0,0.1);  }
-  .contact{    padding:80px 0 110px;border-bottom:0  }  .contact h2{font-size:2rem}  .contact a{    display:inline-block;margin-top:16px;text-decoration:none;    border-bottom:2px solid var(--accent);padding-bottom:2px;font-weight:600  }  .contact a:hover{color:var(--accent)}
-  footer{    padding:26px 0 42px;color:var(--muted);font-size:.85rem;    border-top:1px solid var(--line)  }
-  /* 탐색 도우미 (Scroll Spy) 스타일 */  .nav-assistant {    position: fixed;    top: 50%;    right: 24px;    transform: translateY(-50%);    display: flex;    flex-direction: column;    gap: 16px;    background: rgba(244, 241, 234, 0.7);    backdrop-filter: blur(10px);    padding: 16px 10px;    border-radius: 30px;    border: 1px solid var(--line);    box-shadow: 0 4px 12px rgba(0,0,0,0.03);    z-index: 1000;  }  .nav-dot {    width: 10px;    height: 10px;    border-radius: 50%;    background: var(--line);    transition: all 0.3s ease;    cursor: pointer;    position: relative;    text-decoration: none;  }  .nav-dot.active {    background: var(--accent);    transform: scale(1.3);  }  .nav-dot::after {    content: attr(data-tooltip);    position: absolute;    right: 24px;    top: 50%;    transform: translateY(-50%);    background: var(--ink);    color: var(--paper);    padding: 4px 10px;    font-size: 0.75rem;    border-radius: 6px;    opacity: 0;    pointer-events: none;    transition: opacity 0.2s, transform 0.2s;    white-space: nowrap;    font-weight: 500;  }  .nav-dot:hover::after {    opacity: 1;    transform: translateY(-50%) translateX(-4px);  }
-  @media (max-width:800px) {    .nav-assistant { display: none; }  }
-  @media (max-width:680px){    .hero{padding:64px 0 52px}    section{padding:56px 0}    .two{grid-template-columns:1fr;gap:24px}    .top{flex-direction:column;gap:10px}    .gallery { grid-template-columns: 1fr 1fr; }  }</style></head><body>
-<!-- 탐색 도우미 --><div class="nav-assistant">  <a href="#top" class="nav-dot active" data-tooltip="Intro" id="dot-top"></a>  <a href="#about" class="nav-dot" data-tooltip="About" id="dot-about"></a>  <a href="#work" class="nav-dot" data-tooltip="Activities" id="dot-work"></a>  <a href="#contact" class="nav-dot" data-tooltip="Contact" id="dot-contact"></a></div>
-<div class="wrap" id="top">
-  <div class="top">    <b>문태양</b>    <nav>      <a href="#about">소개</a>      <a href="#work">활동 및 프로젝트</a>      <a href="#contact">연락</a>    </nav>  </div>
-  <!-- 관측을 위해 id를 명확히 분리 -->  <header class="hero scroll-section" id="intro">    <p class="small">상업정보교육과 · 문헌정보교육과 복수전공</p>    <h1>배우고, 엮어내어<br>작은 것을 <span>만들어</span> 봅니다.</h1>    <p>      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 그것을 기획안, 시각적 디자인, 또는 실용적인 도구로 구현해 내는 과정을 즐깁니다. 일상의 불편함을 줄이거나 사회에 긍정적인 가치를 더하는 일에 관심이 많습니다.    </p>    <div class="meta">      <span>교육과 지식정보</span>      <span>시각 디자인</span>      <span>기획 및 아이디어</span>    </div>  </header>
-  <section id="about" class="scroll-section">    <p class="label">About</p>    <h2>지금 관심 있는 것</h2>    <p class="lead">      상업정보와 문헌정보학을 함께 배우며, "정보를 사람들에게 어떻게 더 유용하고 매력적으로 전달할 수 있을까"를 치열하게 고민하고 있습니다.    </p>    <div class="two">      <div>        <h3>기획과 제안</h3>        <p>복잡한 문제를 분석하고 실현 가능한 아이디어로 풀어내는 것을 좋아합니다. 도서관 정책부터 지역 축제까지 공간과 사람을 잇는 기획을 시도하고 있습니다.</p>      </div>      <div>        <h3>시각화와 도구 제작</h3>        <p>추상적인 아이디어를 포스터, 엠블럼 등의 시각 디자인으로 표현하거나, 일상에서 바로 쓸 수 있는 프로그램과 기기를 직접 만들어보며 기술을 익히고 있습니다.</p>      </div>    </div>  </section>
-  <section id="work" class="scroll-section">    <p class="label">Activities</p>    <h2>해본 것</h2>    <p class="lead">관심사를 바탕으로 도전했던 공모전 기획과 다양한 시각 디자인, 그리고 직접 코드를 짜서 만든 웹/하드웨어 프로젝트 기록입니다.</p>
-    <!-- Group 1: 디자인 프로젝트 전시 -->    <div class="work-group">      <div class="work-group-title">시각 디자인 및 3D 모델링</div>            <article class="work">        <h3>학교 마스코트 미니블록 디자인</h3>        <p class="when">3학년</p>        <p>학교의 마스코트 캐릭터를 활용하여, 입체적인 3D 미니블록 형태로 재구성 및 디자인한 결과물입니다. 다각도(앞, 뒤, 옆, 대각선)에서 조립 형태를 확인할 수 있도록 렌더링했습니다.</p>        <div class="gallery">          <img src="대각선.png" alt="미니블록 대각선">          <img src="앞.png" alt="미니블록 앞면">          <img src="옆.png" alt="미니블록 옆면">          <img src="뒤.png" alt="미니블록 뒷면">        </div>      </article>            <!-- 프로젝트 1: 경기도 전국체전 디자인 -->      <article class="work">        <h3>경기 전국체전 디자인</h3>        <p class="when">그래픽 디자인 공모</p>        <p>경기도에서 열리는 제108회 전국체육대회 및 제48회 전국장애인체육대회의 정체성을 담아낸 시각물 디자인 작업입니다. 양 대회의 통합 엠블럼과 공식 포스터를 직접 기획하고 구현했습니다.</p>        <div class="gallery">          <img src="양대회통합–엠블럼–260108-문태양.png" alt="제108회 전국체전 통합 엠블럼">          <img src="전국장애인체전–포스터–260108-문태양.png" alt="제108회 전국체전 대회 포스터">        </div>      </article>
-      <!-- 프로젝트 2: 제주 전국체전 메달 디자인 -->      <article class="work">        <h3>제주 전국체전 메달 디자인</h3>        <p class="when">그래픽 디자인 공모</p>        <p>제주도에서 개최되는 제107회 전국체육대회 및 제47회 전국장애인체육대회의 상징성을 담은 메달 디자인 작업입니다. 제주의 자연과 체전의 열정을 담아 메달의 앞면과 뒷면을 직접 기획하고 구현했습니다.</p>        <div class="gallery">          <img src="메달 앞면.png" alt="제107회 전국체전 메달 앞면">          <img src="메달 뒷면.png" alt="제107회 전국체전 메달 뒷면">        </div>      </article>
-      <article class="work">        <h3>밴드부 홍보물 제작</h3>        <p class="when">동아리 시각물 디자인</p>        <p>밴드부 '봉황 Phoenix'의 신입부원 모집을 위한 홍보용 이미지 타이포그래피 및 카드뉴스 컷을 디자인했습니다.</p>        <div class="gallery">          <img src="컷1-4123.png" alt="밴드부 홍보물 1">          <img src="컷2-4 (2).png" alt="밴드부 홍보물 2">          <img src="컷3-4 (2).png" alt="밴드부 홍보물 3">          <img src="컷4-4 (2).png" alt="밴드부 홍보물 4">        </div>      </article>
-      <article class="work">        <h3>학교 체크카드 디자인</h3>        <p class="when">2학년 학교 공모전</p>        <p>재학생들이 실생활에서 사용하는 학교 체크카드의 그래픽 디자인을 기획했습니다. 학교의 상징적인 색상과 요소를 조합하여 가시성을 높였습니다.</p>        <div class="gallery" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">          <img src="카드 앞면.png" alt="카드 앞면">          <img src="카드 뒷면.png" alt="카드 뒷면">        </div>      </article>
-      <article class="work">        <h3>학과 단체복(과잠) 디자인</h3>        <p class="when">그래픽 디자인</p>        <p>상업정보교육과(Business Finance Education) 학우들을 위한 단체복 등판 타이포그래피와 소매 로고를 디자인했습니다. (※ 디자인 내 '21'은 레이아웃 요소로 차용된 이름일 뿐, 특정 학번만을 위한 디자인은 아닙니다.)</p>        <div class="gallery">          <img src="아트보드 1.png" alt="과잠 디자인 시안 1">          <img src="아트보드 1 - 복사본.png" alt="과잠 디자인 시안 2">        </div>      </article>    </div>
-    <!-- Group 2: 기획 및 공모전 -->    <div class="work-group">      <div class="work-group-title">정책 기획 및 공모전</div>            <article class="work">        <h3>2026 미래도서관 정책 아이디어 해커톤</h3>        <p class="when">정책 제안 공모</p>        <p>환경 문제와 도서관의 사회적 역할을 결합한 「순록: 순환하는 녹색 도서관」 정책을 기획했습니다. 다회용기 리필 거점과 기후변화 교육 전시관 등 세부적인 예산 편성과 공간 혁신안을 도출했습니다.</p>      </article>
-      <article class="work">        <h3>상주 대표축제 공모</h3>        <p class="when">아이디어 기획 공모</p>        <p>상주시의 지역 특산물(상추, 돼지고기 등)과 상권을 연계한 「상주 쌈박 페스티벌」을 종합 기획했습니다. 순방문객 1만 5천 명 유치를 위한 핵심 콘텐츠 및 비축척 공간배치 개념도를 작성했습니다.</p>      </article>          <!-- 학술 소논문 추가 항목 -->    <article class="work">      <h3>학술 소논문: 복합문화기관으로서의 도서관 평가 모형 개선 방안 연구 <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a></h3>      <p class="when">학술 연구 / OPEN-Qual 모형 개발</p>      <p>현대 도서관이 요구받는 물리적·기능적 복합화 요소를 체계적으로 진단하기 위해 온·오프라인 환경의 개방성, 이용자의 다층적 경험 및 잠재적 불만 요인을 진단하는 새로운 서비스 품질 평가 도구 'OPEN-Qual' 모형을 제안하고 설계했습니다.</p>            <div class="pdf-preview-container" style="margin-top: 15px;">        <details style="background: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 10px;">          <summary style="font-weight: 600; cursor: pointer; color: #555; outline: none; user-select: none;">논문 본문 바로보기 (클릭)</summary>          <div style="margin-top: 12px; position: relative; padding-bottom: 141.4%; height: 0; overflow: hidden; border-radius: 4px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);">            <iframe src="소논문_202300133_문태양.pdf"                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"                     allowfullscreen>            </iframe>          </div>        </details>      </div>    </article>              </div>
-<!-- Group 3: 개발 및 교육용 웹 교구 제작 -->    <div class="work-group">      <div class="work-group-title">하드웨어 제어 및 반응형 웹 앱 제작</div>
-      <article class="work">        <h3>OmenMax16 커스텀 쿨링 제어</h3>        <p class="when">C# / 하드웨어 모니터링</p>        <p>HP Omen 16 랩탑의 발열 및 소음을 효율적으로 제어하기 위해 BIOS 수준의 명령을 직접 호출하여 동작하는 전용 쿨링 소프트웨어를 개발했습니다.</p>        <div class="gallery" style="grid-template-columns: 1fr;">          <img src="image_5f2b92.png" alt="Omen Control Dashboard" style="max-width: 600px;">        </div>      </article>
-      <article class="work">        <h3>컴퓨터 원격 부팅 기기 제작</h3>        <p class="when">아두이노 (ESP-32 Super mini)</p>        <p>네트워크 밖에서도 PC를 원격으로 켜고 관리하기 위해 ESP-32 Super mini 보드를 활용한 원격 부팅 하드웨어를 직접 구성했습니다. WOL 환경의 한계를 하드웨어적으로 극복했습니다.</p>      </article>
-      <article class="work">        <h3>좌석 관리 펌웨어 <a href="https://github.com/nlasdnfkl2/frog-seat-manager-fw" target="_blank" rel="noopener noreferrer" class="project-link">GitHub &rarr;</a></h3>        <p class="when">아두이노 프로젝트</p>        <p>특정 좌석의 상태를 관리하고 모니터링하기 위한 펌웨어(Seat Manager)를 개발하고 코드를 기록했습니다.</p>      </article>            <article class="work">        <h3>오늘의 할 일 관리 <a href="todo.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">개인 웹 프로젝트</p>        <p>복잡한 기능 없이 하루의 목표를 직관적으로 추가하고 완료를 체크할 수 있는 브라우저 기반의 가벼운 웹 도구를 제작했습니다.</p>      </article>
-      <article class="work">        <h3>디지털 도장 생성기 <a href="stamp.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">개인 웹 프로젝트</p>        <p>사용자가 이름을 입력하고 원하는 글꼴과 모양을 선택하여 배경이 투명한 디지털 도장 이미지를 실시간으로 생성하고 다운로드할 수 있는 웹 도구를 제작했습니다.</p>      </article>            <article class="work">        <h3>마음의 문장들 : 감정별 명언 추천 앱 <a href="myeongeon.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">웹 기반 인터랙티브 앱 (실습 4)</p>        <p>사용자의 감정 상태(행복, 우울, 번아웃, 불안)를 버튼으로 입력받아 그에 맞는 위로와 격려의 문장을 무작위로 제시하는 감정 상태별 명언 추천 앱을 제작했습니다. 동일 문장 연속 출현 방지 알고리즘과 구글 검색 연동 기능을 포함했습니다.</p>      </article>            <article class="work">        <h3>기억력 짝맞추기 게임 <a href="cardgame.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">학습용 디지털 교구 제작 (실습 5)</p>        <p>초등학생의 집중력을 높일 수 있는 2D 웹 기반 동물 짝맞추기 게임을 구현했습니다. 카드 뒤집기 애니메이션, 짝 맞춤 판정 로직, 점수판 시스템 및 완료 시 폭죽 파티클 효과를 적용했습니다.</p>      </article>            <article class="work">        <h3>도서관 지식 라운지 : 통합 교육 앱 <a href="libgame.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">맞춤형 디지털 학습 도구 (실습 6 통합)</p>        <p>중학생 도서관 이용자를 타겟으로 KDC 강목 짝맞추기 게임과 4지선다형 객관식 퀴즈를 하나로 통합한 웹 교구입니다. 타이머 제한과 외부 데이터(엑셀) 연동 기능을 통해 실시간 채점 및 피드백을 제공합니다.</p>      </article>
-      <article class="work">        <h3>평면도형 학습 도구 <a href="2d-viewer.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">수학 교과 디지털 교구 (실습 7)</p>        <p>평면도형의 공간지각 개념을 시각적으로 확인할 수 있는 조작형 교구입니다. 도형의 회전 및 좌우/상하 뒤집기 조작을 지원하는 '연습 모드'와 랜덤으로 제시되는 목표를 맞추는 '퀴즈 모드'가 있습니다.</p>      </article>
-      <article class="work">        <h3>입체도형 학습 도구 <a href="3d-viewer.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">수학 교과 디지털 교구 (실습 7 변형)</p>        <p>입체도형의 공간지각 개념을 시각적으로 확인할 수 있는 조작형 교구입니다. 역사적 사건과 관련된 도형을 관찰할 수 있습니다.</p>      </article>            <article class="work">        <h3>인터랙티브 사건 연표 <a href="timeline.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">데이터 시각화 웹 앱 (실습 8)</p>        <p>사건의 발생 순서와 시대적 흐름을 직관적으로 파악할 수 있도록 시간 순서대로 배치된 가로 스크롤 타임라인 앱입니다. 노드 클릭 시 상세 설명 팝업이 출력됩니다.</p>      </article>
-      <article class="work">        <h3>디지털 리터러시 다각형 평가 차트 <a href="literacy.html" class="project-link" target="_blank" rel="noopener noreferrer">열기 &rarr;</a></h3>        <p class="when">데이터 시각화 도구 (실습 9)</p>        <p>학생들의 역량 지표 사전 및 사후 평가 결과를 입력받아, 다각형 레이더 차트로 겹쳐 렌더링함으로써 역량 변화와 성장 정도를 직관적으로 비교 분석할 수 있는 시각화 프로그램입니다.</p>      </article>          </div>  </section>
-  <section id="contact" class="scroll-section">    <p class="label">Contact</p>    <h2>이야기하고 싶은 것이 있다면</h2>    <a href="mailto:nn80300@naver.com">nn80300@naver.com</a>  </section>
-  <footer>    © 문태양. 직접 기록하고 만든 개인 포트폴리오입니다.  </footer>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>문태양 - Portfolio</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+    
+    :root {
+      /* 사용자 선호 에디토리얼 테마 유지 (미니멀, 종이 질감, 다크 잉크) */
+      --ink: #17150f;
+      --paper: #f4f1ea;
+      --line: #d8d2c4;
+      --accent: #b34700;
+      --muted: #6b6557;
+      --bg-card: #fcfbf9;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--paper); 
+      color: var(--ink); 
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    a { color: inherit; transition: color 0.2s ease; }
+    
+    /* 헤더 네비게이션 */
+    .top {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 22px 0; border-bottom: 1px solid var(--line);
+      font-size: 0.92rem; color: var(--muted);
+    }
+    .top b { color: var(--ink); letter-spacing: 0.04em; }
+    .top nav { display: flex; gap: 24px; }
+    .top nav a { text-decoration: none; font-weight: 500; }
+    .top nav a:hover { color: var(--accent); }
+
+    /* 히어로 섹션 */
+    .hero { padding: 110px 0 80px; border-bottom: 1px solid var(--line); }
+    .hero .small { font-size: 0.95rem; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 4.6rem);
+      line-height: 1.1; letter-spacing: -0.03em; font-weight: 800;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p { max-width: 36em; margin-top: 28px; font-size: 1.1rem; color: #3d392f; }
+    .hero .meta {
+      margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px 28px;
+      font-size: 0.95rem; color: var(--muted); font-weight: 500;
+    }
+
+    /* 공통 섹션 스타일 */
+    section { padding: 80px 0; border-bottom: 1px solid var(--line); }
+    .label {
+      font-size: 0.85rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px; font-weight: 700;
+    }
+    h2 { font-size: 1.8rem; letter-spacing: -0.02em; margin-bottom: 24px; font-weight: 700; }
+    .lead { max-width: 38em; color: #3d392f; font-size: 1.05rem; }
+
+    /* About 섹션 */
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; }
+    .two h3 { font-size: 1.15rem; margin-bottom: 10px; font-weight: 600; }
+    .two p { color: #4a453a; font-size: 1rem; }
+
+    /* Work 그룹 타이틀 */
+    .work-group { margin-top: 64px; }
+    .work-group-title {
+      font-size: 1.1rem; color: var(--muted); font-weight: 600;
+      border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 32px;
+    }
+
+    /* 일반 아티클 (정책, 소논문 등) */
+    .work { margin-top: 48px; padding-top: 0; }
+    .work h3 { font-size: 1.3rem; letter-spacing: -0.01em; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .work .when { font-size: 0.9rem; color: var(--muted); margin: 6px 0 16px; font-weight: 500; }
+    .work p { max-width: 40em; color: #3d392f; }
+    .project-link {
+      font-size: 0.85rem; background: var(--line); padding: 4px 12px;
+      border-radius: 16px; text-decoration: none; color: var(--ink); font-weight: 600;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .project-link:hover { background: var(--accent); color: var(--paper); }
+
+    /* 개선된 가로 스크롤 갤러리 (Carousel) */
+    .carousel-wrap {
+      margin-top: 24px; position: relative;
+    }
+    .carousel {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      gap: 16px; padding-bottom: 16px; -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+    .carousel::-webkit-scrollbar { height: 8px; }
+    .carousel::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 4px; }
+    .carousel::-webkit-scrollbar-track { background: var(--line); border-radius: 4px; }
+    .carousel img {
+      scroll-snap-align: start; flex: 0 0 85%; max-width: 500px; max-height: 380px;
+      object-fit: cover; border-radius: 12px; border: 1px solid var(--line);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03); background: #fff;
+    }
+    @media (min-width: 768px) { .carousel img { flex: 0 0 auto; width: 60%; } }
+
+    /* 웹 앱 / 하드웨어 프로젝트 카드 그리드 */
+    .app-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 28px; margin-top: 32px;
+    }
+    .app-card {
+      display: flex; flex-direction: column; border: 1px solid var(--line);
+      border-radius: 14px; background: var(--bg-card); overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none;
+      color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .app-card:hover {
+      transform: translateY(-6px); box-shadow: 0 16px 32px rgba(0,0,0,0.06);
+    }
+    
+    /* 웹페이지 브라우저 목업 미리보기 */
+    .browser-bar {
+      height: 36px; background: #e8e4db; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; padding: 0 14px; gap: 8px;
+    }
+    .browser-dot { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+    .browser-dot.r { background: #ff5f56; }
+    .browser-dot.y { background: #ffbd2e; }
+    .browser-dot.g { background: #27c93f; }
+    
+    .mockup-window {
+      width: 100%; padding-top: 56.25%; /* 16:9 비율 */
+      position: relative; overflow: hidden; background: #fff; border-bottom: 1px solid var(--line);
+    }
+    /* iframe을 이용한 실제 웹페이지 축소 렌더링 */
+    .mockup-window iframe {
+      position: absolute; top: 0; left: 0;
+      width: 400%; height: 400%; transform: scale(0.25); transform-origin: 0 0;
+      pointer-events: none; border: none;
+    }
+    .mockup-window img {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    /* 이미지가 없는 하드웨어/코드용 플레이스홀더 */
+    .code-placeholder {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #eae6df; color: var(--muted); font-family: monospace; font-size: 1.1rem; text-align: center; line-height: 1.4;
+    }
+
+    .app-info { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
+    .app-info .tech { font-size: 0.8rem; color: var(--accent); font-weight: 700; margin-bottom: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .app-info h3 { font-size: 1.25rem; margin-bottom: 8px; font-weight: 700; }
+    .app-info p { font-size: 0.95rem; color: #4a453a; margin-bottom: 24px; flex-grow: 1; line-height: 1.6; }
+    .app-link-btn {
+      align-self: flex-start; font-size: 0.85rem; font-weight: 600; padding: 8px 18px;
+      border-radius: 20px; background: var(--paper); border: 1px solid var(--line);
+      transition: all 0.2s; color: var(--ink);
+    }
+    .app-card:hover .app-link-btn { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* Contact 및 Footer */
+    .contact { padding: 90px 0 120px; border-bottom: 0; }
+    .contact h2 { font-size: 2.2rem; }
+    .contact a {
+      display: inline-block; margin-top: 16px; text-decoration: none; font-size: 1.1rem;
+      border-bottom: 2px solid var(--accent); padding-bottom: 2px; font-weight: 600;
+    }
+    .contact a:hover { color: var(--accent); }
+    footer { padding: 32px 0 48px; color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--line); }
+
+    /* 개선된 스크롤 스파이 네비게이터 */
+    .nav-assistant {
+      position: fixed; top: 50%; right: 24px; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 16px;
+      background: rgba(244, 241, 234, 0.85); backdrop-filter: blur(12px);
+      padding: 18px 12px; border-radius: 30px; border: 1px solid var(--line);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04); z-index: 1000;
+    }
+    .nav-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--line);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative;
+    }
+    .nav-dot.active { background: var(--accent); transform: scale(1.4); }
+    .nav-dot::after {
+      content: attr(data-tooltip); position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+      background: var(--ink); color: var(--paper); padding: 5px 12px; font-size: 0.8rem;
+      border-radius: 6px; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s; white-space: nowrap; font-weight: 600;
+    }
+    .nav-dot:hover::after { opacity: 1; transform: translateY(-50%) translateX(-6px); }
+
+    /* 스크롤 페이드인 애니메이션 */
+    .fade-in {
+      opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 860px) { .nav-assistant { display: none; } }
+    @media (max-width: 680px) {
+      .hero { padding: 80px 0 60px; }
+      section { padding: 64px 0; }
+      .two { grid-template-columns: 1fr; gap: 28px; }
+      .top { flex-direction: column; gap: 14px; }
+      .app-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 탐색 도우미 -->
+<div class="nav-assistant">
+  <div class="nav-dot active" data-tooltip="Intro" data-target="intro"></div>
+  <div class="nav-dot" data-tooltip="About" data-target="about"></div>
+  <div class="nav-dot" data-tooltip="Activities" data-target="work"></div>
+  <div class="nav-dot" data-tooltip="Contact" data-target="contact"></div>
 </div>
-<!-- Scroll Spy 스크립트 수정 적용 --><script>  document.addEventListener("DOMContentLoaded", () => {    const sections = document.querySelectorAll('.scroll-section');    const navDots = document.querySelectorAll('.nav-dot');
-    const observerOptions = {      root: null,      // 화면 상단 10%부터 하단 50% 사이의 영역에 걸칠 때 활성화되도록 설정하여 3, 4번째 섹션 구분을 명확히 함      rootMargin: '-10% 0px -40% 0px',      threshold: 0     };
 
-    const observer = new IntersectionObserver((entries) => {      entries.forEach(entry => {        if (entry.isIntersecting) {          const id = entry.target.getAttribute('id');          navDots.forEach(dot => {            dot.classList.remove('active');            // #intro(Intro)는 id가 intro이므로 dot-top과 매칭            const targetDotId = id === 'intro' ? 'dot-top' : `dot-${id}`;            if (dot.getAttribute('id') === targetDotId) {              dot.classList.add('active');            }          });        }      });    }, observerOptions);
+<div class="wrap" id="top">
+  <div class="top">
+    <b>문태양</b>
+    <nav>
+      <a href="#about">소개</a>
+      <a href="#work">활동 및 프로젝트</a>
+      <a href="#contact">연락</a>
+    </nav>
+  </div>
 
-    sections.forEach(section => {      observer.observe(section);    });  });</script>
-</body></html>
+  <header class="hero scroll-section fade-in" id="intro">
+    <p class="small">상업정보교육과 · 문헌정보교육과 복수전공</p>
+    <h1>배우고, 엮어내어<br>작은 것을 <span>만들어</span> 봅니다.</h1>
+    <p>
+      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 그것을 기획안, 시각적 디자인, 또는 실용적인 도구로 구현해 내는 과정을 즐깁니다. 일상의 불편함을 줄이거나 사회에 긍정적인 가치를 더하는 일에 관심이 많습니다.
+    </p>
+    <div class="meta">
+      <span>#교육과 지식정보</span>
+      <span>#시각 디자인</span>
+      <span>#기획 및 아이디어</span>
+    </div>
+  </header>
+
+  <section id="about" class="scroll-section fade-in">
+    <p class="label">About</p>
+    <h2>지금 관심 있는 것</h2>
+    <p class="lead">상업정보와 문헌정보학을 함께 배우며, "정보를 사람들에게 어떻게 더 유용하고 매력적으로 전달할 수 있을까"를 치열하게 고민하고 있습니다.</p>
+    <div class="two">
+      <div>
+        <h3>기획과 제안</h3>
+        <p>복잡한 문제를 분석하고 실현 가능한 아이디어로 풀어내는 것을 좋아합니다. 도서관 정책부터 지역 축제까지 공간과 사람을 잇는 기획을 시도하고 있습니다.</p>
+      </div>
+      <div>
+        <h3>시각화와 도구 제작</h3>
+        <p>추상적인 아이디어를 포스터, 엠블럼 등의 시각 디자인으로 표현하거나, 일상에서 바로 쓸 수 있는 프로그램과 기기를 직접 만들어보며 기술을 익히고 있습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="scroll-section">
+    <p class="label">Activities</p>
+    <h2 class="fade-in">해본 것</h2>
+    <p class="lead fade-in">관심사를 바탕으로 도전했던 공모전 기획과 다양한 시각 디자인, 그리고 직접 코드를 짜서 만든 웹/하드웨어 프로젝트 기록입니다.</p>
+
+    <!-- Group 1: 시각 디자인 및 3D 모델링 (갤러리 슬라이드 적용) -->
+    <div class="work-group fade-in">
+      <div class="work-group-title">시각 디자인 및 3D 모델링</div>
+      
+      <article class="work fade-in">
+        <h3>학교 마스코트 미니블록 디자인</h3>
+        <p class="when">3학년</p>
+        <p>학교의 마스코트 캐릭터를 활용하여, 입체적인 3D 미니블록 형태로 재구성 및 디자인한 결과물입니다.</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <img src="대각선.png" alt="미니블록 대각선">
+            <img src="앞.png" alt="미니블록 앞면">
+            <img src="옆.png" alt="미니블록 옆면">
+            <img src="뒤.png" alt="미니블록 뒷면">
+          </div>
+        </div>
+      </article>
+
+      <article class="work fade-in">
+        <h3>경기 전국체전 디자인</h3>
+        <p class="when">그래픽 디자인 공모</p>
+        <p>경기도에서 열리는 제108회 전국체육대회 및 제48회 전국장애인체육대회의 통합 엠블럼과 공식 포스터를 기획하고 구현했습니다.</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <img src="양대회통합–엠블럼–260108-문태양.png" alt="전국체전 통합 엠블럼">
+            <img src="전국장애인체전–포스터–260108-문태양.png" alt="전국체전 대회 포스터">
+          </div>
+        </div>
+      </article>
+
+      <article class="work fade-in">
+        <h3>제주 전국체전 메달 디자인</h3>
+        <p class="when">그래픽 디자인 공모</p>
+        <p>제주도에서 개최되는 제107회 전국체육대회의 상징성을 담은 메달 앞면과 뒷면 디자인 작업입니다.</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <img src="메달 앞면.png" alt="메달 앞면">
+            <img src="메달 뒷면.png" alt="메달 뒷면">
+          </div>
+        </div>
+      </article>
+
+      <article class="work fade-in">
+        <h3>밴드부 홍보물 및 학교 체크카드/과잠 디자인</h3>
+        <p class="when">그래픽 디자인 / 교내 활동</p>
+        <p>밴드부 '봉황' 카드뉴스, 재학생 실사용 체크카드 및 학과 단체복 등판 타이포그래피 시안 디자인 기록입니다.</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <img src="카드 앞면.png" alt="카드 앞면">
+            <img src="카드 뒷면.png" alt="카드 뒷면">
+            <img src="아트보드 1.png" alt="과잠 디자인 시안 1">
+            <img src="컷1-4123.png" alt="밴드부 홍보물">
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Group 2: 기획 및 공모전 (리스트 유지, PDF 미리보기 유지) -->
+    <div class="work-group fade-in">
+      <div class="work-group-title">정책 기획 및 학술 연구</div>
+      
+      <article class="work fade-in">
+        <h3>2026 미래도서관 정책 아이디어 해커톤</h3>
+        <p class="when">정책 제안 공모</p>
+        <p>환경 문제와 도서관의 역할을 결합한 「순록: 순환하는 녹색 도서관」 기획안입니다. 다회용기 리필 거점 등 예산과 공간 혁신안을 도출했습니다.</p>
+      </article>
+
+      <article class="work fade-in">
+        <h3>상주 대표축제 공모</h3>
+        <p class="when">아이디어 기획 공모</p>
+        <p>지역 특산물과 상권을 연계한 「상주 쌈박 페스티벌」을 종합 기획하여 핵심 콘텐츠 및 공간배치 개념도를 작성했습니다.</p>
+      </article>
+
+      <article class="work fade-in">
+        <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구 <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a></h3>
+        <p class="when">학술 연구 / OPEN-Qual 모형 개발</p>
+        <p>현대 복합문화기관으로서의 도서관 서비스 품질을 체계적으로 진단하기 위해 잠재적 불만 요인을 포함한 'OPEN-Qual' 평가 모형을 제안했습니다.</p>
+        
+        <div style="margin-top: 20px;">
+          <details style="background: var(--bg-card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;">
+            <summary style="font-weight: 600; cursor: pointer; padding: 16px; outline: none; user-select: none;">논문 본문 미리보기 (클릭하여 펼치기)</summary>
+            <div style="position: relative; padding-bottom: 141.4%; height: 0; background: #fff; border-top: 1px solid var(--line);">
+              <iframe src="소논문_202300133_문태양.pdf" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+            </div>
+          </details>
+        </div>
+      </article>
+    </div>
+
+    <!-- Group 3: 웹 앱 및 하드웨어 (카드/미리보기 그리드 레이아웃 적용) -->
+    <div class="work-group fade-in">
+      <div class="work-group-title">하드웨어 제어 및 반응형 웹 앱 제작</div>
+      
+      <div class="app-grid">
+        
+        <!-- 웹 기반 프로젝트들 (iframe 실시간 렌더링) -->
+        <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window"><iframe src="todo.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">개인 웹 프로젝트</div>
+            <h3>오늘의 할 일 관리</h3>
+            <p>복잡한 기능 없이 하루의 목표를 직관적으로 추가하고 완료를 체크할 수 있는 브라우저 기반의 가벼운 웹 도구입니다.</p>
+            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window"><iframe src="stamp.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">개인 웹 프로젝트</div>
+            <h3>디지털 도장 생성기</h3>
+            <p>이름을 입력하고 글꼴과 모양을 선택하여 배경이 투명한 디지털 도장 이미지를 실시간으로 생성 및 다운로드하는 도구입니다.</p>
+            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window"><iframe src="myeongeon.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">인터랙티브 웹 (실습 4)</div>
+            <h3>감정별 명언 추천 앱</h3>
+            <p>감정 상태(행복, 불안 등)를 입력받아 위로의 문장을 무작위로 제시합니다. 연속 출현 방지 알고리즘이 적용되었습니다.</p>
+            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window"><iframe src="cardgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">디지털 교구 (실습 5)</div>
+            <h3>기억력 짝맞추기 게임</h3>
+            <p>초등학생 집중력 향상을 위한 2D 동물 짝맞추기 게임입니다. 카드 뒤집기 애니메이션과 판정 로직을 구현했습니다.</p>
+            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window"><iframe src="libgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">통합 학습 앱 (실습 6)</div>
+            <h3>도서관 지식 라운지</h3>
+            <p>중학생 타겟으로 KDC 강목 짝맞추기와 4지선다형 퀴즈를 통합하고, 타이머 제한 및 실시간 채점 피드백을 제공합니다.</p>
+            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window"><iframe src="literacy.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">데이터 시각화 (실습 9)</div>
+            <h3>디지털 리터러시 다각형 차트</h3>
+            <p>학생들의 역량 평가 결과를 입력받아, 사전/사후 다각형 레이더 차트로 렌더링하여 성장을 직관적으로 분석합니다.</p>
+            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window"><iframe src="2d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">수학 교과 교구 (실습 7)</div>
+            <h3>평면도형 학습 도구</h3>
+            <p>도형의 회전 및 뒤집기 조작을 시각적으로 확인하는 교구로 연습 모드와 목표를 맞추는 퀴즈 모드를 지원합니다.</p>
+            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 하드웨어 및 이미지 의존 프로젝트들 (Mockup 대신 이미지 또는 텍스트 사용) -->
+        <div class="app-card fade-in" style="cursor: default; pointer-events: none;">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window">
+            <img src="image_5f2b92.png" alt="Omen Control Dashboard">
+          </div>
+          <div class="app-info">
+            <div class="tech">C# / 하드웨어 모니터링</div>
+            <h3>OmenMax16 커스텀 쿨링 제어</h3>
+            <p>HP Omen 16 랩탑의 발열 제어를 위해 BIOS 수준의 명령을 직접 호출하여 동작하는 전용 쿨링 소프트웨어를 개발했습니다.</p>
+          </div>
+        </div>
+
+        <a href="https://github.com/nlasdnfkl2/frog-seat-manager-fw" target="_blank" rel="noopener noreferrer" class="app-card fade-in">
+          <div class="browser-bar">
+            <div class="browser-dot r"></div><div class="browser-dot y"></div><div class="browser-dot g"></div>
+          </div>
+          <div class="mockup-window">
+            <div class="code-placeholder">
+              <span>&lt; / &gt;</span>
+              <span style="font-size: 0.9rem; margin-top: 8px;">ESP-32 Firmware Code</span>
+            </div>
+          </div>
+          <div class="app-info">
+            <div class="tech">아두이노 프로젝트</div>
+            <h3>좌석 관리 및 원격 부팅 펌웨어</h3>
+            <p>WOL 환경의 한계를 하드웨어적으로 극복하여 PC를 원격 부팅하고 좌석 상태를 모니터링하는 ESP-32 기반 펌웨어입니다.</p>
+            <span class="app-link-btn" style="pointer-events: auto;">GitHub 코드 보기 &rarr;</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="scroll-section fade-in contact">
+    <p class="label">Contact</p>
+    <h2>이야기하고 싶은 것이 있다면</h2>
+    <a href="mailto:nn80300@naver.com">nn80300@naver.com</a>
+  </section>
+
+  <footer>
+    © 문태양. 직접 기록하고 만든 개인 포트폴리오입니다.
+  </footer>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1. 요소 페이드인 애니메이션 (Intersection Observer)
+    const fadeElements = document.querySelectorAll('.fade-in');
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          fadeObserver.unobserve(entry.target); // 한 번만 실행
+        }
+      });
+    }, { threshold: 0.1 });
+    fadeElements.forEach(el => fadeObserver.observe(el));
+
+    // 2. 화면 내 태그가 차지하는 면적을 계산하는 정교한 Scroll Spy
+    // 스크롤 시 화면 비율이 아니라, 뷰포트에 '어떤 섹션 태그'가 가장 많이 들어와 있는지를 계산
+    const sections = document.querySelectorAll('.scroll-section');
+    const navDots = document.querySelectorAll('.nav-dot');
+    let sectionRatios = {};
+
+    const spyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        sectionRatios[entry.target.id] = entry.intersectionRatio;
+      });
+
+      // 가장 화면에 많이 보이는 섹션 찾기
+      let activeId = 'intro';
+      let maxRatio = 0;
+      for (const [id, ratio] of Object.entries(sectionRatios)) {
+        if (ratio > maxRatio) {
+          maxRatio = ratio;
+          activeId = id;
+        }
+      }
+
+      // 점 업데이트
+      if (maxRatio > 0) {
+        navDots.forEach(dot => {
+          dot.classList.remove('active');
+          if (dot.dataset.target === activeId) {
+            dot.classList.add('active');
+          }
+        });
+      }
+    }, {
+      // 5% 단위로 Intersection을 세밀하게 감지
+      threshold: Array.from({length: 21}, (_, i) => i * 0.05) 
+    });
+
+    sections.forEach(sec => spyObserver.observe(sec));
+
+    // 네비게이션 닷 클릭 시 부드러운 스크롤 이동
+    navDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const targetId = dot.dataset.target;
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
