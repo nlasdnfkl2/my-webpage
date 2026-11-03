@@ -97,7 +97,6 @@
             background-size: 30px 30px;
         }
 
-        /* 💡 수정된 부분: SVG 내부가 아닌 래퍼에 애니메이션 적용 */
         .shape-animator {
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex; justify-content: center; align-items: center;
@@ -131,7 +130,6 @@
         .shape-tab:hover { background: var(--pink); color: #fff; }
         .shape-tab.active { background: var(--ink); color: var(--yellow); transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
 
-        /* 퀴즈 모드 상단 바 */
         .quiz-top-bar {
             background: var(--yellow); border: var(--border); box-shadow: var(--shadow);
             padding: 1.5rem; margin-bottom: 2rem;
@@ -140,7 +138,6 @@
         .quiz-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 3px dashed var(--ink); padding-bottom: 1rem; }
         .quiz-instructions { font-size: 1.1rem; font-weight: 900; text-align: center; }
         
-        /* 콤보 시스템 스타일 */
         .streak-counter {
             font-size: 1.5rem; font-weight: 900; background: var(--ink); color: var(--green);
             padding: 4px 12px; border: var(--border); box-shadow: 4px 4px 0 var(--pink);
@@ -165,12 +162,10 @@
         .btn-action:hover { background: var(--ink); color: var(--yellow); transform: translate(-2px, -2px); box-shadow: var(--shadow-hover); }
         .btn-action:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
 
-        /* 피드백 박스 */
         .feedback-box { text-align: center; font-weight: 900; font-size: 1.2rem; min-height: 2rem; margin-top: 1.5rem; text-transform: uppercase; }
         .feedback-box.error { color: #ff0000; animation: shake 0.3s; background: var(--ink); display: inline-block; padding: 4px 12px; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px) rotate(-2deg);} 75% {transform: translateX(10px) rotate(2deg);} }
 
-        /* 모달 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8);
             backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center;
@@ -181,7 +176,6 @@
         .modal-card h2 { font-family: 'Nanum Myeongjo', serif; color: var(--ink); font-size: 2.5rem; margin: 1rem 0; font-weight: 900; text-shadow: 3px 3px 0 #fff; }
         .modal-card p { font-weight: 900; font-size: 1.1rem; margin-bottom: 2rem; }
 
-        /* 단축키 힌트 */
         .key-hint { display: inline-block; background: var(--ink); color: #fff; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; margin-left: 4px; vertical-align: middle;}
     </style>
 </head>
@@ -225,7 +219,6 @@
 
         <div class="workspace">
             <div class="canvas-box">
-                <!-- 💡 수정됨: 애니메이션이 부드럽게 적용되는 래퍼 -->
                 <div class="shape-animator" id="practiceShapeWrapper">
                     <div id="practiceShapeView"></div>
                 </div>
@@ -294,7 +287,6 @@
 
         <div class="workspace">
             <div class="canvas-box" style="height: 320px; background: var(--pink);">
-                <!-- 💡 수정됨: 애니메이션 래퍼 -->
                 <div class="shape-animator" id="quizShapeWrapper">
                     <div id="quizShapeView"></div>
                 </div>
@@ -329,7 +321,6 @@
 </div>
 
 <script>
-    // --- 🔊 Web Audio API (사운드 이펙트) ---
     let audioCtx = null;
     function initAudio() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -343,25 +334,24 @@
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         
-        if (type === 'tick') { // 조작음
+        if (type === 'tick') {
             osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
             gain.setValueAtTime(0.1, audioCtx.currentTime); gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-        } else if (type === 'success') { // 정답음
+        } else if (type === 'success') {
             osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
             osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
             osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.2);
             gain.setValueAtTime(0.2, audioCtx.currentTime); gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
             osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-        } else if (type === 'error') { // 오답음
+        } else if (type === 'error') {
             osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
             gain.setValueAtTime(0.2, audioCtx.currentTime); gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         }
     }
-    document.body.addEventListener('click', initAudio, { once: true }); // 유저 첫 인터랙션 시 오디오 활성화
-    // ----------------------------------------
+    document.body.addEventListener('click', initAudio, { once: true });
 
     let currentMode = 'menu';
     let comboStreak = 0;
@@ -385,7 +375,6 @@
     let practiceState = { shape: 'triangle', rot: 0, flipH: 1, flipV: 1, fillColor: '#ffde00', vertexColor: '#ff007b' };
     let quizState = { shape: 'triangle', currentRot: 0, currentFlipH: 1, currentFlipV: 1, targetRot: 0, targetFlipH: 1, targetFlipV: 1, fillColor: '#ffffff', vertexColor: '#111111' };
 
-    // 💡 수정된 부분: SVG 자체는 고정 형태로 렌더링하고, Transform은 상위 Wrapper에 적용
     function renderShapeSVG(def, fillColor, vertexColor, isMini = false) {
         const size = isMini ? 40 : 150;
         let svgHTML = `<svg width="${size}" height="${size}" viewBox="-80 -80 160 160" style="overflow: visible;"><g>`;
@@ -405,7 +394,6 @@
         return svgHTML;
     }
 
-    // --- 자유 연습 모드 ---
     function initPracticeMode() {
         document.querySelectorAll('#practiceTabs .shape-tab').forEach(tab => {
             tab.onclick = (e) => {
@@ -429,11 +417,9 @@
         const def = shapeDefinitions[practiceState.shape];
         const wrapper = document.getElementById('practiceShapeWrapper');
         document.getElementById('practiceShapeView').innerHTML = renderShapeSVG(def, practiceState.fillColor, practiceState.vertexColor);
-        // 부드러운 CSS 애니메이션을 위해 래퍼의 인라인 스타일 변경
         wrapper.style.transform = `rotate(${practiceState.rot}deg) scale(${practiceState.flipH}, ${practiceState.flipV})`;
     }
 
-    // --- 도형 조작 ---
     function transformShape(mode, action) {
         playSound('tick');
         if (mode === 'practice') {
@@ -459,7 +445,6 @@
         }
     }
 
-    // --- 퀴즈 모드 ---
     function initQuizMode() {
         const shapes = Object.keys(shapeDefinitions);
         quizState.shape = shapes[Math.floor(Math.random() * shapes.length)];
@@ -473,7 +458,6 @@
         
         const def = shapeDefinitions[quizState.shape];
         
-        // 목표 도형 그리기 및 회전 적용
         document.getElementById('targetPreview').innerHTML = renderShapeSVG(def, '#00f0ff', '#ff007b', true);
         document.getElementById('targetPreviewWrapper').style.transform = `rotate(${quizState.targetRot}deg) scale(${quizState.targetFlipH}, ${quizState.targetFlipV})`;
         
@@ -483,11 +467,9 @@
     function updateQuizView() {
         const def = shapeDefinitions[quizState.shape];
         
-        // 메인 캔버스 래퍼 제어
         document.getElementById('quizShapeView').innerHTML = renderShapeSVG(def, quizState.fillColor, quizState.vertexColor);
         document.getElementById('quizShapeWrapper').style.transform = `rotate(${quizState.currentRot}deg) scale(${quizState.currentFlipH}, ${quizState.currentFlipV})`;
         
-        // 미니 프리뷰 래퍼 제어
         document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, quizState.fillColor, quizState.vertexColor, true);
         document.getElementById('currentPreviewWrapper').style.transform = `rotate(${quizState.currentRot}deg) scale(${quizState.currentFlipH}, ${quizState.currentFlipV})`;
     }
@@ -522,7 +504,7 @@
             feedback.innerHTML = "";
         } else {
             playSound('error');
-            comboStreak = 0; // 오답 시 콤보 초기화
+            comboStreak = 0;
             updateComboUI();
             feedback.innerHTML = "오답! 조작을 다시 확인하세요.";
             feedback.className = "feedback-box error";
@@ -533,7 +515,7 @@
         const streakEl = document.getElementById('streakDisplay');
         streakEl.innerText = `🔥 COMBO: ${comboStreak}`;
         streakEl.classList.remove('pop');
-        void streakEl.offsetWidth; // reflow trigger
+        void streakEl.offsetWidth;
         if(comboStreak > 0) streakEl.classList.add('pop');
     }
 
@@ -553,9 +535,7 @@
         }());
     }
 
-    // --- ⌨️ 키보드 단축키 지원 ---
     document.addEventListener('keydown', (e) => {
-        // 모달이 켜져있을 때 Enter 누르면 다음 퀴즈
         if (document.getElementById('successModal').classList.contains('active') && e.key === 'Enter') {
             nextQuiz(); return;
         }
@@ -576,6 +556,8 @@
         }
     });
 
+    // 💡 초기 실행 시 기본 모드(practice) 상태 세팅 및 렌더링 강제 실행
+    initPracticeMode();
 </script>
 </body>
 </html>
