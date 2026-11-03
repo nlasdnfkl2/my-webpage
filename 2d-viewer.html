@@ -3,181 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>크리에이티브 평면도형 스튜디오</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>크리에이티브 평면도형 스튜디오 - Neo Brutalism</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@800;900&family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
+        /* 네오 브루탈리즘 테마 변수 */
         :root {
-            --ink: #17150f;
-            --paper: #f4f1ea;
-            --line: #d8d2c4;
-            --accent: #b34700;
-            --muted: #6b6557;
-            --panel-bg: #ffffff;
-            --success: #2e7d32;
-            --error: #c62828;
+            --bg: #dfdcd3;
+            --ink: #111111;
+            --yellow: #ffde00;
+            --pink: #ff007b;
+            --cyan: #00f0ff;
+            --green: #00ff55;
+            --border: 4px solid var(--ink);
+            --shadow: 8px 8px 0 var(--ink);
+            --shadow-hover: 12px 12px 0 var(--ink);
+            --shadow-active: 0px 0px 0 var(--ink);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* 브루탈리즘 노이즈 배경 */
+        body::before {
+            content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.1"/%3E%3C/svg%3E');
+            mix-blend-mode: overlay;
+        }
 
         body {
-            background-color: var(--paper);
+            background-color: var(--bg);
             color: var(--ink);
             font-family: 'Noto Sans KR', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1.5rem 1rem;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 2rem 1rem;
+            overflow-x: hidden;
         }
 
         .app-container {
-            width: 100%;
-            max-width: 800px;
-            background: var(--panel-bg);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            border: 1px solid var(--line);
-            padding: 2.2rem;
-            position: relative;
-            overflow: hidden;
+            width: 100%; max-width: 860px;
+            background: #fff; border: var(--border); box-shadow: var(--shadow);
+            padding: 2.5rem; position: relative;
         }
 
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section { display: none; animation: brutalSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .view-section.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+        
+        @keyframes brutalSlide {
+            0% { opacity: 0; transform: translateY(30px) rotate(2deg); }
+            100% { opacity: 1; transform: translateY(0) rotate(0); }
         }
 
-        .header { text-align: center; margin-bottom: 1.8rem; position: relative; }
-        .header h1 { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; margin: 0 0 0.4rem 0; color: var(--ink); }
-        .header p { color: var(--muted); margin: 0; font-size: 0.95rem; }
+        .header { text-align: center; margin-bottom: 2.5rem; position: relative; }
+        .header h1 { 
+            font-family: 'Nanum Myeongjo', serif; font-size: 2.4rem; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: -2px; margin-bottom: 0.5rem;
+            text-shadow: 4px 4px 0 var(--cyan); transform: skew(-2deg);
+        }
+        .header p { 
+            font-size: 1.1rem; font-weight: 900; background: var(--ink); color: var(--yellow);
+            display: inline-block; padding: 4px 12px; transform: rotate(1deg); box-shadow: 4px 4px 0 var(--pink);
+        }
 
         .btn-back {
-            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            background: none; border: none; font-size: 1.4rem; color: var(--muted);
-            cursor: pointer; transition: color 0.2s; display: flex; align-items: center;
+            position: absolute; left: 0; top: 10px;
+            background: var(--yellow); border: var(--border); box-shadow: 4px 4px 0 var(--ink);
+            font-size: 1.5rem; color: var(--ink); width: 44px; height: 44px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.1s;
         }
-        .btn-back:hover { color: var(--accent); }
+        .btn-back:hover { background: var(--pink); color: #fff; transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+        .btn-back:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
 
-        .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.5rem; }
+        .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
         .mode-card {
-            background: var(--paper); border: 2px solid var(--line);
-            border-radius: 16px; padding: 2.2rem 1.2rem; text-align: center; cursor: pointer; transition: all 0.25s ease;
+            background: #fff; border: var(--border); box-shadow: var(--shadow);
+            padding: 3rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.15s;
         }
-        .mode-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 8px 20px rgba(179, 71, 0, 0.1); }
-        .mode-card i { font-size: 3rem; color: var(--accent); margin-bottom: 0.8rem; }
-        .mode-card h3 { margin: 0 0 0.4rem 0; font-size: 1.2rem; }
-        .mode-card p { font-size: 0.85rem; color: var(--muted); margin: 0; word-break: keep-all; }
+        .mode-card:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-hover); background: var(--yellow); }
+        .mode-card:active { transform: translate(4px, 4px); box-shadow: var(--shadow-active); }
+        .mode-card i { font-size: 4rem; color: var(--ink); margin-bottom: 1rem; text-shadow: 3px 3px 0 #fff, 6px 6px 0 var(--ink); }
+        .mode-card h3 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; }
+        .mode-card p { font-size: 1rem; font-weight: 700; word-break: keep-all; }
 
-        .workspace {
-            display: grid; grid-template-columns: 1fr 290px; gap: 1.5rem; align-items: start;
-        }
-        @media(max-width: 720px) {
-            .workspace { grid-template-columns: 1fr; }
-        }
+        .workspace { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; align-items: start; }
+        @media(max-width: 768px) { .workspace { grid-template-columns: 1fr; } }
 
         .canvas-box {
-            width: 100%; height: 320px; background: var(--paper); border: 2px solid var(--line);
-            border-radius: 14px; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden;
-            background-image: radial-gradient(var(--line) 1.5px, transparent 1.5px);
-            background-size: 20px 20px;
+            width: 100%; height: 360px; background: var(--cyan); border: var(--border); box-shadow: var(--shadow);
+            display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden;
+            background-image: linear-gradient(var(--ink) 2px, transparent 2px), linear-gradient(90deg, var(--ink) 2px, transparent 2px);
+            background-size: 30px 30px;
         }
 
-        .shape-wrapper {
+        /* 💡 수정된 부분: SVG 내부가 아닌 래퍼에 애니메이션 적용 */
+        .shape-animator {
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex; justify-content: center; align-items: center;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+            transform-origin: center center;
+            filter: drop-shadow(8px 8px 0 rgba(0,0,0,0.5));
         }
 
-        .control-panel { display: flex; flex-direction: column; gap: 0.8rem; }
-        .control-group {
-            background: var(--paper); border: 1px solid var(--line); padding: 1rem; border-radius: 12px;
-        }
-        .control-group h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.6rem; }
+        .control-panel { display: flex; flex-direction: column; gap: 1.5rem; }
+        .control-group { background: #fff; border: var(--border); padding: 1.2rem; box-shadow: 4px 4px 0 var(--ink); }
+        .control-group h4 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; background: var(--ink); color: #fff; display: inline-block; padding: 2px 8px; margin-bottom: 1rem; transform: rotate(-1deg); }
 
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
         .ctrl-btn {
-            background: #FFF; border: 1px solid var(--line); border-radius: 8px;
-            padding: 0.6rem 0.4rem; font-size: 0.82rem; font-family: inherit; color: var(--ink);
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.3rem; font-weight: 500;
-            transition: all 0.2s;
+            background: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+            padding: 0.8rem 0.4rem; font-size: 0.9rem; font-family: inherit; font-weight: 900; color: var(--ink);
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+            transition: all 0.1s; text-transform: uppercase;
         }
-        .ctrl-btn:hover { border-color: var(--accent); background: rgba(179, 71, 0, 0.04); color: var(--accent); }
-        .ctrl-btn i { font-size: 1.05rem; }
+        .ctrl-btn:hover { background: var(--green); transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+        .ctrl-btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+        .ctrl-btn i { font-size: 1.2rem; }
 
-        .color-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.5rem; }
-        .color-row input[type="color"] { border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; background: none; }
+        .color-row { display: flex; align-items: center; justify-content: space-between; font-weight: 900; margin-bottom: 0.8rem; }
+        .color-row input[type="color"] { border: 2px solid var(--ink); width: 36px; height: 36px; cursor: pointer; padding: 0; box-shadow: 2px 2px 0 var(--ink); }
 
-        .shape-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .shape-tabs { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
         .shape-tab {
-            background: var(--paper); border: 1px solid var(--line); padding: 0.35rem 0.8rem;
-            border-radius: 20px; font-size: 0.82rem; cursor: pointer; font-weight: 500; font-family: inherit;
+            background: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+            padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; font-weight: 900; font-family: inherit; transition: 0.1s;
         }
-        .shape-tab.active { background: var(--accent); color: #FFF; border-color: var(--accent); }
+        .shape-tab:hover { background: var(--pink); color: #fff; }
+        .shape-tab.active { background: var(--ink); color: var(--yellow); transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
 
+        /* 퀴즈 모드 상단 바 */
         .quiz-top-bar {
-            background: var(--paper);
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
+            background: var(--yellow); border: var(--border); box-shadow: var(--shadow);
+            padding: 1.5rem; margin-bottom: 2rem;
         }
-        .quiz-instructions {
-            font-size: 0.9rem;
-            color: var(--muted);
-            text-align: center;
-            font-weight: 500;
+        
+        .quiz-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 3px dashed var(--ink); padding-bottom: 1rem; }
+        .quiz-instructions { font-size: 1.1rem; font-weight: 900; text-align: center; }
+        
+        /* 콤보 시스템 스타일 */
+        .streak-counter {
+            font-size: 1.5rem; font-weight: 900; background: var(--ink); color: var(--green);
+            padding: 4px 12px; border: var(--border); box-shadow: 4px 4px 0 var(--pink);
+            transform: rotate(2deg); transition: transform 0.2s;
         }
-        .quiz-targets-row {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px dashed var(--line);
-            padding-top: 0.8rem;
-        }
-        .target-box-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: var(--ink);
-        }
+        .streak-counter.pop { animation: streakPop 0.4s; }
+        @keyframes streakPop { 50% { transform: scale(1.3) rotate(-5deg); color: #fff; background: var(--pink); } }
+
+        .quiz-targets-row { display: flex; justify-content: space-around; align-items: center; padding-top: 1rem; }
+        .target-box-wrapper { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; font-weight: 900; font-size: 1.1rem; }
+        
         .preview-box {
-            width: 48px; height: 48px;
-            background: #FFF;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            width: 70px; height: 70px; background: #fff; border: var(--border);
+            display: flex; justify-content: center; align-items: center; box-shadow: 4px 4px 0 var(--ink);
         }
 
         .btn-action {
-            background: var(--accent); color: #FFF; border: none; padding: 0.8rem; border-radius: 10px;
-            font-size: 0.95rem; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.2s; font-family: inherit;
+            background: var(--pink); color: #fff; border: var(--border); box-shadow: var(--shadow);
+            padding: 1rem; font-size: 1.2rem; font-weight: 900; cursor: pointer; width: 100%; 
+            transition: all 0.1s; font-family: inherit; text-transform: uppercase; margin-top: 1rem;
         }
-        .btn-action:hover { background: #963b00; }
+        .btn-action:hover { background: var(--ink); color: var(--yellow); transform: translate(-2px, -2px); box-shadow: var(--shadow-hover); }
+        .btn-action:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
 
-        .feedback-box { text-align: center; font-weight: 700; font-size: 0.95rem; min-height: 1.4rem; margin-top: 0.8rem; }
-        .feedback-box.success { color: var(--success); }
-        .feedback-box.error { color: var(--error); }
+        /* 피드백 박스 */
+        .feedback-box { text-align: center; font-weight: 900; font-size: 1.2rem; min-height: 2rem; margin-top: 1.5rem; text-transform: uppercase; }
+        .feedback-box.error { color: #ff0000; animation: shake 0.3s; background: var(--ink); display: inline-block; padding: 4px 12px; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px) rotate(-2deg);} 75% {transform: translateX(10px) rotate(2deg);} }
 
+        /* 모달 */
         .modal-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(244, 241, 234, 0.9);
-            backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 100;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 1000;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-card { background: #FFF; padding: 2.2rem; border-radius: 16px; border: 1px solid var(--line); text-align: center; max-width: 360px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .modal-card h2 { font-family: 'Nanum Myeongjo', serif; color: var(--accent); font-size: 1.7rem; margin: 0.4rem 0; }
+        .modal-card { background: var(--green); padding: 3rem 2rem; border: var(--border); box-shadow: 16px 16px 0 var(--ink); text-align: center; max-width: 400px; width: 90%; transform: rotate(-2deg); }
+        .modal-card h2 { font-family: 'Nanum Myeongjo', serif; color: var(--ink); font-size: 2.5rem; margin: 1rem 0; font-weight: 900; text-shadow: 3px 3px 0 #fff; }
+        .modal-card p { font-weight: 900; font-size: 1.1rem; margin-bottom: 2rem; }
+
+        /* 단축키 힌트 */
+        .key-hint { display: inline-block; background: var(--ink); color: #fff; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; margin-left: 4px; vertical-align: middle;}
     </style>
 </head>
 <body>
@@ -188,24 +193,19 @@
     <div id="view-menu" class="view-section active">
         <div class="header">
             <h1>크리에이티브 평면도형 스튜디오</h1>
-            <p>공간지각 향상을 위한 회전·대칭 교구 앱</p>
+            <p>공간지각 향상을 위한 하드코어 회전·대칭 교구</p>
         </div>
         <div class="mode-grid">
             <div class="mode-card" onclick="switchView('view-practice')">
                 <i class="ph ph-shapes"></i>
                 <h3>자유 연습 모드</h3>
-                <p>도형 색상을 바꾸고 자유롭게 회전·뒤집어보며 성질을 관찰해요.</p>
+                <p>도형의 색상을 마음대로 바꾸고 조작하여 성질을 관찰하세요.</p>
             </div>
             <div class="mode-card" onclick="switchView('view-quiz')">
                 <i class="ph ph-target"></i>
                 <h3>도형 맞추기 퀴즈</h3>
-                <p>빨간 점과 내부 색칠 면을 목표 도형과 똑같이 맞추는 퀴즈!</p>
+                <p>회전과 뒤집기를 활용해 목표 도형을 맞추고 콤보를 쌓으세요!</p>
             </div>
-        </div>
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="index.html" style="text-decoration: none; color: var(--muted); font-size: 0.88rem; font-weight: 500;">
-                <i class="ph ph-house"></i> 포트폴리오 메인으로 돌아가기
-            </a>
         </div>
     </div>
 
@@ -214,7 +214,6 @@
         <div class="header">
             <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
             <h1>자유 연습 모드</h1>
-            <p>도형을 선택하고 자유롭게 움직이며 대칭 성질을 관찰해보세요.</p>
         </div>
 
         <div class="shape-tabs" id="practiceTabs">
@@ -226,35 +225,36 @@
 
         <div class="workspace">
             <div class="canvas-box">
-                <div class="shape-wrapper" id="practiceShapeView"></div>
+                <!-- 💡 수정됨: 애니메이션이 부드럽게 적용되는 래퍼 -->
+                <div class="shape-animator" id="practiceShapeWrapper">
+                    <div id="practiceShapeView"></div>
+                </div>
             </div>
 
             <div class="control-panel">
                 <div class="control-group">
-                    <h4>도형 조작 버튼</h4>
+                    <h4>조작 컨트롤</h4>
                     <div class="btn-grid">
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'rot-left')"><i class="ph ph-arrow-counter-clockwise"></i> 반시계 90°</button>
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'rot-right')"><i class="ph ph-arrow-clockwise"></i> 시계 90°</button>
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'flip-h')"><i class="ph ph-arrows-left-right"></i> 좌우 뒤집기</button>
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'flip-v')"><i class="ph ph-arrows-down-up"></i> 상하 뒤집기</button>
+                        <button class="ctrl-btn" onclick="transformShape('practice', 'rot-left')"><i class="ph ph-arrow-counter-clockwise"></i> 반시계 <span class="key-hint">←</span></button>
+                        <button class="ctrl-btn" onclick="transformShape('practice', 'rot-right')"><i class="ph ph-arrow-clockwise"></i> 시계 <span class="key-hint">→</span></button>
+                        <button class="ctrl-btn" onclick="transformShape('practice', 'flip-h')"><i class="ph ph-arrows-left-right"></i> 좌우 <span class="key-hint">↑</span></button>
+                        <button class="ctrl-btn" onclick="transformShape('practice', 'flip-v')"><i class="ph ph-arrows-down-up"></i> 상하 <span class="key-hint">↓</span></button>
                     </div>
                 </div>
 
                 <div class="control-group">
                     <h4>색상 설정</h4>
                     <div class="color-row">
-                        <span>도형 채우기 색상</span>
-                        <input type="color" id="fillColorPicker" value="#b34700" onchange="updatePracticeCustom()">
+                        <span>도형 채우기</span>
+                        <input type="color" id="fillColorPicker" value="#ffde00" onchange="updatePracticeCustom()">
                     </div>
                     <div class="color-row">
-                        <span>빨간 포인트 점(A)</span>
-                        <input type="color" id="vertexColorPicker" value="#c62828" onchange="updatePracticeCustom()">
+                        <span>포인트 점(A)</span>
+                        <input type="color" id="vertexColorPicker" value="#ff007b" onchange="updatePracticeCustom()">
                     </div>
                 </div>
                 
-                <button class="ctrl-btn" style="width: 100%; padding: 0.6rem;" onclick="resetShape('practice')">
-                    <i class="ph ph-arrow-counter-clockwise"></i> 처음 위치로 초기화
-                </button>
+                <button class="btn-action" onclick="resetShape('practice')">초기화 (Space)</button>
             </div>
         </div>
     </div>
@@ -264,128 +264,148 @@
         <div class="header">
             <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
             <h1>도형 맞추기 퀴즈</h1>
-            <p>회전과 뒤집기로 빨간 점과 내부 색상 면을 목표 도형과 일치시키세요!</p>
         </div>
 
         <div class="quiz-top-bar">
-            <div class="quiz-instructions">
-                💡 목표 도형의 <b>빨간 점(A)</b>과 <b>내부 색칠 면</b>의 방향이 완전히 겹쳐지면 정답!
+            <div class="quiz-stats">
+                <div class="quiz-instructions">💡 빨간 점과 색칠 면을 일치시키세요!</div>
+                <div class="streak-counter" id="streakDisplay">🔥 COMBO: 0</div>
             </div>
             <div class="quiz-targets-row">
                 <div class="target-box-wrapper">
                     <span>🎯 목표 도형</span>
-                    <div class="preview-box" id="targetPreview"></div>
+                    <div class="preview-box">
+                        <div class="shape-animator" id="targetPreviewWrapper">
+                            <div id="targetPreview"></div>
+                        </div>
+                    </div>
                 </div>
-                <div style="font-size: 1.2rem; color: var(--muted); font-weight: bold;">VS</div>
+                <div style="font-size: 2rem; font-weight: 900; color: var(--ink);">VS</div>
                 <div class="target-box-wrapper">
                     <span>🛠️ 나의 도형</span>
-                    <div class="preview-box" id="currentPreview"></div>
+                    <div class="preview-box">
+                        <div class="shape-animator" id="currentPreviewWrapper">
+                            <div id="currentPreview"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="workspace">
-            <div class="canvas-box" style="height: 280px;">
-                <div class="shape-wrapper" id="quizShapeView"></div>
+            <div class="canvas-box" style="height: 320px; background: var(--pink);">
+                <!-- 💡 수정됨: 애니메이션 래퍼 -->
+                <div class="shape-animator" id="quizShapeWrapper">
+                    <div id="quizShapeView"></div>
+                </div>
             </div>
 
             <div class="control-panel">
                 <div class="control-group">
-                    <h4>퀴즈 조작 컨트롤</h4>
+                    <h4>조작 컨트롤</h4>
                     <div class="btn-grid">
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'rot-left')"><i class="ph ph-arrow-counter-clockwise"></i> 반시계 90°</button>
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'rot-right')"><i class="ph ph-arrow-clockwise"></i> 시계 90°</button>
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'flip-h')"><i class="ph ph-arrows-left-right"></i> 좌우 뒤집기</button>
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'flip-v')"><i class="ph ph-arrows-down-up"></i> 상하 뒤집기</button>
+                        <button class="ctrl-btn" onclick="transformShape('quiz', 'rot-left')"><i class="ph ph-arrow-counter-clockwise"></i> 반시계 <span class="key-hint">←</span></button>
+                        <button class="ctrl-btn" onclick="transformShape('quiz', 'rot-right')"><i class="ph ph-arrow-clockwise"></i> 시계 <span class="key-hint">→</span></button>
+                        <button class="ctrl-btn" onclick="transformShape('quiz', 'flip-h')"><i class="ph ph-arrows-left-right"></i> 좌우 <span class="key-hint">↑</span></button>
+                        <button class="ctrl-btn" onclick="transformShape('quiz', 'flip-v')"><i class="ph ph-arrows-down-up"></i> 상하 <span class="key-hint">↓</span></button>
                     </div>
                 </div>
-                <button class="btn-action" onclick="checkQuizAnswer()">정답 확인하기</button>
+                <button class="btn-action" onclick="checkQuizAnswer()">정답 확인 (Enter)</button>
+                <div style="text-align: center;"><span id="quizFeedback" class="feedback-box"></span></div>
             </div>
         </div>
-        <div class="feedback-box" id="quizFeedback"></div>
     </div>
 
     <!-- 성공 모달 -->
     <div class="modal-overlay" id="successModal">
         <div class="modal-card">
-            <i class="ph ph-seal-check" style="font-size: 3.2rem; color: var(--success);"></i>
-            <h2>정답입니다!</h2>
-            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1.2rem;">빨간 점과 내부 색상 면을 완벽하게 맞추셨네요!</p>
-            <button class="btn-action" style="margin-top: 0;" onclick="nextQuiz()">다음 문제 도전</button>
+            <i class="ph ph-skull" style="font-size: 5rem; color: var(--ink);"></i>
+            <h2>PERFECT!</h2>
+            <p>공간지각 능력이 대단하시군요!</p>
+            <button class="btn-action" onclick="nextQuiz()">다음 문제 도전 (Enter)</button>
         </div>
     </div>
 
 </div>
 
 <script>
+    // --- 🔊 Web Audio API (사운드 이펙트) ---
+    let audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    
+    function playSound(type) {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        if (type === 'tick') { // 조작음
+            osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+            gain.setValueAtTime(0.1, audioCtx.currentTime); gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        } else if (type === 'success') { // 정답음
+            osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.2);
+            gain.setValueAtTime(0.2, audioCtx.currentTime); gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'error') { // 오답음
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            gain.setValueAtTime(0.2, audioCtx.currentTime); gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+    document.body.addEventListener('click', initAudio, { once: true }); // 유저 첫 인터랙션 시 오디오 활성화
+    // ----------------------------------------
+
+    let currentMode = 'menu';
+    let comboStreak = 0;
+
     function switchView(viewId) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
-        if (viewId === 'view-practice') initPracticeMode();
-        if (viewId === 'view-quiz') initQuizMode();
+        if (viewId === 'view-practice') { currentMode = 'practice'; initPracticeMode(); }
+        if (viewId === 'view-quiz') { currentMode = 'quiz'; comboStreak = 0; updateComboUI(); initQuizMode(); }
+        if (viewId === 'view-menu') { currentMode = 'menu'; }
+        playSound('tick');
     }
 
     const shapeDefinitions = {
-        triangle: {
-            path: "M 0,-50 L 50,45 L -50,45 Z",
-            vertices: [{x: 0, y: -60, label: 'A'}, {x: 58, y: 50, label: 'B'}, {x: -58, y: 50, label: 'C'}],
-            innerPatch: "M 0,-15 L 20,25 L -20,25 Z"
-        },
-        square: {
-            path: "M -42,-42 L 42,-42 L 42,42 L -42,42 Z",
-            vertices: [{x: -48, y: -48, label: 'A'}, {x: 48, y: -48, label: 'B'}, {x: 48, y: 48, label: 'C'}, {x: -48, y: 48, label: 'D'}],
-            innerPatch: "M 0,-42 L 42,0 L 0,42 L -42,0 Z"
-        },
-        pentagon: {
-            path: "M 0,-50 L 48,-14 L 28,42 L -28,42 L -48,-14 Z",
-            vertices: [{x: 0, y: -60, label: 'A'}, {x: 56, y: -16, label: 'B'}, {x: 34, y: 50, label: 'C'}, {x: -34, y: 50, label: 'D'}, {x: -56, y: -16, label: 'E'}],
-            innerPatch: "M 0,-25 L 22,-7 L 14,21 L -14,21 L -22,-7 Z"
-        },
-        Lshape: {
-            path: "M -32,-50 L 0,-50 L 0,12 L 32,12 L 32,50 L -32,50 Z",
-            vertices: [{x: -38, y: -58, label: 'A'}, {x: 8, y: -58, label: 'B'}, {x: 8, y: 6, label: 'C'}, {x: 38, y: 6, label: 'D'}, {x: 38, y: 58, label: 'E'}, {x: -38, y: 58, label: 'F'}],
-            innerPatch: "M -18,-35 L -2,-35 L -2,-5 L 18,-5 L 18,35 L -18,35 Z"
-        }
+        triangle: { path: "M 0,-50 L 50,45 L -50,45 Z", vertices: [{x: 0, y: -60, label: 'A'}, {x: 58, y: 50, label: 'B'}, {x: -58, y: 50, label: 'C'}], innerPatch: "M 0,-15 L 20,25 L -20,25 Z" },
+        square: { path: "M -42,-42 L 42,-42 L 42,42 L -42,42 Z", vertices: [{x: -48, y: -48, label: 'A'}, {x: 48, y: -48, label: 'B'}, {x: 48, y: 48, label: 'C'}, {x: -48, y: 48, label: 'D'}], innerPatch: "M 0,-42 L 42,0 L 0,42 L -42,0 Z" },
+        pentagon: { path: "M 0,-50 L 48,-14 L 28,42 L -28,42 L -48,-14 Z", vertices: [{x: 0, y: -60, label: 'A'}, {x: 56, y: -16, label: 'B'}, {x: 34, y: 50, label: 'C'}, {x: -34, y: 50, label: 'D'}, {x: -56, y: -16, label: 'E'}], innerPatch: "M 0,-25 L 22,-7 L 14,21 L -14,21 L -22,-7 Z" },
+        Lshape: { path: "M -32,-50 L 0,-50 L 0,12 L 32,12 L 32,50 L -32,50 Z", vertices: [{x: -38, y: -58, label: 'A'}, {x: 8, y: -58, label: 'B'}, {x: 8, y: 6, label: 'C'}, {x: 38, y: 6, label: 'D'}, {x: 38, y: 58, label: 'E'}, {x: -38, y: 58, label: 'F'}], innerPatch: "M -18,-35 L -2,-35 L -2,-5 L 18,-5 L 18,35 L -18,35 Z" }
     };
 
-    let practiceState = { shape: 'triangle', rot: 0, flipH: 1, flipV: 1, fillColor: '#b34700', vertexColor: '#c62828' };
-    let quizState = { shape: 'triangle', currentRot: 0, currentFlipH: 1, currentFlipV: 1, targetRot: 0, targetFlipH: 1, targetFlipV: 1, fillColor: '#b34700', vertexColor: '#c62828' };
+    let practiceState = { shape: 'triangle', rot: 0, flipH: 1, flipV: 1, fillColor: '#ffde00', vertexColor: '#ff007b' };
+    let quizState = { shape: 'triangle', currentRot: 0, currentFlipH: 1, currentFlipV: 1, targetRot: 0, targetFlipH: 1, targetFlipV: 1, fillColor: '#ffffff', vertexColor: '#111111' };
 
-    function renderShapeSVG(def, state, interactive = false, isMini = false) {
+    // 💡 수정된 부분: SVG 자체는 고정 형태로 렌더링하고, Transform은 상위 Wrapper에 적용
+    function renderShapeSVG(def, fillColor, vertexColor, isMini = false) {
         const size = isMini ? 40 : 150;
-        let svgHTML = `<svg width="${size}" height="${size}" viewBox="-80 -80 160 160" style="overflow: visible;">`;
+        let svgHTML = `<svg width="${size}" height="${size}" viewBox="-80 -80 160 160" style="overflow: visible;"><g>`;
         
-        let r = interactive ? (state.currentRot || 0) : (state.rot || 0);
-        let fh = interactive ? (state.currentFlipH !== undefined ? state.currentFlipH : 1) : (state.flipH !== undefined ? state.flipH : 1);
-        let fv = interactive ? (state.currentFlipV !== undefined ? state.currentFlipV : 1) : (state.flipV !== undefined ? state.flipV : 1);
-
-        // 상하 뒤집기(fv)는 Y축 기준 스케일(scaleY), 좌우 뒤집기(fh)는 X축 기준 스케일(scaleX)로 정확하게 매칭
-        let transformStr = `rotate(${r}) scale(${fh}, ${fv})`;
-        let fillColor = state.fillColor || '#b34700';
-        let vertexColor = state.vertexColor || '#c62828';
-
-        svgHTML += `<g transform="${transformStr}">`;
-        svgHTML += `<path d="${def.path}" fill="${fillColor}" stroke="#17150f" stroke-width="2.5" stroke-linejoin="round" opacity="0.9" />`;
-        
-        if (def.innerPatch) {
-            svgHTML += `<path d="${def.innerPatch}" fill="#ffffff" opacity="0.25" stroke="none" />`;
-        }
+        svgHTML += `<path d="${def.path}" fill="${fillColor}" stroke="#111" stroke-width="4" stroke-linejoin="round" />`;
+        if (def.innerPatch) svgHTML += `<path d="${def.innerPatch}" fill="#111" opacity="0.3" stroke="none" />`;
 
         if (def.vertices) {
             def.vertices.forEach((v, idx) => {
-                let cColor = (idx === 0) ? vertexColor : '#17150f';
-                let rSize = (idx === 0) ? 6 : 4;
-                svgHTML += `<circle cx="${v.x}" cy="${v.y}" r="${rSize}" fill="${cColor}" stroke="#fff" stroke-width="1.5" />`;
-                if (!isMini) {
-                    svgHTML += `<text x="${v.x * 1.2}" y="${v.y * 1.2}" font-size="10" font-weight="bold" fill="${cColor}" text-anchor="middle" dominant-baseline="central">${v.label}</text>`;
-                }
+                let cColor = (idx === 0) ? vertexColor : '#111';
+                let rSize = (idx === 0) ? 8 : 5;
+                svgHTML += `<circle cx="${v.x}" cy="${v.y}" r="${rSize}" fill="${cColor}" stroke="#fff" stroke-width="2" />`;
+                if (!isMini) svgHTML += `<text x="${v.x * 1.25}" y="${v.y * 1.25}" font-size="14" font-weight="900" font-family="sans-serif" fill="${cColor}" text-anchor="middle" dominant-baseline="central">${v.label}</text>`;
             });
         }
-
         svgHTML += `</g></svg>`;
         return svgHTML;
     }
 
+    // --- 자유 연습 모드 ---
     function initPracticeMode() {
         document.querySelectorAll('#practiceTabs .shape-tab').forEach(tab => {
             tab.onclick = (e) => {
@@ -393,7 +413,7 @@
                 e.target.classList.add('active');
                 practiceState.shape = e.target.dataset.shape;
                 practiceState.rot = 0; practiceState.flipH = 1; practiceState.flipV = 1;
-                updatePracticeView();
+                updatePracticeView(); playSound('tick');
             };
         });
         updatePracticeView();
@@ -407,32 +427,39 @@
 
     function updatePracticeView() {
         const def = shapeDefinitions[practiceState.shape];
-        document.getElementById('practiceShapeView').innerHTML = renderShapeSVG(def, practiceState);
+        const wrapper = document.getElementById('practiceShapeWrapper');
+        document.getElementById('practiceShapeView').innerHTML = renderShapeSVG(def, practiceState.fillColor, practiceState.vertexColor);
+        // 부드러운 CSS 애니메이션을 위해 래퍼의 인라인 스타일 변경
+        wrapper.style.transform = `rotate(${practiceState.rot}deg) scale(${practiceState.flipH}, ${practiceState.flipV})`;
     }
 
+    // --- 도형 조작 ---
     function transformShape(mode, action) {
+        playSound('tick');
         if (mode === 'practice') {
-            if (action === 'rot-left') practiceState.rot = (practiceState.rot - 90 + 360) % 360;
-            if (action === 'rot-right') practiceState.rot = (practiceState.rot + 90) % 360;
-            if (action === 'flip-h') practiceState.flipH *= -1; // 좌우 뒤집기 (scaleX)
-            if (action === 'flip-v') practiceState.flipV *= -1; // 상하 뒤집기 (scaleY)
+            if (action === 'rot-left') practiceState.rot -= 90;
+            if (action === 'rot-right') practiceState.rot += 90;
+            if (action === 'flip-h') practiceState.flipH *= -1;
+            if (action === 'flip-v') practiceState.flipV *= -1;
             updatePracticeView();
         } else if (mode === 'quiz') {
-            if (action === 'rot-left') quizState.currentRot = (quizState.currentRot - 90 + 360) % 360;
-            if (action === 'rot-right') quizState.currentRot = (quizState.currentRot + 90) % 360;
-            if (action === 'flip-h') quizState.currentFlipH *= -1; // 좌우 뒤집기 (scaleX)
-            if (action === 'flip-v') quizState.currentFlipV *= -1; // 상하 뒤집기 (scaleY)
+            if (action === 'rot-left') quizState.currentRot -= 90;
+            if (action === 'rot-right') quizState.currentRot += 90;
+            if (action === 'flip-h') quizState.currentFlipH *= -1;
+            if (action === 'flip-v') quizState.currentFlipV *= -1;
             updateQuizView();
         }
     }
 
     function resetShape(mode) {
+        playSound('tick');
         if (mode === 'practice') {
             practiceState.rot = 0; practiceState.flipH = 1; practiceState.flipV = 1;
             updatePracticeView();
         }
     }
 
+    // --- 퀴즈 모드 ---
     function initQuizMode() {
         const shapes = Object.keys(shapeDefinitions);
         quizState.shape = shapes[Math.floor(Math.random() * shapes.length)];
@@ -441,40 +468,39 @@
         quizState.targetFlipH = Math.random() > 0.5 ? 1 : -1;
         quizState.targetFlipV = Math.random() > 0.5 ? 1 : -1;
 
-        quizState.currentRot = 0;
-        quizState.currentFlipH = 1;
-        quizState.currentFlipV = 1;
-        quizState.fillColor = '#b34700';
-        quizState.vertexColor = '#c62828';
-
-        document.getElementById('quizFeedback').textContent = '';
+        quizState.currentRot = 0; quizState.currentFlipH = 1; quizState.currentFlipV = 1;
+        document.getElementById('quizFeedback').innerHTML = '';
         
         const def = shapeDefinitions[quizState.shape];
-        document.getElementById('targetPreview').innerHTML = renderShapeSVG(def, { rot: quizState.targetRot, flipH: quizState.targetFlipH, flipV: quizState.targetFlipV, fillColor: '#2563eb', vertexColor: '#c62828' }, false, true);
+        
+        // 목표 도형 그리기 및 회전 적용
+        document.getElementById('targetPreview').innerHTML = renderShapeSVG(def, '#00f0ff', '#ff007b', true);
+        document.getElementById('targetPreviewWrapper').style.transform = `rotate(${quizState.targetRot}deg) scale(${quizState.targetFlipH}, ${quizState.targetFlipV})`;
         
         updateQuizView();
     }
 
     function updateQuizView() {
         const def = shapeDefinitions[quizState.shape];
-        document.getElementById('quizShapeView').innerHTML = renderShapeSVG(def, quizState, true, false);
-        document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, { rot: quizState.currentRot, flipH: quizState.currentFlipH, flipV: quizState.currentFlipV, fillColor: quizState.fillColor, vertexColor: quizState.vertexColor }, false, true);
+        
+        // 메인 캔버스 래퍼 제어
+        document.getElementById('quizShapeView').innerHTML = renderShapeSVG(def, quizState.fillColor, quizState.vertexColor);
+        document.getElementById('quizShapeWrapper').style.transform = `rotate(${quizState.currentRot}deg) scale(${quizState.currentFlipH}, ${quizState.currentFlipV})`;
+        
+        // 미니 프리뷰 래퍼 제어
+        document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, quizState.fillColor, quizState.vertexColor, true);
+        document.getElementById('currentPreviewWrapper').style.transform = `rotate(${quizState.currentRot}deg) scale(${quizState.currentFlipH}, ${quizState.currentFlipV})`;
     }
 
     function checkQuizAnswer() {
         const curRotNorm = (quizState.currentRot % 360 + 360) % 360;
         const targetRotNorm = (quizState.targetRot % 360 + 360) % 360;
-
         let isMatched = false;
         
-        // 회전 각도 및 좌우/상하 뒤집기 상태가 목표와 완벽히 포개어지는지 검증
-        if (curRotNorm === targetRotNorm && 
-            quizState.currentFlipH === quizState.targetFlipH && 
-            quizState.currentFlipV === quizState.targetFlipV) {
+        if (curRotNorm === targetRotNorm && quizState.currentFlipH === quizState.targetFlipH && quizState.currentFlipV === quizState.targetFlipV) {
             isMatched = true;
         }
 
-        // 회전 대칭을 고려한 허용 케이스 검증
         const validMatchCases = [
             { rot: targetRotNorm, h: quizState.targetFlipH, v: quizState.targetFlipV },
             { rot: (targetRotNorm + 180) % 360, h: -quizState.targetFlipH, v: -quizState.targetFlipV }
@@ -482,24 +508,37 @@
 
         for (let c of validMatchCases) {
             if (curRotNorm === c.rot && quizState.currentFlipH === c.h && quizState.currentFlipV === c.v) {
-                isMatched = true;
-                break;
+                isMatched = true; break;
             }
         }
 
         const feedback = document.getElementById('quizFeedback');
         if (isMatched) {
-            feedback.textContent = "정답입니다! 🎉 목표 모양과 완벽하게 겹쳐졌어요.";
-            feedback.className = "feedback-box success";
+            playSound('success');
+            comboStreak++;
+            updateComboUI();
             document.getElementById('successModal').classList.add('active');
             fireConfetti();
+            feedback.innerHTML = "";
         } else {
-            feedback.textContent = "아직 빨간 점과 내부 면의 위치가 다릅니다. 회전과 뒤집기를 다시 조절해보세요!";
+            playSound('error');
+            comboStreak = 0; // 오답 시 콤보 초기화
+            updateComboUI();
+            feedback.innerHTML = "오답! 조작을 다시 확인하세요.";
             feedback.className = "feedback-box error";
         }
     }
 
+    function updateComboUI() {
+        const streakEl = document.getElementById('streakDisplay');
+        streakEl.innerText = `🔥 COMBO: ${comboStreak}`;
+        streakEl.classList.remove('pop');
+        void streakEl.offsetWidth; // reflow trigger
+        if(comboStreak > 0) streakEl.classList.add('pop');
+    }
+
     function nextQuiz() {
+        playSound('tick');
         document.getElementById('successModal').classList.remove('active');
         initQuizMode();
     }
@@ -508,13 +547,35 @@
         var duration = 2 * 1000;
         var end = Date.now() + duration;
         (function frame() {
-            confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#b34700', '#17150f'] });
-            confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#b34700', '#17150f'] });
+            confetti({ particleCount: 5, angle: 60, spread: 60, origin: { x: 0 }, colors: ['#ffde00', '#ff007b', '#00f0ff'] });
+            confetti({ particleCount: 5, angle: 120, spread: 60, origin: { x: 1 }, colors: ['#ffde00', '#ff007b', '#00f0ff'] });
             if (Date.now() < end) requestAnimationFrame(frame);
         }());
     }
 
-    initPracticeMode();
+    // --- ⌨️ 키보드 단축키 지원 ---
+    document.addEventListener('keydown', (e) => {
+        // 모달이 켜져있을 때 Enter 누르면 다음 퀴즈
+        if (document.getElementById('successModal').classList.contains('active') && e.key === 'Enter') {
+            nextQuiz(); return;
+        }
+
+        if (currentMode === 'practice' || currentMode === 'quiz') {
+            if (e.key === 'ArrowLeft') transformShape(currentMode, 'rot-left');
+            if (e.key === 'ArrowRight') transformShape(currentMode, 'rot-right');
+            if (e.key === 'ArrowUp') transformShape(currentMode, 'flip-h');
+            if (e.key === 'ArrowDown') transformShape(currentMode, 'flip-v');
+        }
+
+        if (currentMode === 'practice' && e.key === ' ') {
+            e.preventDefault(); resetShape('practice');
+        }
+        
+        if (currentMode === 'quiz' && e.key === 'Enter') {
+            checkQuizAnswer();
+        }
+    });
+
 </script>
 </body>
 </html>
