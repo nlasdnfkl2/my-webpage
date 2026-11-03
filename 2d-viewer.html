@@ -1,563 +1,569 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>크리에이티브 평면도형 스튜디오 - Neo Brutalism</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@800;900&family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+    <title>크리에이티브 평면도형 스튜디오 - 중학 수학 고도화 버전</title>
     <style>
-        /* 네오 브루탈리즘 테마 변수 */
+        /* Neo Brutalism Base Theme */
         :root {
-            --bg: #dfdcd3;
-            --ink: #111111;
-            --yellow: #ffde00;
-            --pink: #ff007b;
-            --cyan: #00f0ff;
-            --green: #00ff55;
-            --border: 4px solid var(--ink);
-            --shadow: 8px 8px 0 var(--ink);
-            --shadow-hover: 12px 12px 0 var(--ink);
-            --shadow-active: 0px 0px 0 var(--ink);
+            --bg-color: #f0ebe1;
+            --main-yellow: #ffde00;
+            --main-pink: #ff007b;
+            --main-cyan: #00f0ff;
+            --main-green: #00ff66;
+            --dark: #000000;
+            --border-size: 4px;
+            --shadow-offset: 5px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        /* 브루탈리즘 노이즈 배경 */
-        body::before {
-            content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.1"/%3E%3C/svg%3E');
-            mix-blend-mode: overlay;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Black', ui-sans-serif, system-ui, sans-serif;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--ink);
-            font-family: 'Noto Sans KR', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; padding: 2rem 1rem;
-            overflow-x: hidden;
+            background-color: var(--bg-color);
+            color: var(--dark);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .app-container {
-            width: 100%; max-width: 860px;
-            background: #fff; border: var(--border); box-shadow: var(--shadow);
-            padding: 2.5rem; position: relative;
+        .brutal-card {
+            background: #ffffff;
+            border: var(--border-size) solid var(--dark);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+            padding: 20px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 900px;
         }
 
-        .view-section { display: none; animation: brutalSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .view-section.active { display: block; }
-        
-        @keyframes brutalSlide {
-            0% { opacity: 0; transform: translateY(30px) rotate(2deg); }
-            100% { opacity: 1; transform: translateY(0) rotate(0); }
+        h1 {
+            font-size: 2.3rem;
+            text-transform: uppercase;
+            background: var(--main-yellow);
+            padding: 10px 20px;
+            border: var(--border-size) solid var(--dark);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
+            margin-bottom: 30px;
+            display: inline-block;
+            transform: rotate(-1deg);
         }
 
-        .header { text-align: center; margin-bottom: 2.5rem; position: relative; }
-        .header h1 { 
-            font-family: 'Nanum Myeongjo', serif; font-size: 2.4rem; font-weight: 900; 
-            text-transform: uppercase; letter-spacing: -2px; margin-bottom: 0.5rem;
-            text-shadow: 4px 4px 0 var(--cyan); transform: skew(-2deg);
-        }
-        .header p { 
-            font-size: 1.1rem; font-weight: 900; background: var(--ink); color: var(--yellow);
-            display: inline-block; padding: 4px 12px; transform: rotate(1deg); box-shadow: 4px 4px 0 var(--pink);
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            display: inline-block;
+            border-bottom: 3px solid var(--dark);
         }
 
-        .btn-back {
-            position: absolute; left: 0; top: 10px;
-            background: var(--yellow); border: var(--border); box-shadow: 4px 4px 0 var(--ink);
-            font-size: 1.5rem; color: var(--ink); width: 44px; height: 44px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.1s;
-        }
-        .btn-back:hover { background: var(--pink); color: #fff; transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
-        .btn-back:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
-
-        .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
-        .mode-card {
-            background: #fff; border: var(--border); box-shadow: var(--shadow);
-            padding: 3rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.15s;
-        }
-        .mode-card:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-hover); background: var(--yellow); }
-        .mode-card:active { transform: translate(4px, 4px); box-shadow: var(--shadow-active); }
-        .mode-card i { font-size: 4rem; color: var(--ink); margin-bottom: 1rem; text-shadow: 3px 3px 0 #fff, 6px 6px 0 var(--ink); }
-        .mode-card h3 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; }
-        .mode-card p { font-size: 1rem; font-weight: 700; word-break: keep-all; }
-
-        .workspace { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; align-items: start; }
-        @media(max-width: 768px) { .workspace { grid-template-columns: 1fr; } }
-
-        .canvas-box {
-            width: 100%; height: 360px; background: var(--cyan); border: var(--border); box-shadow: var(--shadow);
-            display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden;
-            background-image: linear-gradient(var(--ink) 2px, transparent 2px), linear-gradient(90deg, var(--ink) 2px, transparent 2px);
-            background-size: 30px 30px;
+        .tab-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 900px;
         }
 
-        .shape-animator {
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: flex; justify-content: center; align-items: center;
-            transform-origin: center center;
-            filter: drop-shadow(8px 8px 0 rgba(0,0,0,0.5));
+        .brutal-btn {
+            background: #ffffff;
+            border: var(--border-size) solid var(--dark);
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px var(--dark);
+            transition: all 0.1s ease;
         }
 
-        .control-panel { display: flex; flex-direction: column; gap: 1.5rem; }
-        .control-group { background: #fff; border: var(--border); padding: 1.2rem; box-shadow: 4px 4px 0 var(--ink); }
-        .control-group h4 { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; background: var(--ink); color: #fff; display: inline-block; padding: 2px 8px; margin-bottom: 1rem; transform: rotate(-1deg); }
-
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-        .ctrl-btn {
-            background: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
-            padding: 0.8rem 0.4rem; font-size: 0.9rem; font-family: inherit; font-weight: 900; color: var(--ink);
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.3rem;
-            transition: all 0.1s; text-transform: uppercase;
-        }
-        .ctrl-btn:hover { background: var(--green); transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
-        .ctrl-btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
-        .ctrl-btn i { font-size: 1.2rem; }
-
-        .color-row { display: flex; align-items: center; justify-content: space-between; font-weight: 900; margin-bottom: 0.8rem; }
-        .color-row input[type="color"] { border: 2px solid var(--ink); width: 36px; height: 36px; cursor: pointer; padding: 0; box-shadow: 2px 2px 0 var(--ink); }
-
-        .shape-tabs { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .shape-tab {
-            background: #fff; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
-            padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; font-weight: 900; font-family: inherit; transition: 0.1s;
-        }
-        .shape-tab:hover { background: var(--pink); color: #fff; }
-        .shape-tab.active { background: var(--ink); color: var(--yellow); transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
-
-        .quiz-top-bar {
-            background: var(--yellow); border: var(--border); box-shadow: var(--shadow);
-            padding: 1.5rem; margin-bottom: 2rem;
-        }
-        
-        .quiz-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 3px dashed var(--ink); padding-bottom: 1rem; }
-        .quiz-instructions { font-size: 1.1rem; font-weight: 900; text-align: center; }
-        
-        .streak-counter {
-            font-size: 1.5rem; font-weight: 900; background: var(--ink); color: var(--green);
-            padding: 4px 12px; border: var(--border); box-shadow: 4px 4px 0 var(--pink);
-            transform: rotate(2deg); transition: transform 0.2s;
-        }
-        .streak-counter.pop { animation: streakPop 0.4s; }
-        @keyframes streakPop { 50% { transform: scale(1.3) rotate(-5deg); color: #fff; background: var(--pink); } }
-
-        .quiz-targets-row { display: flex; justify-content: space-around; align-items: center; padding-top: 1rem; }
-        .target-box-wrapper { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; font-weight: 900; font-size: 1.1rem; }
-        
-        .preview-box {
-            width: 70px; height: 70px; background: #fff; border: var(--border);
-            display: flex; justify-content: center; align-items: center; box-shadow: 4px 4px 0 var(--ink);
+        .brutal-btn:active, .brutal-btn.active {
+            transform: translate(3px, 3px);
+            box-shadow: 0px 0px 0px var(--dark);
         }
 
-        .btn-action {
-            background: var(--pink); color: #fff; border: var(--border); box-shadow: var(--shadow);
-            padding: 1rem; font-size: 1.2rem; font-weight: 900; cursor: pointer; width: 100%; 
-            transition: all 0.1s; font-family: inherit; text-transform: uppercase; margin-top: 1rem;
+        .brutal-btn.active {
+            background: var(--main-cyan);
         }
-        .btn-action:hover { background: var(--ink); color: var(--yellow); transform: translate(-2px, -2px); box-shadow: var(--shadow-hover); }
-        .btn-action:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--ink); }
 
-        .feedback-box { text-align: center; font-weight: 900; font-size: 1.2rem; min-height: 2rem; margin-top: 1.5rem; text-transform: uppercase; }
-        .feedback-box.error { color: #ff0000; animation: shake 0.3s; background: var(--ink); display: inline-block; padding: 4px 12px; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px) rotate(-2deg);} 75% {transform: translateX(10px) rotate(2deg);} }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 1000;
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-card { background: var(--green); padding: 3rem 2rem; border: var(--border); box-shadow: 16px 16px 0 var(--ink); text-align: center; max-width: 400px; width: 90%; transform: rotate(-2deg); }
-        .modal-card h2 { font-family: 'Nanum Myeongjo', serif; color: var(--ink); font-size: 2.5rem; margin: 1rem 0; font-weight: 900; text-shadow: 3px 3px 0 #fff; }
-        .modal-card p { font-weight: 900; font-size: 1.1rem; margin-bottom: 2rem; }
 
-        .key-hint { display: inline-block; background: var(--ink); color: #fff; padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; margin-left: 4px; vertical-align: middle;}
+        @media (max-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+
+        .canvas-area {
+            position: relative;
+            background: #fff;
+            border: var(--border-size) solid var(--dark);
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .shape-selector, .option-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: var(--border-size) solid var(--dark);
+            width: 50px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; }
+
+        .quiz-status {
+            background: var(--main-pink);
+            color: white;
+            font-size: 1.5rem;
+            padding: 10px;
+            border: var(--border-size) solid var(--dark);
+            box-shadow: 3px 3px 0px var(--dark);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .quiz-success-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 255, 102, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: var(--border-size) solid var(--dark);
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .key-hint {
+            font-size: 0.85rem;
+            color: #333;
+            margin-top: 5px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <!-- 1. 메인 메뉴 -->
-    <div id="view-menu" class="view-section active">
-        <div class="header">
-            <h1>크리에이티브 평면도형 스튜디오</h1>
-            <p>공간지각 향상을 위한 하드코어 회전·대칭 교구</p>
-        </div>
-        <div class="mode-grid">
-            <div class="mode-card" onclick="switchView('view-practice')">
-                <i class="ph ph-shapes"></i>
-                <h3>자유 연습 모드</h3>
-                <p>도형의 색상을 마음대로 바꾸고 조작하여 성질을 관찰하세요.</p>
-            </div>
-            <div class="mode-card" onclick="switchView('view-quiz')">
-                <i class="ph ph-target"></i>
-                <h3>도형 맞추기 퀴즈</h3>
-                <p>회전과 뒤집기를 활용해 목표 도형을 맞추고 콤보를 쌓으세요!</p>
-            </div>
-        </div>
+    <h1>Creative Geometry Studio</h1>
+
+    <div class="tab-container">
+        <button class="brutal-btn active" id="btn-practice" onclick="setMode('practice')">자유 연습 모드</button>
+        <button class="brutal-btn" id="btn-quiz" onclick="setMode('quiz')">도형 맞추기 퀴즈</button>
     </div>
 
-    <!-- 2. 자유 연습 모드 -->
-    <div id="view-practice" class="view-section">
-        <div class="header">
-            <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
-            <h1>자유 연습 모드</h1>
-        </div>
-
-        <div class="shape-tabs" id="practiceTabs">
-            <button class="shape-tab active" data-shape="triangle">삼각형</button>
-            <button class="shape-tab" data-shape="square">정사각형</button>
-            <button class="shape-tab" data-shape="pentagon">오각형</button>
-            <button class="shape-tab" data-shape="Lshape">L자형</button>
-        </div>
-
-        <div class="workspace">
-            <div class="canvas-box">
-                <div class="shape-animator" id="practiceShapeWrapper">
-                    <div id="practiceShapeView"></div>
-                </div>
-            </div>
-
-            <div class="control-panel">
-                <div class="control-group">
-                    <h4>조작 컨트롤</h4>
-                    <div class="btn-grid">
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'rot-left')"><i class="ph ph-arrow-counter-clockwise"></i> 반시계 <span class="key-hint">←</span></button>
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'rot-right')"><i class="ph ph-arrow-clockwise"></i> 시계 <span class="key-hint">→</span></button>
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'flip-h')"><i class="ph ph-arrows-left-right"></i> 좌우 <span class="key-hint">↑</span></button>
-                        <button class="ctrl-btn" onclick="transformShape('practice', 'flip-v')"><i class="ph ph-arrows-down-up"></i> 상하 <span class="key-hint">↓</span></button>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <h4>색상 설정</h4>
-                    <div class="color-row">
-                        <span>도형 채우기</span>
-                        <input type="color" id="fillColorPicker" value="#ffde00" onchange="updatePracticeCustom()">
-                    </div>
-                    <div class="color-row">
-                        <span>포인트 점(A)</span>
-                        <input type="color" id="vertexColorPicker" value="#ff007b" onchange="updatePracticeCustom()">
-                    </div>
-                </div>
-                
-                <button class="btn-action" onclick="resetShape('practice')">초기화 (Space)</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. 퀴즈 모드 -->
-    <div id="view-quiz" class="view-section">
-        <div class="header">
-            <button class="btn-back" onclick="switchView('view-menu')"><i class="ph ph-caret-left"></i></button>
-            <h1>도형 맞추기 퀴즈</h1>
-        </div>
-
-        <div class="quiz-top-bar">
-            <div class="quiz-stats">
-                <div class="quiz-instructions">💡 빨간 점과 색칠 면을 일치시키세요!</div>
-                <div class="streak-counter" id="streakDisplay">🔥 COMBO: 0</div>
-            </div>
-            <div class="quiz-targets-row">
-                <div class="target-box-wrapper">
-                    <span>🎯 목표 도형</span>
-                    <div class="preview-box">
-                        <div class="shape-animator" id="targetPreviewWrapper">
-                            <div id="targetPreview"></div>
-                        </div>
-                    </div>
-                </div>
-                <div style="font-size: 2rem; font-weight: 900; color: var(--ink);">VS</div>
-                <div class="target-box-wrapper">
-                    <span>🛠️ 나의 도형</span>
-                    <div class="preview-box">
-                        <div class="shape-animator" id="currentPreviewWrapper">
-                            <div id="currentPreview"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="workspace">
-            <div class="canvas-box" style="height: 320px; background: var(--pink);">
-                <div class="shape-animator" id="quizShapeWrapper">
-                    <div id="quizShapeView"></div>
-                </div>
-            </div>
-
-            <div class="control-panel">
-                <div class="control-group">
-                    <h4>조작 컨트롤</h4>
-                    <div class="btn-grid">
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'rot-left')"><i class="ph ph-arrow-counter-clockwise"></i> 반시계 <span class="key-hint">←</span></button>
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'rot-right')"><i class="ph ph-arrow-clockwise"></i> 시계 <span class="key-hint">→</span></button>
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'flip-h')"><i class="ph ph-arrows-left-right"></i> 좌우 <span class="key-hint">↑</span></button>
-                        <button class="ctrl-btn" onclick="transformShape('quiz', 'flip-v')"><i class="ph ph-arrows-down-up"></i> 상하 <span class="key-hint">↓</span></button>
-                    </div>
-                </div>
-                <button class="btn-action" onclick="checkQuizAnswer()">정답 확인 (Enter)</button>
-                <div style="text-align: center;"><span id="quizFeedback" class="feedback-box"></span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 성공 모달 -->
-    <div class="modal-overlay" id="successModal">
-        <div class="modal-card">
-            <i class="ph ph-skull" style="font-size: 5rem; color: var(--ink);"></i>
-            <h2>PERFECT!</h2>
-            <p>공간지각 능력이 대단하시군요!</p>
-            <button class="btn-action" onclick="nextQuiz()">다음 문제 도전 (Enter)</button>
-        </div>
-    </div>
-
-</div>
-
-<script>
-    let audioCtx = null;
-    function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-    
-    function playSound(type) {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+    <!-- PRACTICE MODE -->
+    <div id="practice-mode" class="brutal-card">
+        <h2>자유 연습 모드</h2>
+        <p style="margin-bottom: 15px; font-weight: bold;">도형의 회전, 대칭, 각도 및 중학 기하 성질을 시각적으로 탐구하세요.</p>
         
-        if (type === 'tick') {
-            osc.type = 'square'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
-            gain.setValueAtTime(0.1, audioCtx.currentTime); gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-        } else if (type === 'success') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
-            osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.2);
-            gain.setValueAtTime(0.2, audioCtx.currentTime); gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-        } else if (type === 'error') {
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            gain.setValueAtTime(0.2, audioCtx.currentTime); gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        }
-    }
-    document.body.addEventListener('click', initAudio, { once: true });
+        <div class="grid-layout">
+            <div class="canvas-area" id="practice-container">
+                <svg id="practice-svg"></svg>
+            </div>
+            
+            <div class="controls-panel">
+                <div>
+                    <label style="display:block; margin-bottom:5px; font-weight: bold;">도형 선택 (중학 수학 과정)</label>
+                    <div class="shape-selector">
+                        <button class="brutal-btn active" onclick="changeShape('triangle', this)">정삼각형</button>
+                        <button class="brutal-btn" onclick="changeShape('square', this)">정사각형</button>
+                        <button class="brutal-btn" onclick="changeShape('parallelogram', this)">평행사변형</button>
+                        <button class="brutal-btn" onclick="changeShape('rhombus', this)">마름모</button>
+                        <button class="brutal-btn" onclick="changeShape('trapezoid', this)">사다리꼴</button>
+                        <button class="brutal-btn" onclick="changeShape('lshape', this)">L자형 변형도형</button>
+                    </div>
+                </div>
 
-    let currentMode = 'menu';
-    let comboStreak = 0;
+                <div>
+                    <label style="display:block; margin-bottom:5px; font-weight: bold;">시각화 옵션</label>
+                    <div class="option-selector">
+                        <button class="brutal-btn" id="opt-axis" onclick="toggleOption('axis')">대칭축 표시</button>
+                        <button class="brutal-btn" id="opt-angle" onclick="toggleOption('angle')">내각 표시</button>
+                    </div>
+                </div>
 
-    function switchView(viewId) {
-        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        if (viewId === 'view-practice') { currentMode = 'practice'; initPracticeMode(); }
-        if (viewId === 'view-quiz') { currentMode = 'quiz'; comboStreak = 0; updateComboUI(); initQuizMode(); }
-        if (viewId === 'view-menu') { currentMode = 'menu'; }
-        playSound('tick');
-    }
+                <div>
+                    <label style="display:block; margin-bottom:5px; font-weight: bold;">조작 컨트롤</label>
+                    <div class="control-grid">
+                        <button class="brutal-btn" onclick="manipulate('rotate-ccw')">반시계 회전 (←)</button>
+                        <button class="brutal-btn" onclick="manipulate('rotate-cw')">시계 회전 (→)</button>
+                        <button class="brutal-btn" onclick="manipulate('flip-h')">좌우 뒤집기 (↑)</button>
+                        <button class="brutal-btn" onclick="manipulate('flip-v')">상하 뒤집기 (↓)</button>
+                    </div>
+                    <div class="key-hint">💡 키보드 방향키 조작 지원 (화면 스크롤 방지 완료) / 리셋: Space</div>
+                </div>
 
-    const shapeDefinitions = {
-        triangle: { path: "M 0,-50 L 50,45 L -50,45 Z", vertices: [{x: 0, y: -60, label: 'A'}, {x: 58, y: 50, label: 'B'}, {x: -58, y: 50, label: 'C'}], innerPatch: "M 0,-15 L 20,25 L -20,25 Z" },
-        square: { path: "M -42,-42 L 42,-42 L 42,42 L -42,42 Z", vertices: [{x: -48, y: -48, label: 'A'}, {x: 48, y: -48, label: 'B'}, {x: 48, y: 48, label: 'C'}, {x: -48, y: 48, label: 'D'}], innerPatch: "M 0,-42 L 42,0 L 0,42 L -42,0 Z" },
-        pentagon: { path: "M 0,-50 L 48,-14 L 28,42 L -28,42 L -48,-14 Z", vertices: [{x: 0, y: -60, label: 'A'}, {x: 56, y: -16, label: 'B'}, {x: 34, y: 50, label: 'C'}, {x: -34, y: 50, label: 'D'}, {x: -56, y: -16, label: 'E'}], innerPatch: "M 0,-25 L 22,-7 L 14,21 L -14,21 L -22,-7 Z" },
-        Lshape: { path: "M -32,-50 L 0,-50 L 0,12 L 32,12 L 32,50 L -32,50 Z", vertices: [{x: -38, y: -58, label: 'A'}, {x: 8, y: -58, label: 'B'}, {x: 8, y: 6, label: 'C'}, {x: 38, y: 6, label: 'D'}, {x: 38, y: 58, label: 'E'}, {x: -38, y: 58, label: 'F'}], innerPatch: "M -18,-35 L -2,-35 L -2,-5 L 18,-5 L 18,35 L -18,35 Z" }
-    };
+                <div class="color-picker-group">
+                    <div>
+                        <label style="display:block; margin-bottom:2px; font-size:0.9rem;">도형 채우기</label>
+                        <input type="color" id="color-fill" value="#ffde00" onchange="updateColors()">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:2px; font-size:0.9rem;">기준점(A)</label>
+                        <input type="color" id="color-point" value="#ff007b" onchange="updateColors()">
+                    </div>
+                    <button class="brutal-btn" style="margin-left:auto; background:var(--main-pink); color:white;" onclick="resetState()">공간 리셋</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    let practiceState = { shape: 'triangle', rot: 0, flipH: 1, flipV: 1, fillColor: '#ffde00', vertexColor: '#ff007b' };
-    let quizState = { shape: 'triangle', currentRot: 0, currentFlipH: 1, currentFlipV: 1, targetRot: 0, targetFlipH: 1, targetFlipV: 1, fillColor: '#ffffff', vertexColor: '#111111' };
+    <!-- QUIZ MODE -->
+    <div id="quiz-mode" class="brutal-card" style="display: none;">
+        <div class="quiz-status">🔥 COMBO: <span id="combo-count">0</span></div>
+        <h2>도형 합동 및 대칭 맞추기 퀴즈</h2>
+        <p style="margin-bottom: 15px; font-weight: bold;">🛠 나의 도형을 조작하여 🎯 목표 도형과 완전히 일치(합동)시키세요! (기준점 A 매칭 필수)</p>
 
-    function renderShapeSVG(def, fillColor, vertexColor, isMini = false) {
-        const size = isMini ? 40 : 150;
-        let svgHTML = `<svg width="${size}" height="${size}" viewBox="-80 -80 160 160" style="overflow: visible;"><g>`;
-        
-        svgHTML += `<path d="${def.path}" fill="${fillColor}" stroke="#111" stroke-width="4" stroke-linejoin="round" />`;
-        if (def.innerPatch) svgHTML += `<path d="${def.innerPatch}" fill="#111" opacity="0.3" stroke="none" />`;
+        <div class="grid-layout">
+            <div style="text-align: center;">
+                <div style="background:var(--main-cyan); padding:5px; border:3px solid #000; font-weight:bold; margin-bottom:10px;">🎯 목표 도형 (TARGET)</div>
+                <div class="canvas-area">
+                    <svg id="quiz-target-svg"></svg>
+                </div>
+            </div>
+            <div style="text-align: center; position: relative;">
+                <div style="background:var(--main-yellow); padding:5px; border:3px solid #000; font-weight:bold; margin-bottom:10px;">🛠 나의 도형 (USER)</div>
+                <div class="canvas-area" id="quiz-user-container">
+                    <div class="quiz-success-overlay" id="success-overlay">
+                        <span style="font-size: 2.2rem; font-weight: bold; background: white; border:3px solid #000; padding:5px 15px; box-shadow:3px 3px 0 #000;">PERFECT!</span>
+                        <p style="margin: 15px 0; font-weight: bold;">공간지각 능력이 대단하시군요!</p>
+                        <button class="brutal-btn" style="background: var(--main-green);" onclick="nextQuiz()">다음 문제 도전 (Enter)</button>
+                    </div>
+                    <svg id="quiz-user-svg"></svg>
+                </div>
+            </div>
+        </div>
 
-        if (def.vertices) {
-            def.vertices.forEach((v, idx) => {
-                let cColor = (idx === 0) ? vertexColor : '#111';
-                let rSize = (idx === 0) ? 8 : 5;
-                svgHTML += `<circle cx="${v.x}" cy="${v.y}" r="${rSize}" fill="${cColor}" stroke="#fff" stroke-width="2" />`;
-                if (!isMini) svgHTML += `<text x="${v.x * 1.25}" y="${v.y * 1.25}" font-size="14" font-weight="900" font-family="sans-serif" fill="${cColor}" text-anchor="middle" dominant-baseline="central">${v.label}</text>`;
+        <div style="margin-top: 20px;" class="controls-panel">
+            <div class="control-grid">
+                <button class="brutal-btn" onclick="manipulate('rotate-ccw')">반시계 회전 (←)</button>
+                <button class="brutal-btn" onclick="manipulate('rotate-cw')">시계 회전 (→)</button>
+                <button class="brutal-btn" onclick="manipulate('flip-h')">좌우 뒤집기 (↑)</button>
+                <button class="brutal-btn" onclick="manipulate('flip-v')">상하 뒤집기 (↓)</button>
+            </div>
+            <button class="brutal-btn" style="width: 100%; background: var(--main-green); font-size: 1.3rem;" onclick="checkAnswer()">정답 확인 (Enter)</button>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        let currentMode = 'practice';
+        let currentShapeType = 'triangle';
+
+        // Geometry Transform Tracking
+        let transformState = { rotation: 0, flipH: 1, flipV: 1 };
+        let targetState = { rotation: 0, flipH: 1, flipV: 1, shapeType: 'triangle' };
+
+        // Visualization Options
+        let options = { axis: false, angle: false };
+        let combo = 0;
+        let isQuizCleared = false;
+
+        // Shape Coordinate & Geometric Properties (Centered at 0,0)
+        const shapes = {
+            triangle: {
+                points: [[0, -65], [56, 32], [-56, 32]],
+                angles: [60, 60, 60],
+                name: "정삼각형"
+            },
+            square: {
+                points: [[-45, -45], [45, -45], [45, 45], [-45, 45]],
+                angles: [90, 90, 90, 90],
+                name: "정사각형"
+            },
+            parallelogram: {
+                points: [[-25, -45], [55, -45], [25, 45], [-55, 45]],
+                angles: [60, 120, 60, 120],
+                name: "평행사변형"
+            },
+            rhombus: {
+                points: [[0, -65], [50, 0], [0, 65], [-50, 0]],
+                angles: [70, 110, 70, 110],
+                name: "마름모"
+            },
+            trapezoid: {
+                points: [[-30, -40], [30, -40], [60, 40], [-60, 40]],
+                angles: [70, 70, 110, 110],
+                name: "등변사다리꼴"
+            },
+            lshape: {
+                points: [[-40, -40], [10, -40], [10, 0], [40, 0], [40, 40], [-40, 40]],
+                angles: [90, 90, 270, 90, 90, 90],
+                name: "L자형 변형도형"
+            }
+        };
+
+        window.onload = function() {
+            initSVGs();
+            resetState();
+            bindGlobalKeys();
+        };
+
+        function initSVGs() {
+            const svgs = ['practice-svg', 'quiz-target-svg', 'quiz-user-svg'];
+            svgs.forEach(id => {
+                const svg = document.getElementById(id);
+                svg.innerHTML = `<g id="${id}-g" transform="translate(150, 175)"></g>`;
             });
         }
-        svgHTML += `</g></svg>`;
-        return svgHTML;
-    }
 
-    function initPracticeMode() {
-        document.querySelectorAll('#practiceTabs .shape-tab').forEach(tab => {
-            tab.onclick = (e) => {
-                document.querySelectorAll('#practiceTabs .shape-tab').forEach(t => t.classList.remove('active'));
-                e.target.classList.add('active');
-                practiceState.shape = e.target.dataset.shape;
-                practiceState.rot = 0; practiceState.flipH = 1; practiceState.flipV = 1;
-                updatePracticeView(); playSound('tick');
-            };
-        });
-        updatePracticeView();
-    }
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('btn-practice').classList.toggle('active', mode === 'practice');
+            document.getElementById('btn-quiz').classList.toggle('active', mode === 'quiz');
+            document.getElementById('practice-mode').style.display = mode === 'practice' ? 'block' : 'none';
+            document.getElementById('quiz-mode').style.display = mode === 'quiz' ? 'block' : 'none';
 
-    function updatePracticeCustom() {
-        practiceState.fillColor = document.getElementById('fillColorPicker').value;
-        practiceState.vertexColor = document.getElementById('vertexColorPicker').value;
-        updatePracticeView();
-    }
-
-    function updatePracticeView() {
-        const def = shapeDefinitions[practiceState.shape];
-        const wrapper = document.getElementById('practiceShapeWrapper');
-        document.getElementById('practiceShapeView').innerHTML = renderShapeSVG(def, practiceState.fillColor, practiceState.vertexColor);
-        wrapper.style.transform = `rotate(${practiceState.rot}deg) scale(${practiceState.flipH}, ${practiceState.flipV})`;
-    }
-
-    function transformShape(mode, action) {
-        playSound('tick');
-        if (mode === 'practice') {
-            if (action === 'rot-left') practiceState.rot -= 90;
-            if (action === 'rot-right') practiceState.rot += 90;
-            if (action === 'flip-h') practiceState.flipH *= -1;
-            if (action === 'flip-v') practiceState.flipV *= -1;
-            updatePracticeView();
-        } else if (mode === 'quiz') {
-            if (action === 'rot-left') quizState.currentRot -= 90;
-            if (action === 'rot-right') quizState.currentRot += 90;
-            if (action === 'flip-h') quizState.currentFlipH *= -1;
-            if (action === 'flip-v') quizState.currentFlipV *= -1;
-            updateQuizView();
-        }
-    }
-
-    function resetShape(mode) {
-        playSound('tick');
-        if (mode === 'practice') {
-            practiceState.rot = 0; practiceState.flipH = 1; practiceState.flipV = 1;
-            updatePracticeView();
-        }
-    }
-
-    function initQuizMode() {
-        const shapes = Object.keys(shapeDefinitions);
-        quizState.shape = shapes[Math.floor(Math.random() * shapes.length)];
-        
-        quizState.targetRot = [0, 90, 180, 270][Math.floor(Math.random() * 4)];
-        quizState.targetFlipH = Math.random() > 0.5 ? 1 : -1;
-        quizState.targetFlipV = Math.random() > 0.5 ? 1 : -1;
-
-        quizState.currentRot = 0; quizState.currentFlipH = 1; quizState.currentFlipV = 1;
-        document.getElementById('quizFeedback').innerHTML = '';
-        
-        const def = shapeDefinitions[quizState.shape];
-        
-        document.getElementById('targetPreview').innerHTML = renderShapeSVG(def, '#00f0ff', '#ff007b', true);
-        document.getElementById('targetPreviewWrapper').style.transform = `rotate(${quizState.targetRot}deg) scale(${quizState.targetFlipH}, ${quizState.targetFlipV})`;
-        
-        updateQuizView();
-    }
-
-    function updateQuizView() {
-        const def = shapeDefinitions[quizState.shape];
-        
-        document.getElementById('quizShapeView').innerHTML = renderShapeSVG(def, quizState.fillColor, quizState.vertexColor);
-        document.getElementById('quizShapeWrapper').style.transform = `rotate(${quizState.currentRot}deg) scale(${quizState.currentFlipH}, ${quizState.currentFlipV})`;
-        
-        document.getElementById('currentPreview').innerHTML = renderShapeSVG(def, quizState.fillColor, quizState.vertexColor, true);
-        document.getElementById('currentPreviewWrapper').style.transform = `rotate(${quizState.currentRot}deg) scale(${quizState.currentFlipH}, ${quizState.currentFlipV})`;
-    }
-
-    function checkQuizAnswer() {
-        const curRotNorm = (quizState.currentRot % 360 + 360) % 360;
-        const targetRotNorm = (quizState.targetRot % 360 + 360) % 360;
-        let isMatched = false;
-        
-        if (curRotNorm === targetRotNorm && quizState.currentFlipH === quizState.targetFlipH && quizState.currentFlipV === quizState.targetFlipV) {
-            isMatched = true;
-        }
-
-        const validMatchCases = [
-            { rot: targetRotNorm, h: quizState.targetFlipH, v: quizState.targetFlipV },
-            { rot: (targetRotNorm + 180) % 360, h: -quizState.targetFlipH, v: -quizState.targetFlipV }
-        ];
-
-        for (let c of validMatchCases) {
-            if (curRotNorm === c.rot && quizState.currentFlipH === c.h && quizState.currentFlipV === c.v) {
-                isMatched = true; break;
+            if (mode === 'quiz') {
+                generateQuiz();
+            } else {
+                resetState();
             }
         }
 
-        const feedback = document.getElementById('quizFeedback');
-        if (isMatched) {
-            playSound('success');
-            comboStreak++;
-            updateComboUI();
-            document.getElementById('successModal').classList.add('active');
-            fireConfetti();
-            feedback.innerHTML = "";
-        } else {
-            playSound('error');
-            comboStreak = 0;
-            updateComboUI();
-            feedback.innerHTML = "오답! 조작을 다시 확인하세요.";
-            feedback.className = "feedback-box error";
-        }
-    }
-
-    function updateComboUI() {
-        const streakEl = document.getElementById('streakDisplay');
-        streakEl.innerText = `🔥 COMBO: ${comboStreak}`;
-        streakEl.classList.remove('pop');
-        void streakEl.offsetWidth;
-        if(comboStreak > 0) streakEl.classList.add('pop');
-    }
-
-    function nextQuiz() {
-        playSound('tick');
-        document.getElementById('successModal').classList.remove('active');
-        initQuizMode();
-    }
-
-    function fireConfetti() {
-        var duration = 2 * 1000;
-        var end = Date.now() + duration;
-        (function frame() {
-            confetti({ particleCount: 5, angle: 60, spread: 60, origin: { x: 0 }, colors: ['#ffde00', '#ff007b', '#00f0ff'] });
-            confetti({ particleCount: 5, angle: 120, spread: 60, origin: { x: 1 }, colors: ['#ffde00', '#ff007b', '#00f0ff'] });
-            if (Date.now() < end) requestAnimationFrame(frame);
-        }());
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (document.getElementById('successModal').classList.contains('active') && e.key === 'Enter') {
-            nextQuiz(); return;
+        function changeShape(shapeType, btn) {
+            currentShapeType = shapeType;
+            const buttons = btn.parentElement.querySelectorAll('.brutal-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            resetState();
         }
 
-        if (currentMode === 'practice' || currentMode === 'quiz') {
-            if (e.key === 'ArrowLeft') transformShape(currentMode, 'rot-left');
-            if (e.key === 'ArrowRight') transformShape(currentMode, 'rot-right');
-            if (e.key === 'ArrowUp') transformShape(currentMode, 'flip-h');
-            if (e.key === 'ArrowDown') transformShape(currentMode, 'flip-v');
+        function toggleOption(opt) {
+            options[opt] = !options[opt];
+            document.getElementById(`opt-${opt}`).classList.toggle('active', options[opt]);
+            render();
         }
 
-        if (currentMode === 'practice' && e.key === ' ') {
-            e.preventDefault(); resetShape('practice');
+        function resetState() {
+            transformState = { rotation: 0, flipH: 1, flipV: 1 };
+            render();
         }
-        
-        if (currentMode === 'quiz' && e.key === 'Enter') {
-            checkQuizAnswer();
-        }
-    });
 
-    // 💡 초기 실행 시 기본 모드(practice) 상태 세팅 및 렌더링 강제 실행
-    initPracticeMode();
-</script>
+        function manipulate(action) {
+            if (isQuizCleared && currentMode === 'quiz') return;
+
+            if (action === 'rotate-cw') transformState.rotation = (transformState.rotation + 45) % 360;
+            if (action === 'rotate-ccw') transformState.rotation = (transformState.rotation - 45 + 360) % 360;
+            if (action === 'flip-h') transformState.flipH *= -1;
+            if (action === 'flip-v') transformState.flipV *= -1;
+
+            render();
+        }
+
+        function updateColors() {
+            render();
+        }
+
+        function bindGlobalKeys() {
+            window.addEventListener('keydown', function(e) {
+                if(['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(e.code) > -1) {
+                    e.preventDefault();
+                }
+            }, {passive: false});
+
+            document.addEventListener('keydown', function(e) {
+                if (currentMode === 'practice') {
+                    if (e.key === 'ArrowLeft') manipulate('rotate-ccw');
+                    if (e.key === 'ArrowRight') manipulate('rotate-cw');
+                    if (e.key === 'ArrowUp') manipulate('flip-h');
+                    if (e.key === 'ArrowDown') manipulate('flip-v');
+                    if (e.key === ' ' || e.code === 'Space') resetState();
+                } else if (currentMode === 'quiz') {
+                    if (isQuizCleared) {
+                        if (e.key === 'Enter') nextQuiz();
+                        return;
+                    }
+                    if (e.key === 'ArrowLeft') manipulate('rotate-ccw');
+                    if (e.key === 'ArrowRight') manipulate('rotate-cw');
+                    if (e.key === 'ArrowUp') manipulate('flip-h');
+                    if (e.key === 'ArrowDown') manipulate('flip-v');
+                    if (e.key === 'Enter') checkAnswer();
+                }
+            });
+        }
+
+        function render() {
+            if (currentMode === 'practice') {
+                const group = document.getElementById('practice-svg-g');
+                renderShapeInGroup(group, currentShapeType, transformState, false);
+            } else {
+                const userGroup = document.getElementById('quiz-user-svg-g');
+                renderShapeInGroup(userGroup, targetState.shapeType, transformState, false);
+            }
+        }
+
+        function renderShapeInGroup(group, shapeType, state, isTarget = false) {
+            group.innerHTML = '';
+            const shape = shapes[shapeType];
+            const fillColor = isTarget ? '#d0d0d0' : document.getElementById('color-fill').value;
+            const pointColor = isTarget ? '#ff003c' : document.getElementById('color-point').value;
+
+            const transformG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            transformG.setAttribute('transform', `scale(${state.flipH}, ${state.flipV}) rotate(${state.rotation})`);
+
+            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            const pointsStr = shape.points.map(p => p.join(',')).join(' ');
+            polygon.setAttribute('points', pointsStr);
+            polygon.setAttribute('fill', fillColor);
+            polygon.setAttribute('stroke', '#000000');
+            polygon.setAttribute('stroke-width', '4');
+            transformG.appendChild(polygon);
+
+            if (options.angle && !isTarget && currentMode === 'practice') {
+                shape.points.forEach((p, idx) => {
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', p[0] * 0.6);
+                    text.setAttribute('y', p[1] * 0.6);
+                    text.setAttribute('font-size', '14px');
+                    text.setAttribute('font-weight', 'bold');
+                    text.setAttribute('fill', '#000000');
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('dominant-baseline', 'central');
+                    text.textContent = `${shape.angles[idx]}°`;
+                    transformG.appendChild(text);
+                });
+            }
+
+            const ptA = shape.points[0];
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', ptA[0]);
+            circle.setAttribute('cy', ptA[1]);
+            circle.setAttribute('r', '9');
+            circle.setAttribute('fill', pointColor);
+            circle.setAttribute('stroke', '#000000');
+            circle.setAttribute('stroke-width', '3');
+            transformG.appendChild(circle);
+
+            const textA = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            textA.setAttribute('x', ptA[0]);
+            textA.setAttribute('y', ptA[1] - 15);
+            textA.setAttribute('font-size', '14px');
+            textA.setAttribute('font-weight', 'bold');
+            textA.setAttribute('text-anchor', 'middle');
+            textA.textContent = 'A';
+            transformG.appendChild(textA);
+
+            group.appendChild(transformG);
+
+            if (options.axis && !isTarget && currentMode === 'practice') {
+                const axisH = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                axisH.setAttribute('x1', '-140'); axisH.setAttribute('y1', '0');
+                axisH.setAttribute('x2', '140'); axisH.setAttribute('y2', '0');
+                axisH.setAttribute('stroke', '#00f0ff'); axisH.setAttribute('stroke-width', '2');
+                axisH.setAttribute('stroke-dasharray', '6,4');
+                group.appendChild(axisH);
+
+                const axisV = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                axisV.setAttribute('x1', '0'); axisV.setAttribute('y1', '-140');
+                axisV.setAttribute('x2', '0'); axisV.setAttribute('y2', '140');
+                axisV.setAttribute('stroke', '#ff007b'); axisV.setAttribute('stroke-width', '2');
+                axisV.setAttribute('stroke-dasharray', '6,4');
+                group.appendChild(axisV);
+            }
+        }
+
+        function generateQuiz() {
+            isQuizCleared = false;
+            document.getElementById('success-overlay').style.display = 'none';
+
+            const shapeKeys = Object.keys(shapes);
+            targetState.shapeType = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
+
+            const rotations = [0, 45, 90, 135, 180, 225, 270, 315];
+            targetState.rotation = rotations[Math.floor(Math.random() * rotations.length)];
+            targetState.flipH = Math.random() > 0.5 ? 1 : -1;
+            targetState.flipV = Math.random() > 0.5 ? 1 : -1;
+
+            transformState = { rotation: 0, flipH: 1, flipV: 1 };
+
+            const targetGroup = document.getElementById('quiz-target-svg-g');
+            renderShapeInGroup(targetGroup, targetState.shapeType, targetState, true);
+
+            render();
+        }
+
+        function checkAnswer() {
+            if (isQuizCleared) return;
+
+            const shape = shapes[targetState.shapeType];
+            const ptA = shape.points[0];
+
+            const getTransformedPt = (pt, state) => {
+                let x = pt[0] * state.flipH;
+                let y = pt[1] * state.flipV;
+                let rad = (state.rotation * Math.PI) / 180;
+                return [
+                    x * Math.cos(rad) - y * Math.sin(rad),
+                    x * Math.sin(rad) + y * Math.cos(rad)
+                ];
+            };
+
+            const userPt = getTransformedPt(ptA, transformState);
+            const targetPt = getTransformedPt(ptA, targetState);
+
+            const distance = Math.hypot(userPt[0] - targetPt[0], userPt[1] - targetPt[1]);
+
+            if (distance < 1e-1) {
+                isQuizCleared = true;
+                combo++;
+                document.getElementById('combo-count').textContent = combo;
+                document.getElementById('success-overlay').style.display = 'flex';
+            } else {
+                alert("도형의 방향이나 기준점(A)의 위치가 일치하지 않습니다. 대칭과 회전을 다시 이용해 맞춰보세요!");
+                combo = 0;
+                document.getElementById('combo-count').textContent = combo;
+            }
+        }
+
+        function nextQuiz() {
+            generateQuiz();
+        }
+    </script>
 </body>
 </html>
