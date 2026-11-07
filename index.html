@@ -170,6 +170,79 @@
     }
     @media (min-width: 768px) { .carousel img { flex: 0 0 auto; width: 60%; } }
 
+    /* 3D 플립 카드 스타일 */
+    .flip-container {
+      background-color: transparent;
+      perspective: 1000px;
+      margin-top: 24px;
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+    }
+    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; }
+    .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 400px; }
+    
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    
+    .flip-container.is-flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+    
+    .flip-front, .flip-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border: var(--border-thick);
+      box-shadow: 8px 8px 0 var(--black);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+    
+    .flip-front img, .flip-back img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .flip-hint {
+      position: absolute;
+      bottom: -16px;
+      right: -16px;
+      background: var(--yellow);
+      border: var(--border);
+      padding: 6px 18px;
+      font-weight: 900;
+      font-size: 1rem;
+      transform: rotate(-5deg);
+      box-shadow: 4px 4px 0 var(--black);
+      z-index: 10;
+      pointer-events: none;
+      color: var(--black);
+      transition: all 0.2s;
+    }
+    
+    .flip-container:hover .flip-hint {
+      background: var(--red);
+      color: white;
+      transform: scale(1.1) rotate(-5deg);
+    }
+
     /* 논문 PDF 미리보기 아코디언 */
     details { 
       background: white; border: var(--border-thick); box-shadow: 6px 6px 0 var(--black); 
@@ -388,28 +461,62 @@
         </div>
       </article>
 
+      <!-- 3D 애니메이션 적용: 메달 디자인 -->
       <article class="work brutal-reveal">
         <h3>제주 전국체전 메달 디자인</h3>
         <p class="when">그래픽 디자인 공모</p>
-        <p>제주도에서 개최되는 제107회 전국체육대회의 상징성을 담은 메달 앞면과 뒷면 디자인 작업입니다.</p>
-        <div class="carousel-wrap">
-          <div class="carousel">
-            <img src="메달 앞면.png" alt="메달 앞면">
-            <img src="메달 뒷면.png" alt="메달 뒷면">
+        <p>제주도에서 개최되는 제107회 전국체육대회의 상징성을 담은 메달 디자인입니다. 이미지를 클릭해 양면을 확인해 보세요.</p>
+        <div class="flip-container ratio-medal">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <img src="메달 앞면.png" alt="메달 앞면">
+              <div class="flip-hint">CLICK!</div>
+            </div>
+            <div class="flip-back">
+              <img src="메달 뒷면.png" alt="메달 뒷면">
+            </div>
+          </div>
+        </div>
+      </article>
+      
+      <!-- 분리 및 3D 애니메이션 적용: 체크카드 -->
+      <article class="work brutal-reveal">
+        <h3>교내 실사용 체크카드 디자인</h3>
+        <p class="when">그래픽 디자인 / 교내 활동</p>
+        <p>재학생들이 실제로 사용하는 교내 제휴 체크카드의 시안 디자인입니다. 이미지를 클릭해 양면을 확인해 보세요.</p>
+        <div class="flip-container ratio-card">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <img src="카드 앞면.png" alt="카드 앞면">
+              <div class="flip-hint">CLICK!</div>
+            </div>
+            <div class="flip-back">
+              <img src="카드 뒷면.png" alt="카드 뒷면">
+            </div>
           </div>
         </div>
       </article>
 
+      <!-- 분리: 밴드부 홍보물 -->
       <article class="work brutal-reveal">
-        <h3>밴드부 홍보물 및 학교 체크카드/과잠 디자인</h3>
+        <h3>밴드부 홍보물 디자인</h3>
         <p class="when">그래픽 디자인 / 교내 활동</p>
-        <p>밴드부 '봉황' 카드뉴스, 재학생 실사용 체크카드 및 학과 단체복 등판 타이포그래피 시안 디자인 기록입니다.</p>
+        <p>교내 밴드부 '봉황'의 부원 모집 및 공연 홍보를 위한 카드뉴스 시안입니다.</p>
         <div class="carousel-wrap">
           <div class="carousel">
-            <img src="카드 앞면.png" alt="카드 앞면">
-            <img src="카드 뒷면.png" alt="카드 뒷면">
-            <img src="아트보드 1.png" alt="과잠 디자인 시안 1">
             <img src="컷1-4123.png" alt="밴드부 홍보물">
+          </div>
+        </div>
+      </article>
+
+      <!-- 분리: 과잠 디자인 -->
+      <article class="work brutal-reveal">
+        <h3>학과 단체복(과잠) 디자인</h3>
+        <p class="when">그래픽 디자인 / 교내 활동</p>
+        <p>학과 단체복 등판에 들어갈 타이포그래피 및 엠블럼 시안 디자인 기록입니다.</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <img src="아트보드 1.png" alt="과잠 디자인 시안 1">
           </div>
         </div>
       </article>
@@ -642,6 +749,13 @@
             behavior: 'smooth'
           });
         }
+      });
+    });
+
+    // 3. 플립 컨테이너 클릭 이벤트 리스너 추가
+    document.querySelectorAll('.flip-container').forEach(container => {
+      container.addEventListener('click', () => {
+        container.classList.toggle('is-flipped');
       });
     });
   });
