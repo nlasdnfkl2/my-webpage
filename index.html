@@ -165,10 +165,29 @@
     .carousel::-webkit-scrollbar-thumb { background: var(--black); border-left: var(--border); border-right: var(--border); }
     .carousel img {
       scroll-snap-align: start; flex: 0 0 85%; max-width: 500px; max-height: 400px;
-      object-fit: cover; border: var(--border-thick); background: #fff;
+      object-fit: contain; /* 비율 유지하며 안 잘리게 변경 */
+      padding: 16px;
+      border: var(--border-thick); background: #fff;
       box-shadow: 8px 8px 0 var(--black);
     }
     @media (min-width: 768px) { .carousel img { flex: 0 0 auto; width: 60%; } }
+
+    /* 단일 이미지 전용 래퍼 (밴드부 홍보물, 과잠 등 1장짜리) */
+    .single-image {
+      margin-top: 24px;
+      border: var(--border-thick);
+      background: white;
+      box-shadow: 8px 8px 0 var(--black);
+      padding: 16px;
+      max-width: 500px;
+    }
+    .single-image img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: contain;
+      display: block;
+    }
 
     /* 3D 플립 카드 스타일 */
     .flip-container {
@@ -176,11 +195,11 @@
       perspective: 1000px;
       margin-top: 24px;
       width: 100%;
-      max-width: 500px;
       position: relative;
     }
-    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; }
+    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; max-width: 500px; }
     .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 400px; }
+    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 400px; }
     
     .flip-inner {
       position: relative;
@@ -207,7 +226,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
     
     .flip-back {
@@ -217,9 +235,11 @@
     .flip-front img, .flip-back img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain; /* 원본 비율 유지, 잘림 방지 */
+      padding: 16px;
     }
     
+    /* CLICK 힌트를 3D 플립 프레임 밖으로 분리 (잘림 완벽 방지) */
     .flip-hint {
       position: absolute;
       bottom: -16px;
@@ -231,7 +251,7 @@
       font-size: 1rem;
       transform: rotate(-5deg);
       box-shadow: 4px 4px 0 var(--black);
-      z-index: 10;
+      z-index: 100;
       pointer-events: none;
       color: var(--black);
       transition: all 0.2s;
@@ -338,7 +358,7 @@
       border-top: var(--border-thick); border-color: var(--black);
     }
 
-    /* 스크롤 스파이 네비게이터 (브루탈리스트 스타일) */
+    /* 스크롤 스파이 네비게이터 */
     .nav-assistant {
       position: fixed; top: 50%; right: 24px; transform: translateY(-50%);
       display: flex; flex-direction: column; gap: 16px;
@@ -358,7 +378,7 @@
     }
     .nav-dot:hover::after { opacity: 1; transform: translateY(-50%) translateX(-8px); box-shadow: 4px 4px 0 var(--red); }
 
-    /* 페이드 인 / 바운스 인 애니메이션 */
+    /* 애니메이션 */
     .brutal-reveal {
       opacity: 0; transform: translateY(40px) scale(0.98); 
       transition: opacity 0.6s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -449,19 +469,24 @@
         </div>
       </article>
 
+      <!-- 3D 애니메이션 적용: 전국체전 포스터/엠블럼 -->
       <article class="work brutal-reveal">
         <h3>경기 전국체전 디자인</h3>
         <p class="when">그래픽 디자인 공모</p>
-        <p>경기도에서 열리는 제108회 전국체육대회 및 제48회 전국장애인체육대회의 통합 엠블럼과 공식 포스터를 기획하고 구현했습니다.</p>
-        <div class="carousel-wrap">
-          <div class="carousel">
-            <img src="양대회통합–엠블럼–260108-문태양.png" alt="전국체전 통합 엠블럼">
-            <img src="전국장애인체전–포스터–260108-문태양.png" alt="전국체전 대회 포스터">
+        <p>경기도에서 열리는 제108회 전국체육대회 및 제48회 전국장애인체육대회의 디자인 작업입니다. 카드를 클릭해 통합 엠블럼과 포스터를 확인해 보세요.</p>
+        <div class="flip-container ratio-poster">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <img src="양대회통합–엠블럼–260108-문태양.png" alt="전국체전 통합 엠블럼">
+            </div>
+            <div class="flip-back">
+              <img src="전국장애인체전–포스터–260108-문태양.png" alt="전국체전 대회 포스터">
+            </div>
           </div>
+          <div class="flip-hint">CLICK!</div>
         </div>
       </article>
 
-      <!-- 3D 애니메이션 적용: 메달 디자인 -->
       <article class="work brutal-reveal">
         <h3>제주 전국체전 메달 디자인</h3>
         <p class="when">그래픽 디자인 공모</p>
@@ -470,16 +495,15 @@
           <div class="flip-inner">
             <div class="flip-front">
               <img src="메달 앞면.png" alt="메달 앞면">
-              <div class="flip-hint">CLICK!</div>
             </div>
             <div class="flip-back">
               <img src="메달 뒷면.png" alt="메달 뒷면">
             </div>
           </div>
+          <div class="flip-hint">CLICK!</div>
         </div>
       </article>
       
-      <!-- 분리 및 3D 애니메이션 적용: 체크카드 -->
       <article class="work brutal-reveal">
         <h3>교내 실사용 체크카드 디자인</h3>
         <p class="when">그래픽 디자인 / 교내 활동</p>
@@ -488,36 +512,32 @@
           <div class="flip-inner">
             <div class="flip-front">
               <img src="카드 앞면.png" alt="카드 앞면">
-              <div class="flip-hint">CLICK!</div>
             </div>
             <div class="flip-back">
               <img src="카드 뒷면.png" alt="카드 뒷면">
             </div>
           </div>
+          <div class="flip-hint">CLICK!</div>
         </div>
       </article>
 
-      <!-- 분리: 밴드부 홍보물 -->
+      <!-- 단일 프레임 렌더링 적용 -->
       <article class="work brutal-reveal">
         <h3>밴드부 홍보물 디자인</h3>
         <p class="when">그래픽 디자인 / 교내 활동</p>
         <p>교내 밴드부 '봉황'의 부원 모집 및 공연 홍보를 위한 카드뉴스 시안입니다.</p>
-        <div class="carousel-wrap">
-          <div class="carousel">
-            <img src="컷1-4123.png" alt="밴드부 홍보물">
-          </div>
+        <div class="single-image">
+          <img src="컷1-4123.png" alt="밴드부 홍보물">
         </div>
       </article>
 
-      <!-- 분리: 과잠 디자인 -->
+      <!-- 단일 프레임 렌더링 적용 -->
       <article class="work brutal-reveal">
         <h3>학과 단체복(과잠) 디자인</h3>
         <p class="when">그래픽 디자인 / 교내 활동</p>
         <p>학과 단체복 등판에 들어갈 타이포그래피 및 엠블럼 시안 디자인 기록입니다.</p>
-        <div class="carousel-wrap">
-          <div class="carousel">
-            <img src="아트보드 1.png" alt="과잠 디자인 시안 1">
-          </div>
+        <div class="single-image">
+          <img src="아트보드 1.png" alt="과잠 디자인 시안 1">
         </div>
       </article>
     </div>
