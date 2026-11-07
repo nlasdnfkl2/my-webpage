@@ -63,6 +63,20 @@
       color: var(--bg); 
     }
 
+    /* 좌우 흔들림(Wiggle) 키프레임 애니메이션 */
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(var(--rot, 0deg)) translateX(0); }
+      25% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
+      50% { transform: rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
+      75% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
+    }
+    @keyframes wiggle-scale {
+      0%, 100% { transform: scale(1.1) rotate(var(--rot, 0deg)) translateX(0); }
+      25% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
+      50% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
+      75% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
+    }
+
     /* 히어로 섹션 */
     .hero { padding: 120px 0 100px; border-bottom: var(--border-thick); }
     .hero .small { 
@@ -81,8 +95,17 @@
       border: var(--border-thick);
       padding: 0 16px;
       box-shadow: 6px 6px 0 var(--black);
-      transform: rotate(-2deg);
+      
+      /* 기본 기울기 및 초기 애니메이션 설정 */
+      --rot: -2deg;
+      transform: rotate(var(--rot));
+      animation: wiggle 0.6s ease-in-out 1s; /* 페이지 로드 1초 후 1번 흔들림 */
     }
+    /* 마우스 호버 시 계속 흔들림 */
+    .hero h1 span:hover {
+      animation: wiggle 0.4s ease-in-out infinite;
+    }
+    
     .hero p { 
       max-width: 36em; margin-top: 40px; font-size: 1.15rem; font-weight: 600;
       border-left: 6px solid var(--black); padding-left: 20px;
@@ -102,7 +125,11 @@
       background: var(--black); color: white; padding: 4px 16px;
       margin-bottom: 24px; text-transform: uppercase;
       box-shadow: 4px 4px 0 var(--red);
+      --rot: 0deg;
+      transform: rotate(var(--rot));
     }
+    .label:hover { animation: wiggle 0.4s ease-in-out infinite; cursor: default; }
+
     h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 24px; }
     .lead { max-width: 38em; font-size: 1.1rem; font-weight: 600; }
 
@@ -128,8 +155,11 @@
       font-size: 1.2rem; font-weight: 900;
       border: var(--border); background: var(--yellow);
       padding: 8px 20px; box-shadow: 4px 4px 0 var(--black);
-      margin-bottom: 40px; transform: rotate(1deg);
+      margin-bottom: 40px; 
+      --rot: 1deg;
+      transform: rotate(var(--rot));
     }
+    .work-group-title:hover { animation: wiggle 0.4s ease-in-out infinite; cursor: default; }
 
     /* 일반 아티클 (정책, 소논문 등) */
     .work { 
@@ -171,23 +201,6 @@
       box-shadow: 8px 8px 0 var(--black);
     }
     @media (min-width: 768px) { .carousel img { flex: 0 0 auto; width: 60%; } }
-
-    /* 단일 이미지 전용 래퍼 (밴드부 홍보물, 과잠 등 1장짜리) */
-    .single-image {
-      margin-top: 24px;
-      border: var(--border-thick);
-      background: white;
-      box-shadow: 8px 8px 0 var(--black);
-      padding: 16px;
-      max-width: 500px;
-    }
-    .single-image img {
-      width: 100%;
-      height: auto;
-      max-height: 500px;
-      object-fit: contain;
-      display: block;
-    }
 
     /* 3D 플립 카드 스타일 */
     .flip-container {
@@ -239,7 +252,7 @@
       padding: 16px;
     }
     
-    /* CLICK 힌트를 3D 플립 프레임 밖으로 분리 (잘림 완벽 방지) */
+    /* CLICK 힌트를 3D 플립 프레임 밖으로 분리 (잘림 방지) & 흔들림 적용 */
     .flip-hint {
       position: absolute;
       bottom: -16px;
@@ -249,18 +262,19 @@
       padding: 6px 18px;
       font-weight: 900;
       font-size: 1rem;
-      transform: rotate(-5deg);
       box-shadow: 4px 4px 0 var(--black);
       z-index: 100;
       pointer-events: none;
       color: var(--black);
-      transition: all 0.2s;
+      
+      --rot: -5deg;
+      transform: rotate(var(--rot));
+      animation: wiggle 0.6s ease-in-out 1.5s; /* 로드 1.5초 후 흔들림 */
     }
-    
     .flip-container:hover .flip-hint {
       background: var(--red);
       color: white;
-      transform: scale(1.1) rotate(-5deg);
+      animation: wiggle-scale 0.4s ease-in-out infinite; /* 호버 시 크기가 커지며 흔들림 */
     }
 
     /* 논문 PDF 미리보기 아코디언 */
@@ -469,7 +483,6 @@
         </div>
       </article>
 
-      <!-- 3D 애니메이션 적용: 전국체전 포스터/엠블럼 -->
       <article class="work brutal-reveal">
         <h3>경기 전국체전 디자인</h3>
         <p class="when">그래픽 디자인 공모</p>
@@ -521,23 +534,32 @@
         </div>
       </article>
 
-      <!-- 단일 프레임 렌더링 적용 -->
+      <!-- 4장으로 복구된 밴드부 홍보물 -->
       <article class="work brutal-reveal">
         <h3>밴드부 홍보물 디자인</h3>
         <p class="when">그래픽 디자인 / 교내 활동</p>
-        <p>교내 밴드부 '봉황'의 부원 모집 및 공연 홍보를 위한 카드뉴스 시안입니다.</p>
-        <div class="single-image">
-          <img src="컷1-4123.png" alt="밴드부 홍보물">
+        <p>교내 밴드부 '봉황'의 부원 모집 및 공연 홍보를 위한 카드뉴스 시안입니다. 가로로 스와이프하여 볼 수 있습니다.</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <img src="컷1-4(2).png" alt="밴드부 홍보물 1">
+            <img src="컷2-4(2).png" alt="밴드부 홍보물 2">
+            <img src="컷3-4(2).png" alt="밴드부 홍보물 3">
+            <img src="컷4-4(2).png" alt="밴드부 홍보물 4">
+          </div>
         </div>
       </article>
 
-      <!-- 단일 프레임 렌더링 적용 -->
+      <!-- 2장으로 복구된 과잠 디자인 -->
       <article class="work brutal-reveal">
         <h3>학과 단체복(과잠) 디자인</h3>
         <p class="when">그래픽 디자인 / 교내 활동</p>
-        <p>학과 단체복 등판에 들어갈 타이포그래피 및 엠블럼 시안 디자인 기록입니다.</p>
-        <div class="single-image">
-          <img src="아트보드 1.png" alt="과잠 디자인 시안 1">
+        <p>학과 단체복 등판에 들어갈 타이포그래피 및 엠블럼 시안 디자인 기록입니다. 가로로 스와이프하여 볼 수 있습니다.</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <!-- ※ 실제 이미지 파일명에 맞춰 수정해 주세요 -->
+            <img src="과잠_아트보드1.png" alt="과잠 디자인 시안 1">
+            <img src="과잠_아트보드2.png" alt="과잠 디자인 시안 2">
+          </div>
         </div>
       </article>
     </div>
