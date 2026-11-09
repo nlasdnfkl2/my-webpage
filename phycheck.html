@@ -25,84 +25,43 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: var(--bg); 
-      color: var(--black); 
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-      position: relative;
-      padding-top: 70px;
+      background: var(--bg); color: var(--black); line-height: 1.7;
+      -webkit-font-smoothing: antialiased; position: relative; padding-top: 70px;
     }
     
     .fixed-top-bar {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 60px;
-      background: var(--yellow);
-      border-bottom: var(--border-thick);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 24px;
-      z-index: 2000;
-      box-shadow: 0 4px 0 var(--black);
+      position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+      background: var(--yellow); border-bottom: var(--border-thick);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 24px; z-index: 2000; box-shadow: 0 4px 0 var(--black);
     }
-
     .fixed-top-bar .current-time {
-      font-weight: 900;
-      font-size: 0.95rem;
-      background: white;
-      border: var(--border);
-      padding: 4px 10px;
-      box-shadow: 2px 2px 0 var(--black);
+      font-weight: 900; font-size: 0.95rem; background: white;
+      border: var(--border); padding: 4px 10px; box-shadow: 2px 2px 0 var(--black);
     }
-
-    .fixed-top-bar .icon-group {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
+    .fixed-top-bar .icon-group { display: flex; gap: 12px; align-items: center; }
     .fixed-top-bar .icon-btn {
-      width: 38px; height: 38px;
-      background: white;
-      border: var(--border);
-      border-radius: 50%;
+      width: 38px; height: 38px; background: white; border: var(--border); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 3px 3px 0 var(--black);
-      cursor: pointer;
-      font-weight: 900; font-size: 0.9rem;
-      transition: all 0.1s ease;
-      text-decoration: none;
-      color: var(--black);
-      position: relative;
+      box-shadow: 3px 3px 0 var(--black); cursor: pointer; font-weight: 900;
+      transition: all 0.1s ease; text-decoration: none; color: var(--black);
     }
-
     .fixed-top-bar .icon-btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 5px 5px 0 var(--black);
-      background: var(--cyan);
+      transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); background: var(--cyan);
     }
 
-    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+    .wrap { max-width: 800px; margin: 0 auto; padding: 0 24px 80px; }
     a { color: inherit; text-decoration: none; }
     
     .top {
       display: flex; justify-content: space-between; align-items: baseline;
-      padding: 24px 0; 
-      border-bottom: var(--border-thick);
-      font-size: 1rem; font-weight: 800;
+      padding: 24px 0; border-bottom: var(--border-thick); font-size: 1rem; font-weight: 800;
     }
     .top b { 
-      font-size: 1.4rem; 
-      letter-spacing: 0.05em; 
-      text-transform: uppercase; 
-      background: var(--black); 
-      color: var(--yellow);
-      padding: 4px 12px;
-      transform: skew(-5deg);
+      font-size: 1.4rem; letter-spacing: 0.05em; text-transform: uppercase; 
+      background: var(--black); color: var(--yellow); padding: 4px 12px; transform: skew(-5deg);
     }
     .top nav { display: flex; gap: 24px; }
-    .top nav a { position: relative; padding: 4px 8px; }
     .top nav a:hover { background: var(--black); color: var(--bg); }
 
     .hero { padding: 60px 0 40px; border-bottom: var(--border-thick); }
@@ -111,118 +70,100 @@
       background: var(--cyan); border: var(--border); padding: 4px 12px;
       box-shadow: 4px 4px 0 var(--black); margin-bottom: 20px;
     }
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 1.2; font-weight: 900;
-    }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.2; font-weight: 900; }
     .hero h1 span { 
-      display: inline-block;
-      color: var(--black); 
-      background: var(--yellow);
-      border: var(--border-thick);
-      padding: 0 16px;
-      box-shadow: 6px 6px 0 var(--black);
+      display: inline-block; color: var(--black); background: var(--yellow);
+      border: var(--border-thick); padding: 0 16px; box-shadow: 6px 6px 0 var(--black);
     }
-    .hero p { 
-      max-width: 38em; margin-top: 20px; font-size: 1.05rem; font-weight: 600;
-      border-left: 6px solid var(--black); padding-left: 20px;
-    }
+    .hero p { max-width: 42em; margin-top: 20px; font-size: 1.05rem; font-weight: 600; border-left: 6px solid var(--black); padding-left: 20px; }
 
     .game-card {
-      background: white;
-      border: var(--border-thick);
-      box-shadow: 8px 8px 0 var(--black);
-      padding: 40px;
-      margin-top: 48px;
+      background: white; border: var(--border-thick); box-shadow: 8px 8px 0 var(--black);
+      padding: 40px; margin-top: 48px;
     }
+    @media(max-width: 600px) { .game-card { padding: 24px; } }
 
-    .status-banner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--yellow);
-      border: var(--border);
-      padding: 16px 20px;
-      font-weight: 900;
-      font-size: 1.1rem;
-      box-shadow: 4px 4px 0 var(--black);
-      margin-bottom: 24px;
+    /* 대시보드 진행률 스타일 */
+    .dashboard {
+      background: #f0f3f6; border: var(--border); padding: 24px; margin-bottom: 32px;
+      box-shadow: 4px 4px 0 var(--black); text-align: center;
     }
+    .dashboard h2 { font-size: 1.5rem; font-weight: 900; margin-bottom: 16px; }
+    
+    .progress-container {
+      width: 100%; height: 32px; border: var(--border-thick); background: white;
+      position: relative; margin-bottom: 12px;
+    }
+    .progress-bar {
+      height: 100%; background: var(--green); width: 0%; transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .progress-text {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-weight: 900; font-size: 1.1rem; color: var(--black); text-shadow: 1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white;
+    }
+    .status-msg { font-weight: 800; font-size: 1.1rem; color: var(--blue); }
 
+    /* 입력 폼 */
     .add-form {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
+      display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
     }
-    .add-form input {
-      flex: 1;
-      padding: 14px 16px;
-      font-size: 1.05rem;
-      font-weight: 900;
-      border: var(--border-thick);
-      box-shadow: 4px 4px 0 var(--black);
-      background: white;
+    .input-box { flex: 2; min-width: 200px; }
+    .input-box-sub { flex: 1; min-width: 120px; }
+    
+    input[type="text"] {
+      width: 100%; padding: 14px 16px; font-family: inherit; font-size: 1.05rem;
+      font-weight: 800; border: var(--border-thick); box-shadow: 4px 4px 0 var(--black);
+      background: white; outline: none; transition: transform 0.1s;
     }
+    input[type="text"]:focus { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); }
 
     .btn {
-      font-family: inherit;
-      font-size: 1.1rem;
-      font-weight: 900;
-      padding: 14px 28px;
-      background: var(--yellow);
-      border: var(--border);
-      box-shadow: 4px 4px 0 var(--black);
-      cursor: pointer;
-      transition: all 0.1s;
+      font-family: inherit; font-size: 1.1rem; font-weight: 900; padding: 14px 28px;
+      background: var(--yellow); border: var(--border-thick); box-shadow: 4px 4px 0 var(--black);
+      cursor: pointer; transition: all 0.1s; display: inline-flex; align-items: center; justify-content: center;
+      white-space: nowrap;
     }
-    .btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0 var(--black);
-      background: var(--cyan);
-    }
-    .btn-green { background: var(--green); }
-    .btn-red { background: var(--red); color: white; }
+    .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); background: var(--cyan); }
+    .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
 
-    .checklist {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    /* 체크리스트 영역 */
+    .todo-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+    
+    .todo-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      background: white; border: var(--border-thick); padding: 16px 20px;
+      box-shadow: 6px 6px 0 var(--black); transition: all 0.2s;
     }
-
-    .check-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fdfbf7;
-      border: var(--border);
-      padding: 16px 20px;
-      box-shadow: 4px 4px 0 var(--black);
-      font-weight: 900;
-      font-size: 1.1rem;
+    .todo-item:hover { transform: translateX(4px); }
+    .todo-item.completed { background: #e0e0e0; border-color: #555; box-shadow: 4px 4px 0 #555; }
+    
+    .todo-content { flex: 1; display: flex; align-items: center; gap: 16px; cursor: pointer; overflow: hidden; }
+    
+    /* 커스텀 체크박스 */
+    .checkbox {
+      width: 28px; height: 28px; flex-shrink: 0; border: var(--border); background: white;
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
     }
-    .check-item.completed {
-      background: #e2f0d9;
-      text-decoration: line-through;
-      color: #666;
-    }
-    .check-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      cursor: pointer;
-    }
-    .check-info input[type="checkbox"] {
-      width: 22px;
-      height: 22px;
-      cursor: pointer;
-      accent-color: var(--black);
+    .todo-item.completed .checkbox { background: var(--green); }
+    .todo-item.completed .checkbox::after {
+      content: '✔'; font-weight: 900; color: var(--black); font-size: 1.2rem;
     }
 
-    footer { 
-      padding: 40px 0; color: white; background: var(--black);
-      font-size: 1rem; font-weight: 800; text-align: center;
-      border-top: var(--border-thick); margin-top: 80px;
+    .todo-text { display: flex; flex-direction: column; }
+    .todo-title { font-weight: 900; font-size: 1.2rem; transition: color 0.2s; }
+    .todo-item.completed .todo-title { text-decoration: line-through; color: #666; }
+    .todo-sub { font-weight: 600; font-size: 0.95rem; color: #555; margin-top: 4px; }
+    
+    .delete-btn {
+      background: var(--red); color: white; border: var(--border); font-weight: 900;
+      padding: 8px 12px; cursor: pointer; box-shadow: 3px 3px 0 var(--black); transition: all 0.1s;
     }
+    .delete-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); }
+    .delete-btn:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--black); }
+
+    .empty-state { text-align: center; padding: 40px 20px; font-weight: 800; color: #555; }
+
+    footer { padding: 40px 0; color: white; background: var(--black); font-size: 1rem; font-weight: 800; text-align: center; border-top: var(--border-thick); margin-top: 80px; }
   </style>
 </head>
 <body>
@@ -230,23 +171,11 @@
 <div class="fixed-top-bar">
   <div class="current-time" id="currentTimeDisplay">--:--:--</div>
   <div class="icon-group">
-    <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+    <a href="https://github.com/nlasdnfkl2" target="_blank" class="icon-btn" title="GitHub">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
     </a>
-    <a href="mailto:nn80300@naver.com" class="icon-btn" title="Email">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
-    </a>
-    <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
-    </a>
-    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
-      <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-      <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-    </div>
   </div>
 </div>
-
-<div id="youtubePlayerContainer" style="display:none;"></div>
 
 <div class="wrap">
   <div class="top">
@@ -257,25 +186,40 @@
   </div>
 
   <header class="hero">
-    <p class="small">실습 17[cite: 8] · 11주차 중상급 앱 만들기</p>
-    <h1>매일의 운동 기록을 관리하는<br><span>운동 체크리스트 앱</span></h1>
-    <p>오늘의 운동 목록을 추가·삭제하고 완료 상태를 점검하여 달성 현황을 한눈에 확인하는 앱입니다[cite: 8].</p>
+    <p class="small">실습 17 · 기록이 남는 공유형 웹 앱</p>
+    <h1>오운완!<br><span>매일 운동 체크리스트</span></h1>
+    <p>계획한 운동 중 완료한 항목을 직관적으로 확인하세요. 브라우저 저장소(LocalStorage)를 사용하여 창을 닫아도 나의 운동 기록과 달성 현황이 그대로 유지됩니다.</p>
   </header>
 
   <div class="game-card" id="phyCheck">
-    <div class="status-banner">
-      <span>오늘의 운동 달성 현황</span>
-      <span id="statusCount">0 / 0 완료 (0%)</span>
+    
+    <!-- 달성도 대시보드 -->
+    <div class="dashboard">
+      <h2>🔥 오늘의 운동 달성도</h2>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="progress-text" id="progressText">0 / 0 완료</div>
+      </div>
+      <div class="status-msg" id="statusMsg">오늘의 운동 계획을 추가해 보세요!</div>
     </div>
 
-    <form class="add-form" id="addForm">
-      <input type="text" id="exerciseInput" placeholder="추가할 운동 종목 입력 (예: 팔굽혀펴기 50회)" autocomplete="off">
-      <button type="submit" class="btn btn-green">운동 추가</button>
+    <!-- 입력 폼 -->
+    <form class="add-form" id="todoForm">
+      <div class="input-box">
+        <input type="text" id="todoInput" placeholder="운동 이름 (예: 스쿼트, 런닝)" required>
+      </div>
+      <div class="input-box-sub">
+        <!-- 횟수나 시간을 추가해야 할 때를 대비한 서브 입력란 -->
+        <input type="text" id="todoSubInput" placeholder="목표 (예: 15회 3세트, 30분)">
+      </div>
+      <button type="submit" class="btn">추가하기</button>
     </form>
 
-    <div class="checklist" id="checklistContainer">
-      <!-- 동적 렌더링 -->
-    </div>
+    <!-- 체크리스트 -->
+    <ul class="todo-list" id="todoList">
+      <!-- 자바스크립트로 리스트가 생성됩니다. -->
+    </ul>
+    
   </div>
 
   <footer>
@@ -284,23 +228,8 @@
 </div>
 
 <script>
-  let ytPlayer;
-  let isUserPaused = false;
-  function onYouTubeIframeAPIReady() {
-    ytPlayer = new YT.Player('youtubePlayerContainer', {
-      height: '0', width: '0',
-      videoId: 'PkVmztKY9PU',
-      playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'PkVmztKY9PU', 'controls': 0 },
-      events: {
-        'onReady': (event) => { event.target.playVideo(); event.target.setVolume(50); }
-      }
-    });
-  }
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, document.getElementsByTagName('script')[0]);
-
   document.addEventListener("DOMContentLoaded", () => {
+    // 실시간 시계 업데이트
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
@@ -309,92 +238,113 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    const muteToggleBtn = document.getElementById('muteToggleBtn');
-    const soundOnIcon = document.getElementById('soundOnIcon');
-    const soundOffIcon = document.getElementById('soundOffIcon');
-    let isMuted = false;
-    muteToggleBtn.addEventListener('click', () => {
-      if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
-      if (isMuted) {
-        ytPlayer.unMute();
-        soundOnIcon.style.display = 'block';
-        soundOffIcon.style.display = 'none';
-        isMuted = false;
-      } else {
-        ytPlayer.mute();
-        soundOnIcon.style.display = 'none';
-        soundOffIcon.style.display = 'block';
-        isMuted = true;
-      }
-    });
+    // DOM 요소
+    const todoForm = document.getElementById('todoForm');
+    const todoInput = document.getElementById('todoInput');
+    const todoSubInput = document.getElementById('todoSubInput');
+    const todoList = document.getElementById('todoList');
+    
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const statusMsg = document.getElementById('statusMsg');
 
-    window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
-    window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
+    // 상태 관리 (localStorage 사용)
+    const STORAGE_KEY = 'vibe_exercise_checklist';
+    let todos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-    // 실습 17: 운동 체크리스트 로직
-    let exercises = [
-      { name: "푸시업 50개", completed: true },
-      { name: "스쿼트 100개", completed: false },
-      { name: "러닝머신 30분", completed: false },
-      { name: "플랭크 3분", completed: false }
-    ];
-
-    const checklistContainer = document.getElementById('checklistContainer');
-    const statusCount = document.getElementById('statusCount');
-    const addForm = document.getElementById('addForm');
-    const exerciseInput = document.getElementById('exerciseInput');
-
-    function renderList() {
-      checklistContainer.innerHTML = '';
-      let completedCount = 0;
-
-      exercises.forEach((ex, index) => {
-        if (ex.completed) completedCount++;
-
-        const item = document.createElement('div');
-        item.className = `check-item ${ex.completed ? 'completed' : ''}`;
-        item.innerHTML = `
-          <label class="check-info">
-            <input type="checkbox" data-index="${index}" ${ex.completed ? 'checked' : ''}>
-            <span>${ex.name}</span>
-          </label>
-          <button class="btn btn-red" data-index="${index}" style="padding: 6px 12px; font-size: 0.85rem;">삭제</button>
-        `;
-        checklistContainer.appendChild(item);
-      });
-
-      const total = exercises.length;
-      const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
-      statusCount.textContent = `${completedCount} / ${total} 완료 (${percent}%)`;
+    // 데이터 저장
+    function saveTodos() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+      renderTodos();
     }
 
-    checklistContainer.addEventListener('change', (e) => {
-      if (e.target.type === 'checkbox') {
-        const idx = e.target.dataset.index;
-        exercises[idx].completed = e.target.checked;
-        renderList();
-      }
-    });
+    // 통계 업데이트
+    function updateStats() {
+      const total = todos.length;
+      const completed = todos.filter(t => t.done).length;
+      const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 
-    checklistContainer.addEventListener('click', (e) => {
-      if (e.target.tagName === 'BUTTON') {
-        const idx = e.target.dataset.index;
-        exercises.splice(idx, 1);
-        renderList();
-      }
-    });
+      progressBar.style.width = `${percentage}%`;
+      progressText.textContent = `${completed} / ${total} 완료 (${percentage}%)`;
 
-    addForm.addEventListener('submit', (e) => {
+      if (total === 0) {
+        statusMsg.textContent = "오늘의 운동 계획을 추가해 보세요!";
+        statusMsg.style.color = "var(--blue)";
+      } else if (percentage === 100) {
+        statusMsg.textContent = "🎉 완벽해요! 오늘의 운동을 모두 마쳤습니다!";
+        statusMsg.style.color = "var(--green)";
+      } else if (percentage >= 50) {
+        statusMsg.textContent = "💪 절반 이상 해냈어요! 조금만 더 힘내세요!";
+        statusMsg.style.color = "var(--black)";
+      } else {
+        statusMsg.textContent = "🏃 시작이 반입니다! 운동을 하나씩 클리어해보세요.";
+        statusMsg.style.color = "var(--red)";
+      }
+    }
+
+    // 렌더링
+    function renderTodos() {
+      todoList.innerHTML = '';
+
+      if (todos.length === 0) {
+        todoList.innerHTML = '<div class="empty-state">아직 등록된 운동이 없습니다.<br>위 입력창에서 새로운 운동을 추가해주세요.</div>';
+      } else {
+        todos.forEach((todo, index) => {
+          const li = document.createElement('li');
+          li.className = `todo-item ${todo.done ? 'completed' : ''}`;
+          
+          li.innerHTML = `
+            <div class="todo-content" data-index="${index}">
+              <div class="checkbox"></div>
+              <div class="todo-text">
+                <span class="todo-title">${todo.title}</span>
+                ${todo.sub ? `<span class="todo-sub">🎯 목표: ${todo.sub}</span>` : ''}
+              </div>
+            </div>
+            <button class="delete-btn" data-index="${index}">삭제</button>
+          `;
+          todoList.appendChild(li);
+        });
+      }
+
+      updateStats();
+    }
+
+    // 아이템 추가
+    todoForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const val = exerciseInput.value.trim();
-      if (val) {
-        exercises.push({ name: val, completed: false });
-        exerciseInput.value = '';
-        renderList();
+      const title = todoInput.value.trim();
+      const sub = todoSubInput.value.trim();
+      
+      if (title) {
+        todos.push({ title, sub, done: false });
+        todoInput.value = '';
+        todoSubInput.value = '';
+        todoInput.focus();
+        saveTodos();
       }
     });
 
-    renderList();
+    // 아이템 완료/해제 및 삭제 (이벤트 위임)
+    todoList.addEventListener('click', (e) => {
+      const deleteBtn = e.target.closest('.delete-btn');
+      const contentBtn = e.target.closest('.todo-content');
+
+      if (deleteBtn) {
+        const index = deleteBtn.dataset.index;
+        if(confirm('이 운동 항목을 삭제하시겠습니까?')) {
+          todos.splice(index, 1);
+          saveTodos();
+        }
+      } else if (contentBtn) {
+        const index = contentBtn.dataset.index;
+        todos[index].done = !todos[index].done; // 상태 토글
+        saveTodos();
+      }
+    });
+
+    // 초기 화면 렌더링
+    renderTodos();
   });
 </script>
 
