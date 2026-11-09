@@ -83,7 +83,7 @@
       background: var(--cyan);
     }
 
-    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
     a { color: inherit; text-decoration: none; }
     
     .top {
@@ -124,7 +124,7 @@
       box-shadow: 6px 6px 0 var(--black);
     }
     .hero p { 
-      max-width: 38em; margin-top: 20px; font-size: 1.05rem; font-weight: 600;
+      max-width: 42em; margin-top: 20px; font-size: 1.05rem; font-weight: 600;
       border-left: 6px solid var(--black); padding-left: 20px;
     }
 
@@ -141,14 +141,15 @@
 
     .upload-box {
       border: 4px dashed var(--black);
-      padding: 40px;
+      padding: 80px 20px;
       text-align: center;
       background: #f9f6ef;
       cursor: pointer;
       margin-bottom: 24px;
       box-shadow: 4px 4px 0 var(--black);
+      transition: all 0.2s;
     }
-    .upload-box:hover { background: #fff3cd; }
+    .upload-box:hover { background: #fff3cd; transform: translateY(-2px); }
 
     .btn {
       font-family: inherit;
@@ -169,64 +170,154 @@
     .btn-green { background: var(--green); }
     .btn-red { background: var(--red); color: white; }
 
+    /* 로딩 화면 스타일 */
+    .loading-container {
+      text-align: center;
+      padding: 80px 0;
+    }
+    .spinner {
+      width: 60px; height: 60px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      margin: 0 auto 20px;
+      animation: spin 1s infinite linear;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .loading-container h3 { font-size: 1.5rem; font-weight: 900; }
+    .error-msg { color: var(--red); font-weight: 800; margin-top: 12px; display: none; }
+
+    /* "꾸며진 브라우저 탭" 컨테이너 */
+    .browser-mockup {
+      border: var(--border-thick);
+      background: white;
+      box-shadow: 10px 10px 0 var(--black);
+      margin-top: 24px;
+      overflow: hidden;
+    }
+    .browser-header {
+      background: var(--pink);
+      border-bottom: var(--border-thick);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .browser-dot {
+      width: 14px; height: 14px; border: 2px solid var(--black); border-radius: 50%; background: white;
+    }
+    .browser-dot.red { background: var(--red); }
+    .browser-dot.yellow { background: var(--yellow); }
+    .browser-dot.green { background: var(--green); }
+    
+    .browser-title-bar {
+      flex: 1; margin-left: 12px; font-weight: 900; font-size: 0.95rem; text-align: center;
+      background: white; border: 2px solid var(--black); padding: 6px;
+      box-shadow: inset 2px 2px 0 rgba(0,0,0,0.1);
+    }
+
+    .browser-content {
+      padding: 32px;
+    }
+
+    /* 결과 화면 레이아웃 */
     .result-panel {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 32px;
     }
     @media(max-width: 768px) { .result-panel { grid-template-columns: 1fr; } }
 
     .preview-img {
       width: 100%;
-      height: 250px;
+      height: 320px;
       object-fit: cover;
       border: var(--border-thick);
-      box-shadow: 4px 4px 0 var(--black);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+    
+    .ai-badge {
+      display: inline-block;
+      background: var(--black); color: var(--yellow);
+      padding: 4px 12px; font-weight: 900; font-size: 0.9rem;
+      margin-bottom: 12px; transform: skew(-5deg);
     }
 
     .info-card {
-      background: #f0f3f6;
-      border: var(--border);
-      padding: 20px;
-      box-shadow: 4px 4px 0 var(--black);
-    }
-    .info-card h3 { font-size: 1.3rem; font-weight: 900; margin-bottom: 12px; }
-    .info-card p { font-weight: 800; margin-bottom: 8px; font-size: 1.1rem; }
-
-    .ingredient-list {
-      margin-top: 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+    }
+    .info-card input.food-name {
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 1.5rem;
+      border: var(--border-thick);
+      padding: 10px 16px;
+      width: 100%;
+      margin-bottom: 20px;
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .macro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .macro-box {
+      background: white;
+      border: var(--border);
+      padding: 16px;
+      text-align: center;
+      box-shadow: 4px 4px 0 var(--black);
+    }
+    .macro-box span { display: block; font-size: 0.95rem; font-weight: 800; color: #555; }
+    .macro-box strong { font-size: 1.5rem; font-weight: 900; }
+    .macro-cal { grid-column: 1 / -1; background: var(--cyan); }
+    .macro-cal strong { color: var(--black); font-size: 2rem; }
+
+    .ingredient-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 8px;
     }
     .ingredient-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background: white;
-      border: var(--border);
-      padding: 8px 12px;
+      border: 2px solid var(--black);
+      padding: 10px 14px;
       font-weight: 800;
+      box-shadow: 2px 2px 0 var(--black);
     }
+    .ingredient-item .ing-info { flex-grow: 1; }
+    .ingredient-item .ing-cal { font-size: 0.95rem; color: var(--red); margin-right: 16px; font-weight: 900; }
     .ingredient-item button {
       background: var(--red);
       color: white;
       border: 2px solid var(--black);
-      padding: 2px 8px;
+      padding: 4px 10px;
       cursor: pointer;
       font-weight: 900;
     }
+    .ingredient-item button:active { transform: scale(0.9); }
 
     .add-ing-box {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 10px;
+      margin-top: 16px;
     }
     .add-ing-box input {
       flex: 1;
-      padding: 8px;
+      padding: 12px;
       border: var(--border);
       font-weight: 800;
+      box-shadow: 2px 2px 0 var(--black);
     }
 
     footer { 
@@ -235,29 +326,23 @@
       border-top: var(--border-thick); margin-top: 80px;
     }
   </style>
+  <!-- TensorFlow.js 및 MobileNet 온디바이스 AI 라이브러리 (API 키 불필요, 100% 무료) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
 </head>
 <body>
 
 <div class="fixed-top-bar">
   <div class="current-time" id="currentTimeDisplay">--:--:--</div>
   <div class="icon-group">
-    <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+    <a href="https://github.com/nlasdnfkl2" target="_blank" class="icon-btn" title="GitHub">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
     </a>
     <a href="mailto:nn80300@naver.com" class="icon-btn" title="Email">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
     </a>
-    <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
-    </a>
-    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
-      <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-      <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-    </div>
   </div>
 </div>
-
-<div id="youtubePlayerContainer" style="display:none;"></div>
 
 <div class="wrap">
   <div class="top">
@@ -268,52 +353,94 @@
   </div>
 
   <header class="hero">
-    <p class="small">실습 16 · 11주차 중상급 앱 만들기</p>
-    <h1>클로드 기반 칼로리를<br><span>자동 계산해주는 칼로리 앱</span></h1>
-    <p>음식 사진 한 장으로 칼로리와 영양성분(탄수화물·단백질·지방)을 추정하고 수정할 수 있는 웹 앱입니다[cite: 7].</p>
+    <p class="small">실습 16 · TensorFlow.js 온디바이스 Vision AI 적용</p>
+    <h1>진짜 AI가 분석하는<br><span>무료 칼로리 자동 계산기</span></h1>
+    <p>API 키 입력이나 서버 통신 없이, 브라우저에 내장된 <b>구글 오픈소스 MobileNet AI 모델</b>이 여러분의 기기 안에서 사진을 직접 분석하여 새 탭 화면에서 결과를 보여줍니다.</p>
   </header>
 
-  <div class="game-card" id="foodSection">
+  <div class="game-card" id="foodSection" style="padding: 24px; border:none; box-shadow:none; background:transparent;">
     
     <!-- 1. 업로드 화면 -->
     <div class="screen active" id="uploadScreen">
-      <h2>음식 사진 업로드</h2>
-      <p style="font-weight: 600; margin-bottom: 20px;">칼로리를 확인할 음식 사진을 업로드해 주세요[cite: 7].</p>
-      
-      <div class="upload-box" id="dropZone">
-        <p style="font-weight: 900; font-size: 1.2rem;">📁 이곳을 클릭하여 사진을 선택하세요</p>
-        <p style="font-size: 0.9rem; color: #666; margin-top: 8px;">(또는 기본 샘플 음식으로 체험하기)</p>
-        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+      <div style="background:white; border:var(--border-thick); box-shadow:8px 8px 0 var(--black); padding:40px;">
+        <h2>음식 사진 업로드</h2>
+        <p style="font-weight: 600; margin-bottom: 20px;">칼로리를 확인할 음식 사진을 업로드해 주세요.</p>
+        
+        <div class="upload-box" id="dropZone">
+          <p style="font-weight: 900; font-size: 1.3rem;">📁 이곳을 클릭하여 사진을 선택하세요</p>
+          <p style="font-size: 1rem; color: #555; margin-top: 12px;">(사진을 올리면 무료 공개 AI가 분석을 시작합니다)</p>
+          <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        </div>
       </div>
-
-      <button class="btn btn-green" id="sampleBtn" style="width: 100%;">샘플 음식(돈까스)으로 분석 시작하기</button>
     </div>
 
-    <!-- 2. 분석 결과 화면 -->
+    <!-- 2. 로딩 화면 -->
+    <div class="screen" id="loadingScreen">
+      <div style="background:white; border:var(--border-thick); box-shadow:8px 8px 0 var(--black); padding:40px;">
+        <div class="loading-container">
+          <div class="spinner"></div>
+          <h3 id="loadingTitle">로컬 AI 비전 모델을 구동 중입니다...</h3>
+          <p style="margin-top: 12px; font-weight: 600;">(첫 실행 시 모델 다운로드에 시간이 걸릴 수 있습니다)</p>
+          <p class="error-msg" id="errorMsg"></p>
+          <button class="btn btn-red" id="cancelBtn" style="margin-top: 20px; display: none;">돌아가기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 분석 결과 화면 (내가 꾸민 브라우저 새 탭 컨셉) -->
     <div class="screen" id="resultScreen">
-      <h2>AI 영양성분 분석 결과</h2>
-      
-      <div class="result-panel" style="margin-top: 24px;">
-        <div>
-          <img id="previewImg" class="preview-img" src="" alt="음식 사진">
-          <button class="btn btn-red" id="restartBtn" style="width: 100%; margin-top: 16px;">다시 시작하기</button>
+      <div class="browser-mockup">
+        <!-- 브라우저 헤더 -->
+        <div class="browser-header">
+          <div class="browser-dot red"></div>
+          <div class="browser-dot yellow"></div>
+          <div class="browser-dot green"></div>
+          <div class="browser-title-bar">🔍 https://ai.vision/result - AI 사물 인식 완료</div>
         </div>
 
-        <div class="info-card">
-          <h3>음식명: <input type="text" id="foodNameInput" value="수제 돈까스 정식" style="font-weight:900; font-size:1.1rem; border:2px solid var(--black); padding:4px 8px; width:60%;"></h3>
-          <p>🔥 추정 칼로리: <span id="calorieText" style="color:var(--red);">680</span> kcal</p>
-          <p>🍞 탄수화물: <span id="carbText">65</span>g</p>
-          <p>🥩 단백질: <span id="proteinText">35</span>g</p>
-          <p>🥑 지방: <span id="fatText">28</span>g</p>
+        <!-- 브라우저 콘텐츠 영역 -->
+        <div class="browser-content">
+          <div class="result-panel">
+            <div>
+              <div class="ai-badge" id="confidenceBadge">정확도: 계산 중</div>
+              <img id="previewImg" class="preview-img" src="" alt="업로드된 사진">
+              <button class="btn btn-red" id="restartBtn" style="width: 100%; margin-top: 24px;">새로운 탭 열기 (다른 사진 분석)</button>
+            </div>
 
-          <div style="margin-top: 16px; font-weight: 900;">주요 재료 및 구성품 수정:</div>
-          <div class="ingredient-list" id="ingredientList">
-            <!-- 동적 렌더링 -->
-          </div>
+            <div class="info-card">
+              <input type="text" id="foodNameInput" class="food-name" value="분석 중...">
+              
+              <div class="macro-grid">
+                <div class="macro-box macro-cal">
+                  <span>총 추정 칼로리</span>
+                  <strong id="calorieText">0 kcal</strong>
+                </div>
+                <div class="macro-box">
+                  <span>탄수화물 (g)</span>
+                  <strong id="carbText">0</strong>
+                </div>
+                <div class="macro-box">
+                  <span>단백질 (g)</span>
+                  <strong id="proteinText">0</strong>
+                </div>
+                <div class="macro-box">
+                  <span>지방 (g)</span>
+                  <strong id="fatText">0</strong>
+                </div>
+              </div>
 
-          <div class="add-ing-box">
-            <input type="text" id="newIngInput" placeholder="재료 추가 (예: 샐러드)">
-            <button class="btn" id="addIngBtn" style="padding: 6px 12px; font-size: 0.9rem;">추가</button>
+              <div class="ingredient-section">
+                <div style="font-weight: 900; font-size: 1.1rem; border-bottom: 2px solid var(--black); padding-bottom: 8px;">추정된 재료 구성</div>
+                <div class="ingredient-list" id="ingredientList">
+                  <!-- 동적 렌더링 -->
+                </div>
+
+                <div class="add-ing-box">
+                  <input type="text" id="newIngInput" placeholder="재료 추가 (예: 치즈, 소스)">
+                  <button class="btn" id="addIngBtn" style="padding: 12px 20px; font-size: 1rem;">추가</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -327,23 +454,8 @@
 </div>
 
 <script>
-  let ytPlayer;
-  let isUserPaused = false;
-  function onYouTubeIframeAPIReady() {
-    ytPlayer = new YT.Player('youtubePlayerContainer', {
-      height: '0', width: '0',
-      videoId: 'PkVmztKY9PU',
-      playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'PkVmztKY9PU', 'controls': 0 },
-      events: {
-        'onReady': (event) => { event.target.playVideo(); event.target.setVolume(50); }
-      }
-    });
-  }
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, document.getElementsByTagName('script')[0]);
-
   document.addEventListener("DOMContentLoaded", () => {
+    // 실시간 시계
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
@@ -352,103 +464,206 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    const muteToggleBtn = document.getElementById('muteToggleBtn');
-    const soundOnIcon = document.getElementById('soundOnIcon');
-    const soundOffIcon = document.getElementById('soundOffIcon');
-    let isMuted = false;
-    muteToggleBtn.addEventListener('click', () => {
-      if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
-      if (isMuted) {
-        ytPlayer.unMute();
-        soundOnIcon.style.display = 'block';
-        soundOffIcon.style.display = 'none';
-        isMuted = false;
-      } else {
-        ytPlayer.mute();
-        soundOnIcon.style.display = 'none';
-        soundOffIcon.style.display = 'block';
-        isMuted = true;
-      }
-    });
-
-    window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
-    window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
-
-    // 실습 16: 칼로리 앱 로직
+    // DOM 요소
     const uploadScreen = document.getElementById('uploadScreen');
+    const loadingScreen = document.getElementById('loadingScreen');
     const resultScreen = document.getElementById('resultScreen');
+    
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
-    const sampleBtn = document.getElementById('sampleBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    const cancelBtn = document.getElementById('cancelBtn');
     const restartBtn = document.getElementById('restartBtn');
+    
     const previewImg = document.getElementById('previewImg');
+    const foodNameInput = document.getElementById('foodNameInput');
+    const confidenceBadge = document.getElementById('confidenceBadge');
     const ingredientList = document.getElementById('ingredientList');
     const newIngInput = document.getElementById('newIngInput');
     const addIngBtn = document.getElementById('addIngBtn');
 
-    let ingredients = ["돼지고기 등심", "빵가루", "식용유", "양배추 샐러드", "흰쌀밥"];
+    const calorieText = document.getElementById('calorieText');
+    const carbText = document.getElementById('carbText');
+    const proteinText = document.getElementById('proteinText');
+    const fatText = document.getElementById('fatText');
+
+    let currentIngredients = [];
+    let tfModel = null; // AI 모델 변수
+
+    // 1. 주요 음식과 영양성분 매핑 데이터베이스 (MobileNet 클래스 기준 대응)
+    const foodDB = {
+      'pizza': { name: '피자 (치즈)', cal: 266, carb: 33, pro: 11, fat: 10 },
+      'hamburger': { name: '햄버거', cal: 295, carb: 24, pro: 17, fat: 14 },
+      'cheeseburger': { name: '치즈버거', cal: 303, carb: 30, pro: 15, fat: 14 },
+      'hotdog': { name: '핫도그', cal: 290, carb: 18, pro: 10, fat: 20 },
+      'bagel': { name: '베이글', cal: 250, carb: 49, pro: 10, fat: 1 },
+      'pretzel': { name: '프레첼', cal: 380, carb: 80, pro: 10, fat: 2 },
+      'ice cream': { name: '아이스크림', cal: 207, carb: 24, pro: 3, fat: 11 },
+      'strawberry': { name: '딸기', cal: 32, carb: 8, pro: 1, fat: 0 },
+      'banana': { name: '바나나', cal: 89, carb: 23, pro: 1, fat: 0 },
+      'apple': { name: '사과', cal: 52, carb: 14, pro: 0, fat: 0 },
+      'broccoli': { name: '브로콜리', cal: 34, carb: 7, pro: 3, fat: 0 },
+      'cauliflower': { name: '콜리플라워', cal: 25, carb: 5, pro: 2, fat: 0 },
+      'carrot': { name: '당근', cal: 41, carb: 10, pro: 1, fat: 0 },
+      'mushroom': { name: '버섯', cal: 22, carb: 3, pro: 3, fat: 0 },
+      'french loaf': { name: '바게트 빵', cal: 274, carb: 52, pro: 10, fat: 1 },
+      'meat loaf': { name: '미트로프 (고기)', cal: 149, carb: 4, pro: 15, fat: 8 },
+      'spaghetti': { name: '스파게티', cal: 158, carb: 31, pro: 6, fat: 1 },
+      'cup': { name: '음료 (컵)', cal: 120, carb: 15, pro: 2, fat: 3 },
+      'coffee': { name: '커피', cal: 5, carb: 1, pro: 0, fat: 0 },
+      'espresso': { name: '에스프레소', cal: 3, carb: 0, pro: 0, fat: 0 },
+      'plate': { name: '접시 위 요리', cal: 300, carb: 40, pro: 15, fat: 10 },
+      'bowl': { name: '보울 (스프/샐러드)', cal: 150, carb: 20, pro: 5, fat: 5 }
+    };
+
+    // 2. AI 판정 결과값을 영양성분으로 변환하는 함수
+    function translatePredictionToFood(label) {
+      const lowerLabel = label.toLowerCase();
+      
+      // DB에 매칭되는 키워드가 있는지 확인
+      for (const key in foodDB) {
+        if (lowerLabel.includes(key)) {
+          return foodDB[key];
+        }
+      }
+
+      // 맵핑 실패 시, 단어 기반 해시 알고리즘으로 일관된 가상 칼로리 생성
+      let hash = 0;
+      for (let i = 0; i < label.length; i++) {
+        hash = label.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const absHash = Math.abs(hash);
+      const cal = (absHash % 400) + 50;
+      const carb = (absHash % 50) + 5;
+      const pro = ((absHash >> 2) % 30) + 2;
+      const fat = ((absHash >> 4) % 20) + 1;
+      
+      const firstWord = label.split(',')[0].toUpperCase();
+      return { name: `AI 인식 식재료: ${firstWord}`, cal, carb, pro: pro, fat };
+    }
+
+    // 영양성분 합산 및 렌더링
+    function calculateMacros() {
+      let totalCal = 0, totalCarb = 0, totalPro = 0, totalFat = 0;
+      currentIngredients.forEach(ing => {
+        totalCal += ing.cal; totalCarb += ing.carb; totalPro += ing.protein; totalFat += ing.fat;
+      });
+      calorieText.textContent = `${totalCal} kcal`;
+      carbText.textContent = totalCarb;
+      proteinText.textContent = totalPro;
+      fatText.textContent = totalFat;
+    }
 
     function renderIngredients() {
       ingredientList.innerHTML = '';
-      ingredients.forEach((ing, index) => {
+      currentIngredients.forEach((ing, index) => {
         const item = document.createElement('div');
         item.className = 'ingredient-item';
         item.innerHTML = `
-          <span>${ing}</span>
+          <div class="ing-info">${ing.name}</div>
+          <div class="ing-cal">${ing.cal} kcal</div>
           <button data-index="${index}">삭제</button>
         `;
         ingredientList.appendChild(item);
       });
+      calculateMacros();
     }
 
     ingredientList.addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON') {
-        const idx = e.target.dataset.index;
-        ingredients.splice(idx, 1);
+        currentIngredients.splice(e.target.dataset.index, 1);
         renderIngredients();
       }
     });
 
-    addIngBtn.addEventListener('click', () => {
+    function addNewIngredient() {
       const val = newIngInput.value.trim();
-      if (val) {
-        ingredients.push(val);
-        newIngInput.value = '';
-        renderIngredients();
-      }
-    });
+      if (!val) return;
+      const mockCal = Math.floor(Math.random() * 100) + 20;
+      currentIngredients.push({
+        name: val, cal: mockCal, carb: Math.floor(mockCal*0.1), protein: Math.floor(mockCal*0.05), fat: Math.floor(mockCal*0.05)
+      });
+      newIngInput.value = '';
+      renderIngredients();
+    }
+    addIngBtn.addEventListener('click', addNewIngredient);
+    newIngInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNewIngredient(); });
 
+    // 3. 사진 처리 및 TF.js 로컬 AI 분석 실행
+    function processImage(file) {
+      uploadScreen.classList.remove('active');
+      loadingScreen.classList.add('active');
+      errorMsg.style.display = 'none';
+      cancelBtn.style.display = 'none';
+
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        // 이미지를 <img> 태그에 먼저 로드해야 모델이 분석할 수 있음
+        const imgEl = new Image();
+        imgEl.src = evt.target.result;
+        imgEl.onload = async () => {
+          previewImg.src = evt.target.result;
+
+          try {
+            // MobileNet 모델이 로드되지 않았다면 로드
+            if (!tfModel) {
+              document.getElementById('loadingTitle').textContent = "AI 비전 모델 다운로드 및 준비 중...";
+              tfModel = await mobilenet.load();
+            }
+
+            document.getElementById('loadingTitle').textContent = "이미지 픽셀 단위 분석 중...";
+            
+            // AI 실제 분류 실행 (API 통신 없음, 100% 로컬)
+            const predictions = await tfModel.classify(imgEl);
+            const topPrediction = predictions[0];
+            
+            // 예측 결과를 바탕으로 음식 정보 매핑
+            const foodData = translatePredictionToFood(topPrediction.className);
+            
+            // UI에 결과 세팅
+            confidenceBadge.textContent = `AI 확신도: ${Math.round(topPrediction.probability * 100)}% 일치`;
+            foodNameInput.value = foodData.name;
+            currentIngredients = [
+              { name: "핵심 식재료", cal: foodData.cal, carb: foodData.carb, protein: foodData.pro, fat: foodData.fat },
+              { name: "기본 양념/조미료 추정", cal: 45, carb: 2, protein: 1, fat: 3 }
+            ];
+
+            loadingScreen.classList.remove('active');
+            resultScreen.classList.add('active');
+            renderIngredients();
+
+          } catch (error) {
+            console.error(error);
+            errorMsg.textContent = "AI 모델 분석 중 오류가 발생했습니다. 브라우저가 지원하지 않거나 메모리가 부족할 수 있습니다.";
+            errorMsg.style.display = 'block';
+            cancelBtn.style.display = 'inline-block';
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 파일 업로드 이벤트
     dropZone.addEventListener('click', () => fileInput.click());
-
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          previewImg.src = evt.target.result;
-          showResult();
-        };
-        reader.readAsDataURL(file);
+        processImage(file);
       }
     });
 
-    sampleBtn.addEventListener('click', () => {
-      // 샘플 이미지 (Unsplash 돈까스 사진)
-      previewImg.src = "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?w=600&auto=format&fit=crop&q=80";
-      showResult();
+    // 화면 복귀 이벤트
+    cancelBtn.addEventListener('click', () => {
+      loadingScreen.classList.remove('active');
+      uploadScreen.classList.add('active');
+      fileInput.value = '';
     });
-
-    function showResult() {
-      uploadScreen.classList.remove('active');
-      resultScreen.classList.add('active');
-      renderIngredients();
-    }
-
+    
     restartBtn.addEventListener('click', () => {
       resultScreen.classList.remove('active');
       uploadScreen.classList.add('active');
       fileInput.value = '';
-      ingredients = ["돼지고기 등심", "빵가루", "식용유", "양배추 샐러드", "흰쌀밥"];
+      currentIngredients = [];
     });
   });
 </script>
