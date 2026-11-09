@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마음의 문장들 - Minimal Brutalist</title>
+    <title>문태양 - 마음의 문장들 (Minimal Brutalist)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <style>
-        /* 미니멀 브루탈리즘 테마 */
+        /* 네오 브루탈리즘 테마 변수 (기존 프로젝트들과 통일) */
         :root {
-            --bg: #f4f0ea; /* 재생지 느낌의 웜 화이트 */
-            --ink: #111111; /* 짙은 먹물 블랙 */
-            --accent: #ff3b00; /* 경고성 형광 오렌지 */
-            --blue: #0044ff; /* 코발트 블루 */
-            --border: 3px solid var(--ink);
-            --shadow: 6px 6px 0 var(--ink);
+            --bg: #dfdcd3;
+            --black: #0f0f0f;
+            --yellow: #ffd83b;
+            --pink: #ff4757;
+            --cyan: #48dbfb;
+            --green: #2ed573;
+            --accent: #ff3b00;
+            --border-thick: 4px solid var(--black);
+            --border: 3px solid var(--black);
+            --shadow: 6px 6px 0 var(--black);
         }
 
         /* [실험적 효과 1] 배경 노이즈 필터 */
@@ -27,11 +31,36 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            background-color: var(--bg); color: var(--ink);
+            background-color: var(--bg); color: var(--black);
             font-family: 'Noto Sans KR', sans-serif;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; word-break: keep-all; overflow-x: hidden;
             transition: filter 0.3s ease;
+            padding-top: calc(80px + 2rem);
+        }
+
+        /* 상단 고정 바 */
+        .fixed-top-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 60px;
+            background: var(--yellow);
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 2000;
+            box-shadow: 0 4px 0 var(--black);
+        }
+
+        .current-time {
+            font-weight: 900;
+            font-size: 0.95rem;
+            background: white;
+            border: var(--border);
+            padding: 4px 10px;
+            box-shadow: 2px 2px 0 var(--black);
         }
 
         /* [실험적 효과 2] 특정 요소 호버 시 화면 전체 색상 왜곡 */
@@ -42,75 +71,73 @@
 
         header {
             margin-bottom: 3rem; text-align: left;
-            border-bottom: var(--border); padding-bottom: 1rem;
+            border-bottom: var(--border-thick); padding-bottom: 1rem;
             display: flex; justify-content: space-between; align-items: flex-end;
         }
 
         h1 {
             font-family: 'Nanum Myeongjo', serif; font-size: 2.2rem; font-weight: 800;
             letter-spacing: -1px; text-transform: uppercase;
-            /* 브루탈리즘 특유의 오프셋 텍스트 그림자 */
             text-shadow: 3px 3px 0 var(--accent);
             cursor: crosshair;
         }
         
         /* [실험적 효과 3] 제목 타이포그래피 호버 시 깨짐(글리치) 효과 */
-        h1:hover { animation: text-glitch 0.2s infinite; color: var(--bg); text-shadow: 3px 3px 0 var(--ink), -2px -2px 0 var(--blue); }
+        h1:hover { animation: text-glitch 0.2s infinite; color: var(--bg); text-shadow: 3px 3px 0 var(--black), -2px -2px 0 var(--cyan); }
         @keyframes text-glitch {
             0% { transform: skew(0deg); }
             25% { transform: skew(5deg) translate(-2px, 2px); }
             75% { transform: skew(-5deg) translate(2px, -2px); }
         }
 
-        .subtitle { font-size: 0.95rem; font-weight: 700; background: var(--ink); color: var(--bg); padding: 0.2rem 0.6rem; display: inline-block; }
+        .subtitle { font-size: 0.95rem; font-weight: 700; background: var(--black); color: var(--bg); padding: 0.2rem 0.6rem; display: inline-block; }
 
-        /* 심플한 텍스트 기반 감정 리스트 (아이콘 배제) */
+        /* 심플한 텍스트 기반 감정 리스트 */
         .emotion-list {
             display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 3rem;
         }
 
         .emotion-btn {
-            background: transparent; border: 2px solid var(--ink);
-            color: var(--ink); font-family: 'Noto Sans KR', sans-serif;
+            background: transparent; border: 3px solid var(--black);
+            color: var(--black); font-family: 'Noto Sans KR', sans-serif;
             font-size: 1rem; font-weight: 900; padding: 0.6rem 1.2rem;
             cursor: pointer; transition: all 0.15s;
             text-transform: uppercase;
         }
 
         .emotion-btn:hover {
-            transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--ink);
+            transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--black);
             background: var(--bg);
         }
 
         .emotion-btn.active {
-            background: var(--ink); color: var(--bg);
+            background: var(--black); color: var(--bg);
             transform: translate(2px, 2px); box-shadow: inset 3px 3px 0 rgba(0,0,0,0.5);
-            border-color: var(--ink);
+            border-color: var(--black);
         }
         
-        /* 특정 감정 버튼 선택 시 강렬한 원색 포인트 */
-        .emotion-btn[data-emotion="happy"].active { background: var(--blue); border-color: var(--blue); }
-        .emotion-btn[data-emotion="sad"].active { background: #555; border-color: #555; }
-        .emotion-btn[data-emotion="burnout"].active { background: var(--accent); border-color: var(--accent); }
-        .emotion-btn[data-emotion="anxious"].active { background: #ff00ff; border-color: #ff00ff; }
-        .emotion-btn[data-emotion="angry"].active { background: #ff0000; border-color: #ff0000; }
-        .emotion-btn[data-emotion="peaceful"].active { background: #00aa00; border-color: #00aa00; }
+        .emotion-btn[data-emotion="happy"].active { background: var(--cyan); border-color: var(--black); color: var(--black); }
+        .emotion-btn[data-emotion="sad"].active { background: #555; border-color: var(--black); color: #fff; }
+        .emotion-btn[data-emotion="burnout"].active { background: var(--accent); border-color: var(--black); color: #fff; }
+        .emotion-btn[data-emotion="anxious"].active { background: #ff00ff; border-color: var(--black); color: #fff; }
+        .emotion-btn[data-emotion="angry"].active { background: #ff0000; border-color: var(--black); color: #fff; }
+        .emotion-btn[data-emotion="peaceful"].active { background: var(--green); border-color: var(--black); color: var(--black); }
 
-        /* 명언 카드 - 브루탈리즘 박스 */
+        /* 명언 카드 */
         .quote-card {
-            background-color: #fff; border: var(--border); box-shadow: var(--shadow);
+            background-color: #fff; border: var(--border-thick); box-shadow: var(--shadow);
             padding: 3rem 2rem; display: none; position: relative;
             transform: rotate(-1deg); transition: transform 0.2s;
         }
 
-        .quote-card:hover { transform: rotate(0deg) translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
+        .quote-card:hover { transform: rotate(0deg) translate(-2px, -2px); box-shadow: 8px 8px 0 var(--black); }
 
         .quote-card.active {
             display: block; animation: brutalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes brutalPop {
-            0% { transform: scale(0.9) translateY(20px) rotate(-3deg); opacity: 0; box-shadow: 0 0 0 var(--ink); }
+            0% { transform: scale(0.9) translateY(20px) rotate(-3deg); opacity: 0; box-shadow: 0 0 0 var(--black); }
             100% { transform: scale(1) translateY(0) rotate(-1deg); opacity: 1; box-shadow: var(--shadow); }
         }
 
@@ -120,53 +147,55 @@
             position: relative; z-index: 2;
         }
 
-        /* 텍스트 뒤에 형광펜 칠한 듯한 효과 */
         .quote-text::after {
             content: ""; position: absolute; left: -2%; top: 60%; width: 104%; height: 40%;
             background: rgba(255, 220, 0, 0.5); z-index: -1; transform: rotate(-1deg);
         }
 
         .quote-source {
-            font-size: 1rem; font-weight: 900; color: var(--ink); text-align: right;
-            border-top: 2px dashed var(--ink); padding-top: 1rem; margin-bottom: 2rem;
+            font-size: 1rem; font-weight: 900; color: var(--black); text-align: right;
+            border-top: 2px dashed var(--black); padding-top: 1rem; margin-bottom: 2rem;
         }
 
         .keyword-list { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
 
         .keyword-btn {
-            background: var(--ink); color: #fff; border: none; font-weight: 900;
+            background: var(--black); color: #fff; border: none; font-weight: 900;
             padding: 0.3rem 0.8rem; font-size: 0.85rem; cursor: pointer;
             text-transform: uppercase; transition: transform 0.1s;
         }
 
         .keyword-btn:hover { background: var(--accent); transform: scale(1.05) rotate(2deg); }
 
-        /* 하단 액션 버튼 (외부 연동) */
         .action-bar { display: flex; gap: 1rem; justify-content: flex-start; }
 
         .action-btn {
-            background: #fff; border: 2px solid var(--ink); color: var(--ink);
+            background: #fff; border: 3px solid var(--black); color: var(--black);
             padding: 0.6rem 1rem; font-weight: 900; font-size: 0.9rem;
             cursor: pointer; display: flex; align-items: center; gap: 0.4rem;
-            transition: all 0.15s; box-shadow: 3px 3px 0 var(--ink);
+            transition: all 0.15s; box-shadow: 3px 3px 0 var(--black);
         }
 
         .action-btn i { font-size: 1.2rem; }
-        .action-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
-        .action-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink); }
+        .action-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); }
+        .action-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--black); }
         
-        .action-btn.google:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
-        .action-btn.youtube:hover { background: #ff0000; color: #fff; border-color: #ff0000; }
+        .action-btn.google:hover { background: var(--cyan); color: var(--black); border-color: var(--black); }
+        .action-btn.youtube:hover { background: #ff0000; color: #fff; border-color: var(--black); }
 
-        /* 초기 안내 문구 */
-        .initial-msg { font-weight: 900; font-size: 1.2rem; color: var(--ink); text-align: center; margin-top: 3rem; text-decoration: underline; text-underline-offset: 4px; }
+        .initial-msg { font-weight: 900; font-size: 1.2rem; color: var(--black); text-align: center; margin-top: 3rem; text-decoration: underline; text-underline-offset: 4px; }
         
-        /* 닫기 버튼 */
-        .close-btn { position: absolute; top: -15px; right: -15px; background: var(--accent); color: #fff; border: var(--border); width: 36px; height: 36px; border-radius: 50%; font-weight: 900; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+        .close-btn { position: absolute; top: -15px; right: -15px; background: var(--accent); color: #fff; border: var(--border-thick); width: 36px; height: 36px; border-radius: 50%; font-weight: 900; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 2px 2px 0 var(--black); }
         .close-btn:hover { transform: scale(1.1) rotate(90deg); transition: transform 0.2s; }
     </style>
 </head>
 <body>
+
+<!-- 상단 고정 바 -->
+<div class="fixed-top-bar">
+    <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+    <div style="font-weight: 900; text-transform: uppercase;">문태양 · 마음의 문장들</div>
+</div>
 
 <div class="app-container">
     <header>
@@ -174,7 +203,6 @@
         <p class="subtitle">SELECT MOOD</p>
     </header>
 
-    <!-- 6가지 감정: 텍스트 버튼 형태의 브루탈리즘 UI -->
     <div class="emotion-list">
         <button class="emotion-btn" data-emotion="happy">행복 / 기쁨</button>
         <button class="emotion-btn" data-emotion="peaceful">평온 / 여유</button>
@@ -186,23 +214,17 @@
 
     <div class="initial-msg" id="initialMsg">오늘 당신의 감정은 어떤가요? 위에서 선택해주세요.</div>
 
-    <!-- 명언 출력 카드 -->
     <main class="quote-card" id="quoteCard">
         <div class="close-btn" id="closeBtn" title="닫기">✕</div>
         <div class="quote-text" id="quoteText">명언이 이곳에 표시됩니다.</div>
         <div class="quote-source" id="quoteSource">- 발언자 -</div>
         
-        <div class="keyword-list" id="keywordList">
-            <!-- 키워드 태그 위치 -->
-        </div>
+        <div class="keyword-list" id="keywordList"></div>
 
         <div class="action-bar">
-            <!-- 새로고침 없이 해당 감정의 다른 문장 보기 -->
             <button class="action-btn" id="nextBtn" title="새로운 문장 뽑기">
                 <i class="ph ph-arrows-clockwise"></i> 다시
             </button>
-            
-            <!-- 외부 인터넷 자료 연동 버튼 -->
             <button class="action-btn google" id="searchBtn" title="구글에서 키워드 검색">
                 <i class="ph ph-google-logo"></i> 검색
             </button>
@@ -214,29 +236,35 @@
 </div>
 
 <script>
-    // 6가지 감정에 맞춘 데이터 확장 (문학, 철학, 영화 대사 등)
+    // --- 실시간 시계 연동 ---
+    function updateClock() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+        const timeEl = document.getElementById('currentTimeDisplay');
+        if (timeEl) timeEl.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
     const quotesData = [
-        // 행복
         { id: 1, emotion: 'happy', text: "행복은 목적지가 아니라 여행 그 자체이다.", source: "랄프 왈도 에머슨", keyword: "행복" },
         { id: 2, emotion: 'happy', text: "우리가 가진 것을 즐기는 것이야말로 진정한 풍요로움이다.", source: "에피쿠로스", keyword: "감사" },
         { id: 3, emotion: 'happy', text: "가장 어두운 밤도 언젠가는 끝나고 해는 떠오른다.", source: "영화 <레미제라블>", keyword: "희망" },
-        // 평온
         { id: 4, emotion: 'peaceful', text: "단순하게 살아라. 현대인은 쓸데없는 일 때문에 얼마나 복잡한 삶을 살아가는가?", source: "이다 사우엘", keyword: "미니멀리즘" },
         { id: 5, emotion: 'peaceful', text: "모든 것은 제자리에 있다. 서두를 필요가 없다.", source: "노자", keyword: "여유" },
         { id: 6, emotion: 'peaceful', text: "침묵은 비어있는 것이 아니다. 그것은 해답으로 가득 차 있다.", source: "무명", keyword: "명상" },
-        // 우울
         { id: 7, emotion: 'sad', text: "슬픔이 그대의 삶을 삼키려 할 때, 그것이 지나갈 것임을 기억하라.", source: "에이브러햄 링컨", keyword: "시간" },
         { id: 8, emotion: 'sad', text: "눈물을 흘려라. 눈물은 영혼을 씻어내는 비누다.", source: "조세프 루", keyword: "위로" },
         { id: 9, emotion: 'sad', text: "때로는 무너져도 괜찮다. 별들도 무너져 내려야 새로운 은하를 만드니까.", source: "영화 <인터스텔라>", keyword: "회복" },
-        // 번아웃
         { id: 10, emotion: 'burnout', text: "휴식은 게으름이 아니다. 때로는 아무것도 하지 않는 것이 가장 큰 생산성이다.", source: "존 러복", keyword: "휴식" },
         { id: 11, emotion: 'burnout', text: "모든 것을 완벽하게 하려는 강박을 내려놓아라. 당신은 이미 충분하다.", source: "브레네 브라운", keyword: "자존감" },
         { id: 12, emotion: 'burnout', text: "가끔은 멈춰 서서 자신이 얼마나 멀리 왔는지 돌아볼 필요가 있다.", source: "영화 <월터의 상상은 현실이 된다>", keyword: "성장" },
-        // 불안
         { id: 13, emotion: 'anxious', text: "걱정의 40%는 절대 일어나지 않을 일이고, 30%는 이미 일어난 일이다.", source: "어니 젤린스키", keyword: "걱정" },
         { id: 14, emotion: 'anxious', text: "두려움은 환상이다. 용기는 선택이다.", source: "윈스턴 처칠", keyword: "용기" },
         { id: 15, emotion: 'anxious', text: "포스와 함께 하길. 불안은 미지의 것에 대한 저항일 뿐이다.", source: "영화 <스타워즈>", keyword: "마음챙김" },
-        // 분노
         { id: 16, emotion: 'angry', text: "분노는 다른 사람에게 던지기 위해 뜨거운 석탄을 쥐고 있는 것과 같다. 화상을 입는 것은 결국 자신이다.", source: "불교 격언", keyword: "통제" },
         { id: 17, emotion: 'angry', text: "화를 내는 것은 쉬운 일이다. 그러나 올바른 사람에게, 올바른 정도로, 올바른 목적을 위해 화를 내는 것은 어렵다.", source: "아리스토텔레스", keyword: "지혜" },
         { id: 18, emotion: 'angry', text: "깊게 숨을 들이마셔라. 당신이 통제할 수 없는 일에 에너지를 낭비하지 마라.", source: "스토아 철학", keyword: "평정심" }
@@ -257,7 +285,6 @@
     let currentQuote = null;
     let lastShownId = -1; 
 
-    // 화면 렌더링
     function displayQuote(quoteArray) {
         if (quoteArray.length === 0) return;
 
@@ -270,7 +297,7 @@
         currentQuote = availableQuotes[randomIndex];
         lastShownId = currentQuote.id;
 
-        quoteText.innerHTML = `${currentQuote.text}`; // 마크업 없이 텍스트만, CSS 가상요소로 형광펜 효과
+        quoteText.innerHTML = `${currentQuote.text}`;
         quoteSource.textContent = `${currentQuote.source}`;
         
         keywordList.innerHTML = '';
@@ -278,23 +305,19 @@
         keywordBtn.className = 'keyword-btn';
         keywordBtn.textContent = `#${currentQuote.keyword}`;
         
-        // 키워드 클릭 시 같은 키워드의 문장 필터링
         keywordBtn.addEventListener('click', () => {
             const relatedQuotes = quotesData.filter(q => q.keyword === currentQuote.keyword);
             if(relatedQuotes.length > 0) displayQuote(relatedQuotes);
         });
         
         keywordList.appendChild(keywordBtn);
-        
         initialMsg.style.display = 'none';
         
-        // 카드 재등장 애니메이션 트리거
         quoteCard.classList.remove('active');
-        void quoteCard.offsetWidth; // reflow
+        void quoteCard.offsetWidth;
         quoteCard.classList.add('active');
     }
 
-    // 감정 버튼 클릭
     emotionBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             emotionBtns.forEach(b => b.classList.remove('active'));
@@ -306,14 +329,12 @@
         });
     });
 
-    // 다음 문장
     nextBtn.addEventListener('click', () => {
         if (!currentEmotion) return;
         const filteredQuotes = quotesData.filter(q => q.emotion === currentEmotion);
         displayQuote(filteredQuotes);
     });
 
-    // 닫기 버튼
     closeBtn.addEventListener('click', () => {
         quoteCard.classList.remove('active');
         setTimeout(() => { quoteCard.style.display = 'none'; }, 300);
@@ -322,7 +343,6 @@
         initialMsg.style.display = 'block';
     });
 
-    // 구글 검색 (키워드 명언)
     searchBtn.addEventListener('click', () => {
         if (currentQuote && currentQuote.keyword) {
             const searchQuery = encodeURIComponent(`${currentQuote.keyword} 명언 글귀`);
@@ -330,11 +350,9 @@
         }
     });
 
-    // 유튜브 검색 연동 (감정 상태에 맞는 음악/명상 검색)
     youtubeBtn.addEventListener('click', () => {
         if (!currentEmotion) return;
         
-        // 감정별 유튜브 검색어 매핑
         const searchTerms = {
             'happy': '기분 좋아지는 경쾌한 플레이리스트',
             'peaceful': '마음이 편안해지는 잔잔한 피아노 지브리',
