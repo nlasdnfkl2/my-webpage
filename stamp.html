@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>서명 및 도장 생성기 (Neo-Brutalism)</title>
+    <title>문태양 - 서명 및 도장 생성기 (Neo-Brutalism)</title>
     
     <!-- Google Fonts 확장 목록 로드 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Caveat:wght@400..700&family=Dancing+Script:wght@400..700&family=Do+Hyeon&family=Dongle:wght@300;400;700&family=Gamja+Flower&family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@100..900&family=Jua&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&family=Pacifico&family=Song+Myung&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* 네오 브루탈리즘 테마 변수 */
+        /* 네오 브루탈리즘 테마 변수 (기존 프로젝트들과 통일) */
         :root {
-            --bg-color: #ffffff;
-            --main-color: #000000;
-            --white: #ffffff;
+            --bg: #dfdcd3;
+            --black: #0f0f0f;
+            --yellow: #ffd83b;
+            --pink: #ff4757;
+            --cyan: #48dbfb;
+            --green: #2ed573;
             --stamp-color: #E53935; /* 아시아 전통 도장 붉은색 */
-            --border-width: 3px;
-            --shadow-offset: 6px;
+            --border-thick: 4px solid var(--black);
+            --border: 3px solid var(--black);
+            --shadow-sm: 4px 4px 0 var(--black);
+            --shadow-lg: 8px 8px 0 var(--black);
         }
 
         * {
@@ -28,26 +34,61 @@
             font-family: 'Noto Sans KR', sans-serif;
         }
 
+        /* 전역 노이즈 텍스처 */
+        body::after {
+            content: "";
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 9999;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
+            opacity: 0.12;
+            mix-blend-mode: overlay;
+        }
+
         body {
-            background-color: var(--bg-color);
-            color: var(--main-color);
+            background-color: var(--bg);
+            color: var(--black);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            /* 도트 패턴 배경으로 브루탈리즘 감성 추가 */
-            background-image: radial-gradient(#000 1px, transparent 0);
-            background-size: 20px 20px;
+            /* 닷 패턴 배경 */
+            background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            padding-top: calc(80px + 2rem);
+        }
+
+        /* 상단 고정 바 */
+        .fixed-top-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 60px;
+            background: var(--yellow);
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 2000;
+            box-shadow: 0 4px 0 var(--black);
+        }
+
+        .current-time {
+            font-weight: 900;
+            font-size: 0.95rem;
+            background: white;
+            border: var(--border);
+            padding: 4px 10px;
+            box-shadow: 2px 2px 0 var(--black);
         }
 
         .app-container {
             width: 100%;
-            max-width: 500px;
-            background-color: var(--white);
-            border: var(--border-width) solid var(--main-color);
-            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--main-color);
-            padding: 25px;
+            max-width: 520px;
+            background-color: #ffffff;
+            border: var(--border-thick);
+            box-shadow: var(--shadow-lg);
+            padding: 30px;
         }
 
         /* 탭 버튼 네비게이션 */
@@ -61,20 +102,21 @@
             flex: 1;
             padding: 12px;
             font-size: 18px;
-            font-weight: 800;
-            background-color: var(--white);
-            color: var(--main-color);
-            border: var(--border-width) solid var(--main-color);
-            box-shadow: 4px 4px 0px var(--main-color);
+            font-weight: 900;
+            background-color: #ffffff;
+            color: var(--black);
+            border: var(--border);
+            box-shadow: var(--shadow-sm);
             cursor: pointer;
             transition: all 0.1s ease;
             text-align: center;
+            text-transform: uppercase;
         }
 
         .tab-btn.active {
-            background-color: var(--main-color);
-            color: var(--white);
-            box-shadow: 2px 2px 0px var(--main-color);
+            background-color: var(--yellow);
+            color: var(--black);
+            box-shadow: 2px 2px 0 var(--black);
             transform: translate(2px, 2px);
         }
 
@@ -97,27 +139,27 @@
         .mode-toggle {
             display: flex;
             margin-bottom: 20px;
-            border: var(--border-width) solid var(--main-color);
+            border: var(--border);
+            background: var(--black);
+            padding: 3px;
+            gap: 3px;
+            box-shadow: var(--shadow-sm);
         }
 
         .mode-btn {
             flex: 1;
             padding: 10px;
-            font-weight: 700;
-            background: var(--white);
-            color: var(--main-color);
-            border: none;
+            font-weight: 900;
+            background: #ffffff;
+            color: var(--black);
+            border: 2px solid var(--black);
             cursor: pointer;
-            border-right: var(--border-width) solid var(--main-color);
+            text-transform: uppercase;
         }
         
-        .mode-btn:last-child {
-            border-right: none;
-        }
-
         .mode-btn.active {
-            background: var(--main-color);
-            color: var(--white);
+            background: var(--yellow);
+            color: var(--black);
         }
 
         /* 컨트롤 그룹 및 입력 폼 */
@@ -127,45 +169,48 @@
 
         .control-group label {
             display: block;
-            font-weight: 800;
+            font-weight: 900;
             margin-bottom: 8px;
             font-size: 15px;
+            text-transform: uppercase;
         }
 
         .brutal-input {
             width: 100%;
             padding: 12px;
             font-size: 16px;
-            border: var(--border-width) solid var(--main-color);
-            background-color: var(--white);
-            color: var(--main-color);
+            border: var(--border);
+            background-color: #ffffff;
+            color: var(--black);
             border-radius: 0;
-            box-shadow: 4px 4px 0px var(--main-color);
+            box-shadow: var(--shadow-sm);
+            font-weight: 800;
             transition: all 0.1s ease;
             appearance: none;
         }
 
         .brutal-input:focus {
             outline: none;
-            box-shadow: 2px 2px 0px var(--main-color);
+            background-color: var(--yellow);
+            box-shadow: 2px 2px 0 var(--black);
             transform: translate(2px, 2px);
         }
 
         /* 캔버스 래퍼 */
         .canvas-wrapper {
-            border: var(--border-width) solid var(--main-color);
-            background-color: var(--white);
-            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--main-color);
+            border: var(--border-thick);
+            background-color: #ffffff;
+            box-shadow: var(--shadow-lg);
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 20px 0;
             position: relative;
-            touch-action: none; /* 모바일 드로잉 스크롤 방지 */
+            touch-action: none;
             overflow: hidden;
         }
 
-        /* 체커보드 배경 - 캔버스가 투명함을 나타내기 위함 */
+        /* 체커보드 배경 (투명 표시) */
         .canvas-wrapper::before {
             content: '';
             position: absolute;
@@ -198,11 +243,11 @@
             flex: 1;
             padding: 14px;
             font-size: 16px;
-            font-weight: 800;
-            border: var(--border-width) solid var(--main-color);
-            background-color: var(--white);
-            color: var(--main-color);
-            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--main-color);
+            font-weight: 900;
+            border: var(--border-thick);
+            background-color: #ffffff;
+            color: var(--black);
+            box-shadow: var(--shadow-sm);
             cursor: pointer;
             transition: all 0.1s ease;
             text-align: center;
@@ -210,22 +255,25 @@
         }
 
         .btn-action.primary {
-            background-color: var(--main-color);
-            color: var(--white);
+            background-color: var(--pink);
+            color: #ffffff;
         }
 
         .btn-action:hover {
-            background-color: var(--main-color);
-            color: var(--white);
+            background-color: var(--black);
+            color: var(--yellow);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--pink);
         }
         
         .btn-action.primary:hover {
-            background-color: var(--white);
-            color: var(--main-color);
+            background-color: var(--black);
+            color: var(--green);
+            box-shadow: 6px 6px 0 var(--yellow);
         }
 
         .btn-action:active {
-            box-shadow: 2px 2px 0px var(--main-color);
+            box-shadow: 0 0 0 var(--black);
             transform: translate(4px, 4px);
         }
 
@@ -233,6 +281,12 @@
     </style>
 </head>
 <body>
+
+<!-- 상단 고정 바 -->
+<div class="fixed-top-bar">
+    <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+    <div style="font-weight: 900; text-transform: uppercase;">문태양 · 서명 및 도장 생성기</div>
+</div>
 
 <div class="app-container">
     <!-- 메인 탭 -->
@@ -249,14 +303,13 @@
             <button class="mode-btn" onclick="setSigMode('type')">텍스트 입력</button>
         </div>
 
-        <!-- 텍스트 입력용 컨트롤 (Type 모드 시 표시) -->
+        <!-- 텍스트 입력용 컨트롤 -->
         <div id="sig-type-controls" class="hidden">
             <div class="control-group">
-                <input type="text" id="sigTextInput" class="brutal-input" placeholder="서명할 텍스트 입력" value="Hong Gil Dong">
+                <input type="text" id="sigTextInput" class="brutal-input" placeholder="서명할 텍스트 입력" value="Moon Tae Yang">
             </div>
             <div class="control-group">
                 <select id="sigFontSelect" class="brutal-input">
-                    <!-- 영문/필기체 추천 폰트 -->
                     <optgroup label="Handwriting / Scripts">
                         <option value="'Nanum Pen Script', cursive">나눔 펜 스크립트 (Nanum Pen)</option>
                         <option value="'Caveat', cursive">캐비엇 (Caveat)</option>
@@ -265,7 +318,6 @@
                         <option value="'Gamja Flower', cursive">감자꽃 (Gamja Flower)</option>
                         <option value="'Dongle', sans-serif">동글 (Dongle)</option>
                     </optgroup>
-                    <!-- 일반 서체 -->
                     <optgroup label="Formal / Standard">
                         <option value="'Noto Sans KR', sans-serif">노토 산스 (Noto Sans)</option>
                         <option value="'Noto Serif KR', serif">노토 세리프 (Noto Serif)</option>
@@ -288,7 +340,7 @@
     <div id="tab-stamp" class="content-box">
         <div class="control-group">
             <label for="stampText">도장 문구 (2~4자 추천)</label>
-            <input type="text" id="stampText" class="brutal-input" value="홍길동" maxlength="4" placeholder="이름 입력">
+            <input type="text" id="stampText" class="brutal-input" value="문태양" maxlength="4" placeholder="이름 입력">
         </div>
         
         <div class="control-group">
@@ -313,7 +365,7 @@
             </select>
         </div>
 
-        <div class="canvas-wrapper" style="width: 250px; margin: 20px auto;">
+        <div class="canvas-wrapper" style="width: 230px; margin: 20px auto;">
             <canvas id="stampCanvas" width="200" height="200"></canvas>
         </div>
 
@@ -322,9 +374,20 @@
 </div>
 
 <script>
-    /* ==========================================
-       1. 공통 및 탭 관리
-    ========================================== */
+    /* --- 실시간 시계 연동 --- */
+    function updateClock() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+        const timeEl = document.getElementById('currentTimeDisplay');
+        if (timeEl) timeEl.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /* --- 탭 관리 --- */
     function switchTab(tabId) {
         document.querySelectorAll('.content-box').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -341,25 +404,19 @@
         link.click();
     }
 
-    /* ==========================================
-       2. 서명(Signature) 영역
-    ========================================== */
+    /* --- 서명(Signature) 영역 --- */
     const sigCanvas = document.getElementById('sigCanvas');
     const sigCtx = sigCanvas.getContext('2d');
     let isDrawing = false;
-    let currentSigMode = 'draw'; // 'draw' or 'type'
+    let currentSigMode = 'draw';
 
-    // 브러시 설정
     sigCtx.lineWidth = 5;
     sigCtx.lineCap = 'round';
     sigCtx.lineJoin = 'round';
-    sigCtx.strokeStyle = '#000000'; // 서명 흑백 테마
+    sigCtx.strokeStyle = '#000000';
 
-    // 서명 모드 전환
     function setSigMode(mode) {
         currentSigMode = mode;
-        
-        // 토글 UI 업데이트
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
@@ -368,7 +425,7 @@
 
         if (mode === 'type') {
             typeControls.classList.remove('hidden');
-            clearBtn.classList.add('hidden'); // Type 모드에선 지우기 버튼 불필요
+            clearBtn.classList.add('hidden');
             sigCanvas.style.cursor = 'default';
             renderTypedSignature();
         } else {
@@ -379,7 +436,6 @@
         }
     }
 
-    // 마우스/터치 좌표 변환
     function getPointerPos(e) {
         const rect = sigCanvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -392,7 +448,6 @@
         };
     }
 
-    // 그리기 이벤트 (Draw 모드일 때만 동작)
     function startDrawing(e) {
         if (currentSigMode !== 'draw') return;
         e.preventDefault();
@@ -421,25 +476,22 @@
         sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
     }
 
-    // Type 모드 자동 렌더링 및 Auto-Scaling
     const sigTextInput = document.getElementById('sigTextInput');
     const sigFontSelect = document.getElementById('sigFontSelect');
 
     function renderTypedSignature() {
         if (currentSigMode !== 'type') return;
-        
         const text = sigTextInput.value || ' ';
         const font = sigFontSelect.value;
         
-        clearSignature(); // 화면 정리
+        clearSignature();
         
-        let fontSize = 120; // 초기 최대 폰트 사이즈
+        let fontSize = 120;
         sigCtx.font = `${fontSize}px ${font}`;
         sigCtx.textBaseline = 'middle';
         sigCtx.textAlign = 'center';
         sigCtx.fillStyle = '#000000';
         
-        // Auto-scaling 로직: 텍스트가 캔버스 폭(-40px 마진)보다 크면 사이즈 축소
         let textWidth = sigCtx.measureText(text).width;
         while (textWidth > sigCanvas.width - 40 && fontSize > 10) {
             fontSize -= 2;
@@ -447,11 +499,9 @@
             textWidth = sigCtx.measureText(text).width;
         }
         
-        // 캔버스 중앙에 텍스트 배치
         sigCtx.fillText(text, sigCanvas.width / 2, sigCanvas.height / 2);
     }
 
-    // 이벤트 리스너: 그리기
     sigCanvas.addEventListener('mousedown', startDrawing);
     sigCanvas.addEventListener('mousemove', draw);
     sigCanvas.addEventListener('mouseup', stopDrawing);
@@ -460,13 +510,10 @@
     sigCanvas.addEventListener('touchmove', draw, {passive: false});
     sigCanvas.addEventListener('touchend', stopDrawing);
 
-    // 이벤트 리스너: 텍스트 입력
     sigTextInput.addEventListener('input', renderTypedSignature);
     sigFontSelect.addEventListener('change', renderTypedSignature);
 
-    /* ==========================================
-       3. 도장(Stamp) 영역
-    ========================================== */
+    /* --- 도장(Stamp) 영역 --- */
     const stampCanvas = document.getElementById('stampCanvas');
     const stampCtx = stampCanvas.getContext('2d');
     
@@ -483,15 +530,13 @@
         
         const size = stampCanvas.width;
         const center = size / 2;
-        const stampColor = "var(--stamp-color)";
-        const computedColor = getComputedStyle(document.body).getPropertyValue('--stamp-color').trim();
+        const computedColor = getComputedStyle(document.body).getPropertyValue('--stamp-color').trim() || '#E53935';
         
         stampCtx.strokeStyle = computedColor;
         stampCtx.fillStyle = computedColor;
         stampCtx.lineCap = 'butt';
         stampCtx.lineJoin = 'miter';
         
-        // 1. 테두리 그리기
         if (shape === 'circle') {
             stampCtx.lineWidth = 7;
             stampCtx.beginPath();
@@ -502,27 +547,22 @@
             stampCtx.strokeRect(12, 12, size - 24, size - 24);
         }
         
-        // 2. 텍스트 배치
         stampCtx.textBaseline = 'middle';
         stampCtx.textAlign = 'center';
         
         if (text.length === 1) {
             stampCtx.font = `bold 100px ${font}`;
-            stampCtx.fillText(text, center, center + 5); // 폰트별 미세 보정 (+5)
-        } 
-        else if (text.length === 2) {
+            stampCtx.fillText(text, center, center + 5);
+        } else if (text.length === 2) {
             stampCtx.font = `bold 70px ${font}`;
             stampCtx.fillText(text[0], center - 38, center + 5);
             stampCtx.fillText(text[1], center + 38, center + 5);
-        } 
-        else if (text.length === 3) {
+        } else if (text.length === 3) {
             stampCtx.font = `bold 50px ${font}`;
             stampCtx.fillText(text[0], center - 50, center + 3);
             stampCtx.fillText(text[1], center, center + 3);
             stampCtx.fillText(text[2], center + 50, center + 3);
-        } 
-        else if (text.length >= 4) {
-            // 4자 이상일 경우 우상, 우하, 좌상, 좌하 (전통 인장 순서)
+        } else if (text.length >= 4) {
             stampCtx.font = `bold 55px ${font}`;
             stampCtx.fillText(text[0], center + 38, center - 35);
             stampCtx.fillText(text[1], center + 38, center + 45);
@@ -535,10 +575,6 @@
     stampFontEl.addEventListener('change', drawStamp);
     stampShapeEl.addEventListener('change', drawStamp);
 
-    /* ==========================================
-       4. 초기 폰트 로드 및 렌더링
-    ========================================== */
-    // Google Fonts 다운로드가 완료되면 캔버스를 최신화합니다.
     document.fonts.ready.then(() => {
         drawStamp();
         if (currentSigMode === 'type') {
@@ -546,9 +582,7 @@
         }
     });
 
-    // 초기 실행
     drawStamp();
-
 </script>
 </body>
 </html>
