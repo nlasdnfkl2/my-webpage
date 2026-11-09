@@ -85,26 +85,35 @@
             align-items: center; 
             z-index: 20; 
             box-shadow: 0 4px 0 var(--black);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         .brand h1 { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; text-shadow: 3px 3px 0 var(--pink); margin-bottom: 5px; }
         .brand p { color: var(--black); font-weight: 900; font-size: 0.95rem; background: var(--cyan); display: inline-block; padding: 2px 8px; border: 2px solid var(--black); box-shadow: 2px 2px 0 var(--black); }
         
-        .controls { display: flex; gap: 1rem; align-items: center; }
+        .controls { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
         
+        /* 뷰 모드 전환 탭 버튼 */
+        .view-tabs { display: flex; gap: 5px; background: var(--bg); padding: 4px; border: var(--border); box-shadow: var(--shadow-sm); }
+        .tab-btn { background: var(--white); border: 2px solid var(--black); padding: 8px 12px; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: 0.1s; }
+        .tab-btn.active { background: var(--black); color: var(--white); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--yellow); }
+        .tab-btn:hover:not(.active) { background: var(--yellow); }
+
         /* Wiki API Toggle */
         .api-toggle-btn {
-            background: var(--white); color: var(--black); border: var(--border); padding: 12px 18px; font-weight: 900; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.1s;
+            background: var(--white); color: var(--black); border: var(--border); padding: 10px 16px; font-weight: 900; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.1s; font-size: 0.9rem;
         }
         .api-toggle-btn.active { background: var(--green); color: var(--black); box-shadow: 2px 2px 0 var(--black); transform: translate(2px, 2px); }
         .api-toggle-btn:hover { background: var(--black); color: var(--white); }
 
-        .search-input { background: var(--white); border: var(--border); color: var(--black); padding: 12px; font-size: 1.1rem; width: 300px; font-weight: 900; box-shadow: var(--shadow-sm); outline: none; }
-        .search-input:focus { background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); }
+        .search-input { background: var(--white); border: var(--border); color: var(--black); padding: 10px 14px; font-size: 1rem; width: 240px; font-weight: 900; box-shadow: var(--shadow-sm); outline: none; }
+        .search-input:focus { background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); }
         
         /* Layout */
-        main { flex: 1; display: flex; overflow-x: auto; overflow-y: auto; padding: 2rem; gap: 2.5rem; flex-direction: column; }
+        main { flex: 1; overflow: auto; padding: 2rem; }
         
-        /* Lanes */
+        /* 멀티 레인 모드 (가로 스크롤) */
+        .board-multi { display: flex; flex-direction: column; gap: 2.5rem; }
         .lane { position: relative; min-height: 200px; background: rgba(255, 255, 255, 0.7); border: var(--border-thick); min-width: 100%; box-shadow: var(--shadow-lg); display: flex; align-items: center; padding: 0 20px; gap: 20px; overflow-x: auto; }
         .lane-header { position: absolute; left: -4px; top: -22px; padding: 6px 20px; font-size: 1.1rem; font-weight: 900; color: var(--black); border: var(--border-thick); z-index: 10; box-shadow: var(--shadow-sm); }
         
@@ -115,9 +124,15 @@
         
         .timeline-axis { position: absolute; left: 0; right: 0; top: 50%; height: 4px; background: var(--black); z-index: 1; }
         
+        /* 단일 카테고리 세로 스크롤 모드 (그리드 형태) */
+        .board-single { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding-bottom: 40px; }
+
         /* Card */
-        .event-card { position: relative; z-index: 5; background: var(--white); border: var(--border); min-width: 250px; width: 250px; padding: 15px; cursor: pointer; transition: 0.15s; box-shadow: var(--shadow-sm); }
-        .event-card:hover { transform: translateY(-8px); z-index: 15; background: var(--yellow); box-shadow: var(--shadow-lg); }
+        .event-card { position: relative; z-index: 5; background: var(--white); border: var(--border); padding: 18px; cursor: pointer; transition: 0.15s; box-shadow: var(--shadow-sm); }
+        .board-multi .event-card { min-width: 250px; width: 250px; }
+        .board-single .event-card { width: 100%; }
+        
+        .event-card:hover { transform: translateY(-6px); z-index: 15; background: var(--yellow); box-shadow: var(--shadow-lg); }
         
         .e-year { display: inline-block; background: var(--black); color: var(--white); padding: 3px 8px; font-weight: 900; font-size: 0.9rem; margin-bottom: 10px; }
         .e-title { font-size: 1.2rem; font-weight: 900; line-height: 1.3; margin-bottom: 8px; color: var(--black); }
@@ -162,7 +177,15 @@
             <p>자체 탑재 200+ Core Database & Live Wikipedia 연동</p>
         </div>
         <div class="controls">
-            <button id="apiToggle" class="api-toggle-btn active">🌐 LIVE WIKI 연동 ON</button>
+            <!-- 뷰 모드 전환 탭 -->
+            <div class="view-tabs">
+                <button class="tab-btn active" onclick="switchView('all')">전체 보기</button>
+                <button class="tab-btn" onclick="switchView('korea')">🇰🇷 한국사</button>
+                <button class="tab-btn" onclick="switchView('west')">🏛️ 서양사</button>
+                <button class="tab-btn" onclick="switchView('world')">🌍 세계사</button>
+                <button class="tab-btn" onclick="switchView('war')">⚔️ 전쟁사</button>
+            </div>
+            <button id="apiToggle" class="api-toggle-btn active">🌐 WIKI ON</button>
             <input type="text" id="searchBox" class="search-input" placeholder="사건명, 인물, 키워드 검색...">
         </div>
     </header>
@@ -209,10 +232,12 @@
         const coreData = [{"category": "korea", "year": "BC 2333", "title": "고조선 건국", "summary": "청동기 기반 한반도 최초 고대 국가", "desc": "단군왕검이 아사달에 도읍을 정하고 홍익인간 이념으로 세운 국가.", "keywords": ["고조선", "단군", "청동기"]}, {"category": "korea", "year": "BC 108", "title": "고조선 멸망", "summary": "한무제의 침공과 한사군 설치", "desc": "왕검성이 함락되며 고조선이 멸망하고 한사군이 설치됨.", "keywords": ["한무제", "왕검성", "한사군"]}, {"category": "korea", "year": "BC 57", "title": "신라 건국", "summary": "박혁거세의 사로국 건국", "desc": "경주 지역을 중심으로 6부족 연맹체로 출발함.", "keywords": ["박혁거세", "사로국", "신라"]}, {"category": "korea", "year": "BC 37", "title": "고구려 건국", "summary": "주몽의 졸본 부여 건국", "desc": "압록강 유역 졸본에서 주몽이 건국하여 주변국을 정복함.", "keywords": ["주몽", "동명성왕", "졸본"]}, {"category": "korea", "year": "BC 18", "title": "백제 건국", "summary": "온조의 하남 위례성 건국", "desc": "고구려 유이민 온조가 한강 유역에 세운 국가.", "keywords": ["온조", "위례성", "백제"]}, {"category": "korea", "year": "313", "title": "낙랑군 축출", "summary": "고구려 미천왕의 영토 확장", "desc": "미천왕이 한사군의 마지막 남은 낙랑군을 몰아내고 한반도 북부를 장악함.", "keywords": ["미천왕", "낙랑군"]}, {"category": "korea", "year": "371", "title": "백제 근초고왕 평양성 공격", "summary": "백제의 전성기와 고구려 고국원왕 전사", "desc": "백제가 최대 영토를 확보하고 고구려 평양성을 공격함.", "keywords": ["근초고왕", "고국원왕"]}, {"category": "korea", "year": "391", "title": "광개토대왕 즉위", "summary": "고구려의 대정복 시대 개막", "desc": "영락이라는 연호를 사용하며 만주와 한반도 남부까지 영향력을 확대함.", "keywords": ["광개토대왕", "영락"]}, {"category": "korea", "year": "427", "title": "장수왕 평양 천도", "summary": "고구려의 남진 정책 본격화", "desc": "국내성에서 평양으로 수도를 옮기고 한성 백제를 압박함.", "keywords": ["장수왕", "평양성", "남진정책"]}, {"category": "korea", "year": "475", "title": "한성 함락 및 웅진 천도", "summary": "고구려의 한성 백제 점령", "desc": "장수왕이 한성을 함락시키고 개로왕이 전사하자, 문주왕이 웅진으로 천도함.", "keywords": ["개로왕", "웅진", "한성함락"]}, {"category": "korea", "year": "512", "title": "우산국 정벌", "summary": "지증왕 대 신라의 영토 확장", "desc": "신라 장군 이사부가 우릉도(우산국)를 정벌하여 영토로 편입함.", "keywords": ["지증왕", "이사부", "우산국"]}, {"category": "korea", "year": "532", "title": "금관가야 멸망", "summary": "신라 법흥왕의 가야 병합", "desc": "금관가야의 구해왕이 신라에 항복하며 가야 전기가 막을 내림.", "keywords": ["금관가야", "법흥왕"]}, {"category": "korea", "year": "554", "title": "관산성 전투", "summary": "신라와 백제의 나제동맹 결렬", "desc": "백제 성왕이 신라 진흥왕을 공격했으나 관산성에서 전사함.", "keywords": ["관산성", "성왕", "진흥왕"]}, {"category": "korea", "year": "612", "title": "살수대첩", "summary": "수나라 30만 대군 격파", "desc": "고구려 을지문덕 장군이 살수에서 수나라 양제의 군대를 크게 물리침.", "keywords": ["을지문덕", "수나라", "살수대첩"]}, {"category": "korea", "year": "645", "title": "안시성 전투", "summary": "당나라 태종의 침공 격퇴", "desc": "안시성 성주와 군민들이 당태종의 대군을 88일간 방어해냄.", "keywords": ["안시성", "당태종", "양만춘"]}, {"category": "korea", "year": "660", "title": "백제 멸망", "summary": "황산벌 전투와 사비성 함락", "desc": "나당 연합군의 공격으로 계백의 5천 결사대가 패하고 백제가 멸망함.", "keywords": ["황산벌", "계백", "의자왕"]}, {"category": "korea", "year": "668", "title": "고구려 멸망", "summary": "나당 연합군의 평양성 함락", "desc": "오랜 전쟁과 내분으로 인해 동북아 강국 고구려가 역사 속으로 사라짐.", "keywords": ["나당연합군", "평양성"]}, {"category": "korea", "year": "676", "title": "삼국 통일 완수", "summary": "기벌포 전투와 당군 축출", "desc": "신라가 당나라 세력을 몰아내고 대동강 이남의 삼국을 통합함.", "keywords": ["매소성", "기벌포", "문무왕"]}, {"category": "korea", "year": "698", "title": "발해 건국", "summary": "대조영의 동모산 건국", "desc": "고구려 유민 대조영이 말갈족과 함께 발해를 세워 남북국 시대가 열림.", "keywords": ["대조영", "동모산", "발해"]}, {"category": "korea", "year": "828", "title": "청해진 설치", "summary": "장보고의 해상 무역 장악", "desc": "장보고가 완도에 청해진을 설치하고 동아시아 해상권을 장악함.", "keywords": ["장보고", "청해진", "해상왕"]}, {"category": "korea", "year": "892", "title": "후백제 건국", "summary": "견훤의 무진주 봉기", "desc": "신라 말기의 혼란기에 견훤이 완산주를 도읍으로 후백제를 세움.", "keywords": ["견훤", "후백제", "완산주"]}, {"category": "korea", "year": "901", "title": "후고구려 건국", "summary": "궁예의 송악 건국", "desc": "궁예가 송악(개성)을 도읍으로 후고구려를 세우고 후삼국 시대가 본격화됨.", "keywords": ["궁예", "후고구려", "송악"]}, {"category": "korea", "year": "918", "title": "고려 건국", "summary": "왕건의 역성혁명", "desc": "궁예를 몰아내고 왕건이 철원에서 고려를 건국함.", "keywords": ["왕건", "고려", "태조"]}, {"category": "korea", "year": "936", "title": "후삼국 통일", "summary": "고려의 후백제 병합", "desc": "일리천 전투에서 승리한 왕건이 신검의 항복을 받아 후삼국을 통일함.", "keywords": ["일리천전투", "후삼국통일"]}, {"category": "korea", "year": "958", "title": "과거제 실시", "summary": "광종의 왕권 강화", "desc": "쌍기의 건의를 받아들여 시험을 통해 관리를 선발하는 과거제를 도입함.", "keywords": ["광종", "과거제", "쌍기"]}, {"category": "korea", "year": "993", "title": "서희의 강동 6주 획득", "summary": "거란의 1차 침입 격퇴", "desc": "거란의 소손녕과 서희가 외교 담판을 벌여 강동 6주를 획득함.", "keywords": ["서희", "거란", "강동6주"]}, {"category": "korea", "year": "1019", "title": "귀주대첩", "summary": "거란의 3차 침입 전멸", "desc": "강감찬 장군이 귀주에서 소배압의 거란군 10만을 크게 섬멸함.", "keywords": ["강감찬", "귀주대첩"]}, {"category": "korea", "year": "1170", "title": "무신정변 발발", "summary": "문벌 귀족 사회 붕괴", "desc": "정중부, 이의방 등 무신들이 문신들을 학살하고 정권을 장악함.", "keywords": ["무신정변", "정중부"]}, {"category": "korea", "year": "1232", "title": "강화도 천도", "summary": "몽골의 침입과 대몽 항쟁", "desc": "최우 무신정권이 몽골의 침략에 맞서 수도를 강화도로 옮김.", "keywords": ["최우", "몽골침입", "강화도"]}, {"category": "korea", "year": "1270", "title": "삼별초의 항쟁", "summary": "개경 환도 반대 투쟁", "desc": "배중손을 필두로 삼별초가 강화, 진도, 제주로 이동하며 몽골에 대항함.", "keywords": ["삼별초", "배중손", "대몽항쟁"]}, {"category": "korea", "year": "1388", "title": "위화도 회군", "summary": "이성계의 군사 쿠데타", "desc": "요동 정벌에 나섰던 이성계가 압록강 위화도에서 군대를 돌려 정권을 장악함.", "keywords": ["위화도회군", "이성계"]}, {"category": "korea", "year": "1392", "title": "조선 건국", "summary": "유교 이념의 신흥 국가", "desc": "신진사대부와 이성계가 고려를 멸망시키고 조선을 건국함.", "keywords": ["조선", "이성계", "정도전"]}, {"category": "korea", "year": "1443", "title": "훈민정음 창제", "summary": "세종대왕의 고유 문자 발명", "desc": "백성들이 쉽게 글을 읽고 쓸 수 있도록 28자의 훈민정음을 창제함.", "keywords": ["세종대왕", "훈민정음", "집현전"]}, {"category": "korea", "year": "1592", "title": "임진왜란 발발", "summary": "일본 도요토미 히데요시의 조선 침략", "desc": "부산진이 함락되며 시작된 7년간의 거대한 동아시아 국제 전쟁.", "keywords": ["임진왜란", "이순신", "선조"]}, {"category": "korea", "year": "1627", "title": "정묘호란", "summary": "후금의 조선 침공", "desc": "친명배금 정책을 펴던 인조 정권에 반발해 후금이 침략하여 형제 관계를 맺음.", "keywords": ["정묘호란", "후금", "인조"]}, {"category": "korea", "year": "1636", "title": "병자호란", "summary": "청나라의 대규모 침략", "desc": "청태종이 군대를 이끌고 침략하여 인조가 남한산성으로 피신, 결국 삼전도에서 항복함.", "keywords": ["병자호란", "삼전도의굴욕", "남한산성"]}, {"category": "korea", "year": "1792", "title": "수원 화성 축조 시작", "summary": "정조의 신도시 건설", "desc": "정약용의 거중기 등을 활용하여 왕권 강화와 방어를 위한 화성을 건설함.", "keywords": ["정조", "수원화성", "정약용"]}, {"category": "korea", "year": "1876", "title": "강화도 조약", "summary": "근대적 불평등 조약 체결", "desc": "운요호 사건을 계기로 일본과 맺은 최초의 근대적 조약이자 불평등 조약.", "keywords": ["강화도조약", "운요호사건", "개항"]}, {"category": "korea", "year": "1884", "title": "갑신정변", "summary": "급진 개화파의 정변", "desc": "김옥균, 박영효 등이 근대 국가 수립을 목표로 정변을 일으켰으나 3일 만에 실패함.", "keywords": ["갑신정변", "김옥균", "3일천하"]}, {"category": "korea", "year": "1894", "title": "동학 농민 운동", "summary": "반봉건 반외세 민중 항쟁", "desc": "전봉준을 중심으로 한 농민군이 부패한 관료와 외세에 맞서 봉기함.", "keywords": ["동학농민운동", "전봉준", "우금치"]}, {"category": "korea", "year": "1895", "title": "을미사변", "summary": "명성황후 시해 사건", "desc": "일본 낭인들이 경복궁에 난입하여 조선의 왕비를 무참히 시해한 사건.", "keywords": ["을미사변", "명성황후", "일본낭인"]}, {"category": "korea", "year": "1897", "title": "대한제국 선포", "summary": "환구단에서 황제 즉위", "desc": "고종이 국호를 대한제국으로 바꾸고 자주독립 국가임을 천명함.", "keywords": ["대한제국", "고종", "광무개혁"]}, {"category": "korea", "year": "1910", "title": "경술국치", "summary": "한일 병합 조약 체결", "desc": "일제에 의해 대한제국의 국권을 완전히 강탈당하고 식민지가 됨.", "keywords": ["경술국치", "일제강점기"]}, {"category": "korea", "year": "1919", "title": "3·1 운동 및 임시정부 수립", "summary": "거국적 독립 만세 운동", "desc": "민족자결주의의 영향으로 일어난 평화적 만세 운동이며 이후 상해 임시정부가 세워짐.", "keywords": ["31운동", "유관순", "임시정부"]}, {"category": "korea", "year": "1920", "title": "청산리 대첩", "summary": "독립군 최대의 승리", "desc": "김좌진의 북로군정서군과 홍범도의 대한독립군이 청산리에서 일본군을 대파함.", "keywords": ["청산리대첩", "김좌진", "독립군"]}, {"category": "korea", "year": "1945", "title": "8.15 광복", "summary": "일본의 항복과 제2차 세계대전 종전", "desc": "일제가 패망함에 따라 35년간의 식민 통치에서 벗어나 광복을 맞이함.", "keywords": ["광복절", "해방", "태평양전쟁"]}, {"category": "korea", "year": "1948", "title": "대한민국 정부 수립", "summary": "남한 단독 선거와 헌법 제정", "desc": "5.10 총선거를 거쳐 제헌 국회가 구성되고 이승만을 초대 대통령으로 정부가 수립됨.", "keywords": ["정부수립", "이승만", "제헌국회"]}, {"category": "korea", "year": "1960", "title": "4.19 혁명", "summary": "이승만 독재에 항거한 민주화 운동", "desc": "3.15 부정선거에 분노한 학생과 시민들의 시위로 이승만 정권이 붕괴됨.", "keywords": ["419혁명", "민주화", "김주열"]}, {"category": "korea", "year": "1980", "title": "5.18 민주화 운동", "summary": "신군부에 맞선 광주시민의 항쟁", "desc": "전두환 신군부의 비상계엄 확대에 반대하며 광주 시민들이 민주주의를 외친 항쟁.", "keywords": ["518광주민주화운동", "신군부", "전두환"]}, {"category": "korea", "year": "1987", "title": "6월 민주 항쟁", "summary": "대통령 직선제 쟁취", "desc": "박종철 고문치사 사건 등을 계기로 전국적인 시위가 일어나 6.29 선언을 이끌어냄.", "keywords": ["6월항쟁", "직선제", "민주화"]}, {"category": "west", "year": "BC 776", "title": "제1회 고대 올림픽", "summary": "그리스 펠로폰네소스 반도에서 개최", "desc": "올림피아에서 제우스 신을 기리기 위해 열린 최초의 종합 스포츠 제전.", "keywords": ["올림픽", "고대그리스", "제우스"]}, {"category": "west", "year": "BC 509", "title": "로마 공화정 수립", "summary": "왕정의 종식과 귀족 공화제", "desc": "에트루리아 출신 왕을 쫓아내고 원로원과 집정관 중심의 공화정을 세움.", "keywords": ["로마공화정", "원로원", "집정관"]}, {"category": "west", "year": "BC 332", "title": "알렉산드로스 제국 이집트 정복", "summary": "헬레니즘 제국의 확장", "desc": "알렉산드로스 대왕이 이집트를 정복하고 알렉산드리아를 건설함.", "keywords": ["알렉산드로스", "이집트", "헬레니즘"]}, {"category": "west", "year": "BC 44", "title": "카이사르 암살", "summary": "로마 공화정의 위기", "desc": "독재관 율리우스 카이사르가 브루투스 등 원로원 파벌에게 암살당함.", "keywords": ["카이사르", "브루투스", "원로원"]}, {"category": "west", "year": "BC 27", "title": "로마 제정 시대 시작", "summary": "옥타비아누스의 아우구스투스 등극", "desc": "공화정이 막을 내리고 옥타비아누스가 실질적인 첫 로마 황제가 됨.", "keywords": ["아우구스투스", "팍스로마나", "로마제국"]}, {"category": "west", "year": "313", "title": "밀라노 칙령", "summary": "기독교 공인", "desc": "콘스탄티누스 황제가 기독교에 대한 박해를 중지하고 종교의 자유를 선포함.", "keywords": ["밀라노칙령", "기독교", "콘스탄티누스"]}, {"category": "west", "year": "476", "title": "서로마 제국 멸망", "summary": "고대 유럽의 종식과 중세 시작", "desc": "게르만 용병대장 오도아케르에 의해 서로마 제국이 무너짐.", "keywords": ["서로마", "오도아케르", "중세시작"]}, {"category": "west", "year": "800", "title": "카롤루스 대제 서로마 황제 대관", "summary": "서유럽 세계의 형성", "desc": "교황 레오 3세가 프랑크 왕국의 카롤루스에게 황제의 관을 씌워줌.", "keywords": ["카롤루스대제", "프랑크왕국", "신성로마제국"]}, {"category": "west", "year": "1066", "title": "노르만 콘퀘스트", "summary": "노르망디 공 윌리엄의 잉글랜드 정복", "desc": "헤이스팅스 전투에서 승리한 윌리엄이 잉글랜드 국왕으로 즉위함.", "keywords": ["윌리엄", "노르만왕조", "헤이스팅스"]}, {"category": "west", "year": "1095", "title": "십자군 전쟁 선포", "summary": "클레르몽 공의회", "desc": "교황 우르바누스 2세가 예루살렘 탈환을 목적으로 성전(십자군)을 촉구함.", "keywords": ["십자군전쟁", "우르바누스2세", "예루살렘"]}, {"category": "west", "year": "1215", "title": "마그나 카르타(대헌장)", "summary": "국왕의 권력 제한", "desc": "영국 존 왕이 귀족들의 강요로 왕의 권한을 법으로 제한하는 문서에 서명함.", "keywords": ["마그나카르타", "대헌장", "의회정치"]}, {"category": "west", "year": "1347", "title": "흑사병 유럽 창궐", "summary": "유럽 인구의 3분의 1 감소", "desc": "아시아에서 전파된 페스트로 유럽 인구가 급감하고 장원제가 흔들림.", "keywords": ["흑사병", "페스트", "장원제붕괴"]}, {"category": "west", "year": "1453", "title": "동로마 제국 멸망", "summary": "비잔틴 제국의 최후", "desc": "오스만 제국의 메흐메트 2세가 콘스탄티노폴리스를 함락시킴.", "keywords": ["동로마", "콘스탄티노폴리스", "오스만제국"]}, {"category": "west", "year": "1492", "title": "콜럼버스 아메리카 도달", "summary": "대항해 시대 개막", "desc": "스페인의 지원을 받은 콜럼버스가 대서양을 횡단해 바하마 제도에 상륙함.", "keywords": ["콜럼버스", "신대륙", "대항해시대"]}, {"category": "west", "year": "1517", "title": "종교 개혁", "summary": "마틴 루터의 95개조 반박문", "desc": "면벌부 판매를 비판하며 가톨릭 교회의 타락에 저항하여 개신교가 탄생함.", "keywords": ["종교개혁", "마틴루터", "개신교"]}, {"category": "west", "year": "1648", "title": "베스트팔렌 조약", "summary": "30년 전쟁의 종결과 주권 국가 체제", "desc": "종교 전쟁을 끝내고 각국의 독립된 주권을 인정하는 근대 국제법 체계의 시초.", "keywords": ["베스트팔렌", "30년전쟁", "주권"]}, {"category": "west", "year": "1688", "title": "명예혁명", "summary": "영국 의회 민주주의 확립", "desc": "피를 흘리지 않고 제임스 2세를 폐위한 뒤 권리장전을 승인받은 사건.", "keywords": ["명예혁명", "권리장전", "입헌군주제"]}, {"category": "west", "year": "1776", "title": "미국 독립 선언", "summary": "미합중국의 탄생", "desc": "영국의 식민 지배에 맞서 13개 식민지가 모여 독립을 선언하고 전쟁에 돌입함.", "keywords": ["미국독립", "조지워싱턴", "토머스제퍼슨"]}, {"category": "west", "year": "1789", "title": "프랑스 대혁명", "summary": "바스티유 감옥 습격과 인권 선언", "desc": "절대왕정에 반발한 시민들이 혁명을 일으켜 자유, 평등, 박애를 천명함.", "keywords": ["프랑스혁명", "바스티유", "인권선언"]}, {"category": "west", "year": "1804", "title": "나폴레옹 황제 즉위", "summary": "프랑스 제1제국 성립", "desc": "나폴레옹 보나파르트가 국민투표를 거쳐 황제에 오르고 유럽을 제패하려 함.", "keywords": ["나폴레옹", "프랑스제국"]}, {"category": "west", "year": "1815", "title": "빈 회의", "summary": "유럽의 보수적 질서 회복", "desc": "나폴레옹 전쟁 이후 유럽을 혁명 이전의 상태로 되돌리려는 메테르니히 체제가 성립됨.", "keywords": ["빈회의", "메테르니히", "왕정복고"]}, {"category": "west", "year": "1848", "title": "1848년 혁명", "summary": "유럽 전역의 자유주의/민족주의 폭발", "desc": "프랑스 2월 혁명을 필두로 유럽 곳곳에서 보수 체제에 반대하는 혁명이 일어남.", "keywords": ["1848혁명", "자유주의", "마르크스"]}, {"category": "west", "year": "1861", "title": "미국 남북 전쟁 발발", "summary": "노예제 해방과 연방 분열의 위기", "desc": "링컨 대통령 당선 후 남부 연합이 탈퇴하며 발발한 내전.", "keywords": ["남북전쟁", "링컨", "노예해방"]}, {"category": "west", "year": "1871", "title": "독일 제국 수립", "summary": "비스마르크의 철혈 정책과 통일", "desc": "보불전쟁에서 승리한 프로이센이 베르사유 궁전에서 통일 독일 제국을 선포함.", "keywords": ["독일통일", "비스마르크", "보불전쟁"]}, {"category": "west", "year": "1914", "title": "사라예보 사건", "summary": "제1차 세계대전의 도화선", "desc": "오스트리아 황태자 부부가 세르비아 청년에게 암살되며 대전쟁이 발발함.", "keywords": ["사라예보", "제1차세계대전"]}, {"category": "west", "year": "1917", "title": "러시아 혁명", "summary": "세계 최초의 공산주의 국가 탄생", "desc": "레닌이 이끄는 볼셰비키가 로마노프 왕조와 임시정부를 무너뜨리고 정권을 잡음.", "keywords": ["러시아혁명", "레닌", "볼셰비키"]}, {"category": "west", "year": "1929", "title": "대공황 발발", "summary": "미국 증시 폭락과 세계 경제 위기", "desc": "검은 목요일을 기점으로 주가가 대폭락하며 전 세계적인 경제 침체가 시작됨.", "keywords": ["대공황", "검은목요일", "뉴딜정책"]}, {"category": "west", "year": "1944", "title": "노르망디 상륙 작전", "summary": "제2차 세계대전의 전세 역전", "desc": "아이젠하워가 이끄는 연합군이 프랑스 노르망디 해변에 상륙해 나치를 압박함.", "keywords": ["노르망디", "제2차세계대전", "디데이"]}, {"category": "west", "year": "1945", "title": "유엔(UN) 창설", "summary": "국제 평화 유지 기구 설립", "desc": "전쟁의 참상을 방지하기 위해 샌프란시스코 회의를 거쳐 국제연합이 공식 출범함.", "keywords": ["UN", "국제연합", "냉전시작"]}, {"category": "west", "year": "1969", "title": "아폴로 11호 달 착륙", "summary": "인류 최초로 지구 밖 천체에 발을 디딤", "desc": "미국의 닐 암스트롱이 달 표면에 착륙하며 우주 경쟁에서 승리함.", "keywords": ["아폴로11호", "암스트롱", "우주경쟁"]}, {"category": "west", "year": "1989", "title": "베를린 장벽 붕괴", "summary": "냉전의 종식과 독일 통일의 신호탄", "desc": "동독 시위와 여행 자율화 발표의 오보가 겹쳐 시민들이 장벽을 허물어버림.", "keywords": ["베를린장벽", "냉전종식", "독일통일"]}, {"category": "world", "year": "BC 221", "title": "진시황 천하 통일", "summary": "중국 역사상 최초의 제국", "desc": "진나라가 춘추전국시대를 끝내고 도량형, 문자, 화폐를 통일함.", "keywords": ["진시황", "만리장성", "분서갱유"]}, {"category": "world", "year": "BC 202", "title": "전한(漢) 건국", "summary": "유방의 초한지 승리", "desc": "해하 전투에서 항우를 물리친 유방이 장안을 수도로 한나라를 세움.", "keywords": ["한나라", "유방", "초한지"]}, {"category": "world", "year": "BC 322", "title": "마우리아 왕조 성립", "summary": "인도 최초의 통일 제국", "desc": "찬드라굽타 마우리아가 북인도를 통일하고 강력한 중앙집권 제국을 건설함.", "keywords": ["마우리아", "인도통일", "아소카왕"]}, {"category": "world", "year": "622", "title": "헤지라(성천)", "summary": "이슬람교의 본격적인 확산", "desc": "무함마드가 메카의 박해를 피해 메디나로 이주하며 이슬람 원년이 시작됨.", "keywords": ["무함마드", "헤지라", "이슬람"]}, {"category": "world", "year": "751", "title": "탈라스 전투", "summary": "이슬람 압바스 왕조와 당나라의 격돌", "desc": "전투의 승리로 제지술 등 동양의 기술이 서양으로 전파되는 계기가 됨.", "keywords": ["탈라스전투", "당나라", "제지술전파"]}, {"category": "world", "year": "1206", "title": "칭기즈 칸 몽골 제국 건국", "summary": "역사상 최대의 육상 제국", "desc": "테무친이 몽골 고원의 부족들을 통일하고 칭기즈 칸으로 추대됨.", "keywords": ["칭기즈칸", "몽골제국", "유목제국"]}, {"category": "world", "year": "1368", "title": "명나라 건국", "summary": "한족 왕조의 부활", "desc": "홍건적 출신의 주원장이 몽골 원나라를 몰아내고 남경에서 건국함.", "keywords": ["주원장", "명나라", "한족"]}, {"category": "world", "year": "1494", "title": "토르데시야스 조약", "summary": "스페인과 포르투갈의 세계 분할", "desc": "교황의 중재 하에 대서양에 경계선을 긋고 양국이 신대륙을 나눠 가지기로 합의함.", "keywords": ["토르데시야스", "신대륙", "포르투갈"]}, {"category": "world", "year": "1521", "title": "아스테카 제국 멸망", "summary": "에르난 코르테스의 정복", "desc": "멕시코 지역의 거대 문명 아스테카가 천연두와 스페인 군대에 의해 무너짐.", "keywords": ["아스테카", "코르테스", "스페인정복"]}, {"category": "world", "year": "1526", "title": "무굴 제국 건국", "summary": "바부르의 인도 정복", "desc": "파니파트 전투에서 델리 술탄국을 꺾은 바부르가 인도에 거대한 이슬람 제국을 세움.", "keywords": ["무굴제국", "바부르", "인도"]}, {"category": "world", "year": "1532", "title": "잉카 제국 멸망", "summary": "프란시스코 피사로의 안데스 정복", "desc": "소수의 스페인 군대가 잉카의 황제 아타우알파를 생포하고 제국을 멸망시킴.", "keywords": ["잉카제국", "피사로", "안데스"]}, {"category": "world", "year": "1600", "title": "영국 동인도 회사 설립", "summary": "아시아 무역의 식민지화 시작", "desc": "영국이 아시아와의 향료 무역을 위해 국왕의 특허장을 받아 회사를 설립함.", "keywords": ["동인도회사", "식민주의", "제국주의"]}, {"category": "world", "year": "1644", "title": "청나라 명나라 정복", "summary": "만주족의 중원 대륙 장악", "desc": "이자성의 난으로 명나라가 멸망한 틈을 타 산해관을 넘은 청나라가 베이징을 점령함.", "keywords": ["청나라", "만주족", "명나라멸망"]}, {"category": "world", "year": "1839", "title": "제1차 아편 전쟁", "summary": "영국의 무력 개항 강요", "desc": "아편 몰수에 반발한 영국이 청나라를 공격하여 난징 조약을 체결시킴.", "keywords": ["아편전쟁", "난징조약", "홍콩할양"]}, {"category": "world", "year": "1853", "title": "흑선 내항 (페리 제독)", "summary": "일본의 쇄국 정책 붕괴", "desc": "미국의 페리 제독이 에도 만에 무장 함대를 이끌고 나타나 개항을 요구함.", "keywords": ["페리제독", "메이지유신", "개항"]}, {"category": "world", "year": "1857", "title": "세포이의 항쟁", "summary": "인도의 대영제국 반발 봉기", "desc": "동인도 회사의 용병인 세포이들이 종교적 이유와 차별에 분노하여 거대한 반란을 일으킴.", "keywords": ["세포이항쟁", "인도독립", "영국식민지"]}, {"category": "world", "year": "1868", "title": "메이지 유신", "summary": "일본의 근대화 개혁", "desc": "막부 체제를 무너뜨리고 천황 친정 체제를 복구하며 대대적인 서양화 정책을 추진함.", "keywords": ["메이지유신", "일본근대화", "막부타도"]}, {"category": "world", "year": "1911", "title": "신해혁명", "summary": "중국 2천 년 제국의 종식", "desc": "쑨원을 임시 대총통으로 하여 아시아 최초의 민주 공화국인 중화민국이 탄생함.", "keywords": ["신해혁명", "쑨원", "중화민국"]}, {"category": "world", "year": "1947", "title": "인도와 파키스탄 분리 독립", "summary": "영국 통치의 종식과 종교 갈등", "desc": "힌두교의 인도와 이슬람교의 파키스탄이 분리되어 독립하며 엄청난 유혈 사태가 발생함.", "keywords": ["인도독립", "간디", "카슈미르"]}, {"category": "world", "year": "1949", "title": "중화인민공화국 수립", "summary": "국공내전 마오쩌둥 승리", "desc": "장제스의 국민당을 대만으로 몰아내고 마오쩌둥이 베이징에서 공산 국가를 선포함.", "keywords": ["마오쩌둥", "국공내전", "중국공산당"]}, {"category": "world", "year": "1959", "title": "쿠바 혁명", "summary": "아메리카 대륙 최초의 공산주의", "desc": "피델 카스트로와 체 게바라가 친미 바티스타 독재 정권을 무너뜨림.", "keywords": ["쿠바혁명", "카스트로", "체게바라"]}, {"category": "world", "year": "1994", "title": "남아공 아파르트헤이트 철폐", "summary": "넬슨 만델라 대통령 당선", "desc": "극악한 인종차별 정책이 폐지되고 만델라가 흑인 최초의 대통령이 됨.", "keywords": ["아파르트헤이트", "만델라", "남아공"]}, {"category": "war", "year": "BC 490", "title": "마라톤 전투", "summary": "페르시아 전쟁의 주요 분수령", "desc": "그리스 연합군(아테네)이 다리우스 1세의 페르시아 대군을 해안에서 극적으로 물리침.", "keywords": ["마라톤", "페르시아전쟁", "아테네"]}, {"category": "war", "year": "BC 480", "title": "살라미스 해전", "summary": "그리스 함대의 대승", "desc": "테미스토클레스의 지휘 아래 좁은 해협으로 페르시아 대함대를 유인하여 궤멸시킴.", "keywords": ["살라미스", "해전", "페르시아"]}, {"category": "war", "year": "BC 216", "title": "칸나에 전투", "summary": "한니발의 천재적 포위 섬멸전", "desc": "제2차 포에니 전쟁 중 카르타고의 한니발 장군이 로마 대군을 초승달 진형으로 포위해 전멸시킴.", "keywords": ["한니발", "포위섬멸", "포에니전쟁"]}, {"category": "war", "year": "BC 31", "title": "악티움 해전", "summary": "옥타비아누스의 로마 통일", "desc": "안토니우스와 클레오파트라 연합 함대를 격파하고 지중해의 패권을 확고히 함.", "keywords": ["악티움", "옥타비아누스", "클레오파트라"]}, {"category": "war", "year": "208", "title": "적벽대전", "summary": "삼국지 3대 대첩", "desc": "손권과 유비 연합군이 조조의 남하하는 수십만 대군을 화공으로 크게 물리침.", "keywords": ["적벽대전", "조조", "제갈량"]}, {"category": "war", "year": "1415", "title": "아쟁쿠르 전투", "summary": "백년전쟁 중 영국의 압승", "desc": "영국의 헨리 5세가 장궁병을 활용하여 압도적인 숫자의 프랑스 중장기병을 진흙탕에서 몰살함.", "keywords": ["아쟁쿠르", "장궁병", "백년전쟁"]}, {"category": "war", "year": "1571", "title": "레판토 해전", "summary": "기독교 신성 동맹의 오스만 저지", "desc": "베네치아, 스페인 연합 함대가 오스만 제국의 팽창을 지중해에서 저지한 거대한 갤리선 해전.", "keywords": ["레판토", "오스만", "신성동맹"]}, {"category": "war", "year": "1815", "title": "워털루 전투", "summary": "나폴레옹의 최종 패배", "desc": "엘바섬에서 탈출해 복귀한 나폴레옹이 웰링턴 공작이 이끄는 동맹군에 패배하며 완전히 몰락함.", "keywords": ["워털루", "나폴레옹", "웰링턴"]}, {"category": "war", "year": "1863", "title": "게티즈버그 전투", "summary": "미국 남북전쟁의 전환점", "desc": "리 장군의 남군이 북부로 진격하다 패배하여 미 연방(북군)이 승기를 잡은 최대 규모의 전투.", "keywords": ["게티즈버그", "남북전쟁"]}, {"category": "war", "year": "1905", "title": "쓰시마 해전(동해 해전)", "summary": "러일전쟁의 분수령", "desc": "도고 헤이하치로가 이끄는 일본 연합함대가 러시아 발트 함대를 궤멸시키며 전쟁의 승패를 결정지음.", "keywords": ["러일전쟁", "쓰시마해전", "발트함대"]}, {"category": "war", "year": "1916", "title": "베르됭 전투", "summary": "제1차 세계대전 최악의 소모전", "desc": "프랑스와 독일 간에 약 300일 동안 벌어져 양측 합쳐 70만 명 이상의 사상자가 발생한 참호전.", "keywords": ["베르됭", "참호전", "소모전"]}, {"category": "war", "year": "1942", "title": "미드웨이 해전", "summary": "태평양 전쟁의 판도 변화", "desc": "미 해군이 암호 해독을 통해 일본 항공모함 4척을 격침시키며 방어에서 공세로 전환한 해전.", "keywords": ["미드웨이", "항공모함", "태평양전쟁"]}, {"category": "war", "year": "1942", "title": "스탈린그라드 전투", "summary": "나치 독일군의 파멸적 패배", "desc": "독일 제6군이 스탈린그라드 시가전 중 소련군에 완전히 포위되어 항복하며 독소전쟁의 전세가 뒤집힘.", "keywords": ["스탈린그라드", "독소전쟁", "시가전"]}, {"category": "war", "year": "1950", "title": "인천 상륙 작전", "summary": "한국전쟁 전세 역전의 명장면", "desc": "맥아더 장군의 지휘로 조수간만의 차를 극복하고 후방을 기습해 북한군의 병참선을 끊어냄.", "keywords": ["인천상륙작전", "맥아더", "한국전쟁"]}, {"category": "war", "year": "1968", "title": "테트 공세(구정 공세)", "summary": "베트남 전쟁의 심리적 전환", "desc": "북베트남과 베트콩이 명절을 기해 동시다발적 기습을 감행, 미국 내 반전 여론을 들끓게 만듦.", "keywords": ["테트공세", "베트남전쟁", "베트콩"]}];
         
         let apiEnabled = true;
+        let currentViewMode = 'all'; // 'all', 'korea', 'west', 'world', 'war'
+
         document.getElementById('apiToggle').onclick = function() {
             apiEnabled = !apiEnabled;
             this.classList.toggle('active');
-            this.innerText = apiEnabled ? '🌐 LIVE WIKI 연동 ON' : '📴 LIVE WIKI 연동 OFF';
+            this.innerText = apiEnabled ? '🌐 WIKI ON' : '📴 WIKI OFF';
             document.getElementById('status-text').innerText = apiEnabled ? '외부 DB(Wikipedia API) 실시간 검색 기능이 활성화되었습니다.' : '내장 코어 DB 전용 모드로 전환되었습니다.';
         };
 
@@ -223,37 +248,73 @@
             { id: 'war', name: '⚔️ 전쟁사 (WAR)', color: 'var(--cat-war)' }
         ];
 
+        function switchView(mode) {
+            currentViewMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 검색창 입력값 기준으로 다시 렌더링 유도
+            const q = document.getElementById('searchBox').value.trim();
+            applyFilterAndRender(q);
+        }
+
         function renderBoard(dataToRender) {
             const main = document.getElementById('mainBoard');
             main.innerHTML = '';
 
-            const lanes = {};
-            lanesInfo.forEach(info => {
-                const lane = document.createElement('div');
-                lane.className = 'lane';
-                lane.id = 'lane-' + info.id;
-                lane.innerHTML = `<div class="lane-header">${info.name}</div><div class="timeline-axis"></div>`;
-                lanes[info.id] = lane;
-                main.appendChild(lane);
-            });
+            if (currentViewMode === 'all') {
+                // 1. 전체 보기 (멀티 레인 가로 스크롤)
+                const boardDiv = document.createElement('div');
+                boardDiv.className = 'board-multi';
+                
+                const lanes = {};
+                lanesInfo.forEach(info => {
+                    const lane = document.createElement('div');
+                    lane.className = 'lane';
+                    lane.id = 'lane-' + info.id;
+                    lane.innerHTML = `<div class="lane-header">${info.name}</div><div class="timeline-axis"></div>`;
+                    lanes[info.id] = lane;
+                    boardDiv.appendChild(lane);
+                });
 
-            dataToRender.forEach(ev => {
-                const card = document.createElement('div');
-                card.className = 'event-card';
-                card.onclick = () => openModal(ev);
-                
-                let badge = ev.isApi ? '<span class="api-badge">WIKI</span>' : '';
-                
-                card.innerHTML = `
-                    <span class="e-year">${ev.year}</span> ${badge}
-                    <h4 class="e-title">${ev.title}</h4>
-                    <p class="e-summary">${ev.summary}</p>
-                `;
-                
-                if(lanes[ev.category]) {
-                    lanes[ev.category].appendChild(card);
+                dataToRender.forEach(ev => {
+                    const card = createCardElement(ev);
+                    if(lanes[ev.category]) {
+                        lanes[ev.category].appendChild(card);
+                    }
+                });
+                main.appendChild(boardDiv);
+            } else {
+                // 2. 단일 카테고리 보기 (세로 스크롤 그리드)
+                const boardDiv = document.createElement('div');
+                boardDiv.className = 'board-single';
+
+                const filtered = dataToRender.filter(ev => ev.category === currentViewMode);
+                if (filtered.length === 0) {
+                    boardDiv.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; font-weight:900; font-size:1.2rem;">해당 카테고리에 일치하는 역사 데이터가 없습니다.</div>`;
+                } else {
+                    filtered.forEach(ev => {
+                        const card = createCardElement(ev);
+                        boardDiv.appendChild(card);
+                    });
                 }
-            });
+                main.appendChild(boardDiv);
+            }
+        }
+
+        function createCardElement(ev) {
+            const card = document.createElement('div');
+            card.className = 'event-card';
+            card.onclick = () => openModal(ev);
+            
+            let badge = ev.isApi ? '<span class="api-badge">WIKI</span>' : '';
+            
+            card.innerHTML = `
+                <span class="e-year">${ev.year}</span> ${badge}
+                <h4 class="e-title">${ev.title}</h4>
+                <p class="e-summary">${ev.summary}</p>
+            `;
+            return card;
         }
 
         async function fetchWikipediaData(query) {
@@ -281,7 +342,7 @@
                     else if (t.includes('전쟁') || t.includes('전투') || t.includes('대첩')) cat = 'war';
                     else if (t.includes('유럽') || t.includes('로마') || t.includes('프랑스') || t.includes('영국') || t.includes('미국')) cat = 'west';
 
-                newEvents.push({
+                    newEvents.push({
                         category: cat,
                         year: yearStr,
                         title: page.title,
@@ -302,6 +363,16 @@
         }
 
         let timeout = null;
+        function applyFilterAndRender(q) {
+            let localMatched = coreData;
+            if(q) {
+                localMatched = coreData.filter(ev => 
+                    ev.title.includes(q) || ev.desc.includes(q) || ev.keywords.some(k => k.includes(q))
+                );
+            }
+            renderBoard(localMatched);
+        }
+
         document.getElementById('searchBox').addEventListener('input', (e) => {
             clearTimeout(timeout);
             const q = e.target.value.trim();
@@ -341,7 +412,7 @@
                 b.innerText = '#' + k;
                 b.onclick = () => {
                     document.getElementById('searchBox').value = k;
-                    document.getElementById('searchBox').dispatchEvent(new Event('input'));
+                    applyFilterAndRender(k);
                     closeModal();
                 };
                 tags.appendChild(b);
