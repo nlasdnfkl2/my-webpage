@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>문태양 - AI 칼로리 자동 계산 앱</title>
-    <!-- TensorFlow.js 및 MobileNet 온디바이스 모델 로드 -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
     <style>
@@ -26,7 +25,6 @@
             --shadow-lg: 8px 8px 0 var(--black);
         }
 
-        /* 전역 노이즈 텍스처 */
         body::after {
             content: "";
             position: fixed; inset: 0;
@@ -60,7 +58,6 @@
             margin: 0 auto;
         }
 
-        /* 상단바 */
         header.top-bar {
             display: flex;
             justify-content: space-between;
@@ -110,7 +107,6 @@
             letter-spacing: 1px;
         }
 
-        /* 히어로 섹션 */
         .hero {
             background: var(--white);
             padding: 36px 32px;
@@ -148,7 +144,6 @@
             padding-left: 16px;
         }
 
-        /* 업로드 섹션 */
         .upload-card {
             background: var(--white);
             padding: 32px;
@@ -197,7 +192,6 @@
             color: #444;
         }
 
-        /* 로딩 상태 */
         .loading-box {
             display: none;
             padding: 48px 20px;
@@ -221,7 +215,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 결과 브라우저 창 UI */
         .result-window {
             display: none;
             background: var(--white);
@@ -327,17 +320,77 @@
             box-shadow: 2px 2px 0 var(--black);
         }
 
-        /* 칼로리 & 영양소 그리드 */
+        .api-source-badge {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--black);
+            margin-top: 8px;
+            background: var(--yellow);
+            display: inline-block;
+            padding: 3px 10px;
+            border: 2px solid var(--black);
+        }
+
+        .serving-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            background: var(--bg);
+            padding: 14px;
+            border: var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .serving-controls span {
+            font-weight: 900;
+            font-size: 0.95rem;
+        }
+
+        .serving-btn {
+            background: var(--white);
+            border: var(--border);
+            padding: 6px 14px;
+            font-weight: 900;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 var(--black);
+            transition: all 0.1s;
+        }
+
+        .serving-btn:hover {
+            background: var(--cyan);
+            transform: translate(-1px, -1px);
+        }
+
+        .serving-btn.active {
+            background: var(--yellow);
+            box-shadow: 4px 4px 0 var(--black);
+            transform: translate(-2px, -2px);
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sub-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-bottom: 28px;
         }
 
         @media (max-width: 680px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .sub-stats-grid {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
@@ -354,6 +407,14 @@
         .stat-card.prot-card { background: var(--pink); color: var(--white); }
         .stat-card.fat-card { background: var(--orange); }
 
+        .sub-stat-card {
+            background: var(--bg);
+            border: var(--border);
+            box-shadow: 2px 2px 0 var(--black);
+            padding: 12px 10px;
+            text-align: center;
+        }
+
         .stat-title {
             font-size: 0.9rem;
             font-weight: 900;
@@ -366,7 +427,17 @@
             font-weight: 900;
         }
 
-        /* 추정된 재료 구성 */
+        .sub-stat-title {
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: #333;
+        }
+
+        .sub-stat-value {
+            font-size: 1.15rem;
+            font-weight: 900;
+        }
+
         .ingredients-section {
             border-top: var(--border-thick);
             padding-top: 24px;
@@ -507,7 +578,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- 상단바 -->
         <header class="top-bar">
             <div class="brand-group">
                 <span class="brand-name">문태양</span>
@@ -516,24 +586,21 @@
             <div class="clock-box" id="liveClock">--:--:--</div>
         </header>
 
-        <!-- 히어로 섹션 -->
         <section class="hero" id="heroSection">
-            <div class="hero-tag">실습 16 · TensorFlow.js 온디바이스 Vision AI 적용</div>
+            <div class="hero-tag">실습 16 · TensorFlow.js 다중 크롭 Vision AI + 실시간 영양 API 연동</div>
             <h1>진짜 AI가 분석하는 무료 칼로리 자동 계산기</h1>
-            <p>API 키 입력이나 서버 통신 없이, 브라우저에 내장된 <strong>구글 오픈소스 MobileNet AI 모델</strong>이 여러분의 기기 안에서 사진을 직접 분석하여 결과를 보여줍니다.</p>
+            <p>브라우저 내장 <strong>구글 MobileNet V2 다중 크롭(Multi-Crop) 비전 추론</strong>으로 음식 영역을 정밀 포착하고, 실시간 영양 데이터베이스와 결합해 칼로리 및 7대 영양 성분을 자동 계산합니다.</p>
         </section>
 
-        <!-- 음식 사진 업로드 섹션 -->
         <section class="upload-card" id="uploadSection">
             <h2>사진 업로드</h2>
             <p>음식 사진 또는 칼로리를 측정할 사물 사진을 업로드해 주세요.</p>
             <input type="file" id="imageInput" accept="image/*" style="display: none;">
             <div class="drop-zone" id="dropZone">
-                <div class="drop-zone-title">📁 이곳을 클릭하여 사진을 선택하세요</div>
+                <div class="drop-zone-title">이곳을 클릭하거나 사진을 드래그하여 선택하세요</div>
                 <div class="drop-zone-sub">(음식이 아닌 사물의 경우 자동으로 0kcal로 처리됩니다)</div>
             </div>
 
-            <!-- 로컬 AI 구동 로딩 -->
             <div class="loading-box" id="loadingBox">
                 <div class="spinner"></div>
                 <h3 id="loadingTitle" style="font-weight: 900; margin-bottom: 8px; font-size: 1.2rem;">로컬 AI 비전 모델을 구동 중입니다...</h3>
@@ -541,11 +608,10 @@
             </div>
         </section>
 
-        <!-- 분석 결과 창 -->
         <section class="result-window" id="resultSection">
             <div class="browser-bar">
                 <button class="btn-neo" id="backBtn">돌아가기</button>
-                <div class="url-bar">🔍 https://ai.vision/result - AI 사물 인식 완료</div>
+                <div class="url-bar" id="browserUrlBar">https://ai.vision/result - AI 음식 정밀 분석 완료</div>
                 <div class="accuracy-badge" id="accuracyBadge">정확도: 계산 중</div>
             </div>
 
@@ -553,10 +619,22 @@
                 <div class="image-preview-section">
                     <img id="previewImage" src="" alt="업로드된 사진">
                     <div class="detected-label" id="detectedFoodName">분석 중...</div>
-                    <div class="detected-sub" id="rawPredictions">MobileNet 추론 대기 중</div>
+                    <div>
+                        <div class="detected-sub" id="rawPredictions">MobileNet 다중 크롭 추론 대기 중</div>
+                    </div>
+                    <div>
+                        <div class="api-source-badge" id="dataSourceBadge">영양 데이터 출처 확인 중...</div>
+                    </div>
                 </div>
 
-                <!-- 영양성분 요약 -->
+                <div class="serving-controls" id="servingControls">
+                    <span>섭취량(인분) 조절:</span>
+                    <button type="button" class="serving-btn" data-mult="0.5">0.5인분</button>
+                    <button type="button" class="serving-btn active" data-mult="1">1인분 (표준)</button>
+                    <button type="button" class="serving-btn" data-mult="1.5">1.5인분</button>
+                    <button type="button" class="serving-btn" data-mult="2">2인분</button>
+                </div>
+
                 <div class="stats-grid">
                     <div class="stat-card kcal-card">
                         <div class="stat-title">총 추정 칼로리</div>
@@ -576,7 +654,21 @@
                     </div>
                 </div>
 
-                <!-- 추정된 재료/사물 구성 -->
+                <div class="sub-stats-grid">
+                    <div class="sub-stat-card">
+                        <div class="sub-stat-title">당류 (g)</div>
+                        <div class="sub-stat-value" id="totalSugar">0</div>
+                    </div>
+                    <div class="sub-stat-card">
+                        <div class="sub-stat-title">식이섬유 (g)</div>
+                        <div class="sub-stat-value" id="totalFiber">0</div>
+                    </div>
+                    <div class="sub-stat-card">
+                        <div class="sub-stat-title">나트륨 (mg)</div>
+                        <div class="sub-stat-value" id="totalSodium">0</div>
+                    </div>
+                </div>
+
                 <div class="ingredients-section">
                     <h3 id="sectionTitle">추정된 재료 구성</h3>
                     <ul class="ingredient-list" id="ingredientList"></ul>
@@ -601,7 +693,6 @@
     </div>
 
     <script>
-        // 실시간 시계 업데이트
         function updateClock() {
             const now = new Date();
             document.getElementById('liveClock').textContent = now.toTimeString().split(' ')[0];
@@ -609,134 +700,196 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // 음식 데이터베이스
+        // ImageNet 공식 음식/식재료 라벨 확장 매핑 및 1인분 표준 영양 데이터
         const FOOD_DATABASE = [
             {
                 keywords: ['cheeseburger', 'hamburger'],
-                name: '치즈버거 / 햄버거',
+                apiQuery: 'cheeseburger',
+                servingGrams: 220,
+                name: '치즈버거 / 햄버거 (1개)',
                 items: [
-                    { name: '참깨 번 (빵)', kcal: 150, carb: 28, protein: 5, fat: 2 },
-                    { name: '소고기 패티 & 치즈', kcal: 280, carb: 2, protein: 20, fat: 21 },
-                    { name: '소스 및 채소', kcal: 70, carb: 6, protein: 1, fat: 5 }
+                    { name: '참깨 번 (빵)', kcal: 155, carb: 28, protein: 5, fat: 2.5, sugar: 4, fiber: 1.5, sodium: 260 },
+                    { name: '소고기 패티 & 체다치즈', kcal: 295, carb: 2, protein: 21, fat: 22, sugar: 1, fiber: 0, sodium: 480 },
+                    { name: '소스 및 양상추·피클', kcal: 65, carb: 6, protein: 1, fat: 4.5, sugar: 4, fiber: 0.8, sodium: 180 }
                 ]
             },
             {
                 keywords: ['pizza'],
+                apiQuery: 'pepperoni pizza',
+                servingGrams: 240,
                 name: '피자 (2조각 기준)',
                 items: [
-                    { name: '피자 도우', kcal: 260, carb: 48, protein: 8, fat: 3 },
-                    { name: '모짜렐라 치즈 & 토핑', kcal: 290, carb: 8, protein: 16, fat: 21 }
+                    { name: '피자 도우 크러스트', kcal: 270, carb: 49, protein: 8.5, fat: 3.5, sugar: 3, fiber: 2, sodium: 420 },
+                    { name: '모짜렐라 치즈 & 페퍼로니 토핑', kcal: 310, carb: 8, protein: 17, fat: 23, sugar: 3, fiber: 1, sodium: 590 }
                 ]
             },
             {
                 keywords: ['hotdog', 'hot dog'],
-                name: '핫도그',
+                apiQuery: 'hot dog',
+                servingGrams: 150,
+                name: '핫도그 (1개)',
                 items: [
-                    { name: '핫도그 번', kcal: 140, carb: 26, protein: 4, fat: 2 },
-                    { name: '프랑크 소시지 & 소스', kcal: 190, carb: 4, protein: 7, fat: 16 }
+                    { name: '핫도그 번', kcal: 145, carb: 27, protein: 4.5, fat: 2, sugar: 3.5, fiber: 1.2, sodium: 240 },
+                    { name: '프랑크 소시지 & 머스타드', kcal: 205, carb: 4, protein: 8, fat: 17.5, sugar: 2, fiber: 0.2, sodium: 520 }
                 ]
             },
             {
                 keywords: ['sushi'],
+                apiQuery: 'sushi roll',
+                servingGrams: 260,
                 name: '초밥 / 스시 세트 (8pcs)',
                 items: [
-                    { name: '초밥용 배합초 밥', kcal: 240, carb: 52, protein: 4, fat: 0.5 },
-                    { name: '생선회 네타 (연어/광어 등)', kcal: 160, carb: 0, protein: 24, fat: 6.5 }
+                    { name: '초밥용 배합초 밥', kcal: 250, carb: 54, protein: 4.5, fat: 0.5, sugar: 6, fiber: 0.8, sodium: 380 },
+                    { name: '생선회 네타 (연어/광어/참치)', kcal: 170, carb: 0, protein: 25, fat: 7, sugar: 0, fiber: 0, sodium: 140 }
                 ]
             },
             {
                 keywords: ['ramen', 'soup bowl', 'consomme', 'noodle'],
-                name: '라멘 / 면 요리',
+                apiQuery: 'ramen noodle soup',
+                servingGrams: 550,
+                name: '라멘 / 국물 면 요리 (1그릇)',
                 items: [
-                    { name: '생면 / 중화면', kcal: 340, carb: 66, protein: 10, fat: 3 },
-                    { name: '육수 및 고명(차슈/계란)', kcal: 210, carb: 6, protein: 14, fat: 14 }
+                    { name: '생면 / 중화면 (1인분)', kcal: 350, carb: 68, protein: 10.5, fat: 3, sugar: 2, fiber: 2.5, sodium: 310 },
+                    { name: '진한 육수 및 고명(차슈/반숙란)', kcal: 230, carb: 7, protein: 15, fat: 15.5, sugar: 3, fiber: 1, sodium: 1380 }
                 ]
             },
             {
                 keywords: ['spaghetti', 'carbonara'],
-                name: '스파게티 / 파스타',
+                apiQuery: 'spaghetti pasta',
+                servingGrams: 350,
+                name: '스파게티 / 파스타 (1접시)',
                 items: [
-                    { name: '듀럼밀 파스타면', kcal: 320, carb: 64, protein: 11, fat: 1.5 },
-                    { name: '파스타 소스 및 오일', kcal: 220, carb: 12, protein: 6, fat: 16 }
+                    { name: '듀럼밀 파스타면', kcal: 330, carb: 65, protein: 11.5, fat: 1.8, sugar: 2.5, fiber: 3, sodium: 20 },
+                    { name: '파스타 소스 및 올리브오일', kcal: 230, carb: 13, protein: 6.5, fat: 17, sugar: 7, fiber: 2, sodium: 680 }
                 ]
             },
             {
                 keywords: ['ice cream', 'ice lolly', 'gelato'],
-                name: '아이스크림',
+                apiQuery: 'vanilla ice cream',
+                servingGrams: 120,
+                name: '아이스크림 / 젤라또 (1컵)',
                 items: [
-                    { name: '유지방 크림 & 당류', kcal: 250, carb: 28, protein: 4, fat: 14 }
+                    { name: '유지방 크림 & 당류 베이스', kcal: 255, carb: 29, protein: 4.2, fat: 13.5, sugar: 25, fiber: 0.5, sodium: 95 }
                 ]
             },
             {
                 keywords: ['banana'],
+                apiQuery: 'banana',
+                servingGrams: 115,
                 name: '바나나 (중 1개)',
                 items: [
-                    { name: '생 바나나 과육 (100g)', kcal: 89, carb: 23, protein: 1.1, fat: 0.3 }
+                    { name: '생 바나나 과육 (115g)', kcal: 102, carb: 26.2, protein: 1.3, fat: 0.4, sugar: 14.1, fiber: 3.0, sodium: 1 }
                 ]
             },
             {
-                keywords: ['granny smith', 'apple', 'orange', 'lemon', 'strawberry', 'pineapple'],
-                name: '신선 과일 (1접시 기준)',
+                keywords: ['granny smith', 'apple'],
+                apiQuery: 'apple',
+                servingGrams: 180,
+                name: '사과 (중 1개)',
                 items: [
-                    { name: '생과일 과육 (150g)', kcal: 78, carb: 20, protein: 0.6, fat: 0.2 }
+                    { name: '생 사과 과육 (180g)', kcal: 94, carb: 24.8, protein: 0.5, fat: 0.3, sugar: 18.7, fiber: 4.3, sodium: 2 }
                 ]
             },
             {
-                keywords: ['broccoli', 'cucumber', 'bell pepper', 'mushroom', 'cauliflower', 'zucchini', 'salad'],
-                name: '채소 / 샐러드 볼',
+                keywords: ['orange', 'lemon', 'citrus'],
+                apiQuery: 'orange',
+                servingGrams: 150,
+                name: '오렌지 / 감귤류 (1개)',
                 items: [
-                    { name: '모듬 신선 채소 (200g)', kcal: 55, carb: 10, protein: 3, fat: 0.5 },
-                    { name: '기본 드레싱', kcal: 85, carb: 4, protein: 0.5, fat: 7.5 }
+                    { name: '생 오렌지 과육 (150g)', kcal: 71, carb: 17.6, protein: 1.4, fat: 0.2, sugar: 14.0, fiber: 3.6, sodium: 0 }
                 ]
             },
             {
-                keywords: ['espresso', 'coffee', 'cup', 'mug', 'latte'],
-                name: '카페 음료 / 아메리카노·라떼',
+                keywords: ['strawberry', 'pineapple', 'pomegranate', 'fig', 'custard apple', 'jackfruit'],
+                apiQuery: 'strawberry',
+                servingGrams: 150,
+                name: '신선 과일 (1접시 150g)',
                 items: [
-                    { name: '에스프레소 샷 & 베이스', kcal: 110, carb: 10, protein: 6, fat: 5 }
+                    { name: '모듬 생과일 과육 (150g)', kcal: 75, carb: 18.5, protein: 1.0, fat: 0.4, sugar: 12.5, fiber: 3.0, sodium: 2 }
                 ]
             },
             {
-                keywords: ['bagel', 'pretzel', 'croissant', 'french loaf', 'dough', 'bakery', 'toast'],
+                keywords: ['broccoli', 'cucumber', 'bell pepper', 'mushroom', 'cauliflower', 'zucchini', 'head cabbage', 'artichoke', 'cardoon', 'salad', 'guacamole'],
+                apiQuery: 'green salad',
+                servingGrams: 220,
+                name: '채소 / 샐러드 볼 (1접시)',
+                items: [
+                    { name: '모듬 신선 채소 (200g)', kcal: 56, carb: 10.5, protein: 3.2, fat: 0.5, sugar: 4.5, fiber: 4.8, sodium: 45 },
+                    { name: '오리엔탈/발사믹 드레싱 (20g)', kcal: 82, carb: 4.2, protein: 0.4, fat: 7.2, sugar: 3.5, fiber: 0.2, sodium: 240 }
+                ]
+            },
+            {
+                keywords: ['espresso', 'coffee', 'latte', 'cappuccino', 'chocolate sauce', 'eggnog'],
+                apiQuery: 'cafe latte',
+                servingGrams: 350,
+                name: '카페 음료 / 커피·라떼 (1잔)',
+                items: [
+                    { name: '에스프레소 샷 & 우유 베이스', kcal: 135, carb: 12.5, protein: 7.5, fat: 6.2, sugar: 11.5, fiber: 0, sodium: 110 }
+                ]
+            },
+            {
+                keywords: ['bagel', 'pretzel', 'croissant', 'french loaf', 'dough', 'bakery', 'toast', 'corn'],
+                apiQuery: 'croissant',
+                servingGrams: 110,
                 name: '베이커리 / 빵류 (1개)',
                 items: [
-                    { name: '밀가루 반죽 및 버터', kcal: 280, carb: 44, protein: 7, fat: 8 }
+                    { name: '밀가루 반죽 및 발효 버터', kcal: 310, carb: 45, protein: 7.5, fat: 11, sugar: 6.5, fiber: 2.2, sodium: 340 }
                 ]
             },
             {
-                keywords: ['fried rice', 'rice', 'plate', 'burrito', 'taco'],
-                name: '식사류 / 덮밥·볶음밥',
+                keywords: ['fried rice', 'rice', 'burrito', 'taco', 'mashed potato', 'potpie', 'meat loaf'],
+                apiQuery: 'fried rice',
+                servingGrams: 320,
+                name: '식사류 / 덮밥·볶음밥 (1그릇)',
                 items: [
-                    { name: '백미밥 (1공기 210g)', kcal: 300, carb: 66, protein: 5, fat: 0.5 },
-                    { name: '주재료 및 볶음 오일', kcal: 230, carb: 12, protein: 14, fat: 13 }
+                    { name: '백미밥 (1공기 210g)', kcal: 305, carb: 67, protein: 5.5, fat: 0.6, sugar: 0.3, fiber: 1.2, sodium: 10 },
+                    { name: '주재료 및 볶음 오일·양념', kcal: 245, carb: 13, protein: 15, fat: 14.5, sugar: 4.5, fiber: 1.8, sodium: 790 }
                 ]
             },
             {
-                keywords: ['steak', 'meat loaf', 'chicken', 'drumstick', 'wing', 'rotisserie'],
-                name: '육류 / 스테이크·치킨',
+                keywords: ['steak', 'chicken', 'drumstick', 'wing', 'rotisserie', 'hot pot', 'barbecue'],
+                apiQuery: 'grilled steak',
+                servingGrams: 220,
+                name: '육류 / 스테이크·치킨 (1인분)',
                 items: [
-                    { name: '조리된 육류 (200g)', kcal: 440, carb: 4, protein: 42, fat: 28 }
+                    { name: '조리된 고단백 육류 (220g)', kcal: 465, carb: 4.5, protein: 44, fat: 29.5, sugar: 1.5, fiber: 0.4, sodium: 540 }
                 ]
             },
             {
-                keywords: ['chocolate', 'cake', 'cookie', 'donut', 'muffin', 'waffle'],
-                name: '디저트 / 케이크·과자',
+                keywords: ['chocolate', 'cake', 'cookie', 'donut', 'muffin', 'waffle', 'trifle', 'custard'],
+                apiQuery: 'chocolate cake',
+                servingGrams: 120,
+                name: '디저트 / 케이크·와플 (1조각)',
                 items: [
-                    { name: '디저트 1조각 (100g)', kcal: 360, carb: 46, protein: 5, fat: 18 }
+                    { name: '디저트 시트 및 크림 (120g)', kcal: 385, carb: 48, protein: 5.5, fat: 19, sugar: 32, fiber: 1.5, sodium: 240 }
+                ]
+            },
+            {
+                keywords: ['king crab', 'dungeness crab', 'rock crab', 'lobster', 'crayfish', 'shrimp', 'prawn', 'clam', 'oyster'],
+                apiQuery: 'steamed shrimp',
+                servingGrams: 200,
+                name: '갑각류 / 해산물 요리 (200g)',
+                items: [
+                    { name: '신선 해산물 살코기 (200g)', kcal: 198, carb: 1.5, protein: 41, fat: 2.4, sugar: 0, fiber: 0, sodium: 420 }
                 ]
             }
         ];
 
         // 비식용 사물 키워드 리스트 (명확히 음식이 아닌 사물일 경우 0kcal로 판별)
         const NON_FOOD_KEYWORDS = [
-            'laptop', 'computer', 'screen', 'keyboard', 'mouse', 'phone', 'cell phone', 
-            'book', 'pen', 'pencil', 'chair', 'table', 'desk', 'bottle', 'cup', 'glass', 
-            'shoe', 'sneaker', 'shirt', 'clothing', 'bag', 'backpack', 'wallet', 'key', 
-            'clock', 'watch', 'car', 'bicycle', 'motorcycle', 'dog', 'cat', 'bird', 'person'
+            'laptop', 'notebook', 'computer', 'screen', 'monitor', 'keyboard', 'mouse', 'phone', 'cellular telephone', 'ipod',
+            'book', 'comic book', 'pen', 'ballpoint', 'pencil', 'chair', 'folding chair', 'rocking chair', 'table', 'desk',
+            'water bottle', 'pop bottle', 'beer bottle', 'wine bottle', 'shoe', 'running shoe', 'sneaker', 'sandal',
+            'shirt', 'jersey', 'sweatshirt', 'suit', 'jean', 'bag', 'backpack', 'wallet', 'purse', 'key',
+            'clock', 'wall clock', 'digital clock', 'watch', 'stopwatch', 'car', 'sports car', 'minivan', 'cab',
+            'bicycle', 'mountain bike', 'motorcycle', 'moped', 'dog', 'golden retriever', 'labrador', 'cat', 'tabby', 'persian cat',
+            'bird', 'person', 'sunglasses', 'eyeglasses', 'guitar', 'piano', 'camera', 'television', 'remote control'
         ];
 
         let netModel = null;
+        let baseIngredients = [];
         let currentIngredients = [];
+        let currentServingMult = 1;
 
         const dropZone = document.getElementById('dropZone');
         const imageInput = document.getElementById('imageInput');
@@ -775,6 +928,91 @@
             }
         });
 
+        // 음식 특화 다중 크롭(Multi-Crop) 비전 추론: 전체 이미지 + 중앙 75% 확대 + 중앙 정방형 크롭을 앙상블 분석
+        async function classifyFoodMultiCrop(imgElement) {
+            const crops = [
+                { scale: 1.0, weight: 1.0 },   // 전체 프레임
+                { scale: 0.78, weight: 1.25 }, // 접시 중앙 음식 집중 크롭 (가중치 우대)
+                { scale: 0.60, weight: 1.1 }   // 클로즈업 질감 크롭
+            ];
+
+            const scoreMap = new Map();
+
+            for (const crop of crops) {
+                const canvas = document.createElement('canvas');
+                const size = 224;
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                const natW = imgElement.naturalWidth || imgElement.width;
+                const natH = imgElement.naturalHeight || imgElement.height;
+                const minSide = Math.min(natW, natH) * crop.scale;
+                const sx = (natW - minSide) / 2;
+                const sy = (natH - minSide) / 2;
+
+                ctx.drawImage(imgElement, sx, sy, minSide, minSide, 0, 0, size, size);
+
+                const preds = await netModel.classify(canvas, 7);
+                for (const p of preds) {
+                    const isFoodLabel = FOOD_DATABASE.some(f =>
+                        f.keywords.some(kw => p.className.toLowerCase().includes(kw))
+                    );
+                    // 음식 관련 라벨에 1.2배 도메인 가중치 부여
+                    const domainBoost = isFoodLabel ? 1.2 : 1.0;
+                    const weightedProb = p.probability * crop.weight * domainBoost;
+                    scoreMap.set(p.className, (scoreMap.get(p.className) || 0) + weightedProb);
+                }
+            }
+
+            const totalWeight = crops.reduce((acc, c) => acc + c.weight, 0);
+            const merged = Array.from(scoreMap.entries())
+                .map(([className, totalScore]) => ({
+                    className,
+                    probability: Math.min(0.999, totalScore / totalWeight)
+                }))
+                .sort((a, b) => b.probability - a.probability);
+
+            return merged.slice(0, 5);
+        }
+
+        // 실시간 영양 데이터베이스 API (Open Food Facts) 조회 및 표준 1인분 환산
+        async function fetchRealtimeNutritionFromAPI(query, servingGrams) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+            try {
+                const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=5&fields=product_name,nutriments`;
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) return null;
+                const data = await response.json();
+                if (!data.products || data.products.length === 0) return null;
+
+                for (const prod of data.products) {
+                    const n = prod.nutriments;
+                    if (n && typeof n['energy-kcal_100g'] === 'number' && n['energy-kcal_100g'] > 0) {
+                        const ratio = servingGrams / 100;
+                        return {
+                            productName: prod.product_name || query,
+                            kcal: Math.round(n['energy-kcal_100g'] * ratio),
+                            carb: Number(((n['carbohydrates_100g'] || 0) * ratio).toFixed(1)),
+                            protein: Number(((n['proteins_100g'] || 0) * ratio).toFixed(1)),
+                            fat: Number(((n['fat_100g'] || 0) * ratio).toFixed(1)),
+                            sugar: Number(((n['sugars_100g'] || 0) * ratio).toFixed(1)),
+                            fiber: Number(((n['fiber_100g'] || 0) * ratio).toFixed(1)),
+                            sodium: Math.round(((n['sodium_100g'] || 0) * 1000) * ratio)
+                        };
+                    }
+                }
+                return null;
+            } catch (e) {
+                clearTimeout(timeoutId);
+                return null;
+            }
+        }
+
         async function processImageFile(file) {
             if (!file.type.startsWith('image/')) {
                 alert('이미지 파일만 업로드할 수 있습니다.');
@@ -795,10 +1033,11 @@
                             netModel = await mobilenet.load({ version: 2, alpha: 1.0 });
                         }
 
-                        loadingText.textContent = '온디바이스 텐서 연산으로 사물을 판별 중입니다...';
+                        loadingText.textContent = '다중 크롭(Multi-Crop) 텐서 연산으로 음식 영역을 정밀 분석 중입니다...';
+                        const predictions = await classifyFoodMultiCrop(previewImage);
 
-                        const predictions = await netModel.classify(previewImage, 5);
-                        renderAnalysisResult(predictions);
+                        loadingText.textContent = '실시간 영양 데이터베이스에서 성분 정보를 조회 중입니다...';
+                        await renderAnalysisResult(predictions);
                     } catch (error) {
                         alert('AI 모델 분석 중 오류가 발생했습니다: ' + error.message);
                         resetToUpload();
@@ -808,10 +1047,15 @@
             reader.readAsDataURL(file);
         }
 
-        function renderAnalysisResult(predictions) {
+        async function renderAnalysisResult(predictions) {
             uploadSection.style.display = 'none';
             heroSection.style.display = 'none';
             resultSection.style.display = 'block';
+
+            currentServingMult = 1;
+            document.querySelectorAll('.serving-btn').forEach(btn => {
+                btn.classList.toggle('active', Number(btn.dataset.mult) === 1);
+            });
 
             const topPred = predictions[0];
             const confidencePercent = (topPred.probability * 100).toFixed(1);
@@ -820,13 +1064,13 @@
             const rawText = predictions.slice(0, 3)
                 .map(p => `${p.className.split(',')[0]} (${(p.probability * 100).toFixed(1)}%)`)
                 .join(' · ');
-            document.getElementById('rawPredictions').textContent = `MobileNet 원시 분류: ${rawText}`;
+            document.getElementById('rawPredictions').textContent = `다중 크롭 AI 추론: ${rawText}`;
 
             const topLabelLower = topPred.className.toLowerCase();
 
-            // 1. 음식 데이터베이스 매칭 확인
+            // 1. 음식 데이터베이스 매칭 확인 (상위 3개 후보까지 탐색하여 음식 우선 포착)
             let matchedFood = null;
-            for (const pred of predictions) {
+            for (const pred of predictions.slice(0, 3)) {
                 const labelLower = pred.className.toLowerCase();
                 matchedFood = FOOD_DATABASE.find(food =>
                     food.keywords.some(kw => labelLower.includes(kw))
@@ -836,52 +1080,107 @@
 
             // 2. 비식용 사물 여부 확인
             const isNonFood = NON_FOOD_KEYWORDS.some(kw => topLabelLower.includes(kw));
+            const sourceBadge = document.getElementById('dataSourceBadge');
+            const servingControls = document.getElementById('servingControls');
 
             if (matchedFood) {
-                // 음식으로 인식된 경우
+                servingControls.style.display = 'flex';
                 document.getElementById('detectedFoodName').textContent = `인식된 음식: ${matchedFood.name}`;
-                document.getElementById('sectionTitle').textContent = '추정된 재료 구성';
-                currentIngredients = JSON.parse(JSON.stringify(matchedFood.items));
+                document.getElementById('sectionTitle').textContent = '추정된 재료 및 영양 구성';
+
+                // 실시간 Open Food Facts API에서 해당 음식의 실제 영양 데이터 조회 시도
+                const liveApiData = await fetchRealtimeNutritionFromAPI(matchedFood.apiQuery, matchedFood.servingGrams);
+
+                if (liveApiData) {
+                    sourceBadge.textContent = `실시간 Open Food Facts API 데이터 연동 완료 (기준: ${matchedFood.servingGrams}g)`;
+                    sourceBadge.style.background = 'var(--green)';
+                    baseIngredients = [
+                        {
+                            name: `${matchedFood.name} - 실시간 DB 실측 기준 (${matchedFood.servingGrams}g)`,
+                            kcal: liveApiData.kcal,
+                            carb: liveApiData.carb,
+                            protein: liveApiData.protein,
+                            fat: liveApiData.fat,
+                            sugar: liveApiData.sugar,
+                            fiber: liveApiData.fiber,
+                            sodium: liveApiData.sodium
+                        }
+                    ];
+                } else {
+                    sourceBadge.textContent = `표준 식품영양성분 내장 DB 적용 (기준: ${matchedFood.servingGrams}g)`;
+                    sourceBadge.style.background = 'var(--yellow)';
+                    baseIngredients = JSON.parse(JSON.stringify(matchedFood.items));
+                }
             } else if (isNonFood) {
-                // 음식이 아닌 사물로 인식된 경우 (0kcal 처리)
+                servingControls.style.display = 'none';
                 const primaryObject = topPred.className.split(',')[0];
                 document.getElementById('detectedFoodName').textContent = `인식된 사물: ${primaryObject} (비식용 객체)`;
                 document.getElementById('sectionTitle').textContent = '사물 정보 분석';
-                currentIngredients = [
-                    { name: `${primaryObject} (비식용 사물 - 칼로리 없음)`, kcal: 0, carb: 0, protein: 0, fat: 0 }
+                sourceBadge.textContent = '비식용 객체 판별 (칼로리 제외)';
+                sourceBadge.style.background = 'var(--pink)';
+                baseIngredients = [
+                    { name: `${primaryObject} (비식용 사물 - 칼로리 없음)`, kcal: 0, carb: 0, protein: 0, fat: 0, sugar: 0, fiber: 0, sodium: 0 }
                 ];
             } else {
-                // 기타 알 수 없는 객체인 경우 기본 0kcal 또는 일반 처리
+                servingControls.style.display = 'none';
                 const primaryObject = topPred.className.split(',')[0];
                 document.getElementById('detectedFoodName').textContent = `인식된 객체: ${primaryObject} (비식용 사물 판정)`;
                 document.getElementById('sectionTitle').textContent = '사물 정보 분석';
-                currentIngredients = [
-                    { name: `${primaryObject} (섭취 불가 객체)`, kcal: 0, carb: 0, protein: 0, fat: 0 }
+                sourceBadge.textContent = '비식용 객체 판별 (칼로리 제외)';
+                sourceBadge.style.background = 'var(--pink)';
+                baseIngredients = [
+                    { name: `${primaryObject} (섭취 불가 객체)`, kcal: 0, carb: 0, protein: 0, fat: 0, sugar: 0, fiber: 0, sodium: 0 }
                 ];
             }
 
+            applyServingMultiplier();
+        }
+
+        function applyServingMultiplier() {
+            currentIngredients = baseIngredients.map(item => ({
+                name: currentServingMult === 1 ? item.name : `${item.name} (${currentServingMult}배)`,
+                kcal: Math.round((Number(item.kcal) || 0) * currentServingMult),
+                carb: Number(((Number(item.carb) || 0) * currentServingMult).toFixed(1)),
+                protein: Number(((Number(item.protein) || 0) * currentServingMult).toFixed(1)),
+                fat: Number(((Number(item.fat) || 0) * currentServingMult).toFixed(1)),
+                sugar: Number(((Number(item.sugar) || 0) * currentServingMult).toFixed(1)),
+                fiber: Number(((Number(item.fiber) || 0) * currentServingMult).toFixed(1)),
+                sodium: Math.round((Number(item.sodium) || 0) * currentServingMult)
+            }));
             updateNutritionUI();
         }
 
-        // 영양성분 합산 및 리스트 렌더링
+        document.querySelectorAll('.serving-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.serving-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentServingMult = Number(btn.dataset.mult);
+                applyServingMultiplier();
+            });
+        });
+
         function updateNutritionUI() {
             const listEl = document.getElementById('ingredientList');
             listEl.innerHTML = '';
 
             let totalKcal = 0, totalCarb = 0, totalProtein = 0, totalFat = 0;
+            let totalSugar = 0, totalFiber = 0, totalSodium = 0;
 
             currentIngredients.forEach((item, index) => {
                 totalKcal += Number(item.kcal) || 0;
                 totalCarb += Number(item.carb) || 0;
                 totalProtein += Number(item.protein) || 0;
                 totalFat += Number(item.fat) || 0;
+                totalSugar += Number(item.sugar) || 0;
+                totalFiber += Number(item.fiber) || 0;
+                totalSodium += Number(item.sodium) || 0;
 
                 const li = document.createElement('li');
                 li.className = 'ingredient-item';
                 li.innerHTML = `
                     <div>
                         <strong>${item.name}</strong>
-                        <div class="ingredient-macros">탄수화물 ${item.carb}g · 단백질 ${item.protein}g · 지방 ${item.fat}g</div>
+                        <div class="ingredient-macros">탄수 ${item.carb}g · 단백 ${item.protein}g · 지방 ${item.fat}g · 당류 ${item.sugar || 0}g · 나트륨 ${item.sodium || 0}mg</div>
                     </div>
                     <div>
                         <strong>${item.kcal} kcal</strong>
@@ -895,6 +1194,9 @@
             document.getElementById('totalCarb').textContent = totalCarb.toFixed(1).replace(/\.0$/, '');
             document.getElementById('totalProtein').textContent = totalProtein.toFixed(1).replace(/\.0$/, '');
             document.getElementById('totalFat').textContent = totalFat.toFixed(1).replace(/\.0$/, '');
+            document.getElementById('totalSugar').textContent = totalSugar.toFixed(1).replace(/\.0$/, '');
+            document.getElementById('totalFiber').textContent = totalFiber.toFixed(1).replace(/\.0$/, '');
+            document.getElementById('totalSodium').textContent = Math.round(totalSodium);
         }
 
         window.removeIngredient = function(index) {
@@ -914,7 +1216,7 @@
                 return;
             }
 
-            currentIngredients.push({ name, kcal, carb, protein, fat });
+            currentIngredients.push({ name, kcal, carb, protein, fat, sugar: 0, fiber: 0, sodium: 0 });
             updateNutritionUI();
 
             document.getElementById('customName').value = '';
