@@ -25,7 +25,6 @@
       --shadow-lg: 8px 8px 0 var(--black);
     }
 
-    /* 전역 노이즈 텍스처 */
     body::after {
       content: "";
       position: fixed; inset: 0;
@@ -44,7 +43,6 @@
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       position: relative;
-      padding-top: 70px;
       background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px); 
       background-size: 24px 24px; 
       display: flex;
@@ -173,8 +171,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 6px;
       color: var(--black);
       box-shadow: var(--shadow-sm);
     }
@@ -191,6 +188,12 @@
       cursor: not-allowed;
       background: #e0e0e0;
       box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .cat-sub {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #555;
     }
 
     #loading-status {
@@ -225,6 +228,8 @@
       box-shadow: var(--shadow-sm);
       font-weight: 900;
       text-transform: uppercase;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
     .info-box {
@@ -233,7 +238,7 @@
     }
 
     .target-word {
-      font-size: 1.4rem;
+      font-size: 1.45rem;
       font-weight: 900;
       color: var(--yellow);
       text-shadow: 2px 2px 0 var(--black);
@@ -350,6 +355,7 @@
       display: flex;
       gap: 12px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -402,21 +408,21 @@
       box-shadow: var(--shadow-sm);
     }
 
-    .result-success-box {
-      max-width: 420px;
-      margin: 16px auto 24px;
-      padding: 16px 20px;
-      background: var(--green);
+    .answer-banner {
+      display: inline-block;
+      background: var(--yellow);
       border: var(--border);
-      font-size: 1.25rem;
-      font-weight: 900;
       box-shadow: var(--shadow-sm);
+      padding: 10px 24px;
+      font-size: 1.35rem;
+      font-weight: 900;
+      margin: 10px 0 22px;
     }
 
     .top3-list {
       list-style: none;
       max-width: 420px;
-      margin: 16px auto 24px;
+      margin: 14px auto 24px;
       text-align: left;
     }
 
@@ -463,11 +469,11 @@
 
     <main class="container">
       <div>
-        <span class="badge">실습 15 · ml5.js DoodleNet 실시간 추론 연동</span>
+        <span class="badge">실습 15 · 다중 스케일 크롭 온디바이스 Vision AI</span>
       </div>
       <h1>실시간으로 추론하는<br>AI 캐치마인드 앱</h1>
       <p class="subtitle">
-        그림을 그리는 동안 AI가 선택한 카테고리 안에서 무엇을 그리는지 실시간으로 유추하며, 제시어와 일치하는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.
+        API 키 없이 브라우저 내장 AI 비전 엔진이 그림 영역을 자동 포착 및 정규화하여 실시간으로 무엇을 그리는지 추론하고, 제시어와 일치하면 즉시 정답 처리하는 인터랙티브 게임입니다.
       </p>
 
       <section id="category-section">
@@ -477,20 +483,24 @@
         <div class="category-grid">
           <button class="cat-btn" data-cat="animals" disabled>
             <span>동물</span>
+            <span class="cat-sub">사자, 고양이, 펭귄 등 20종</span>
           </button>
           <button class="cat-btn" data-cat="food" disabled>
-            <span>과일/채소</span>
+            <span>과일 / 채소</span>
+            <span class="cat-sub">사과, 바나나, 수박 등 15종</span>
           </button>
           <button class="cat-btn" data-cat="objects" disabled>
             <span>사물</span>
+            <span class="cat-sub">시계, 우산, 카메라 등 15종</span>
           </button>
           <button class="cat-btn" data-cat="vehicles" disabled>
             <span>교통수단</span>
+            <span class="cat-sub">자동차, 비행기, 기차 등 14종</span>
           </button>
         </div>
 
         <div id="loading-status">
-          AI 모델 로딩 중...<br>
+          온디바이스 AI 모델 로딩 및 워밍업 중...<br>
           <small>(최초 1회 AI 모델 다운로드에 약간의 시간이 소요됩니다.)</small>
         </div>
       </section>
@@ -504,7 +514,7 @@
 
         <div class="ai-live-box">
           <div class="ai-live-top">
-            <span id="ai-guess-text">AI 실시간 추측: 열심히 그리는 중...</span>
+            <span id="ai-guess-text">AI 실시간 추측: 그림을 그려주세요</span>
             <span id="ai-confidence-text" style="background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</span>
           </div>
           <div class="progress-bar-bg">
@@ -535,22 +545,23 @@
 
         <div class="action-buttons">
           <button type="button" class="btn btn-secondary" id="clear-btn">전체 지우기</button>
-          <button type="button" class="btn btn-primary" id="finish-btn">그림 완성! AI에게 분석 맡기기</button>
+          <button type="button" class="btn btn-primary" id="finish-btn">그림 완성 및 최종 판정</button>
         </div>
       </section>
 
       <section id="result-section" class="hidden">
-        <h2 id="result-title">AI 분석 완료!</h2>
+        <h2 id="result-title">AI 분석 완료</h2>
         <p style="color: #444; font-size: 0.95rem; margin-top: 6px; font-weight: 700;">내가 그린 그림</p>
         
         <img id="result-image" class="result-snapshot" alt="내가 그린 그림">
         
-        <h3 style="font-weight: 900; margin-bottom: 12px;">실제 정답: <span id="result-answer" style="color: var(--blue);">사자</span></h3>
-        
-        <div id="success-answer-box" class="result-success-box hidden"></div>
+        <div>
+          <div class="answer-banner">정답: <span id="result-answer" style="color: var(--blue);">사자</span></div>
+        </div>
 
-        <div id="fail-top3-wrapper" class="hidden">
-          <p style="margin-top: 16px; font-weight: 900;">AI의 추측 TOP 3 (주제 내 분석):</p>
+        <!-- 오답일 경우에만 표시되는 AI 추측 TOP 3 영역 -->
+        <div id="wrong-detail-box" class="hidden">
+          <p style="margin-top: 8px; font-weight: 900;">AI의 추측 TOP 3 (주제 내 분석):</p>
           <ul id="top3-list" class="top3-list"></ul>
         </div>
 
@@ -560,16 +571,18 @@
   </div>
 
   <footer>
-    © 문태양. 바이브코딩 실습 15 포트폴리오 (실시간 추론 연동).
+    © 문태양. 바이브코딩 실습 15 포트폴리오 (실시간 다중 스케일 추론 연동).
   </footer>
 
   <script>
-    setInterval(() => {
+    function updateClock() {
       const now = new Date();
       document.getElementById('clock').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
-    }, 1000);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-    // DoodleNet(Quick, Draw!) 모델의 실제 345개 공식 영문 클래스와 100% 일치하는 제시어 목록
+    // DoodleNet(Quick, Draw!) 345개 공식 영문 클래스와 100% 일치하는 제시어 데이터
     const CATEGORIES = {
       animals: {
         name: '동물',
@@ -597,7 +610,7 @@
         ]
       },
       food: {
-        name: '과일/채소',
+        name: '과일 / 채소',
         words: [
           { en: 'apple', ko: '사과' },
           { en: 'banana', ko: '바나나' },
@@ -659,7 +672,9 @@
 
     let classifier;
     let p5Canvas;
-    let aiInputCanvas;
+    let cropCanvasStandard;
+    let cropCanvasTight;
+
     let isModelReady = false;
     let isPlaying = false;
     let isClassifying = false;
@@ -675,6 +690,13 @@
     let timerInterval = null;
     let liveClassifyInterval = null;
 
+    function createOffscreenCanvas(size) {
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      return c;
+    }
+
     function setup() {
       p5Canvas = createCanvas(360, 360);
       p5Canvas.parent('canvas-wrapper');
@@ -682,16 +704,18 @@
       strokeCap(ROUND);
       strokeJoin(ROUND);
 
-      aiInputCanvas = document.createElement('canvas');
-      aiInputCanvas.width = 360;
-      aiInputCanvas.height = 360;
+      cropCanvasStandard = createOffscreenCanvas(280);
+      cropCanvasTight = createOffscreenCanvas(280);
 
       classifier = ml5.imageClassifier('DoodleNet', () => {
-        isModelReady = true;
-        const statusEl = document.getElementById('loading-status');
-        statusEl.textContent = 'AI 모델 준비 완료! 카테고리를 선택해 시작하세요.';
-        statusEl.classList.add('ready');
-        document.querySelectorAll('.cat-btn').forEach(btn => btn.disabled = false);
+        // 첫 추론 지연을 없애기 위한 사전 워밍업
+        classifier.classify(cropCanvasStandard, 5, () => {
+          isModelReady = true;
+          const statusEl = document.getElementById('loading-status');
+          statusEl.textContent = 'AI 모델 준비 완료. 카테고리를 선택해 시작하세요.';
+          statusEl.classList.add('ready');
+          document.querySelectorAll('.cat-btn').forEach(btn => btn.disabled = false);
+        });
       });
     }
 
@@ -707,84 +731,170 @@
 
     function mouseReleased() {
       if (isPlaying && hasDrawn) {
-        triggerClassification();
+        triggerEnsembleClassification();
       }
     }
 
     function touchEnded() {
       if (isPlaying && hasDrawn) {
-        triggerClassification();
+        triggerEnsembleClassification();
       }
     }
 
-    function getPreprocessedCanvas() {
-      const ctx = aiInputCanvas.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, aiInputCanvas.width, aiInputCanvas.height);
-      ctx.drawImage(p5Canvas.elt, 0, 0);
+    // 그려진 픽셀의 실제 경계 상자(Bounding Box)를 찾아 고대비 흑백 정규화 및 다중 스케일 캔버스 생성
+    function buildMultiScaleCrops() {
+      const srcEl = p5Canvas.elt;
+      const w = srcEl.width;
+      const h = srcEl.height;
 
-      const imgData = ctx.getImageData(0, 0, aiInputCanvas.width, aiInputCanvas.height);
+      const tempCanvas = createOffscreenCanvas(w);
+      const tCtx = tempCanvas.getContext('2d');
+      tCtx.fillStyle = '#ffffff';
+      tCtx.fillRect(0, 0, w, h);
+      tCtx.drawImage(srcEl, 0, 0);
+
+      const imgData = tCtx.getImageData(0, 0, w, h);
       const data = imgData.data;
 
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        if (r < 245 || g < 245 || b < 245) {
-          data[i] = 0;
-          data[i + 1] = 0;
-          data[i + 2] = 0;
+      let minX = w, minY = h, maxX = 0, maxY = 0;
+      let inkCount = 0;
+
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = (y * w + x) * 4;
+          const r = data[idx];
+          const g = data[idx + 1];
+          const b = data[idx + 2];
+
+          if (r < 245 || g < 245 || b < 245) {
+            // 컬러 펜 획을 모델이 학습한 진한 검정색으로 통일
+            data[idx] = 0;
+            data[idx + 1] = 0;
+            data[idx + 2] = 0;
+            data[idx + 3] = 255;
+
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+            inkCount++;
+          }
         }
       }
-      ctx.putImageData(imgData, 0, 0);
-      return aiInputCanvas;
+
+      if (inkCount === 0) return null;
+      tCtx.putImageData(imgData, 0, 0);
+
+      const boxW = Math.max(1, maxX - minX + 1);
+      const boxH = Math.max(1, maxY - minY + 1);
+      const maxSide = Math.max(boxW, boxH);
+
+      // 1) 표준 여백(22%)을 둔 중앙 정렬 정규화 캔버스
+      renderNormalizedBox(cropCanvasStandard, tempCanvas, minX, minY, boxW, boxH, maxSide, 0.22);
+      // 2) 좁은 여백(8%)으로 디테일을 확대한 타이트 크롭 캔버스
+      renderNormalizedBox(cropCanvasTight, tempCanvas, minX, minY, boxW, boxH, maxSide, 0.08);
+
+      return { standard: cropCanvasStandard, tight: cropCanvasTight };
     }
 
-    function triggerClassification() {
-      if (!isModelReady || !isPlaying || !hasDrawn || isClassifying) return;
-      isClassifying = true;
-      const cleanCanvas = getPreprocessedCanvas();
-      classifier.classify(cleanCanvas, 345, (error, results) => {
-        isClassifying = false;
-        gotResult(error, results);
+    function renderNormalizedBox(targetCanvas, sourceCanvas, minX, minY, boxW, boxH, maxSide, paddingRatio) {
+      const size = targetCanvas.width;
+      const ctx = targetCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+
+      const drawableSize = size * (1 - paddingRatio * 2);
+      const scale = drawableSize / maxSide;
+
+      const destW = boxW * scale;
+      const destH = boxH * scale;
+      const destX = (size - destW) / 2;
+      const destY = (size - destH) / 2;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(sourceCanvas, minX, minY, boxW, boxH, destX, destY, destW, destH);
+    }
+
+    function classifySingleCanvas(canvasEl) {
+      return new Promise((resolve) => {
+        classifier.classify(canvasEl, 345, (err, results) => {
+          if (err || !results) resolve([]);
+          else resolve(results);
+        });
       });
     }
 
-    function gotResult(error, results) {
-      if (error || !isPlaying || !hasDrawn || !results) return;
+    async function triggerEnsembleClassification() {
+      if (!isModelReady || !isPlaying || !hasDrawn || isClassifying) return;
+      isClassifying = true;
 
-      const allowedWords = CATEGORIES[currentCategoryKey].words;
-      const wordMap = new Map(allowedWords.map(item => [item.en.toLowerCase(), item.ko]));
+      try {
+        const crops = buildMultiScaleCrops();
+        if (!crops) {
+          isClassifying = false;
+          return;
+        }
 
-      const filtered = results
-        .filter(r => wordMap.has(r.label.toLowerCase()))
-        .map(r => ({
-          en: r.label.toLowerCase(),
-          ko: wordMap.get(r.label.toLowerCase()),
-          rawConfidence: r.confidence
+        // 두 가지 스케일 크롭을 병렬로 추론 후 가중 앙상블 결합
+        const [resStd, resTight] = await Promise.all([
+          classifySingleCanvas(crops.standard),
+          classifySingleCanvas(crops.tight)
+        ]);
+
+        if (!isPlaying || !hasDrawn) return;
+
+        const scoreMap = new Map();
+        resStd.forEach(item => {
+          const key = item.label.toLowerCase();
+          scoreMap.set(key, (scoreMap.get(key) || 0) + item.confidence * 0.6);
+        });
+        resTight.forEach(item => {
+          const key = item.label.toLowerCase();
+          scoreMap.set(key, (scoreMap.get(key) || 0) + item.confidence * 0.4);
+        });
+
+        const allowedWords = CATEGORIES[currentCategoryKey].words;
+        const wordMap = new Map(allowedWords.map(item => [item.en.toLowerCase(), item.ko]));
+
+        const filtered = [];
+        scoreMap.forEach((rawConfidence, enLabel) => {
+          if (wordMap.has(enLabel)) {
+            filtered.push({
+              en: enLabel,
+              ko: wordMap.get(enLabel),
+              rawConfidence
+            });
+          }
+        });
+
+        filtered.sort((a, b) => b.rawConfidence - a.rawConfidence);
+        if (filtered.length === 0) return;
+
+        const totalConf = filtered.reduce((sum, item) => sum + item.rawConfidence, 0);
+        latestFilteredResults = filtered.map(item => ({
+          ...item,
+          confidence: totalConf > 0 ? (item.rawConfidence / totalConf) : 0
         }));
 
-      if (filtered.length === 0) return;
+        // 실시간 추측은 1순위 항목 하나만 표시
+        const top1 = latestFilteredResults[0];
+        const top1Percent = Math.round(top1.confidence * 100);
 
-      const totalConf = filtered.reduce((sum, item) => sum + item.rawConfidence, 0);
-      latestFilteredResults = filtered.map(item => ({
-        ...item,
-        confidence: totalConf > 0 ? (item.rawConfidence / totalConf) : 0
-      }));
+        document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${top1.ko}`;
+        document.getElementById('ai-confidence-text').textContent = `${top1Percent}%`;
+        document.getElementById('ai-progress-fill').style.width = `${top1Percent}%`;
 
-      // 실시간 추론 UI에는 1순위 단일 항목만 표시
-      const topGuess = latestFilteredResults[0];
-      const percent = Math.round(topGuess.confidence * 100);
+        // 내부 자동 정답 판정: 카테고리 내 상위 3개(TOP 3) 안에 제시어가 포함되면 즉시 정답 처리
+        const top3Candidates = latestFilteredResults.slice(0, 3);
+        const isMatchedInTop3 = top3Candidates.some(
+          item => item.en === currentTarget.en && item.rawConfidence >= 0.04
+        );
 
-      document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${topGuess.ko}`;
-      document.getElementById('ai-confidence-text').textContent = `${percent}%`;
-      document.getElementById('ai-progress-fill').style.width = `${percent}%`;
-
-      // 내부적으로는 TOP 3 내에 제시어가 포함되면 자동 정답 처리
-      const top3 = latestFilteredResults.slice(0, 3);
-      const isTargetInTop3 = top3.some(item => item.en === currentTarget.en);
-      if (isTargetInTop3) {
-        endGame(true);
+        if (isMatchedInTop3) {
+          endGame(true);
+        }
+      } finally {
+        isClassifying = false;
       }
     }
 
@@ -818,16 +928,16 @@
       clearInterval(liveClassifyInterval);
       liveClassifyInterval = setInterval(() => {
         if (isPlaying && hasDrawn) {
-          triggerClassification();
+          triggerEnsembleClassification();
         }
-      }, 500);
+      }, 350);
     }
 
     function resetCanvas() {
       background(255);
       hasDrawn = false;
       latestFilteredResults = [];
-      document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 열심히 그리는 중...';
+      document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림을 그려주세요';
       document.getElementById('ai-confidence-text').textContent = '0%';
       document.getElementById('ai-progress-fill').style.width = '0%';
     }
@@ -843,25 +953,19 @@
       document.getElementById('result-answer').textContent = currentTarget.ko;
 
       const titleEl = document.getElementById('result-title');
-      const successBoxEl = document.getElementById('success-answer-box');
-      const failWrapperEl = document.getElementById('fail-top3-wrapper');
+      const wrongDetailBox = document.getElementById('wrong-detail-box');
       const listEl = document.getElementById('top3-list');
 
       if (isSuccess) {
-        titleEl.textContent = '정답입니다! AI가 그림을 맞혔어요!';
+        // 정답일 경우: 정답어만 표시하고 TOP 3 목록은 숨김
+        titleEl.textContent = '정답입니다! AI가 그림을 맞혔습니다.';
         titleEl.style.color = 'var(--green)';
-
-        // 정답일 경우 TOP 3 목록 숨기고 정답어만 표시
-        failWrapperEl.classList.add('hidden');
-        successBoxEl.classList.remove('hidden');
-        successBoxEl.textContent = `AI 추측 결과: ${currentTarget.ko}`;
+        wrongDetailBox.classList.add('hidden');
       } else {
-        titleEl.textContent = '시간 종료! AI 분석 완료!';
-        titleEl.style.color = 'var(--black)';
-
-        // 오답일 경우에만 상위 3개 목록과 퍼센트 표시
-        successBoxEl.classList.add('hidden');
-        failWrapperEl.classList.remove('hidden');
+        // 오답일 경우: AI의 추측 TOP 3 목록과 퍼센트 표시
+        titleEl.textContent = '오답입니다. AI 분석 결과를 확인하세요.';
+        titleEl.style.color = 'var(--pink)';
+        wrongDetailBox.classList.remove('hidden');
         listEl.innerHTML = '';
 
         if (latestFilteredResults.length === 0) {
@@ -899,10 +1003,13 @@
     });
 
     document.getElementById('clear-btn').addEventListener('click', resetCanvas);
-    document.getElementById('finish-btn').addEventListener('click', () => {
-      const top3 = latestFilteredResults.slice(0, 3);
-      const isTargetInTop3 = top3.some(item => item.en === currentTarget.en);
-      endGame(isTargetInTop3);
+
+    document.getElementById('finish-btn').addEventListener('click', async () => {
+      if (hasDrawn && latestFilteredResults.length === 0) {
+        await triggerEnsembleClassification();
+      }
+      const inTop3 = latestFilteredResults.slice(0, 3).some(item => item.en === currentTarget.en);
+      endGame(inTop3);
     });
 
     document.getElementById('restart-btn').addEventListener('click', () => {
