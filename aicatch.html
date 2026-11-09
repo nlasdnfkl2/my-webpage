@@ -561,6 +561,7 @@
       document.getElementById('clock').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
     }, 1000);
 
+    // DoodleNet(Quick, Draw!) 모델이 정확히 학습하고 인식하는 검증된 클래스들로만 구성된 카테고리/제시어 맵
     const CATEGORIES = {
       animals: {
         name: '동물',
@@ -576,7 +577,10 @@
           { en: 'penguin', ko: '펭귄' },
           { en: 'butterfly', ko: '나비' },
           { en: 'turtle', ko: '거북이' },
-          { en: 'duck', ko: '오리' }
+          { en: 'duck', ko: '오리' },
+          { en: 'horse', ko: '말' },
+          { en: 'cow', ko: '소' },
+          { en: 'sheep', ko: '양' }
         ]
       },
       food: {
@@ -592,7 +596,11 @@
           { en: 'carrot', ko: '당근' },
           { en: 'mushroom', ko: '버섯' },
           { en: 'broccoli', ko: '브로콜리' },
-          { en: 'onion', ko: '양파' }
+          { en: 'onion', ko: '양파' },
+          { en: 'potato', ko: '감자' },
+          { en: 'pineapple', ko: '파인애플' },
+          { en: 'hamburger', ko: '햄버거' },
+          { en: 'pizza', ko: '피자' }
         ]
       },
       objects: {
@@ -608,7 +616,9 @@
           { en: 'key', ko: '열쇠' },
           { en: 'chair', ko: '의자' },
           { en: 'guitar', ko: '기타' },
-          { en: 'crown', ko: '왕관' }
+          { en: 'crown', ko: '왕관' },
+          { en: 'computer', ko: '컴퓨터' },
+          { en: 'pencil', ko: '연필' }
         ]
       },
       vehicles: {
