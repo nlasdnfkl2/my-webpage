@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>문태양 - 실시간 AI 캐치마인드</title>
   <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-    
     :root {
       --bg: #dfdcd3;
       --black: #0f0f0f;
@@ -32,7 +30,13 @@
       mix-blend-mode: overlay;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans KR', "Pretendard Variable", sans-serif; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
+    }
+
     html { scroll-behavior: smooth; }
     
     body { 
@@ -565,7 +569,7 @@
   </footer>
 
   <script type="module">
-    import { pipeline, env, RawImage } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
 
     env.allowLocalModels = false;
     env.useBrowserCache = true;
@@ -579,87 +583,74 @@
       animals: {
         name: '동물',
         words: [
-          { en: 'lion', ko: '사자', prompt: 'a lion with a mane' },
-          { en: 'cat', ko: '고양이', prompt: 'a cute cat with whiskers and ears' },
-          { en: 'dog', ko: '강아지', prompt: 'a dog puppy' },
-          { en: 'elephant', ko: '코끼리', prompt: 'an elephant with a long trunk' },
-          { en: 'rabbit', ko: '토끼', prompt: 'a rabbit bunny with long ears' },
-          { en: 'pig', ko: '돼지', prompt: 'a pink pig' },
-          { en: 'fish', ko: '물고기', prompt: 'a swimming fish' },
-          { en: 'bird', ko: '새', prompt: 'a flying bird with wings' },
-          { en: 'penguin', ko: '펭귄', prompt: 'a penguin' },
-          { en: 'butterfly', ko: '나비', prompt: 'a colorful butterfly' },
-          { en: 'turtle', ko: '거북이', prompt: 'a turtle with a shell' },
-          { en: 'duck', ko: '오리', prompt: 'a yellow duck' },
-          { en: 'frog', ko: '개구리', prompt: 'a green frog' },
-          { en: 'shark', ko: '상어', prompt: 'a shark with fins' },
-          { en: 'whale', ko: '고래', prompt: 'a blue whale' },
-          { en: 'octopus', ko: '문어', prompt: 'an octopus with tentacles' },
-          { en: 'giraffe', ko: '기린', prompt: 'a giraffe with a long neck' }
+          { en: 'lion', ko: '사자', label: 'a drawing of a lion' },
+          { en: 'cat', ko: '고양이', label: 'a drawing of a cat' },
+          { en: 'dog', ko: '강아지', label: 'a drawing of a dog' },
+          { en: 'elephant', ko: '코끼리', label: 'a drawing of an elephant' },
+          { en: 'rabbit', ko: '토끼', label: 'a drawing of a rabbit' },
+          { en: 'pig', ko: '돼지', label: 'a drawing of a pig' },
+          { en: 'fish', ko: '물고기', label: 'a drawing of a fish' },
+          { en: 'bird', ko: '새', label: 'a drawing of a bird' },
+          { en: 'penguin', ko: '펭귄', label: 'a drawing of a penguin' },
+          { en: 'butterfly', ko: '나비', label: 'a drawing of a butterfly' },
+          { en: 'turtle', ko: '거북이', label: 'a drawing of a turtle' },
+          { en: 'duck', ko: '오리', label: 'a drawing of a duck' },
+          { en: 'frog', ko: '개구리', label: 'a drawing of a frog' },
+          { en: 'giraffe', ko: '기린', label: 'a drawing of a giraffe' }
         ]
       },
       food: {
         name: '과일/채소',
         words: [
-          { en: 'apple', ko: '사과', prompt: 'a red apple fruit' },
-          { en: 'banana', ko: '바나나', prompt: 'a yellow banana' },
-          { en: 'grapes', ko: '포도', prompt: 'a bunch of purple grapes' },
-          { en: 'strawberry', ko: '딸기', prompt: 'a red strawberry' },
-          { en: 'watermelon', ko: '수박', prompt: 'a slice of red watermelon with seeds' },
-          { en: 'pineapple', ko: '파인애플', prompt: 'a pineapple fruit' },
-          { en: 'carrot', ko: '당근', prompt: 'an orange carrot vegetable' },
-          { en: 'mushroom', ko: '버섯', prompt: 'a mushroom' },
-          { en: 'broccoli', ko: '브로콜리', prompt: 'green broccoli' },
-          { en: 'tomato', ko: '토마토', prompt: 'a red tomato' },
-          { en: 'corn', ko: '옥수수', prompt: 'yellow corn on the cob' },
-          { en: 'cherry', ko: '체리', prompt: 'a pair of red cherries' },
-          { en: 'lemon', ko: '레몬', prompt: 'a yellow lemon' },
-          { en: 'peach', ko: '복숭아', prompt: 'a pink peach' }
+          { en: 'apple', ko: '사과', label: 'a drawing of an apple' },
+          { en: 'banana', ko: '바나나', label: 'a drawing of a banana' },
+          { en: 'grapes', ko: '포도', label: 'a drawing of grapes' },
+          { en: 'strawberry', ko: '딸기', label: 'a drawing of a strawberry' },
+          { en: 'watermelon', ko: '수박', label: 'a drawing of a watermelon' },
+          { en: 'pineapple', ko: '파인애플', label: 'a drawing of a pineapple' },
+          { en: 'carrot', ko: '당근', label: 'a drawing of a carrot' },
+          { en: 'mushroom', ko: '버섯', label: 'a drawing of a mushroom' },
+          { en: 'broccoli', ko: '브로콜리', label: 'a drawing of broccoli' },
+          { en: 'tomato', ko: '토마토', label: 'a drawing of a tomato' },
+          { en: 'corn', ko: '옥수수', label: 'a drawing of corn' },
+          { en: 'cherry', ko: '체리', label: 'a drawing of cherries' }
         ]
       },
       objects: {
         name: '사물',
         words: [
-          { en: 'clock', ko: '시계', prompt: 'a round wall clock with hands' },
-          { en: 'umbrella', ko: '우산', prompt: 'an open umbrella' },
-          { en: 'eyeglasses', ko: '안경', prompt: 'a pair of eyeglasses' },
-          { en: 'cup', ko: '컵', prompt: 'a coffee mug cup' },
-          { en: 'book', ko: '책', prompt: 'an open book' },
-          { en: 'camera', ko: '카메라', prompt: 'a photo camera with a lens' },
-          { en: 'scissors', ko: '가위', prompt: 'a pair of scissors' },
-          { en: 'key', ko: '열쇠', prompt: 'a metal house key' },
-          { en: 'chair', ko: '의자', prompt: 'a wooden chair' },
-          { en: 'guitar', ko: '기타', prompt: 'an acoustic guitar' },
-          { en: 'crown', ko: '왕관', prompt: 'a golden royal crown' },
-          { en: 'laptop', ko: '노트북', prompt: 'a laptop computer' },
-          { en: 'pencil', ko: '연필', prompt: 'a yellow wooden pencil' },
-          { en: 'light bulb', ko: '전구', prompt: 'a glowing light bulb' }
+          { en: 'clock', ko: '시계', label: 'a drawing of a clock' },
+          { en: 'umbrella', ko: '우산', label: 'a drawing of an umbrella' },
+          { en: 'eyeglasses', ko: '안경', label: 'a drawing of eyeglasses' },
+          { en: 'cup', ko: '컵', label: 'a drawing of a cup' },
+          { en: 'book', ko: '책', label: 'a drawing of a book' },
+          { en: 'camera', ko: '카메라', label: 'a drawing of a camera' },
+          { en: 'scissors', ko: '가위', label: 'a drawing of scissors' },
+          { en: 'key', ko: '열쇠', label: 'a drawing of a key' },
+          { en: 'chair', ko: '의자', label: 'a drawing of a chair' },
+          { en: 'guitar', ko: '기타', label: 'a drawing of a guitar' },
+          { en: 'crown', ko: '왕관', label: 'a drawing of a crown' },
+          { en: 'pencil', ko: '연필', label: 'a drawing of a pencil' }
         ]
       },
       vehicles: {
         name: '교통수단',
         words: [
-          { en: 'car', ko: '자동차', prompt: 'a passenger car with wheels' },
-          { en: 'bus', ko: '버스', prompt: 'a city bus' },
-          { en: 'bicycle', ko: '자전거', prompt: 'a two-wheeled bicycle' },
-          { en: 'airplane', ko: '비행기', prompt: 'a flying airplane' },
-          { en: 'train', ko: '기차', prompt: 'a locomotive train' },
-          { en: 'helicopter', ko: '헬리콥터', prompt: 'a helicopter with rotor blades' },
-          { en: 'sailboat', ko: '돛단배', prompt: 'a sailboat on water' },
-          { en: 'truck', ko: '트럭', prompt: 'a cargo truck' },
-          { en: 'motorcycle', ko: '오토바이', prompt: 'a motorcycle' },
-          { en: 'rocket', ko: '로켓', prompt: 'a space rocket' },
-          { en: 'submarine', ko: '잠수함', prompt: 'a submarine' },
-          { en: 'hot air balloon', ko: '열기구', prompt: 'a colorful hot air balloon' }
+          { en: 'car', ko: '자동차', label: 'a drawing of a car' },
+          { en: 'bus', ko: '버스', label: 'a drawing of a bus' },
+          { en: 'bicycle', ko: '자전거', label: 'a drawing of a bicycle' },
+          { en: 'airplane', ko: '비행기', label: 'a drawing of an airplane' },
+          { en: 'train', ko: '기차', label: 'a drawing of a train' },
+          { en: 'helicopter', ko: '헬리콥터', label: 'a drawing of a helicopter' },
+          { en: 'sailboat', ko: '돛단배', label: 'a drawing of a sailboat' },
+          { en: 'truck', ko: '트럭', label: 'a drawing of a truck' },
+          { en: 'motorcycle', ko: '오토바이', label: 'a drawing of a motorcycle' },
+          { en: 'rocket', ko: '로켓', label: 'a drawing of a rocket' },
+          { en: 'submarine', ko: '잠수함', label: 'a drawing of a submarine' },
+          { en: 'hot air balloon', ko: '열기구', label: 'a drawing of a hot air balloon' }
         ]
       }
     };
-
-    const PROMPT_TEMPLATES = [
-      (desc) => `a simple hand-drawn sketch of ${desc}`,
-      (desc) => `a colorful doodle drawing of ${desc}`,
-      (desc) => `a minimalist illustration of ${desc}`
-    ];
 
     let clipClassifier = null;
     let isModelReady = false;
@@ -723,7 +714,7 @@
         document.querySelectorAll('.cat-btn').forEach(btn => btn.disabled = false);
       } catch (err) {
         console.error(err);
-        textEl.textContent = 'AI 모델 로딩 중 네트워크 오류가 발생했습니다. 페이지를 새로고침해 주세요.';
+        textEl.textContent = 'AI 모델 로딩 중 오류가 발생했습니다. 페이지를 새로고침해 주세요.';
       }
     }
 
@@ -790,7 +781,7 @@
     canvas.addEventListener('touchmove', moveStroke, { passive: false });
     window.addEventListener('touchend', endStroke);
 
-    function prepareSmartCroppedImage() {
+    function prepareCroppedDataUrl() {
       const w = canvas.width;
       const h = canvas.height;
       const imgData = ctx.getImageData(0, 0, w, h).data;
@@ -816,13 +807,13 @@
 
       if (!found) {
         cropCtx.drawImage(canvas, 0, 0, 224, 224);
-        return RawImage.fromCanvas(cropCanvas);
+        return cropCanvas.toDataURL('image/png');
       }
 
       const boxW = Math.max(24, maxX - minX);
       const boxH = Math.max(24, maxY - minY);
       const maxSide = Math.max(boxW, boxH);
-      const pad = Math.round(maxSide * 0.16);
+      const pad = Math.round(maxSide * 0.15);
       const targetSize = 224 - pad * 2;
       const scale = targetSize / maxSide;
 
@@ -832,7 +823,7 @@
       const offsetY = (224 - drawH) / 2;
 
       cropCtx.drawImage(canvas, minX, minY, boxW, boxH, offsetX, offsetY, drawW, drawH);
-      return RawImage.fromCanvas(cropCanvas);
+      return cropCanvas.toDataURL('image/png');
     }
 
     function scheduleInference() {
@@ -851,23 +842,15 @@
       }
 
       inferenceState = 'RUNNING';
+      document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림 분석 중...';
 
       try {
-        const rawImg = prepareSmartCroppedImage();
+        const imageDataUrl = prepareCroppedDataUrl();
         const words = CATEGORIES[currentCategoryKey].words;
+        const candidateLabels = words.map(w => w.label);
+        const labelToWord = new Map(words.map(w => [w.label, w]));
 
-        const allLabels = [];
-        const labelToWord = new Map();
-
-        words.forEach((w) => {
-          PROMPT_TEMPLATES.forEach((tpl) => {
-            const p = tpl(w.prompt);
-            allLabels.push(p);
-            labelToWord.set(p, w);
-          });
-        });
-
-        const output = await clipClassifier(rawImg, allLabels, {
+        const output = await clipClassifier(imageDataUrl, candidateLabels, {
           hypothesis_template: '{}'
         });
 
@@ -876,53 +859,39 @@
           return;
         }
 
-        const scoreMap = new Map();
-        words.forEach(w => scoreMap.set(w.en, { ...w, scoreSum: 0, maxScore: 0 }));
+        if (Array.isArray(output) && output.length > 0) {
+          latestRankedResults = output
+            .map(item => {
+              const matched = labelToWord.get(item.label);
+              return {
+                en: matched ? matched.en : item.label,
+                ko: matched ? matched.ko : item.label,
+                confidence: item.score
+              };
+            })
+            .sort((a, b) => b.confidence - a.confidence);
 
-        output.forEach((item) => {
-          const matchedWord = labelToWord.get(item.label);
-          if (matchedWord) {
-            const entry = scoreMap.get(matchedWord.en);
-            entry.scoreSum += item.score;
-            if (item.score > entry.maxScore) {
-              entry.maxScore = item.score;
-            }
+          const top1 = latestRankedResults[0];
+          const percent = Math.round(top1.confidence * 100);
+
+          document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${top1.ko}`;
+          document.getElementById('ai-confidence-text').textContent = `${percent}%`;
+          document.getElementById('ai-progress-fill').style.width = `${percent}%`;
+
+          const top3 = latestRankedResults.slice(0, 3);
+          const isInTop3 = top3.some(item => item.en === currentTarget.en);
+          const targetEntry = latestRankedResults.find(item => item.en === currentTarget.en);
+          const uniformBaseline = 1 / words.length;
+
+          if (isInTop3 && targetEntry && targetEntry.confidence > uniformBaseline * 1.15) {
+            inferenceState = 'IDLE';
+            endGame(true);
+            return;
           }
-        });
-
-        const aggregated = Array.from(scoreMap.values()).map((entry) => ({
-          en: entry.en,
-          ko: entry.ko,
-          rawScore: entry.scoreSum * 0.7 + entry.maxScore * 0.3
-        }));
-
-        const totalScore = aggregated.reduce((acc, cur) => acc + cur.rawScore, 0);
-        latestRankedResults = aggregated
-          .map((item) => ({
-            ...item,
-            confidence: totalScore > 0 ? item.rawScore / totalScore : 0
-          }))
-          .sort((a, b) => b.confidence - a.confidence);
-
-        const top1 = latestRankedResults[0];
-        const percent = Math.round(top1.confidence * 100);
-
-        document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${top1.ko}`;
-        document.getElementById('ai-confidence-text').textContent = `${percent}%`;
-        document.getElementById('ai-progress-fill').style.width = `${percent}%`;
-
-        const top3 = latestRankedResults.slice(0, 3);
-        const isInTop3 = top3.some(item => item.en === currentTarget.en);
-        const targetEntry = latestRankedResults.find(item => item.en === currentTarget.en);
-        const uniformBaseline = 1 / words.length;
-
-        if (isInTop3 && targetEntry && targetEntry.confidence > uniformBaseline * 1.15) {
-          inferenceState = 'IDLE';
-          endGame(true);
-          return;
         }
       } catch (err) {
         console.error('CLIP 추론 오류:', err);
+        document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 다시 그리는 중...';
       }
 
       if (inferenceState === 'QUEUED' && isPlaying) {
