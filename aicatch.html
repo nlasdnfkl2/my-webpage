@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>문태양 - 실시간 AI 캐치마인드</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
@@ -45,8 +47,14 @@
       padding-top: 70px;
       background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px); 
       background-size: 24px 24px; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 90px 20px 40px;
     }
     
+    /* 상단 고정 바 */
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
@@ -83,519 +91,741 @@
       transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); background: var(--cyan);
     }
 
-    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
-    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 900px; width: 100%; margin: 0 auto; }
     
     .top {
       display: flex; justify-content: space-between; align-items: baseline;
       padding: 24px 0; border-bottom: var(--border-thick); font-size: 1rem; font-weight: 800;
+      margin-bottom: 30px;
     }
     .top b { 
       font-size: 1.4rem; letter-spacing: 0.05em; text-transform: uppercase; 
       background: var(--black); color: var(--yellow); padding: 4px 12px; transform: skew(-5deg);
       box-shadow: 3px 3px 0 var(--pink);
     }
-    .top nav a:hover { background: var(--black); color: var(--white); }
 
-    .hero { padding: 60px 0 40px; border-bottom: var(--border-thick); }
-    .hero .small { 
-      display: inline-block; font-size: 1rem; font-weight: 800; 
-      background: var(--cyan); border: var(--border); padding: 4px 12px;
-      box-shadow: var(--shadow-sm); margin-bottom: 20px;
-    }
-    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.2; font-weight: 900; text-transform: uppercase; }
-    .hero h1 span { 
-      display: inline-block; color: var(--black); background: var(--yellow);
-      border: var(--border-thick); padding: 0 16px; box-shadow: var(--shadow-lg); text-shadow: 2px 2px 0 var(--pink);
-    }
-    .hero p { max-width: 38em; margin-top: 20px; font-size: 1.05rem; font-weight: 700; border-left: 6px solid var(--black); padding-left: 20px; background: rgba(255,255,255,0.5); padding-top: 8px; padding-bottom: 8px; border: var(--border); box-shadow: var(--shadow-sm); }
-
-    .game-card {
-      background: var(--white); border: var(--border-thick); box-shadow: var(--shadow-lg);
-      padding: 40px; margin-top: 48px;
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--white);
+      border: var(--border-thick);
+      border-radius: 0;
+      padding: 36px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      margin: 0 auto;
     }
 
-    .screen { display: none; }
-    .screen.active { display: block; }
-
-    .start-screen h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 16px; text-transform: uppercase; }
-    .setting-group {
-      margin-bottom: 24px; background: var(--bg); border: var(--border); padding: 20px; box-shadow: var(--shadow-sm);
-    }
-    .setting-group label { display: block; font-weight: 900; margin-bottom: 12px; font-size: 1.1rem; }
-    
-    .category-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
-    }
-    .category-chip {
-      padding: 14px; background: var(--white); border: var(--border); font-weight: 900;
-      text-align: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.1s;
-    }
-    .category-chip.selected {
-      background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black);
+    .badge {
+      background: var(--cyan);
+      color: var(--black);
+      padding: 6px 14px;
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      font-weight: 900;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-bottom: 20px;
     }
 
-    .btn {
-      font-family: inherit; font-size: 1.1rem; font-weight: 900; padding: 14px 28px;
-      background: var(--yellow); border: var(--border); box-shadow: var(--shadow-sm);
-      cursor: pointer; transition: all 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn:hover:not(:disabled) { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); background: var(--cyan); }
-    .btn:disabled { background: #dcd6cd; color: #777; box-shadow: 2px 2px 0 var(--black); cursor: not-allowed; }
-    .btn-green { background: var(--green); }
-    .btn-red { background: var(--pink); color: var(--white); }
-    .btn-blue { background: var(--blue); color: var(--white); }
-
-    /* 게임 화면 */
-    .game-header-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--pink); color: var(--white); border: var(--border-thick); padding: 14px 20px;
-      font-weight: 900; font-size: 1.1rem; box-shadow: var(--shadow-sm); margin-bottom: 20px;
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      margin-bottom: 14px;
+      color: var(--black);
+      font-weight: 900;
       text-transform: uppercase;
     }
-    .mission-banner {
-      font-size: 1.3rem; font-weight: 900; margin-bottom: 16px;
-      background: var(--yellow); border: var(--border-thick); padding: 14px 20px;
-      box-shadow: var(--shadow-sm); text-align: center;
+
+    .subtitle {
+      color: #333;
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 32px;
+      border-left: 6px solid var(--black);
+      padding-left: 16px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.5);
     }
-    
-    /* 실시간 추론 결과 표시 패널 */
-    .realtime-prediction-box {
-      background: var(--bg);
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .cat-btn {
+      background: var(--white);
       border: var(--border);
-      padding: 12px 20px;
-      margin-bottom: 16px;
+      border-radius: 0;
+      padding: 24px 16px;
+      font-size: 1.15rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--black);
       box-shadow: var(--shadow-sm);
+    }
+
+    .cat-btn:hover:not(:disabled) {
+      border-color: var(--black);
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+
+    .cat-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #e0e0e0;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .cat-emoji {
+      font-size: 2.2rem;
+    }
+
+    #loading-status {
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--yellow);
+      color: var(--black);
+      border: var(--border);
+      font-size: 0.95rem;
+      font-weight: 900;
+      box-shadow: var(--shadow-sm);
+    }
+
+    #loading-status.ready {
+      background: var(--green);
+      color: var(--black);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--pink);
+      color: var(--white);
+      padding: 14px 20px;
+      border: var(--border);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .info-box {
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .target-word {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--yellow);
+      text-shadow: 2px 2px 0 var(--black);
+    }
+
+    .timer {
+      color: var(--white);
+      font-weight: 900;
+    }
+
+    .ai-live-box {
+      background: var(--white);
+      border: var(--border);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ai-live-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-weight: 900;
+      font-size: 1.05rem;
     }
-    .rt-item { font-size: 1rem; }
-    .rt-item span { color: var(--blue); }
 
-    .canvas-container {
-      border: var(--border-thick); box-shadow: var(--shadow-lg); background: var(--white);
-      display: flex; justify-content: center; margin-bottom: 16px; overflow: hidden; position: relative;
-    }
-    canvas { display: block; cursor: crosshair; touch-action: none; background: var(--white); width: 100%; max-width: 600px; height: 360px; }
-
-    .tools-bar {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-      background: var(--bg); border: var(--border); padding: 12px 16px; box-shadow: var(--shadow-sm);
-    }
-    
-    .pen-size-picker { display: flex; gap: 10px; align-items: center; font-weight: 900; }
-    .pen-size {
-      width: 32px; height: 32px; border: var(--border); border-radius: 50%;
-      background: var(--white); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    .progress-bar-bg {
+      width: 100%;
+      height: 14px;
+      background: #eee;
+      border: var(--border);
+      overflow: hidden;
       box-shadow: 2px 2px 0 var(--black);
     }
-    .pen-size.active { background: var(--yellow); box-shadow: 3px 3px 0 var(--black); transform: translate(-2px,-2px); }
-    .pen-size-dot { background: var(--black); border-radius: 50%; }
 
-    /* 결과 화면 */
-    .result-screen { text-align: center; }
-    .result-screen h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 16px; text-transform: uppercase; }
-    .snapshot-preview {
-      width: 100%; max-width: 400px; border: var(--border-thick);
-      box-shadow: var(--shadow-lg); margin-bottom: 24px; background: var(--white);
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width 0.2s ease;
     }
-    
-    .ai-guess-box {
-      background: var(--bg); border: var(--border-thick); padding: 24px; margin-bottom: 24px;
-      box-shadow: var(--shadow-sm); text-align: left;
+
+    #canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-lg);
+      background: var(--white);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .ai-guess-box h3 { font-size: 1.4rem; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 8px; margin-bottom: 16px; }
-    
-    .guess-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 16px; border: var(--border); margin-bottom: 10px; font-weight: 900; background: var(--white);
+
+    canvas {
+      border: none;
+      border-radius: 0;
+      cursor: crosshair;
+      touch-action: none;
+      background: #ffffff;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg);
+      padding: 14px 18px;
+      border: var(--border);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      font-weight: 900;
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    .color-palette {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .color-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .color-btn.active {
+      transform: scale(1.15);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      border-radius: 0;
+      border: var(--border);
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.1s;
       box-shadow: var(--shadow-sm);
     }
-    .guess-row.correct { background: var(--green); color: var(--black); }
-    
-    .guess-rank { font-size: 1.2rem; width: 50px; }
-    .guess-name { flex-grow: 1; font-size: 1.1rem; }
-    .guess-prob { font-size: 0.95rem; background: var(--black); color: var(--yellow); padding: 3px 10px; border: 2px solid var(--black); }
 
-    footer { padding: 40px 0; color: var(--white); background: var(--black); font-size: 1rem; font-weight: 800; text-align: center; border-top: var(--border-thick); margin-top: 80px; }
-
-    .spinner-small {
-      width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.2);
-      border-top-color: var(--black); border-radius: 50%;
-      animation: spin 1s linear infinite; display: inline-block;
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 var(--black);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .btn-secondary:hover {
+      background: var(--pink);
+      color: var(--white);
+    }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .btn-primary:hover {
+      background: var(--cyan);
+    }
+
+    .result-snapshot {
+      width: 240px;
+      height: 240px;
+      border: var(--border-thick);
+      margin: 16px auto;
+      object-fit: contain;
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .top3-list {
+      list-style: none;
+      max-width: 420px;
+      margin: 16px auto 24px;
+      text-align: left;
+    }
+
+    .top3-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: var(--bg);
+      border: var(--border);
+      margin-bottom: 10px;
+      font-weight: 900;
+      box-shadow: var(--shadow-sm);
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.95rem;
+      color: var(--white);
+      background: var(--black);
+      width: 100%;
+      text-align: center;
+      padding: 20px;
+      border-top: var(--border-thick);
+      font-weight: 800;
+    }
   </style>
-  
-  <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
 </head>
 <body>
 
-<div class="fixed-top-bar">
-  <div class="current-time" id="currentTimeDisplay">--:--:--</div>
-  <div class="icon-group">
-    <a href="https://github.com/nlasdnfkl2" target="_blank" class="icon-btn" title="GitHub">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
-    </a>
-  </div>
-</div>
-
-<div class="wrap">
-  <div class="top">
-    <b>문태양</b>
-    <nav>
-      <a href="#aiCatch">실습 15 · 실시간 AI 캐치마인드</a>
-    </nav>
+  <!-- 상단 고정 바 -->
+  <div class="fixed-top-bar">
+    <div class="current-time" id="clock">--:--:--</div>
+    <div class="icon-group">
+      <a href="https://github.com/nlasdnfkl2" target="_blank" class="icon-btn" title="GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+      </a>
+    </div>
   </div>
 
-  <header class="hero">
-    <p class="small">실습 15 · ml5.js DoodleNet 실시간 추론 연동</p>
-    <h1>실시간으로 추론하는<br><span>AI 캐치마인드 앱</span></h1>
-    <p>그림을 그리는 동안 AI가 실시간으로 무엇을 그리는지 유추하며, 제시어와 일치하는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.</p>
-  </header>
+  <div class="wrap">
+    <div class="top">
+      <b>문태양</b>
+    </div>
 
-  <div class="game-card" id="aiCatch">
-    
-    <!-- 1. 시작 화면 -->
-    <div class="screen start-screen active" id="startScreen">
-      <h2>카테고리 선택</h2>
-      <div class="setting-group">
-        <label>그리기 주제 카테고리를 선택하세요</label>
-        <div class="category-grid" id="categoryGrid">
-          <div class="category-chip selected" data-cat="동물">🐾 동물</div>
-          <div class="category-chip" data-cat="과일채소">🍎 과일/채소</div>
-          <div class="category-chip" data-cat="사물">🧸 사물</div>
-          <div class="category-chip" data-cat="교통수단">🚗 교통수단</div>
+    <main class="container">
+      <div>
+        <span class="badge">실습 15 · ml5.js DoodleNet 실시간 추론 연동</span>
+      </div>
+      <h1>실시간으로 추론하는<br>AI 캐치마인드 앱</h1>
+      <p class="subtitle">
+        그림을 그리는 동안 AI가 선택한 카테고리 안에서 무엇을 그리는지 실시간으로 유추하며, 제시어와 일치하는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.
+      </p>
+
+      <section id="category-section">
+        <h2>카테고리 선택</h2>
+        <p style="color: #444; font-size: 0.95rem; margin-top: 6px; font-weight: 700;">그리기 주제 카테고리를 선택하세요</p>
+        
+        <div class="category-grid">
+          <button class="cat-btn" data-cat="animals" disabled>
+            <span class="cat-emoji">🐾</span>
+            <span>동물</span>
+          </button>
+          <button class="cat-btn" data-cat="food" disabled>
+            <span class="cat-emoji">🍎</span>
+            <span>과일/채소</span>
+          </button>
+          <button class="cat-btn" data-cat="objects" disabled>
+            <span class="cat-emoji">🧸</span>
+            <span>사물</span>
+          </button>
+          <button class="cat-btn" data-cat="vehicles" disabled>
+            <span class="cat-emoji">🚗</span>
+            <span>교통수단</span>
+          </button>
         </div>
-      </div>
-      
-      <button class="btn btn-green" id="startBtn" disabled>
-        <span class="spinner-small" id="btnSpinner"></span> 
-        <span id="btnText">AI 모델 로딩 중...</span>
-      </button>
-      <p style="margin-top:16px; font-size:0.95rem; font-weight:900; color:#444;">(최초 1회 AI 모델 다운로드에 약간의 시간이 소요됩니다.)</p>
-    </div>
 
-    <!-- 2. 게임 화면 -->
-    <div class="screen play-screen" id="playScreen">
-      <div class="game-header-bar">
-        <div>카테고리: <span id="selectedCatText">동물</span></div>
-        <div>남은 시간: <span id="timeLeft">30</span>초</div>
-      </div>
-
-      <div class="mission-banner">
-        제시어: <span id="targetWord" style="color: var(--blue); font-size: 1.6rem; text-decoration: underline;">사자</span>
-      </div>
-
-      <!-- 실시간 AI 추측 표시 바 -->
-      <div class="realtime-prediction-box">
-        <div class="rt-item">🤖 AI 실시간 추측: <span id="liveGuessText" style="font-size: 1.1rem;">열심히 그리는 중...</span></div>
-        <div class="rt-item" id="liveProbText" style="font-size: 0.9rem; background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</div>
-      </div>
-
-      <div class="canvas-container">
-        <canvas id="drawCanvas" width="600" height="360"></canvas>
-      </div>
-
-      <div class="tools-bar">
-        <div class="pen-size-picker">
-          <span>펜 굵기:</span>
-          <div class="pen-size" data-size="6"><div class="pen-size-dot" style="width:6px; height:6px;"></div></div>
-          <div class="pen-size active" data-size="12"><div class="pen-size-dot" style="width:12px; height:12px;"></div></div>
-          <div class="pen-size" data-size="20"><div class="pen-size-dot" style="width:20px; height:20px;"></div></div>
+        <div id="loading-status">
+          AI 모델 로딩 중...<br>
+          <small>(최초 1회 AI 모델 다운로드에 약간의 시간이 소요됩니다.)</small>
         </div>
-        <button class="btn btn-red" id="clearBtn" style="padding: 10px 18px; font-size: 0.95rem;">전체 지우기</button>
-      </div>
+      </section>
 
-      <button class="btn btn-blue" id="submitBtn" style="width: 100%;">그림 완성! AI에게 분석 맡기기</button>
-    </div>
+      <section id="game-section" class="hidden">
+        <div class="game-header">
+          <div class="info-box">카테고리: <span id="display-category">동물</span></div>
+          <div class="info-box">제시어: <span id="display-target" class="target-word">사자</span></div>
+          <div class="info-box">남은 시간: <span id="display-timer" class="timer">30</span> 초</div>
+        </div>
 
-    <!-- 3. 결과 화면 -->
-    <div class="screen result-screen" id="resultScreen">
-      <h2 id="resultTitle">AI 분석 완료!</h2>
-      <img id="resultImg" class="snapshot-preview" alt="내가 그린 그림">
-      
-      <div class="ai-guess-box">
-        <h3>실제 정답: <span id="ansText" style="color: var(--blue);">사자</span></h3>
-        <p style="font-weight: 900; margin-bottom: 12px; font-size: 1.1rem;">AI의 추측 TOP 3:</p>
-        <div id="guessListContainer"></div>
-      </div>
-      
-      <button class="btn btn-green" id="restartBtn">다른 문제 도전하기</button>
-    </div>
+        <div class="ai-live-box">
+          <div class="ai-live-top">
+            <span id="ai-guess-text">🤖 AI 실시간 추측: 열심히 그리는 중...</span>
+            <span id="ai-confidence-text" style="background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="ai-progress-fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
 
+        <div id="canvas-wrapper"></div>
+
+        <div class="toolbar">
+          <div class="tool-group">
+            <span>색상:</span>
+            <div class="color-palette" id="color-palette">
+              <button type="button" class="color-btn active" data-color="#111827" style="background-color: #111827;" title="검정"></button>
+              <button type="button" class="color-btn" data-color="#ff4757" style="background-color: #ff4757;" title="빨강"></button>
+              <button type="button" class="color-btn" data-color="#3e51ff" style="background-color: #3e51ff;" title="파랑"></button>
+              <button type="button" class="color-btn" data-color="#2ed573" style="background-color: #2ed573;" title="초록"></button>
+              <button type="button" class="color-btn" data-color="#ffd83b" style="background-color: #ffd83b;" title="노랑"></button>
+            </div>
+          </div>
+
+          <div class="tool-group">
+            <label for="stroke-slider">펜 굵기:</label>
+            <input type="range" id="stroke-slider" min="4" max="24" value="12">
+            <span id="stroke-val">12px</span>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button type="button" class="btn btn-secondary" id="clear-btn">전체 지우기</button>
+          <button type="button" class="btn btn-primary" id="finish-btn">그림 완성! AI에게 분석 맡기기</button>
+        </div>
+      </section>
+
+      <section id="result-section" class="hidden">
+        <h2 id="result-title">AI 분석 완료!</h2>
+        <p style="color: #444; font-size: 0.95rem; margin-top: 6px; font-weight: 700;">내가 그린 그림</p>
+        
+        <img id="result-image" class="result-snapshot" alt="내가 그린 그림">
+        
+        <h3 style="font-weight: 900; margin-bottom: 12px;">실제 정답: <span id="result-answer" style="color: var(--blue);">사자</span></h3>
+        
+        <p style="margin-top: 16px; font-weight: 900;">AI의 추측 TOP 3 (주제 내 분석):</p>
+        <ul id="top3-list" class="top3-list"></ul>
+
+        <button type="button" class="btn btn-primary" id="restart-btn">다른 문제 도전하기</button>
+      </section>
+    </main>
   </div>
 
   <footer>
     © 문태양. 바이브코딩 실습 15 포트폴리오 (실시간 추론 연동).
   </footer>
-</div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const timeDisplay = document.getElementById('currentTimeDisplay');
-    function updateClock() {
+  <script>
+    setInterval(() => {
       const now = new Date();
-      timeDisplay.textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
+      document.getElementById('clock').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
+    }, 1000);
 
-    const dictionary = {
-      "cat": "고양이", "dog": "강아지", "rabbit": "토끼", "elephant": "코끼리", "lion": "사자",
-      "apple": "사과", "banana": "바나나", "grapes": "포도", "carrot": "당근", "broccoli": "브로콜리",
-      "chair": "의자", "computer": "컴퓨터", "book": "책", "clock": "시계", "pencil": "연필",
-      "car": "자동차", "airplane": "비행기", "bicycle": "자전거", "train": "기차", "sailboat": "배",
-      "line": "선", "circle": "원", "square": "사각형", "triangle": "삼각형",
-      "face": "얼굴", "smiley face": "웃는 얼굴", "snake": "뱀", "mouse": "쥐", 
-      "pear": "배(과일)", "pineapple": "파인애플", "bus": "버스", "truck": "트럭"
+    const CATEGORIES = {
+      animals: {
+        name: '동물',
+        words: [
+          { en: 'lion', ko: '사자' },
+          { en: 'cat', ko: '고양이' },
+          { en: 'dog', ko: '강아지' },
+          { en: 'elephant', ko: '코끼리' },
+          { en: 'rabbit', ko: '토끼' },
+          { en: 'pig', ko: '돼지' },
+          { en: 'fish', ko: '물고기' },
+          { en: 'bird', ko: '새' },
+          { en: 'penguin', ko: '펭귄' },
+          { en: 'butterfly', ko: '나비' },
+          { en: 'turtle', ko: '거북이' },
+          { en: 'duck', ko: '오리' }
+        ]
+      },
+      food: {
+        name: '과일/채소',
+        words: [
+          { en: 'apple', ko: '사과' },
+          { en: 'banana', ko: '바나나' },
+          { en: 'grapes', ko: '포도' },
+          { en: 'strawberry', ko: '딸기' },
+          { en: 'watermelon', ko: '수박' },
+          { en: 'pineapple', ko: '파인애플' },
+          { en: 'pear', ko: '배' },
+          { en: 'carrot', ko: '당근' },
+          { en: 'mushroom', ko: '버섯' },
+          { en: 'broccoli', ko: '브로콜리' },
+          { en: 'onion', ko: '양파' }
+        ]
+      },
+      objects: {
+        name: '사물',
+        words: [
+          { en: 'clock', ko: '시계' },
+          { en: 'umbrella', ko: '우산' },
+          { en: 'eyeglasses', ko: '안경' },
+          { en: 'cup', ko: '컵' },
+          { en: 'book', ko: '책' },
+          { en: 'camera', ko: '카메라' },
+          { en: 'scissors', ko: '가위' },
+          { en: 'key', ko: '열쇠' },
+          { en: 'chair', ko: '의자' },
+          { en: 'guitar', ko: '기타' },
+          { en: 'crown', ko: '왕관' }
+        ]
+      },
+      vehicles: {
+        name: '교통수단',
+        words: [
+          { en: 'car', ko: '자동차' },
+          { en: 'bus', ko: '버스' },
+          { en: 'bicycle', ko: '자전거' },
+          { en: 'airplane', ko: '비행기' },
+          { en: 'train', ko: '기차' },
+          { en: 'helicopter', ko: '헬리콥터' },
+          { en: 'sailboat', ko: '돛단배' },
+          { en: 'truck', ko: '트럭' },
+          { en: 'motorbike', ko: '오토바이' },
+          { en: 'ambulance', ko: '구급차' }
+        ]
+      }
     };
 
-    const categories = {
-      "동물": ["고양이", "강아지", "토끼", "코끼리", "사자"],
-      "과일채소": ["사과", "바나나", "포도", "당근", "브로콜리"],
-      "사물": ["의자", "컴퓨터", "책", "시계", "연필"],
-      "교통수단": ["자동차", "비행기", "자전거", "기차", "배"]
-    };
-
-    let selectedCategory = "동물";
-    let currentWord = "";
-    let timeLeft = 30;
-    let timer = null;
-    let realtimeTimer = null;
     let classifier;
-    let isGameActive = false;
+    let p5Canvas;
+    let isModelReady = false;
+    let isPlaying = false;
+    let hasDrawn = false;
 
-    const startScreen = document.getElementById('startScreen');
-    const playScreen = document.getElementById('playScreen');
-    const resultScreen = document.getElementById('resultScreen');
-    
-    const startBtn = document.getElementById('startBtn');
-    const btnSpinner = document.getElementById('btnSpinner');
-    const btnText = document.getElementById('btnText');
-    const restartBtn = document.getElementById('restartBtn');
-    
-    const selectedCatText = document.getElementById('selectedCatText');
-    const targetWord = document.getElementById('targetWord');
-    const timeLeftElem = document.getElementById('timeLeft');
-    const submitBtn = document.getElementById('submitBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const liveGuessText = document.getElementById('liveGuessText');
-    const liveProbText = document.getElementById('liveProbText');
-    
-    const resultTitle = document.getElementById('resultTitle');
-    const resultImg = document.getElementById('resultImg');
-    const ansText = document.getElementById('ansText');
-    const guessListContainer = document.getElementById('guessListContainer');
+    let currentCategoryKey = 'animals';
+    let currentTarget = null;
+    let latestFilteredResults = [];
 
-    const canvas = document.getElementById('drawCanvas');
-    const ctx = canvas.getContext('2d');
-    let isDrawing = false;
-    let currentLineWidth = 12;
+    let strokeColor = '#111827';
+    let strokeWidth = 12;
+    let timeLeft = 30;
+    let timerInterval = null;
+    let classifyTimeout = null;
 
-    classifier = ml5.imageClassifier('DoodleNet', () => {
-      btnSpinner.style.display = 'none';
-      btnText.textContent = '그림 그리기 시작';
-      startBtn.disabled = false;
-    });
+    function setup() {
+      p5Canvas = createCanvas(360, 360);
+      p5Canvas.parent('canvas-wrapper');
+      background(255);
+      strokeCap(ROUND);
+      strokeJoin(ROUND);
 
-    function clearCanvas() {
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    clearCanvas();
-
-    document.querySelectorAll('.category-chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('selected'));
-        e.target.classList.add('selected');
-        selectedCategory = e.target.dataset.cat;
+      classifier = ml5.imageClassifier('DoodleNet', () => {
+        isModelReady = true;
+        const statusEl = document.getElementById('loading-status');
+        statusEl.textContent = '✅ AI 모델 준비 완료! 카테고리를 선택해 시작하세요.';
+        statusEl.classList.add('ready');
+        document.querySelectorAll('.cat-btn').forEach(btn => btn.disabled = false);
       });
-    });
-
-    document.querySelectorAll('.pen-size').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.pen-size').forEach(b => b.classList.remove('active'));
-        e.currentTarget.classList.add('active');
-        currentLineWidth = parseInt(e.currentTarget.dataset.size);
-      });
-    });
-
-    function getPos(e) {
-      const rect = canvas.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: (clientX - rect.left) * (canvas.width / rect.width),
-        y: (clientY - rect.top) * (canvas.height / rect.height)
-      };
     }
 
-    const startDrawing = (e) => {
-      isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
-      if(e.type === 'touchstart') e.preventDefault();
-    };
-    const draw = (e) => {
-      if (!isDrawing) return;
-      const pos = getPos(e);
-      ctx.strokeStyle = "#000000";
-      ctx.lineWidth = currentLineWidth;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-      if(e.type === 'touchmove') e.preventDefault();
-    };
-    const stopDrawing = () => { isDrawing = false; };
-
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    window.addEventListener('mouseup', stopDrawing);
-    
-    canvas.addEventListener('touchstart', startDrawing, {passive: false});
-    canvas.addEventListener('touchmove', draw, {passive: false});
-    window.addEventListener('touchend', stopDrawing);
-
-    clearBtn.addEventListener('click', clearCanvas);
-
-    // [핵심] 실시간 추론 루프 (그리는 동안 지속적으로 AI 분류 수행)
-    function startRealtimeClassification() {
-      if (realtimeTimer) clearInterval(realtimeTimer);
-      
-      realtimeTimer = setInterval(() => {
-        if (!isGameActive || !classifier) return;
-
-        classifier.classify(canvas, (error, results) => {
-          if (error || !results || results.length === 0) return;
-
-          const topResult = results[0];
-          const rawLabel = topResult.label;
-          const translated = dictionary[rawLabel] || rawLabel;
-          const prob = Math.round(topResult.confidence * 100);
-
-          liveGuessText.textContent = translated;
-          liveProbText.textContent = `${prob}%`;
-
-          // 실시간 일치 여부 확인 (신뢰도가 35% 이상이면서 제시어와 일치할 때 자동 정답 처리)
-          if (translated === currentWord && prob >= 35) {
-            if (isGameActive) {
-              isGameActive = false;
-              clearInterval(timer);
-              clearInterval(realtimeTimer);
-              showResult(true, results);
-            }
-          }
-        });
-      }, 800); // 0.8초마다 실시간 추론
+    function draw() {
+      if (!isPlaying) return;
+      if (mouseIsPressed && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+        stroke(strokeColor);
+        strokeWeight(strokeWidth);
+        line(pmouseX, pmouseY, mouseX, mouseY);
+        hasDrawn = true;
+      }
     }
 
-    startBtn.addEventListener('click', () => {
-      startScreen.classList.remove('active');
-      resultScreen.classList.remove('active');
-      playScreen.classList.add('active');
+    function mouseReleased() {
+      if (isPlaying && hasDrawn) {
+        triggerClassification();
+      }
+    }
 
-      selectedCatText.textContent = selectedCategory;
-      const words = categories[selectedCategory];
-      currentWord = words[Math.floor(Math.random() * words.length)];
-      targetWord.textContent = currentWord;
+    function touchEnded() {
+      if (isPlaying && hasDrawn) {
+        triggerClassification();
+      }
+    }
 
-      clearCanvas();
-      liveGuessText.textContent = "열심히 그리는 중...";
-      liveProbText.textContent = "0%";
+    function triggerClassification() {
+      if (!isModelReady || !isPlaying || !hasDrawn) return;
+      clearTimeout(classifyTimeout);
+      classifyTimeout = setTimeout(() => {
+        classifier.classify(p5Canvas.elt, 345, gotResult);
+      }, 150);
+    }
 
+    function gotResult(error, results) {
+      if (error || !isPlaying || !hasDrawn) return;
+
+      const allowedWords = CATEGORIES[currentCategoryKey].words;
+      const wordMap = new Map(allowedWords.map(item => [item.en.toLowerCase(), item.ko]));
+
+      const filtered = results
+        .filter(r => wordMap.has(r.label.toLowerCase()))
+        .map(r => ({
+          en: r.label.toLowerCase(),
+          ko: wordMap.get(r.label.toLowerCase()),
+          rawConfidence: r.confidence
+        }));
+
+      if (filtered.length === 0) return;
+
+      const totalConf = filtered.reduce((sum, item) => sum + item.rawConfidence, 0);
+      latestFilteredResults = filtered.map(item => ({
+        ...item,
+        confidence: totalConf > 0 ? (item.rawConfidence / totalConf) : 0
+      }));
+
+      const topGuess = latestFilteredResults[0];
+      const percent = Math.round(topGuess.confidence * 100);
+
+      document.getElementById('ai-guess-text').textContent = `🤖 AI 실시간 추측: ${topGuess.ko}`;
+      document.getElementById('ai-confidence-text').textContent = `${percent}%`;
+      document.getElementById('ai-progress-fill').style.width = `${percent}%`;
+
+      if (topGuess.en === currentTarget.en && topGuess.rawConfidence > 0.15) {
+        endGame(true);
+      }
+    }
+
+    function startGame(catKey) {
+      currentCategoryKey = catKey;
+      const catData = CATEGORIES[catKey];
+      currentTarget = catData.words[Math.floor(Math.random() * catData.words.length)];
+
+      document.getElementById('category-section').classList.add('hidden');
+      document.getElementById('result-section').classList.add('hidden');
+      document.getElementById('game-section').classList.remove('hidden');
+
+      document.getElementById('display-category').textContent = catData.name;
+      document.getElementById('display-target').textContent = currentTarget.ko;
+
+      resetCanvas();
+      isPlaying = true;
       timeLeft = 30;
-      timeLeftElem.textContent = timeLeft;
-      isGameActive = true;
+      document.getElementById('display-timer').textContent = timeLeft;
 
-      if (timer) clearInterval(timer);
-      timer = setInterval(() => {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
         timeLeft--;
-        timeLeftElem.textContent = timeLeft;
+        document.getElementById('display-timer').textContent = timeLeft;
         if (timeLeft <= 0) {
-          clearInterval(timer);
-          isGameActive = false;
-          if (realtimeTimer) clearInterval(realtimeTimer);
-          submitDrawing(); // 시간 초과 시 최종 분석 제출
+          endGame(false);
         }
       }, 1000);
-
-      startRealtimeClassification();
-    });
-
-    submitBtn.addEventListener('click', () => {
-      if (!isGameActive) return;
-      isGameActive = false;
-      if (timer) clearInterval(timer);
-      if (realtimeTimer) clearInterval(realtimeTimer);
-      submitDrawing();
-    });
-
-    function submitDrawing() {
-      submitBtn.disabled = true;
-      submitBtn.textContent = "AI가 분석 중입니다...";
-      
-      classifier.classify(canvas, (error, results) => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "그림 완성! AI에게 분석 맡기기";
-        
-        if (error) {
-          console.error(error);
-          alert("AI 분석 중 오류가 발생했습니다.");
-          return;
-        }
-
-        let isCorrect = false;
-        for (let i = 0; i < 3 && i < results.length; i++) {
-          const rawLabel = results[i].label;
-          const translatedLabel = dictionary[rawLabel] || rawLabel;
-          if (translatedLabel === currentWord) isCorrect = true;
-        }
-
-        showResult(isCorrect, results);
-      });
     }
 
-    function showResult(isCorrect, results) {
-      playScreen.classList.remove('active');
-      resultScreen.classList.add('active');
+    function resetCanvas() {
+      background(255);
+      hasDrawn = false;
+      latestFilteredResults = [];
+      document.getElementById('ai-guess-text').textContent = '🤖 AI 실시간 추측: 열심히 그리는 중...';
+      document.getElementById('ai-confidence-text').textContent = '0%';
+      document.getElementById('ai-progress-fill').style.width = '0%';
+    }
 
-      resultImg.src = canvas.toDataURL('image/png');
-      ansText.textContent = currentWord;
-      guessListContainer.innerHTML = '';
+    function endGame(isSuccess) {
+      if (!isPlaying) return;
+      isPlaying = false;
+      clearInterval(timerInterval);
+      clearTimeout(classifyTimeout);
 
-      for (let i = 0; i < 3 && i < results.length; i++) {
-        const rawLabel = results[i].label;
-        const prob = Math.round(results[i].confidence * 100);
-        const translatedLabel = dictionary[rawLabel] || rawLabel;
-        const rowIsCorrect = (translatedLabel === currentWord);
+      const dataUrl = p5Canvas.elt.toDataURL('image/png');
+      document.getElementById('result-image').src = dataUrl;
+      document.getElementById('result-answer').textContent = currentTarget.ko;
 
-        const row = document.createElement('div');
-        row.className = `guess-row ${rowIsCorrect ? 'correct' : ''}`;
-        row.innerHTML = `
-          <div class="guess-rank">${i+1}위</div>
-          <div class="guess-name">${translatedLabel} ${rowIsCorrect ? '🎉 (정답!)' : ''}</div>
-          <div class="guess-prob">${prob}%</div>
-        `;
-        guessListContainer.appendChild(row);
-      }
-
-      if (isCorrect) {
-        resultTitle.textContent = "성공! AI가 그림을 알아맞혔습니다!";
-        resultTitle.style.color = "var(--green)";
+      const titleEl = document.getElementById('result-title');
+      if (isSuccess) {
+        titleEl.textContent = '🎉 정답입니다! AI가 그림을 맞혔어요!';
+        titleEl.style.color = 'var(--green)';
       } else {
-        resultTitle.textContent = "아쉽네요! AI가 정답을 맞히지 못했어요.";
-        resultTitle.style.color = "var(--pink)";
+        titleEl.textContent = '⏰ 시간 종료! AI 분석 완료!';
+        titleEl.style.color = 'var(--black)';
       }
+
+      const listEl = document.getElementById('top3-list');
+      listEl.innerHTML = '';
+
+      if (latestFilteredResults.length === 0) {
+        listEl.innerHTML = '<li class="top3-item">그려진 그림이 없어 분석하지 못했습니다.</li>';
+      } else {
+        latestFilteredResults.slice(0, 3).forEach((item, idx) => {
+          const li = document.createElement('li');
+          li.className = 'top3-item';
+          const isMatch = item.en === currentTarget.en ? ' ✅' : '';
+          li.innerHTML = `<span>${idx + 1}위. ${item.ko}${isMatch}</span> <span style="color: var(--blue);">${Math.round(item.confidence * 100)}%</span>`;
+          listEl.appendChild(li);
+        });
+      }
+
+      document.getElementById('game-section').classList.add('hidden');
+      document.getElementById('result-section').classList.remove('hidden');
     }
 
-    restartBtn.addEventListener('click', () => {
-      resultScreen.classList.remove('active');
-      startScreen.classList.add('active');
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => startGame(btn.dataset.cat));
     });
-  });
-</script>
 
+    document.querySelectorAll('.color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        strokeColor = btn.dataset.color;
+      });
+    });
+
+    const strokeSlider = document.getElementById('stroke-slider');
+    strokeSlider.addEventListener('input', (e) => {
+      strokeWidth = Number(e.target.value);
+      document.getElementById('stroke-val').textContent = `${strokeWidth}px`;
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', resetCanvas);
+    document.getElementById('finish-btn').addEventListener('click', () => {
+      const topIsAnswer = latestFilteredResults.length > 0 && latestFilteredResults[0].en === currentTarget.en;
+      endGame(topIsAnswer);
+    });
+
+    document.getElementById('restart-btn').addEventListener('click', () => {
+      document.getElementById('result-section').classList.add('hidden');
+      document.getElementById('category-section').classList.remove('hidden');
+    });
+  </script>
 </body>
 </html>
