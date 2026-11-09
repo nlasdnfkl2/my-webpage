@@ -459,7 +459,7 @@
       </div>
       <h1>실시간으로 추론하는<br>AI 캐치마인드 앱</h1>
       <p class="subtitle">
-        그림을 그리는 동안 AI가 선택한 카테고리 안에서 무엇을 그리는지 실시간으로 유추하며, 제시어와 일치하는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.
+        그림을 그리는 동안 AI가 선택한 카테고리 안에서 무엇을 그리는지 실시간으로 유추하며, AI의 추측 TOP 3 안에 제시어가 포함되는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.
       </p>
 
       <section id="category-section">
@@ -764,14 +764,21 @@
         confidence: totalConf > 0 ? (item.rawConfidence / totalConf) : 0
       }));
 
-      const topGuess = latestFilteredResults[0];
+      const top3 = latestFilteredResults.slice(0, 3);
+      const topGuess = top3[0];
       const percent = Math.round(topGuess.confidence * 100);
 
-      document.getElementById('ai-guess-text').textContent = `🤖 AI 실시간 추측: ${topGuess.ko}`;
+      const top3Text = top3
+        .map((item, idx) => `${idx + 1}위 ${item.ko}(${Math.round(item.confidence * 100)}%)`)
+        .join(' · ');
+
+      document.getElementById('ai-guess-text').textContent = `🤖 AI 실시간 TOP 3: ${top3Text}`;
       document.getElementById('ai-confidence-text').textContent = `${percent}%`;
       document.getElementById('ai-progress-fill').style.width = `${percent}%`;
 
-      if (topGuess.en === currentTarget.en && percent >= 25) {
+      // 주제 내 TOP 3 안에 현재 제시어(정답)가 포함되어 있으면 즉시 정답 처리
+      const isAnswerInTop3 = top3.some(item => item.en === currentTarget.en);
+      if (isAnswerInTop3) {
         endGame(true);
       }
     }
@@ -832,7 +839,7 @@
 
       const titleEl = document.getElementById('result-title');
       if (isSuccess) {
-        titleEl.textContent = '🎉 정답입니다! AI가 그림을 맞혔어요!';
+        titleEl.textContent = '🎉 정답입니다! AI 추측 TOP 3 안에 들었어요!';
         titleEl.style.color = 'var(--green)';
       } else {
         titleEl.textContent = '⏰ 시간 종료! AI 분석 완료!';
@@ -878,8 +885,9 @@
 
     document.getElementById('clear-btn').addEventListener('click', resetCanvas);
     document.getElementById('finish-btn').addEventListener('click', () => {
-      const topIsAnswer = latestFilteredResults.length > 0 && latestFilteredResults[0].en === currentTarget.en;
-      endGame(topIsAnswer);
+      const top3 = latestFilteredResults.slice(0, 3);
+      const isAnswerInTop3 = top3.some(item => item.en === currentTarget.en);
+      endGame(isAnswerInTop3);
     });
 
     document.getElementById('restart-btn').addEventListener('click', () => {
