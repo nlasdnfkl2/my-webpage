@@ -8,13 +8,11 @@
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
     :root {
-      /* 네오 브루탈리즘 테마 컬러 파레트 */
       --bg: #fdfbf7;
       --black: #111111;
       --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
       
-      /* 팝(Pop) 컬러 */
       --yellow: #ffd83b;
       --red: #ff4757;
       --blue: #3e51ff;
@@ -32,16 +30,13 @@
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       position: relative;
-      padding-top: 70px; /* 상단 고정 바 공간 확보 */
+      padding-top: 70px;
     }
     
-    /* 상단 고정 바 스타일 (네오 브루탈리즘) */
     .fixed-top-bar {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
+      top: 0; left: 0;
+      width: 100%; height: 60px;
       background: var(--yellow);
       border-bottom: var(--border-thick);
       display: flex;
@@ -68,18 +63,14 @@
     }
 
     .fixed-top-bar .icon-btn {
-      width: 38px;
-      height: 38px;
+      width: 38px; height: 38px;
       background: white;
       border: var(--border);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       box-shadow: 3px 3px 0 var(--black);
       cursor: pointer;
-      font-weight: 900;
-      font-size: 0.9rem;
+      font-weight: 900; font-size: 0.9rem;
       transition: all 0.1s ease;
       text-decoration: none;
       color: var(--black);
@@ -92,34 +83,9 @@
       background: var(--cyan);
     }
 
-    .music-wrap:hover .music-player-panel {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .music-player-panel button {
-      background: var(--green);
-      border: var(--border);
-      padding: 4px 10px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 var(--black);
-    }
-    .music-player-panel button:hover {
-      background: var(--black);
-      color: white;
-    }
-
-    .music-player-panel input[type="range"] {
-      accent-color: var(--black);
-      cursor: pointer;
-    }
-
     .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
     a { color: inherit; transition: all 0.2s ease; text-decoration: none; }
-    
-    /* 헤더 네비게이션 */
+
     .top {
       display: flex; justify-content: space-between; align-items: baseline;
       padding: 24px 0; 
@@ -136,39 +102,25 @@
       transform: skew(-5deg);
     }
     .top nav { display: flex; gap: 24px; }
-    .top nav a { 
-      position: relative; 
-      padding: 4px 8px;
-    }
-    .top nav a:hover { 
-      background: var(--black); 
-      color: var(--bg); 
-    }
+    .top nav a { position: relative; padding: 4px 8px; }
+    .top nav a:hover { background: var(--black); color: var(--bg); }
 
-    /* 좌우 흔들림(Wiggle) 키프레임 애니메이션 */
     @keyframes wiggle {
       0%, 100% { transform: rotate(var(--rot, 0deg)) translateX(0); }
       25% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
       50% { transform: rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
       75% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
     }
-    @keyframes wiggle-scale {
-      0%, 100% { transform: scale(1.1) rotate(var(--rot, 0deg)) translateX(0); }
-      25% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-      50% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
-      75% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-    }
 
-    /* 히어로 섹션 */
-    .hero { padding: 120px 0 100px; border-bottom: var(--border-thick); }
+    .hero { padding: 100px 0 80px; border-bottom: var(--border-thick); }
     .hero .small { 
       display: inline-block; font-size: 1rem; font-weight: 800; 
       background: var(--cyan); border: var(--border); padding: 4px 12px;
-      box-shadow: 4px 4px 0 var(--black); margin-bottom: 32px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 24px;
     }
     .hero h1 {
-      font-size: clamp(2.8rem, 7vw, 5rem);
-      line-height: 1.15; letter-spacing: -0.02em; font-weight: 900;
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      line-height: 1.2; font-weight: 900;
     }
     .hero h1 span { 
       display: inline-block;
@@ -177,221 +129,129 @@
       border: var(--border-thick);
       padding: 0 16px;
       box-shadow: 6px 6px 0 var(--black);
-      
-      --rot: -2deg;
-      transform: rotate(var(--rot));
-      animation: wiggle 0.6s ease-in-out 1s;
+      transform: rotate(-2deg);
     }
-    .hero h1 span:hover {
-      animation: wiggle 0.4s ease-in-out infinite;
-    }
-    
     .hero p { 
-      max-width: 36em; margin-top: 40px; font-size: 1.15rem; font-weight: 600;
+      max-width: 36em; margin-top: 30px; font-size: 1.1rem; font-weight: 600;
       border-left: 6px solid var(--black); padding-left: 20px;
     }
-    .hero .meta { margin-top: 48px; display: flex; flex-wrap: wrap; gap: 16px; }
+    .hero .meta { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
     .hero .meta span {
       background: var(--pink); border: var(--border); box-shadow: 3px 3px 0 var(--black);
-      padding: 6px 14px; font-size: 0.95rem; font-weight: 800;
+      padding: 6px 14px; font-size: 0.9rem; font-weight: 800;
     }
-    .hero .meta span:nth-child(2) { background: var(--green); }
-    .hero .meta span:nth-child(3) { background: var(--blue); color: white; }
 
-    /* 공통 섹션 스타일 */
-    section { padding: 100px 0; border-bottom: var(--border-thick); }
+    section { padding: 80px 0; border-bottom: var(--border-thick); }
     .label {
       display: inline-block; font-size: 1rem; font-weight: 900;
       background: var(--black); color: white; padding: 4px 16px;
-      margin-bottom: 24px; text-transform: uppercase;
+      margin-bottom: 20px; text-transform: uppercase;
       box-shadow: 4px 4px 0 var(--red);
-      --rot: 0deg;
-      transform: rotate(var(--rot));
     }
-    .label:hover { animation: wiggle 0.4s ease-in-out infinite; cursor: default; }
 
-    h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 24px; }
-    .lead { max-width: 38em; font-size: 1.1rem; font-weight: 600; }
+    h2 { font-size: 2rem; font-weight: 900; margin-bottom: 20px; }
+    .lead { max-width: 38em; font-size: 1.05rem; font-weight: 600; }
 
-    /* About 섹션 */
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; }
     .two div {
       border: var(--border-thick); background: white;
-      padding: 32px; box-shadow: 8px 8px 0 var(--black);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .two div:hover {
-      transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--black);
+      padding: 24px; box-shadow: 6px 6px 0 var(--black);
     }
     .two div:nth-child(1) { background: #ffeaa7; }
     .two div:nth-child(2) { background: #81ecec; }
-    .two h3 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 8px; display: inline-block; }
-    .two p { font-size: 1.05rem; font-weight: 600; margin-top: 12px; }
+    .two h3 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 6px; display: inline-block; }
 
-    /* Work 그룹 타이틀 */
-    .work-group { margin-top: 80px; }
+    .work-group { margin-top: 60px; }
     .work-group-title {
       display: inline-block;
-      font-size: 1.2rem; font-weight: 900;
+      font-size: 1.1rem; font-weight: 900;
       border: var(--border); background: var(--yellow);
-      padding: 8px 20px; box-shadow: 4px 4px 0 var(--black);
-      margin-bottom: 40px; 
-      --rot: 1deg;
-      transform: rotate(var(--rot));
+      padding: 6px 16px; box-shadow: 4px 4px 0 var(--black);
+      margin-bottom: 30px;
     }
-    .work-group-title:hover { animation: wiggle 0.4s ease-in-out infinite; cursor: default; }
 
     .work { 
-      margin-top: 48px; padding: 32px; 
+      margin-top: 36px; padding: 24px; 
       border: var(--border); background: white;
-      box-shadow: 6px 6px 0 var(--black);
+      box-shadow: 5px 5px 0 var(--black);
     }
-    .work h3 { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .work h3 { font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .work .when { 
-      display: inline-block; font-size: 0.9rem; font-weight: 800; 
-      background: var(--black); color: white; padding: 2px 10px; margin: 12px 0 20px; 
-    }
-    .work p { max-width: 42em; font-weight: 600; font-size: 1.05rem; }
-    
-    .project-link {
-      font-size: 0.95rem; font-weight: 900;
-      background: var(--green); border: var(--border);
-      padding: 6px 16px; box-shadow: 4px 4px 0 var(--black);
-      transition: all 0.2s; white-space: nowrap;
-    }
-    .project-link:hover { 
-      transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black);
-      background: var(--black); color: var(--green); 
+      display: inline-block; font-size: 0.85rem; font-weight: 800; 
+      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 16px; 
     }
 
-    .carousel-wrap { margin-top: 24px; position: relative; }
+    .carousel-wrap { margin-top: 16px; position: relative; }
     .carousel {
       display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-      gap: 20px; padding-bottom: 20px; -webkit-overflow-scrolling: touch;
+      gap: 16px; padding-bottom: 12px;
     }
-    .carousel::-webkit-scrollbar { height: 12px; border: var(--border); background: white; }
-    .carousel::-webkit-scrollbar-thumb { background: var(--black); border-left: var(--border); border-right: var(--border); }
     .carousel img {
-      scroll-snap-align: start; flex: 0 0 85%; max-width: 500px; max-height: 400px;
-      object-fit: contain;
-      padding: 16px;
-      border: var(--border-thick); background: #fff;
-      box-shadow: 8px 8px 0 var(--black);
+      scroll-snap-align: start; flex: 0 0 75%; max-width: 380px; max-height: 280px;
+      object-fit: contain; padding: 12px;
+      border: var(--border); background: #fff;
+      box-shadow: 5px 5px 0 var(--black);
     }
-    @media (min-width: 768px) { .carousel img { flex: 0 0 auto; width: 60%; } }
 
     .flip-container {
       background-color: transparent;
       perspective: 1000px;
-      margin-top: 24px;
+      margin-top: 16px;
       width: 100%;
       position: relative;
     }
-    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; max-width: 500px; }
-    .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 400px; }
-    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 400px; }
-    
+    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; max-width: 400px; }
+    .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 300px; }
+    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 300px; }
+
     .flip-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transform-style: preserve-3d;
-      cursor: pointer;
+      position: relative; width: 100%; height: 100%;
+      text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d; cursor: pointer;
     }
-    
-    .flip-container.is-flipped .flip-inner {
-      transform: rotateY(180deg);
-    }
-    
+    .flip-container.is-flipped .flip-inner { transform: rotateY(180deg); }
     .flip-front, .flip-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border: var(--border-thick);
-      box-shadow: 8px 8px 0 var(--black);
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden; border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black); background: white;
+      display: flex; align-items: center; justify-content: center;
     }
-    
-    .flip-back {
-      transform: rotateY(180deg);
-    }
-    
-    .flip-front img, .flip-back img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      padding: 16px;
-    }
-    
+    .flip-back { transform: rotateY(180deg); }
+    .flip-front img, .flip-back img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
     .flip-hint {
-      position: absolute;
-      bottom: -16px;
-      right: -16px;
-      background: var(--yellow);
-      border: var(--border);
-      padding: 6px 18px;
-      font-weight: 900;
-      font-size: 1rem;
-      box-shadow: 4px 4px 0 var(--black);
-      z-index: 100;
-      pointer-events: none;
-      color: var(--black);
-      
-      --rot: -5deg;
-      transform: rotate(var(--rot));
-      animation: wiggle 0.6s ease-in-out 1.5s;
-    }
-    .flip-container:hover .flip-hint {
-      background: var(--red);
-      color: white;
-      animation: wiggle-scale 0.4s ease-in-out infinite;
+      position: absolute; bottom: -12px; right: -12px;
+      background: var(--yellow); border: var(--border); padding: 4px 12px;
+      font-weight: 900; font-size: 0.85rem; box-shadow: 3px 3px 0 var(--black);
     }
 
-    details { 
-      background: white; border: var(--border-thick); box-shadow: 6px 6px 0 var(--black); 
-      margin-top: 24px;
-    }
-    summary { 
-      font-weight: 900; cursor: pointer; padding: 16px 24px; outline: none; user-select: none;
-      background: var(--pink); border-bottom: var(--border-thick); font-size: 1.1rem;
-    }
-    .pdf-container {
-      position: relative; padding-bottom: 141.4%; height: 0; background: #e0e0e0;
-    }
-    .pdf-container iframe {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
-    }
+    details { background: white; border: var(--border-thick); box-shadow: 5px 5px 0 var(--black); margin-top: 16px; }
+    summary { font-weight: 900; cursor: pointer; padding: 12px 20px; background: var(--pink); border-bottom: var(--border-thick); }
+    .pdf-container { position: relative; padding-bottom: 141.4%; height: 0; background: #e0e0e0; }
+    .pdf-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
+    /* 컴팩트 앱 카드 그리드 (미리보기 크기 최적화) */
     .app-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 32px; margin-top: 24px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px; margin-top: 20px;
     }
     .app-card {
       display: flex; flex-direction: column; border: var(--border-thick);
       background: white; overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease; text-decoration: none;
-      color: var(--black); box-shadow: 8px 8px 0 var(--black);
+      color: var(--black); box-shadow: 6px 6px 0 var(--black);
     }
-    .app-card:hover {
-      transform: translate(-6px, -6px); box-shadow: 14px 14px 0 var(--black);
-    }
-    
+    .app-card:hover { transform: translate(-4px, -4px); box-shadow: 10px 10px 0 var(--black); }
+
     .browser-bar {
-      height: 44px; background: var(--cyan); border-bottom: var(--border-thick);
-      display: flex; align-items: center; padding: 0 16px; gap: 10px;
+      height: 36px; background: var(--cyan); border-bottom: var(--border-thick);
+      display: flex; align-items: center; padding: 0 12px; gap: 8px;
     }
     .app-card:nth-child(2n) .browser-bar { background: var(--pink); }
     .app-card:nth-child(3n) .browser-bar { background: var(--yellow); }
-    .browser-dot { width: 14px; height: 14px; border: 2px solid var(--black); border-radius: 50%; background: white; }
+    .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: white; }
 
     .mockup-window {
-      width: 100%; padding-top: 56.25%; position: relative; overflow: hidden; 
+      width: 100%; padding-top: 60%; position: relative; overflow: hidden; 
       background: white; border-bottom: var(--border-thick);
     }
     .mockup-window iframe {
@@ -402,119 +262,98 @@
     .mockup-window img {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
     }
-    .code-placeholder {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: var(--black); color: var(--green); font-family: monospace; font-size: 1.2rem; font-weight: 800;
-    }
 
-    .app-info { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; background: white; }
+    .app-info { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; background: white; }
     .app-info .tech { 
-      font-size: 0.85rem; font-weight: 900; margin-bottom: 12px; 
+      font-size: 0.75rem; font-weight: 900; margin-bottom: 8px; 
       border: 2px solid var(--black); display: inline-block; align-self: flex-start;
-      padding: 4px 10px; background: var(--yellow); box-shadow: 2px 2px 0 var(--black);
+      padding: 2px 8px; background: var(--yellow); box-shadow: 2px 2px 0 var(--black);
     }
-    .app-info h3 { font-size: 1.35rem; margin-bottom: 12px; font-weight: 900; line-height: 1.3; }
-    .app-info p { font-size: 1rem; font-weight: 600; margin-bottom: 24px; flex-grow: 1; }
-    
+    .app-info h3 { font-size: 1.15rem; margin-bottom: 8px; font-weight: 900; }
+    .app-info p { font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; flex-grow: 1; }
+
     .app-link-btn {
-      align-self: flex-start; font-size: 0.95rem; font-weight: 900; padding: 10px 20px;
-      background: white; border: var(--border); box-shadow: 4px 4px 0 var(--black);
+      align-self: flex-start; font-size: 0.85rem; font-weight: 900; padding: 8px 14px;
+      background: white; border: var(--border); box-shadow: 3px 3px 0 var(--black);
       transition: all 0.2s; color: var(--black); text-transform: uppercase;
     }
     .app-card:hover .app-link-btn { 
-      background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black);
+      background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
     }
 
-    .contact { padding: 120px 0; border-bottom: 0; text-align: center; }
-    .contact h2 { font-size: 2.5rem; }
+    .contact { padding: 100px 0; border-bottom: 0; text-align: center; }
+    .contact h2 { font-size: 2.2rem; }
     .contact a {
-      display: inline-block; margin-top: 24px; text-decoration: none; font-size: 2rem;
+      display: inline-block; margin-top: 20px; text-decoration: none; font-size: 1.6rem;
       font-weight: 900; background: var(--yellow); border: var(--border-thick);
-      padding: 12px 32px; box-shadow: 8px 8px 0 var(--black);
-      transition: all 0.2s;
-    }
-    .contact a:hover { 
-      background: var(--black); color: var(--yellow); transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--yellow);
+      padding: 10px 24px; box-shadow: 6px 6px 0 var(--black);
     }
     footer { 
-      padding: 40px 0; color: white; background: var(--black);
-      font-size: 1rem; font-weight: 800; text-align: center;
-      border-top: var(--border-thick); border-color: var(--black);
+      padding: 30px 0; color: white; background: var(--black);
+      font-size: 0.9rem; font-weight: 800; text-align: center;
+      border-top: var(--border-thick);
     }
 
     .nav-assistant {
-      position: fixed; top: 50%; right: 24px; transform: translateY(-50%);
-      display: flex; flex-direction: column; gap: 16px;
+      position: fixed; top: 50%; right: 16px; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 10px;
       background: white; border: var(--border-thick);
-      padding: 24px 16px; box-shadow: 8px 8px 0 var(--black); z-index: 1000;
+      padding: 12px 10px; box-shadow: 5px 5px 0 var(--black); z-index: 1000;
     }
     .nav-dot {
-      width: 24px; height: 24px; background: white;
+      width: 18px; height: 18px; background: white;
       border: var(--border); transition: all 0.2s; cursor: pointer; position: relative;
     }
-    .nav-dot.active { background: var(--red); box-shadow: 4px 4px 0 var(--black); transform: translate(-2px, -2px); }
+    .nav-dot.active { background: var(--red); box-shadow: 2px 2px 0 var(--black); transform: translate(-2px, -2px); }
     .nav-dot::after {
-      content: attr(data-tooltip); position: absolute; right: 36px; top: 50%; transform: translateY(-50%);
-      background: var(--black); color: white; padding: 8px 14px; font-size: 0.9rem;
+      content: attr(data-tooltip); position: absolute; right: 26px; top: 50%; transform: translateY(-50%);
+      background: var(--black); color: white; padding: 4px 10px; font-size: 0.8rem;
       border: 2px solid var(--black); opacity: 0; pointer-events: none;
-      transition: opacity 0.2s, transform 0.2s; white-space: nowrap; font-weight: 800;
+      transition: opacity 0.2s; white-space: nowrap; font-weight: 800;
     }
-    .nav-dot:hover::after { opacity: 1; transform: translateY(-50%) translateX(-8px); box-shadow: 4px 4px 0 var(--red); }
+    .nav-dot:hover::after { opacity: 1; }
 
     .brutal-reveal {
-      opacity: 0; transform: translateY(40px) scale(0.98); 
-      transition: opacity 0.6s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0; transform: translateY(30px) scale(0.98); 
+      transition: opacity 0.5s, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .brutal-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
 
-    @media (max-width: 900px) { .nav-assistant { display: none; } }
-    @media (max-width: 680px) {
-      .hero { padding: 80px 0 60px; }
-      section { padding: 80px 0; }
-      .two { grid-template-columns: 1fr; gap: 32px; }
-      .top { flex-direction: column; gap: 16px; align-items: flex-start; }
-      .app-grid { grid-template-columns: 1fr; }
-      .contact h2 { font-size: 1.8rem; }
-      .contact a { font-size: 1.4rem; }
+    @media (max-width: 992px) {
+      .nav-assistant { top: auto; bottom: 16px; right: 16px; transform: none; flex-direction: row; }
+      .nav-dot::after { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- 상단 고정 바 (스크롤 무관, 날짜/시간, 아이콘 4개: 깃헙, 메일, 블로그, 음표+플레이어) -->
 <div class="fixed-top-bar">
   <div class="current-time" id="currentTimeDisplay">--:--:--</div>
   <div class="icon-group">
-    <!-- 1. 깃헙 아이콘 -->
     <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
     </a>
-    <!-- 2. 메일 아이콘 -->
     <a href="mailto:nn80300@naver.com" class="icon-btn" title="Email">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
     </a>
-    <!-- 3. 네이버 블로그 아이콘 -->
     <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
     </a>
     <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
-      <!-- 일반 음표 아이콘 -->
       <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-      <!-- 음소거(사선) 아이콘 (기본은 숨김) -->
       <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
     </div>
   </div>
 </div>
 
-<!-- 백그라운드 유튜브 재생용 숨김 아이프레임 -->
 <div id="youtubePlayerContainer" style="display:none;"></div>
 
-<!-- 탐색 도우미 -->
 <div class="nav-assistant">
   <div class="nav-dot active" data-tooltip="Intro" data-target="intro"></div>
   <div class="nav-dot" data-tooltip="About" data-target="about"></div>
-  <div class="nav-dot" data-tooltip="Activities" data-target="work"></div>
+  <div class="nav-dot" data-tooltip="Visual Design" data-target="work-visual"></div>
+  <div class="nav-dot" data-tooltip="Policy & Research" data-target="work-policy"></div>
+  <div class="nav-dot" data-tooltip="Web Apps (Lab 1-17)" data-target="work-web"></div>
   <div class="nav-dot" data-tooltip="Contact" data-target="contact"></div>
 </div>
 
@@ -523,7 +362,7 @@
     <b>문태양</b>
     <nav>
       <a href="#about">소개</a>
-      <a href="#work">활동 및 프로젝트</a>
+      <a href="#work-visual">활동</a>
       <a href="#contact">연락</a>
     </nav>
   </div>
@@ -532,27 +371,27 @@
     <p class="small">상업정보교육과 · 문헌정보교육과 복수전공</p>
     <h1>배우고, 엮어내어<br>작은 것을 <span>만들어</span> 봅니다.</h1>
     <p>
-      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 그것을 기획안, 시각적 디자인, 또는 실용적인 도구로 구현해 내는 과정을 즐깁니다. 일상의 불편함을 줄이거나 사회에 긍정적인 가치를 더하는 일에 관심이 많습니다.
+      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 기획안, 시각 디자인, 또는 실용적인 도구로 구현해 내는 과정을 즐깁니다.
     </p>
     <div class="meta">
       <span>#교육과 지식정보</span>
       <span>#시각 디자인</span>
-      <span>#기획 및 아이디어</span>
+      <span>#기획 및 웹 앱 개발</span>
     </div>
   </header>
 
   <section id="about" class="scroll-section brutal-reveal">
     <p class="label">About</p>
     <h2>지금 관심 있는 것</h2>
-    <p class="lead">상업정보와 문헌정보학을 함께 배우며, "정보를 사람들에게 어떻게 더 유용하고 매력적으로 전달할 수 있을까"를 치열하게 고민하고 있습니다.</p>
+    <p class="lead">상업정보와 문헌정보학을 함께 배우며, 정보를 사람들에게 더 유용하고 매력적으로 전달하는 방법을 고민합니다.</p>
     <div class="two">
       <div>
         <h3>기획과 제안</h3>
-        <p>복잡한 문제를 분석하고 실현 가능한 아이디어로 풀어내는 것을 좋아합니다. 도서관 정책부터 지역 축제까지 공간과 사람을 잇는 기획을 시도하고 있습니다.</p>
+        <p>복잡한 문제를 분석하고 실현 가능한 아이디어로 풀어냅니다. 도서관 정책부터 지역 축제까지 공간과 사람을 잇는 기획을 시도합니다.</p>
       </div>
       <div>
         <h3>시각화와 도구 제작</h3>
-        <p>추상적인 아이디어를 포스터, 엠블럼 등의 시각 디자인으로 표현하거나, 일상에서 바로 쓸 수 있는 프로그램과 기기를 직접 만들어보며 기술을 익히고 있습니다.</p>
+        <p>추상적인 아이디어를 포스터와 그래픽으로 표현하고, 브라우저에서 바로 쓸 수 있는 인터랙티브 웹 앱을 직접 제작합니다.</p>
       </div>
     </div>
   </section>
@@ -560,16 +399,15 @@
   <section id="work" class="scroll-section">
     <p class="label">Activities</p>
     <h2 class="brutal-reveal">해본 것</h2>
-    <p class="lead brutal-reveal">관심사를 바탕으로 도전했던 공모전 기획과 다양한 시각 디자인, 그리고 직접 코드를 짜서 만든 웹/하드웨어 프로젝트 기록입니다.</p>
+    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 실습 1부터 17까지 구현한 웹 앱 프로젝트 아카이브입니다.</p>
 
-    <!-- Group 1: 시각 디자인 및 3D 모델링 -->
-    <div class="work-group brutal-reveal">
+    <!-- Group 1: 시각 디자인 -->
+    <div class="work-group scroll-section brutal-reveal" id="work-visual">
       <div class="work-group-title">시각 디자인 및 3D 모델링</div>
       
       <article class="work brutal-reveal">
         <h3>학교 마스코트 미니블록 디자인</h3>
         <p class="when">3학년</p>
-        <p>학교의 마스코트 캐릭터를 활용하여, 입체적인 3D 미니블록 형태로 재구성 및 디자인한 결과물입니다.</p>
         <div class="carousel-wrap">
           <div class="carousel">
             <img src="대각선.png" alt="미니블록 대각선">
@@ -583,104 +421,24 @@
       <article class="work brutal-reveal">
         <h3>경기 전국체전 디자인</h3>
         <p class="when">그래픽 디자인 공모</p>
-        <p>경기도에서 열리는 제108회 전국체육대회 및 제48회 전국장애인체육대회의 디자인 작업입니다. 카드를 클릭해 통합 엠블럼과 포스터를 확인해 보세요.</p>
         <div class="flip-container ratio-poster">
           <div class="flip-inner">
-            <div class="flip-front">
-              <img src="양대회통합–엠블럼–260108-문태양.png" alt="전국체전 통합 엠블럼">
-            </div>
-            <div class="flip-back">
-              <img src="전국장애인체전–포스터–260108-문태양.png" alt="전국체전 대회 포스터">
-            </div>
+            <div class="flip-front"><img src="양대회통합–엠블럼–260108-문태양.png" alt="엠블럼"></div>
+            <div class="flip-back"><img src="전국장애인체전–포스터–260108-문태양.png" alt="포스터"></div>
           </div>
           <div class="flip-hint">CLICK!</div>
-        </div>
-      </article>
-
-      <article class="work brutal-reveal">
-        <h3>제주 전국체전 메달 디자인</h3>
-        <p class="when">그래픽 디자인 공모</p>
-        <p>제주도에서 개최되는 제107회 전국체육대회의 상징성을 담은 메달 디자인입니다. 이미지를 클릭해 양면을 확인해 보세요.</p>
-        <div class="flip-container ratio-medal">
-          <div class="flip-inner">
-            <div class="flip-front">
-              <img src="메달 앞면.png" alt="메달 앞면">
-            </div>
-            <div class="flip-back">
-              <img src="메달 뒷면.png" alt="메달 뒷면">
-            </div>
-          </div>
-          <div class="flip-hint">CLICK!</div>
-        </div>
-      </article>
-      
-      <article class="work brutal-reveal">
-        <h3>교내 실사용 체크카드 디자인</h3>
-        <p class="when">그래픽 디자인 / 교내 활동</p>
-        <p>재학생들이 실제로 사용하는 교내 제휴 체크카드의 시안 디자인입니다. 이미지를 클릭해 양면을 확인해 보세요.</p>
-        <div class="flip-container ratio-card">
-          <div class="flip-inner">
-            <div class="flip-front">
-              <img src="카드 앞면.png" alt="카드 앞면">
-            </div>
-            <div class="flip-back">
-              <img src="카드 뒷면.png" alt="카드 뒷면">
-            </div>
-          </div>
-          <div class="flip-hint">CLICK!</div>
-        </div>
-      </article>
-
-      <article class="work brutal-reveal">
-        <h3>밴드부 홍보물 디자인</h3>
-        <p class="when">그래픽 디자인 / 교내 활동</p>
-        <p>교내 밴드부 '봉황'의 부원 모집 및 공연 홍보를 위한 카드뉴스 시안입니다. 가로로 스와이프하여 볼 수 있습니다.</p>
-        <div class="carousel-wrap">
-          <div class="carousel">
-            <img src="컷1-4 (2).png" alt="밴드부 홍보물 1">
-            <img src="컷2-4 (2).png" alt="밴드부 홍보물 2">
-            <img src="컷3-4 (2).png" alt="밴드부 홍보물 3">
-            <img src="컷4-4 (2).png" alt="밴드부 홍보물 4">
-          </div>
-        </div>
-      </article>
-
-      <article class="work brutal-reveal">
-        <h3>학과 단체복(과잠) 디자인</h3>
-        <p class="when">그래픽 디자인 / 교내 활동</p>
-        <p>학과 단체복 등판에 들어갈 타이포그래피 및 엠블럼 시안 디자인 기록입니다. 가로로 스와이프하여 볼 수 있습니다.</p>
-        <div class="carousel-wrap">
-          <div class="carousel">
-            <img src="아트보드 1 - 복사본.png" alt="과잠 디자인 시안 1">
-            <img src="아트보드 1.png" alt="과잠 디자인 시안 2">
-          </div>
         </div>
       </article>
     </div>
 
-    <!-- Group 2: 기획 및 공모전 -->
-    <div class="work-group brutal-reveal">
+    <!-- Group 2: 정책 및 논문 -->
+    <div class="work-group scroll-section brutal-reveal" id="work-policy">
       <div class="work-group-title">정책 기획 및 학술 연구</div>
-      
-      <article class="work brutal-reveal">
-        <h3>2026 미래도서관 정책 아이디어 해커톤</h3>
-        <p class="when">정책 제안 공모</p>
-        <p>환경 문제와 도서관의 역할을 결합한 「순록: 순환하는 녹색 도서관」 기획안입니다. 다회용기 리필 거점 등 예산과 공간 혁신안을 도출했습니다.</p>
-      </article>
-
-      <article class="work brutal-reveal">
-        <h3>상주 대표축제 공모</h3>
-        <p class="when">아이디어 기획 공모</p>
-        <p>지역 특산물과 상권을 연계한 「상주 쌈박 페스티벌」을 종합 기획하여 핵심 콘텐츠 및 공간배치 개념도를 작성했습니다.</p>
-      </article>
-
       <article class="work brutal-reveal">
         <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구 <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a></h3>
         <p class="when">학술 연구 / OPEN-Qual 모형 개발</p>
-        <p>현대 복합문화기관으로서의 도서관 서비스 품질을 체계적으로 진단하기 위해 잠재적 불만 요인을 포함한 'OPEN-Qual' 평가 모형을 제안했습니다.</p>
-        
         <details>
-          <summary>논문 본문 미리보기 (클릭하여 펼치기)</summary>
+          <summary>논문 본문 미리보기 (클릭)</summary>
           <div class="pdf-container">
             <iframe src="소논문_202300133_문태양.pdf" allowfullscreen></iframe>
           </div>
@@ -688,9 +446,9 @@
       </article>
     </div>
 
-    <!-- Group 3: 웹 앱 및 하드웨어 -->
-    <div class="work-group brutal-reveal">
-      <div class="work-group-title">하드웨어 제어 및 반응형 웹 앱 제작</div>
+    <!-- Group 3: 웹 앱 (실습 1 ~ 17 통합) -->
+    <div class="work-group scroll-section brutal-reveal" id="work-web">
+      <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 17)</div>
       
       <div class="app-grid">
         
@@ -698,10 +456,10 @@
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
           <div class="mockup-window"><iframe src="todo.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">개인 웹 프로젝트</div>
+            <div class="tech">개인 프로젝트</div>
             <h3>오늘의 할 일 관리</h3>
-            <p>복잡한 기능 없이 하루의 목표를 직관적으로 추가하고 완료를 체크할 수 있는 브라우저 기반의 가벼운 웹 도구입니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+            <p>직관적으로 목표를 추가하고 완료를 체크하는 가벼운 웹 도구입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
@@ -709,10 +467,10 @@
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
           <div class="mockup-window"><iframe src="stamp.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">개인 웹 프로젝트</div>
+            <div class="tech">개인 프로젝트</div>
             <h3>디지털 도장 생성기</h3>
-            <p>이름을 입력하고 글꼴과 모양을 선택하여 배경이 투명한 디지털 도장 이미지를 실시간으로 생성 및 다운로드하는 도구입니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+            <p>이름과 글꼴을 선택해 투명 도장 이미지를 실시간 생성·다운로드합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
@@ -722,8 +480,8 @@
           <div class="app-info">
             <div class="tech">인터랙티브 웹 (실습 4)</div>
             <h3>감정별 명언 추천 앱</h3>
-            <p>감정 상태(행복, 불안 등)를 입력받아 위로의 문장을 무작위로 제시합니다. 연속 출현 방지 알고리즘이 적용되었습니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+            <p>감정 상태에 따라 위로의 문장을 무작위로 제시합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
@@ -733,8 +491,8 @@
           <div class="app-info">
             <div class="tech">디지털 교구 (실습 5)</div>
             <h3>기억력 짝맞추기 게임</h3>
-            <p>초등학생 집중력 향상을 위한 2D 동물 짝맞추기 게임입니다. 카드 뒤집기 애니메이션과 판정 로직을 구현했습니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+            <p>초등학생 집중력 향상을 위한 2D 동물 짝맞추기 게임입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
@@ -742,21 +500,10 @@
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
           <div class="mockup-window"><iframe src="libgame.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">통합 학습 앱 (실습 6)</div>
+            <div class="tech">학습 앱 (실습 6)</div>
             <h3>도서관 지식 라운지</h3>
-            <p>중학생 타겟으로 KDC 강목 짝맞추기와 4지선다형 퀴즈를 통합하고, 타이머 제한 및 실시간 채점 피드백을 제공합니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="literacy.html" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">데이터 시각화 (실습 9)</div>
-            <h3>디지털 리터러시 다각형 차트</h3>
-            <p>학생들의 역량 평가 결과를 입력받아, 사전/사후 다각형 레이더 차트로 렌더링하여 성장을 직관적으로 분석합니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+            <p>KDC 강목 짝맞추기와 4지선다형 퀴즈를 통합 제공합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
@@ -764,49 +511,87 @@
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
           <div class="mockup-window"><iframe src="2d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">수학 교과 교구 (실습 7)</div>
+            <div class="tech">수학 교구 (실습 7)</div>
             <h3>평면도형 학습 도구</h3>
-            <p>도형의 회전 및 뒤집기 조작을 시각적으로 확인하는 교구로 연습 모드와 목표를 맞추는 퀴즈 모드를 지원합니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+            <p>도형 회전 및 뒤집기 조작을 시각적으로 확인하는 교구입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
-        
+
         <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
           <div class="mockup-window"><iframe src="3d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">수학 교과 교구 (실습 7)</div>
+            <div class="tech">수학 교구 (실습 7)</div>
             <h3>입체도형 학습 도구</h3>
-            <p>입체도형의 회전 조작을 시각적으로 확인하는 교구입니다.</p>
-            <span class="app-link-btn">프로젝트 열기 &rarr;</span>
+            <p>입체도형 회전 조작을 3D로 시각화하는 학습 도구입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
-        <div class="app-card brutal-reveal" style="cursor: default; pointer-events: none;">
+        <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window">
-            <img src="image_5f2b92.png" alt="Omen Control Dashboard">
-          </div>
+          <div class="mockup-window"><iframe src="literacy.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">C# / 하드웨어 모니터링</div>
-            <h3>OmenMax16 커스텀 쿨링 제어</h3>
-            <p>HP Omen 16 랩탑의 발열 제어를 위해 BIOS 수준의 명령을 직접 호출하여 동작하는 전용 쿨링 소프트웨어를 개발했습니다.</p>
+            <div class="tech">시각화 (실습 9)</div>
+            <h3>디지털 리터러시 다각형 차트</h3>
+            <p>역량 평가 결과를 사전/사후 레이더 차트로 분석합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
-        </div>
+        </a>
 
-        <a href="https://github.com/nlasdnfkl2/frog-seat-manager-fw" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window">
-            <div class="code-placeholder">
-              <span>&lt; / &gt;</span>
-              <span style="font-size: 0.9rem; margin-top: 8px;">ESP-32 Firmware Code</span>
-            </div>
-          </div>
+          <div class="mockup-window"><iframe src="dice.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">아두이노 프로젝트</div>
-            <h3>좌석 관리 및 원격 부팅 펌웨어</h3>
-            <p>WOL 환경의 한계를 극복하여 PC를 원격 부팅하고 좌석 상태를 모니터링하는 ESP-32 기반 펌웨어입니다.</p>
-            <span class="app-link-btn" style="pointer-events: auto;">GitHub 코드 보기 &rarr;</span>
+            <div class="tech">통계 도구 (실습 11)</div>
+            <h3>3D 주사위 시뮬레이터</h3>
+            <p>페르소나 카툰풍 3D 주사위와 실시간 확률 집계 차트입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="clockgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">수학 교구 (실습 14)</div>
+            <h3>시계 읽기 연습 앱</h3>
+            <p>분침 이동에 따라 시침이 연동되는 초등 저학년 시계 연습 앱입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="aicatch.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">AI 퀴즈 (실습 15)</div>
+            <h3>AI 캐치마인드</h3>
+            <p>그림을 그리고 제미나이 AI 시각 분석 모델로 정답을 맞추는 앱입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="kkfood.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">AI 영양 (실습 16)</div>
+            <h3>AI 칼로리 자동 계산 앱</h3>
+            <p>음식 사진을 분석해 칼로리와 영양성분을 추정하고 수정합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="phycheck.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">건강 관리 (실습 17)</div>
+            <h3>운동 체크리스트 앱</h3>
+            <p>오늘의 운동 목록을 관리하고 달성 현황을 점검합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
@@ -826,7 +611,6 @@
 </div>
 
 <script>
-  // YouTube IFrame API 로드
   let ytPlayer;
   let isUserPaused = false;
 
@@ -850,14 +634,12 @@
     });
   }
 
-  // 유튜브 API 스크립트 동적 로드
   const tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   const firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
   document.addEventListener("DOMContentLoaded", () => {
-    // 0. 현재 날짜와 시간 실시간 업데이트
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
@@ -870,7 +652,6 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 유튜브 음소거 토글 기능
     const muteToggleBtn = document.getElementById('muteToggleBtn');
     const soundOnIcon = document.getElementById('soundOnIcon');
     const soundOffIcon = document.getElementById('soundOffIcon');
@@ -894,7 +675,6 @@
       });
     }
 
-    // 포커스 이탈 / 다른 페이지 이동 시 자동 일시정지
     window.addEventListener('blur', () => {
       if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
         ytPlayer.pauseVideo();
@@ -907,7 +687,6 @@
       }
     });
 
-    // 1. 요소 등장 애니메이션 (통통 튀는 바운스 효과)
     const revealElements = document.querySelectorAll('.brutal-reveal');
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -919,7 +698,6 @@
     }, { threshold: 0.1 });
     revealElements.forEach(el => revealObserver.observe(el));
 
-    // 2. 정교한 Scroll Spy (화면 점유율 계산)
     const sections = document.querySelectorAll('.scroll-section');
     const navDots = document.querySelectorAll('.nav-dot');
     let sectionRatios = {};
@@ -958,14 +736,13 @@
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
           window.scrollTo({
-            top: targetElement.offsetTop - 60, // 상단 바 높이 보정
+            top: targetElement.offsetTop - 60,
             behavior: 'smooth'
           });
         }
       });
     });
 
-    // 3. 플립 컨테이너 클릭 이벤트 리스너 추가
     document.querySelectorAll('.flip-container').forEach(container => {
       container.addEventListener('click', () => {
         container.classList.toggle('is-flipped');
