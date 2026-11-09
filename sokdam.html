@@ -250,6 +250,20 @@
       margin-top: 24px;
     }
 
+    /* 피드백 모달 / 오버레이 메시지 */
+    .feedback-banner {
+      margin-top: 20px;
+      padding: 16px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 900;
+      border: var(--border);
+      box-shadow: 4px 4px 0 var(--black);
+      display: none;
+    }
+    .feedback-banner.correct { background: var(--green); color: var(--black); }
+    .feedback-banner.incorrect { background: var(--red); color: white; }
+
     /* 결과 화면 */
     .result-screen { text-align: center; }
     .result-screen h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 16px; }
@@ -361,12 +375,15 @@
 
       <form class="answer-form" id="answerForm">
         <input type="text" id="answerInput" placeholder="뒷구절을 입력하세요" autocomplete="off">
-        <button type="submit" class="btn">정답 제출</button>
+        <button type="submit" class="btn" id="submitBtn">정답 제출</button>
       </form>
 
       <div class="action-btns">
         <button class="btn btn-red" id="hintBtn" type="button">초성 힌트 보기 (남은 횟수: <span id="hintCount">2</span>)</button>
       </div>
+
+      <!-- 정답/오답 즉시 결과 피드백 배너 -->
+      <div class="feedback-banner" id="feedbackBanner"></div>
     </div>
 
     <!-- 3. 결과 화면 -->
@@ -376,9 +393,7 @@
         <p>획득 총 점수: <span id="finalScore">0</span>점</p>
         <p>맞힌 속담 개수: <span id="finalCount">0</span>개</p>
         <div style="margin-top: 15px; font-weight: 900;">맞힌 속담 사전 출처 (국립국어원):</div>
-        <div class="result-history-list" id="resultHistoryList">
-          <!-- 맞춘 속담 및 사전 링크 리스트가 여기에 렌더링됩니다 -->
-        </div>
+        <div class="result-history-list" id="resultHistoryList"></div>
       </div>
       <button class="btn btn-green" id="restartBtn">다시 시작하기</button>
     </div>
@@ -438,68 +453,18 @@
     window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
     window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
 
-    // 국립국어원 표준국어대사전에 공식 등재된 실존 속담 데이터
+    // 국립국어원 표준국어대사전 실존 속담 데이터
     const sokdamList = [
-      { 
-        q: "콩 심은 데", 
-        a: "콩 나고 팥 심은 데 팥 난다", 
-        chosung: "ㅋ ㄴㄱ ㅍ ㅅㅇ ㄷ ㅍ ㄴㄷ",
-        full: "콩 심은 데 콩 나고 팥 심은 데 팥 난다" 
-      },
-      { 
-        q: "말 한마디로", 
-        a: "천 냥 빚을 갚는다", 
-        chosung: "ㅊ ㄴ ㅂㅇㅈ 갚ㄴㄷ",
-        full: "말 한마디로 천 냥 빚을 갚는다" 
-      },
-      { 
-        q: "고래 싸움에", 
-        a: "새우 터진다", 
-        chosung: "ㅅㅇ ㅌㅈㄴㄷ",
-        full: "고래 싸움에 새우 터진다" 
-      },
-      { 
-        q: "누워서", 
-        a: "떡 먹기", 
-        chosung: "ㄸ ㅁㄱ",
-        full: "누워서 떡 먹기" 
-      },
-      { 
-        q: "원수는", 
-        a: "외나무다리에서 만난다", 
-        chosung: "ㅇㄴㅁㄷㄹㅇㅅ ㅁㄴㄴㄷ",
-        full: "원수는 외나무다리에서 만난다" 
-      },
-      { 
-        q: "시작이", 
-        a: "반이다", 
-        chosung: "ㅂㅇㄷ",
-        full: "시작이 반이다" 
-      },
-      { 
-        q: "소 읽고", 
-        a: "외양간 고친다", 
-        chosung: "ㅇㅇㄱ ㄱㅊㄴㄷ",
-        full: "소 읽고 외양간 고친다" 
-      },
-      { 
-        q: "구슬이 서 말이라도", 
-        a: "꿰어야 보배", 
-        chosung: "ㄲㅇㅇ ㅂㅂ",
-        full: "구슬이 서 말이라도 꿰어야 보배" 
-      },
-      { 
-        q: "돌다리도", 
-        a: "두드려 보고 건너라", 
-        chosung: "ㄷㄷㄹ ㅂㄱ 건ㄴㄹ",
-        full: "돌다리도 두드려 보고 건너라" 
-      },
-      { 
-        q: "고생 끝에", 
-        a: "낙이 온다", 
-        chosung: "ㄴㅇ 오ㄴㄷ",
-        full: "고생 끝에 낙이 온다" 
-      }
+      { q: "콩 심은 데", a: "콩 나고 팥 심은 데 팥 난다", chosung: "ㅋ ㄴㄱ ㅍ ㅅㅇ ㄷ ㅍ ㄴㄷ", full: "콩 심은 데 콩 나고 팥 심은 데 팥 난다" },
+      { q: "말 한마디로", a: "천 냥 빚을 갚는다", chosung: "ㅊ ㄴ ㅂㅇㅈ 갚ㄴㄷ", full: "말 한마디로 천 냥 빚을 갚는다" },
+      { q: "고래 싸움에", a: "새우 터진다", chosung: "ㅅㅇ ㅌㅈㄴㄷ", full: "고래 싸움에 새우 터진다" },
+      { q: "누워서", a: "떡 먹기", chosung: "ㄸ ㅁㄱ", full: "누워서 떡 먹기" },
+      { q: "원수는", a: "외나무다리에서 만난다", chosung: "ㅇㄴㅁㄷㄹㅇㅅ ㅁㄴㄴㄷ", full: "원수는 외나무다리에서 만난다" },
+      { q: "시작이", a: "반이다", chosung: "ㅂㅇㄷ", full: "시작이 반이다" },
+      { q: "소 읽고", a: "외양간 고친다", chosung: "ㅇㅇㄱ ㄱㅊㄴㄷ", full: "소 읽고 외양간 고친다" },
+      { q: "구슬이 서 말이라도", a: "꿰어야 보배", chosung: "ㄲㅇㅇ ㅂㅂ", full: "구슬이 서 말이라도 꿰어야 보배" },
+      { q: "돌다리도", a: "두드려 보고 건너라", chosung: "ㄷㄷㄹ ㅂㄱ 건ㄴㄹ", full: "돌다리도 두드려 보고 건너라" },
+      { q: "고생 끝에", a: "낙이 온다", chosung: "ㄴㅇ 오ㄴㄷ", full: "고생 끝에 낙이 온다" }
     ];
 
     const timeSlider = document.getElementById('timeSlider');
@@ -516,8 +481,10 @@
     const hintText = document.getElementById('hintText');
     const answerForm = document.getElementById('answerForm');
     const answerInput = document.getElementById('answerInput');
+    const submitBtn = document.getElementById('submitBtn');
     const hintBtn = document.getElementById('hintBtn');
     const hintCountElem = document.getElementById('hintCount');
+    const feedbackBanner = document.getElementById('feedbackBanner');
 
     const finalScoreElem = document.getElementById('finalScore');
     const finalCountElem = document.getElementById('finalCount');
@@ -531,7 +498,8 @@
     let currentIdx = 0;
     let hintRemaining = 2;
     let shuffledList = [];
-    let solvedHistory = []; // 맞춘 속담 기록 배열
+    let solvedHistory = [];
+    let isPaused = false; // 타이머 일시정지 상태 플래그
 
     timeSlider.addEventListener('input', (e) => {
       gameTime = e.target.value;
@@ -547,6 +515,8 @@
       score = 0;
       correctCount = 0;
       solvedHistory = [];
+      isPaused = false;
+      feedbackBanner.style.display = 'none';
       currentScoreElem.textContent = score;
       timeLeftElem.textContent = timeLeft;
 
@@ -556,11 +526,13 @@
 
       if (timer) clearInterval(timer);
       timer = setInterval(() => {
-        timeLeft--;
-        timeLeftElem.textContent = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          endGame();
+        if (!isPaused) {
+          timeLeft--;
+          timeLeftElem.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            endGame();
+          }
         }
       }, 1000);
     }
@@ -576,28 +548,59 @@
       hintRemaining = 2;
       hintCountElem.textContent = hintRemaining;
       answerInput.value = "";
+      feedbackBanner.style.display = 'none';
+      answerInput.disabled = false;
+      submitBtn.disabled = false;
       answerInput.focus();
     }
 
     answerForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (isPaused) return; // 이미 판정 대기 중이면 무시
+
       const userAns = answerInput.value.trim();
       const current = shuffledList[currentIdx];
+
+      // 타이머 일시정지
+      isPaused = true;
+      answerInput.disabled = true;
+      submitBtn.disabled = true;
 
       if (userAns === current.a) {
         score += 10;
         correctCount++;
         solvedHistory.push(current);
         currentScoreElem.textContent = score;
-        currentIdx++;
-        loadQuiz();
+
+        feedbackBanner.className = "feedback-banner correct";
+        feedbackBanner.textContent = "✨ 정답입니다! (+10점)";
+        feedbackBanner.style.display = 'block';
+
+        // 0.8초 후 자동으로 다음 문제 진행 및 타이머 재개
+        setTimeout(() => {
+          isPaused = false;
+          currentIdx++;
+          loadQuiz();
+        }, 800);
       } else {
-        alert("틀렸습니다! 다시 시도해보세요.");
-        answerInput.focus();
+        feedbackBanner.className = "feedback-banner incorrect";
+        feedbackBanner.textContent = `❌ 오답입니다! 정답: [${current.a}]`;
+        feedbackBanner.style.display = 'block';
+
+        // 오답일 경우 사용자가 확인 후 다음으로 넘어가도록 입력창 초기화 및 재개 버튼 제공 또는 1.2초 후 자동 재개
+        setTimeout(() => {
+          isPaused = false;
+          feedbackBanner.style.display = 'none';
+          answerInput.disabled = false;
+          submitBtn.disabled = false;
+          answerInput.value = "";
+          answerInput.focus();
+        }, 1500);
       }
     });
 
     hintBtn.addEventListener('click', () => {
+      if (isPaused) return;
       if (hintRemaining > 0) {
         hintRemaining--;
         hintCountElem.textContent = hintRemaining;
