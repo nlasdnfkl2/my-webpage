@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>역사 속 입체도형 탐색기 - Neo Brutalism</title>
+    <title>문태양 - 역사 속 입체도형 탐색기</title>
     <!-- Tailwind CSS (v4) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,25 +12,51 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
         
         :root {
-            --ink: #111111;
             --bg: #dfdcd3;
-            --yellow: #ffde00;
-            --pink: #ff007b;
-            --cyan: #00f0ff;
-            --green: #00ff55;
+            --ink: #111111;
+            --yellow: #ffd83b;
+            --pink: #ff4757;
+            --cyan: #48dbfb;
+            --green: #2ed573;
             --border-thick: 4px solid var(--ink);
+            --border: 3px solid var(--ink);
         }
 
         body { 
-            font-family: 'Pretendard', sans-serif; 
+            font-family: "Pretendard Variable", Pretendard, sans-serif; 
             background-color: var(--bg); 
             color: var(--ink); 
             overflow-x: hidden;
             background-image: radial-gradient(var(--ink) 1.5px, transparent 1.5px);
             background-size: 24px 24px;
+            padding-top: 80px;
+        }
+
+        /* 상단 고정 바 */
+        .fixed-top-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 60px;
+            background: var(--yellow);
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 2000;
+            box-shadow: 0 4px 0 var(--ink);
+        }
+
+        .current-time {
+            font-weight: 900;
+            font-size: 0.95rem;
+            background: white;
+            border: var(--border);
+            padding: 4px 10px;
+            box-shadow: 2px 2px 0 var(--ink);
         }
 
         /* 브루탈리즘 공통 유틸리티 */
@@ -93,11 +119,17 @@
 </head>
 <body class="p-4 md:p-8 min-h-screen">
 
+    <!-- 상단 고정 바 -->
+    <div class="fixed-top-bar">
+        <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+        <div style="font-weight: 900; text-transform: uppercase;">문태양 · 역사 속 입체도형 탐색기</div>
+    </div>
+
 <div class="max-w-7xl mx-auto">
     <!-- 헤더 -->
     <header class="mb-10 border-b-4 border-black pb-6 flex flex-col md:flex-row justify-between items-end gap-4 pop-in" style="animation-delay: 0.1s;">
         <div>
-            <span class="bg-black text-yellow-300 px-3 py-1 font-black text-sm uppercase tracking-widest shadow-[4px_4px_0px_#ff007b] inline-block mb-4 transform -skew-x-6">
+            <span class="bg-black text-yellow-300 px-3 py-1 font-black text-sm uppercase tracking-widest shadow-[4px_4px_0px_#ff4757] inline-block mb-4 transform -skew-x-6">
                 <i class="fa-solid fa-bolt mr-1"></i> History x Math 3D Lab
             </span>
             <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase glitch-hover" style="text-shadow: 4px 4px 0 var(--cyan), 8px 8px 0 var(--pink);">
@@ -137,7 +169,7 @@
                     <div class="flex gap-2">
                         <input type="text" id="externalUrl" placeholder="https://..." 
                                class="flex-1 bg-white border-2 border-black px-3 py-2 text-sm font-bold focus:outline-none focus:bg-yellow-100 transition-colors">
-                        <button onclick="loadExternalModel()" class="brutal-btn px-4 py-2 text-sm">
+                        <button type="button" onclick="loadExternalModel()" class="brutal-btn px-4 py-2 text-sm">
                             로드
                         </button>
                     </div>
@@ -165,7 +197,7 @@
                     </div>
                 </div>
 
-                <div id="eulerResultBox" class="bg-black text-white border-4 border-black p-4 text-center shadow-[6px_6px_0px_#ff007b] relative overflow-hidden">
+                <div id="eulerResultBox" class="bg-black text-white border-4 border-black p-4 text-center shadow-[6px_6px_0px_#ff4757] relative overflow-hidden">
                     <span class="text-xs font-black text-gray-400 block mb-2 uppercase tracking-widest">V - E + F = ?</span>
                     <div class="text-xl md:text-2xl font-black flex justify-center items-center gap-2 flex-wrap">
                         <span id="calcV" class="text-pink-400">5</span> - 
@@ -181,10 +213,10 @@
         <div class="lg:col-span-6 flex flex-col pop-in" style="animation-delay: 0.4s;">
             <!-- 카테고리 탭 대시보드 -->
             <div class="flex bg-black border-4 border-black p-2 gap-2 mb-6 shadow-[6px_6px_0px_#111]">
-                <button onclick="filterTimeline('all')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-yellow-400 text-black border-2 border-black" id="btn-all">전체</button>
-                <button onclick="filterTimeline('korea')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-white text-black hover:bg-gray-200 border-2 border-black" id="btn-korea">한국사</button>
-                <button onclick="filterTimeline('west')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-white text-black hover:bg-gray-200 border-2 border-black" id="btn-west">서양사</button>
-                <button onclick="filterTimeline('world')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-white text-black hover:bg-gray-200 border-2 border-black" id="btn-world">세계사</button>
+                <button type="button" onclick="filterTimeline('all')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-yellow-400 text-black border-2 border-black" id="btn-all">전체</button>
+                <button type="button" onclick="filterTimeline('korea')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-white text-black hover:bg-gray-200 border-2 border-black" id="btn-korea">한국사</button>
+                <button type="button" onclick="filterTimeline('west')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-white text-black hover:bg-gray-200 border-2 border-black" id="btn-west">서양사</button>
+                <button type="button" onclick="filterTimeline('world')" class="tab-btn flex-1 py-2 text-sm font-black uppercase transition-all bg-white text-black hover:bg-gray-200 border-2 border-black" id="btn-world">세계사</button>
             </div>
 
             <!-- 스크롤 가능한 타임라인 피드 -->
@@ -197,76 +229,99 @@
 </div>
 
 <script>
+    // --- 실시간 시계 연동 ---
+    function updateClock() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+        const timeEl = document.getElementById('currentTimeDisplay');
+        if (timeEl) timeEl.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
     // --- 🔊 Web Audio API (사운드 이펙트) ---
     let audioCtx = null;
     function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) audioCtx = new AudioContext();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
     }
     
     function playSound(type) {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        
-        if (type === 'click') {
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.05);
-            gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-        } else if (type === 'alert') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-            gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        try {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'click') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.05);
+                gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'alert') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            }
+        } catch (e) {
+            console.log("Audio play suppressed or unsupported:", e);
         }
     }
     document.body.addEventListener('click', initAudio, { once: true });
     // ----------------------------------------
 
-    // 중학생용 수학적 기하 지표를 포함한 역사 데이터
+    // 역사 데이터
     const historyMathData = [
         {
             id: 1, year: "BC 2500년경", title: "이집트 피라미드 축조", category: "west", categoryLabel: "서양사/고대",
             summary: "인류 최대의 건축물이자 완벽한 입체도형의 대명사.",
-            desc: "고대 이집트인들은 나일강 범람 후 토지를 재측량하는 과정에서 기하학을 발전시켰습니다. 쿠푸 왕의 대피라미드는 밑면이 완벽한 정사각형인 '정사각뿔' 구조로, 각뿔 부피 공식의 실제 기원입니다.",
-            shape: "pyramid", shapeName: "정사각뿔", mathV: 5, mathE: 8, mathF: 5, color: '#ffde00'
+            desc: "고대 이집트인들은 나일강 범람 후 토지를 재측량하는 과정에서 기하학을 발전시켰습니다.",
+            shape: "pyramid", shapeName: "정사각뿔", mathV: 5, mathE: 8, mathF: 5, color: '#ffd83b'
         },
         {
             id: 2, year: "BC 221년", title: "진나라 통일과 도량형 규격화", category: "world", categoryLabel: "세계사/동아시아",
             summary: "천하를 통일한 진시황의 직육면체와 원기둥 규격 통일.",
-            desc: "진시황은 세금 징수와 행정 효율화를 위해 '도량형'을 일정한 직육면체 및 원기둥 청동 용기로 통일했습니다. 부피 공식을 제국 통치에 직접 활용한 역사적 사례입니다.",
-            shape: "box", shapeName: "직육면체", mathV: 8, mathE: 12, mathF: 6, color: '#00f0ff'
+            desc: "진시황은 세금 징수와 행정 효율화를 위해 '도량형'을 일정한 청동 용기로 통일했습니다.",
+            shape: "box", shapeName: "직육면체", mathV: 8, mathE: 12, mathF: 6, color: '#48dbfb'
         },
         {
             id: 3, year: "1세기", title: "고구려 고분 벽화 모줄임 천장", category: "korea", categoryLabel: "한국사/삼국",
             summary: "상부 하중을 분산하는 독창적인 모줄임 건축 기법.",
-            desc: "무덤방 천장의 무게를 분산하기 위해 사각형 모서리를 줄여나가는 '말각조정' 기법을 썼습니다. 사각기둥 위에 각뿔대를 결합한 고도의 건축 기하학입니다.",
-            shape: "frustum", shapeName: "사각뿔대", mathV: 8, mathE: 12, mathF: 6, color: '#00ff55'
+            desc: "무덤방 천장의 무게를 분산하기 위해 사각형 모서리를 줄여나가는 기법을 썼습니다.",
+            shape: "frustum", shapeName: "사각뿔대", mathV: 8, mathE: 12, mathF: 6, color: '#2ed573'
         },
         {
             id: 4, year: "1492년", title: "콜럼버스의 항해와 지구 구체설", category: "world", categoryLabel: "세계사/근세",
             summary: "지구가 평면이 아닌 구(Sphere)라는 믿음.",
-            desc: "지구 구체설을 바탕으로 서쪽 항해를 결심했습니다. 회전체인 구의 성질을 이해하는 것은 현대 항해학과 천문기하학의 핵심 과제입니다.",
-            shape: "sphere", shapeName: "구 (Sphere)", mathV: 0, mathE: 0, mathF: 1, color: '#ff007b'
+            desc: "지구 구체설을 바탕으로 서쪽 항해를 결심했습니다.",
+            shape: "sphere", shapeName: "구 (Sphere)", mathV: 0, mathE: 0, mathF: 1, color: '#ff4757'
         },
         {
             id: 5, year: "1789년", title: "프랑스 대혁명과 미터법", category: "west", categoryLabel: "서양사/근대",
             summary: "모두가 공평하게 쓰는 수학적 단위 기준.",
-            desc: "프랑스 대혁명 정부는 10cm 정육면체의 부피를 1리터(L)로 규정하여 입체도형의 부피와 단위의 연계성을 명확히 확립했습니다.",
+            desc: "프랑스 대혁명 정부는 정육면체의 부피를 기준으로 미터법을 확립했습니다.",
             shape: "cube", shapeName: "정육면체", mathV: 8, mathE: 12, mathF: 6, color: '#ffffff'
         },
         {
             id: 6, year: "1988년", title: "서울 올림픽 축구공", category: "korea", categoryLabel: "한국사/현대",
             summary: "가장 완벽한 다면체 공학의 결정체.",
-            desc: "전통적인 32면체 축구공은 깎은 정이십면체(Truncated Icosahedron)입니다. 정오각형 12개와 정육각형 20개로 조합되어 내부 압력을 완벽히 분산합니다.",
-            shape: "soccer", shapeName: "깎은 정이십면체", mathV: 60, mathE: 90, mathF: 32, color: '#ffde00'
+            desc: "전통적인 32면체 축구공은 깎은 정이십면체 구조로 내부 압력을 완벽히 분산합니다.",
+            shape: "soccer", shapeName: "깎은 정이십면체", mathV: 60, mathE: 90, mathF: 32, color: '#ffd83b'
         }
     ];
 
@@ -275,8 +330,9 @@
     const canvasParent = document.getElementById('canvasParent');
 
     function initThree() {
+        if (!canvasParent) return;
         scene = new THREE.Scene();
-        scene.background = null; // Use CSS background
+        scene.background = null;
 
         camera = new THREE.PerspectiveCamera(45, canvasParent.clientWidth / canvasParent.clientHeight, 0.1, 1000);
         camera.position.z = 6;
@@ -287,7 +343,6 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         canvasParent.appendChild(renderer.domElement);
 
-        // 조명 (강한 대비를 위해 Directional 위주)
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
         scene.add(ambientLight);
 
@@ -305,31 +360,32 @@
 
         window.addEventListener('resize', onWindowResize);
         
-        updateThreeShape('pyramid', '#ffde00');
+        updateThreeShape('pyramid', '#ffd83b');
         animate();
     }
 
     function animate() {
         requestAnimationFrame(animate);
-        if (currentMesh && controls.state === -1) {
+        if (currentMesh && controls && controls.state === -1) {
             currentMesh.rotation.y += 0.003; 
             currentMesh.rotation.x += 0.001; 
         }
-        controls.update();
-        renderer.render(scene, camera);
+        if (controls) controls.update();
+        if (renderer && scene && camera) renderer.render(scene, camera);
     }
 
     function onWindowResize() {
+        if (!canvasParent || !renderer || !camera) return;
         camera.aspect = canvasParent.clientWidth / canvasParent.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(canvasParent.clientWidth, canvasParent.clientHeight);
     }
 
-    function updateThreeShape(shapeType, colorHex = '#ff007b') {
+    function updateThreeShape(shapeType, colorHex = '#ff4757') {
+        if (!scene) return;
         if (currentMesh) scene.remove(currentMesh);
 
         let geometry;
-        // 브루탈리즘 스타일: 외곽선 강조(툰 느낌)를 위해 MeshStandardMaterial + Wireframe 결합
         const material = new THREE.MeshStandardMaterial({
             color: colorHex,
             roughness: 0.1,
@@ -340,18 +396,16 @@
             polygonOffsetUnits: 1
         });
 
-        // 검은색 굵은 와이어프레임
         const wireframeMaterial = new THREE.MeshBasicMaterial({ 
             color: 0x111111, 
-            wireframe: true,
-            wireframeLinewidth: 2 // WebGL 한계가 있으나 가시성 확보
+            wireframe: true
         });
 
         switch(shapeType) {
             case 'pyramid': geometry = new THREE.ConeGeometry(1.5, 2, 4); break;
             case 'box': geometry = new THREE.BoxGeometry(2.4, 1.2, 1.5); break;
             case 'frustum': geometry = new THREE.CylinderGeometry(0.8, 1.8, 1.5, 4); break;
-            case 'sphere': geometry = new THREE.SphereGeometry(1.5, 16, 16); break; // Low-poly sphere for style
+            case 'sphere': geometry = new THREE.SphereGeometry(1.5, 16, 16); break;
             case 'cube': geometry = new THREE.BoxGeometry(1.8, 1.8, 1.8); break;
             case 'soccer': geometry = new THREE.IcosahedronGeometry(1.5, 1); break;
             default: geometry = new THREE.TorusGeometry(1, 0.4, 16, 50);
@@ -368,26 +422,25 @@
             currentMesh.rotation.y = Math.PI / 4; 
         }
 
-        // 등장 애니메이션 효과 (크기 스케일링)
         currentMesh.scale.set(0.1, 0.1, 0.1);
         scene.add(currentMesh);
 
-        // 간단한 팝 애니메이션
         let scale = 0.1;
         const popAnim = setInterval(() => {
             scale += 0.15;
             if(scale >= 1.1) {
-                currentMesh.scale.set(1, 1, 1);
+                if (currentMesh) currentMesh.scale.set(1, 1, 1);
                 clearInterval(popAnim);
             } else {
-                currentMesh.scale.set(scale, scale, scale);
+                if (currentMesh) currentMesh.scale.set(scale, scale, scale);
             }
         }, 16);
     }
 
     function loadExternalModel() {
         playSound('alert');
-        const url = document.getElementById('externalUrl').value.trim();
+        const urlInput = document.getElementById('externalUrl');
+        const url = urlInput ? urlInput.value.trim() : '';
         if(!url) {
             alert("가져오실 3D 모델의 주소를 작성해 주세요!");
             return;
@@ -395,7 +448,7 @@
         
         if (currentMesh) scene.remove(currentMesh);
         const geometry = new THREE.TorusKnotGeometry(1, 0.3, 64, 16);
-        const material = new THREE.MeshStandardMaterial({ color: 0xff00ff, flatShading: true });
+        const material = new THREE.MeshStandardMaterial({ color: 0xff4757, flatShading: true });
         const wire = new THREE.MeshBasicMaterial({ color: 0x111, wireframe: true });
         
         currentMesh = new THREE.Group();
@@ -403,15 +456,20 @@
         currentMesh.add(new THREE.Mesh(geometry, wire));
         scene.add(currentMesh);
 
-        document.getElementById('shapeBadge').innerText = "EXT";
-        document.getElementById('shapeTitle').innerText = "외부 오브젝트 분석 중";
-        document.getElementById('statV').innerText = "?";
-        document.getElementById('statE').innerText = "?";
-        document.getElementById('statF').innerText = "?";
+        const badge = document.getElementById('shapeBadge');
+        const title = document.getElementById('shapeTitle');
+        if (badge) badge.innerText = "EXT";
+        if (title) title.innerText = "외부 오브젝트 분석 중";
+        
+        ['statV', 'statE', 'statF'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = "?";
+        });
     }
 
     function renderTimelineList(filter = 'all') {
         const feed = document.getElementById('timelineFeed');
+        if (!feed) return;
         feed.innerHTML = '';
 
         historyMathData.forEach((item, index) => {
@@ -443,44 +501,56 @@
     function selectEventItem(item) {
         playSound('click');
         
-        document.getElementById('shapeBadge').innerText = item.year;
-        document.getElementById('shapeTitle').innerText = item.shapeName;
+        const badge = document.getElementById('shapeBadge');
+        const title = document.getElementById('shapeTitle');
+        if (badge) badge.innerText = item.year;
+        if (title) title.innerText = item.shapeName;
         
         updateThreeShape(item.shape, item.color);
 
-        // 스탯 업데이트 시 팝 애니메이션 적용
         const stats = ['statV', 'statE', 'statF', 'calcV', 'calcE', 'calcF'];
         stats.forEach(id => {
             const el = document.getElementById(id);
-            el.style.transform = 'scale(1.5)';
-            setTimeout(() => el.style.transform = 'scale(1)', 150);
+            if (el) {
+                el.style.transform = 'scale(1.5)';
+                setTimeout(() => el.style.transform = 'scale(1)', 150);
+            }
         });
 
-        document.getElementById('statV').innerText = item.mathV;
-        document.getElementById('statE').innerText = item.mathE;
-        document.getElementById('statF').innerText = item.mathF;
+        const statV = document.getElementById('statV');
+        const statE = document.getElementById('statE');
+        const statF = document.getElementById('statF');
+        const calcV = document.getElementById('calcV');
+        const calcE = document.getElementById('calcE');
+        const calcF = document.getElementById('calcF');
 
-        document.getElementById('calcV').innerText = item.mathV;
-        document.getElementById('calcE').innerText = item.mathE;
-        document.getElementById('calcF').innerText = item.mathF;
+        if (statV) statV.innerText = item.mathV;
+        if (statE) statE.innerText = item.mathE;
+        if (statF) statF.innerText = item.mathF;
+
+        if (calcV) calcV.innerText = item.mathV;
+        if (calcE) calcE.innerText = item.mathE;
+        if (calcF) calcF.innerText = item.mathF;
 
         const eulerBox = document.getElementById('eulerResultBox');
-        if(item.shape === 'sphere') {
-            playSound('alert');
-            eulerBox.className = "bg-pink-600 text-white border-4 border-black p-4 text-center shadow-[6px_6px_0px_#111] relative overflow-hidden animate-pulse";
-            eulerBox.innerHTML = `<span class="text-xs font-black text-black bg-yellow-300 px-2 py-1 border-2 border-black block mb-2 mx-auto w-max transform -skew-x-6">SYSTEM WARNING</span>
-                                  <div class="text-base font-black uppercase">
-                                      구(Sphere)는 다면체가 아닌 회전체이므로<br>오일러 정리 연산 불가!
-                                  </div>`;
-        } else {
-            eulerBox.className = "bg-black text-white border-4 border-black p-4 text-center shadow-[6px_6px_0px_#00f0ff] relative overflow-hidden";
-            eulerBox.innerHTML = `<span class="text-xs font-black text-gray-400 block mb-2 uppercase tracking-widest">V - E + F = ?</span>
-                                  <div class="text-xl md:text-2xl font-black flex justify-center items-center gap-2 flex-wrap">
-                                      <span id="calcV" class="text-pink-400 transition-transform duration-200">${item.mathV}</span> - 
-                                      <span id="calcE" class="text-cyan-400 transition-transform duration-200">${item.mathE}</span> + 
-                                      <span id="calcF" class="text-yellow-400 transition-transform duration-200">${item.mathF}</span> = 
-                                      <span class="inline-block bg-green-500 text-black px-3 py-1 ml-2 transform skew-x-[-10deg] shadow-[2px_2px_0px_#fff]">결과: 2</span>
-                                  </div>`;
+        if (eulerBox) {
+            if(item.shape === 'sphere') {
+                playSound('alert');
+                eulerBox.className = "bg-pink-600 text-white border-4 border-black p-4 text-center shadow-[6px_6px_0px_#111] relative overflow-hidden animate-pulse";
+                eulerBox.innerHTML = `<span class="text-xs font-black text-black bg-yellow-300 px-2 py-1 border-2 border-black block mb-2 mx-auto w-max transform -skew-x-6">SYSTEM WARNING</span>
+                                    <div class="text-base font-black uppercase">
+                                        구(Sphere)는 다면체가 아닌 회전체이므로<br>오일러 정리 연산 불가!
+                                    </div>`;
+            } else {
+                eulerBox.className = "bg-black text-white border-4 border-black p-4 text-center shadow-[6px_6px_0px_#48dbfb] relative overflow-hidden";
+                eulerBox.innerHTML = `<span class="text-xs font-black text-gray-400 block mb-2 uppercase tracking-widest">V - E + F = ?</span>
+                                    <div class="text-xl md:text-2xl font-black flex justify-center items-center gap-2 flex-wrap">
+                                        <span id="calcV" class="text-pink-400 transition-transform duration-200">${item.mathV}</span> - 
+                                        <span id="calcE" class="text-cyan-400 transition-transform duration-200">${item.mathE}</span> + 
+                                        <span id="calcF" class="text-yellow-400 transition-transform duration-200">${item.mathF}</span> = 
+                                        <span class="inline-block bg-green-500 text-black px-3 py-1 ml-2 transform skew-x-[-10deg] shadow-[2px_2px_0px_#fff]">결과: 2</span>
+                                    </div>`;
+            }
         }
     }
 
@@ -492,8 +562,10 @@
             btn.classList.add('bg-white');
         });
         const activeBtn = document.getElementById(`btn-${category}`);
-        activeBtn.classList.remove('bg-white');
-        activeBtn.classList.add('bg-yellow-400');
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-white');
+            activeBtn.classList.add('bg-yellow-400');
+        }
 
         renderTimelineList(category);
     }
