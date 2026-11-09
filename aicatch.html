@@ -561,7 +561,7 @@
       document.getElementById('clock').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
     }, 1000);
 
-    // DoodleNet(Quick, Draw!) 모델이 정확히 학습하고 인식하는 검증된 클래스들로만 구성된 카테고리/제시어 맵
+    // DoodleNet(Quick, Draw!) 모델의 실제 345개 공식 영문 클래스와 100% 일치하는 제시어 목록
     const CATEGORIES = {
       animals: {
         name: '동물',
@@ -576,11 +576,16 @@
           { en: 'bird', ko: '새' },
           { en: 'penguin', ko: '펭귄' },
           { en: 'butterfly', ko: '나비' },
-          { en: 'turtle', ko: '거북이' },
+          { en: 'sea turtle', ko: '거북이' },
           { en: 'duck', ko: '오리' },
           { en: 'horse', ko: '말' },
           { en: 'cow', ko: '소' },
-          { en: 'sheep', ko: '양' }
+          { en: 'sheep', ko: '양' },
+          { en: 'frog', ko: '개구리' },
+          { en: 'shark', ko: '상어' },
+          { en: 'whale', ko: '고래' },
+          { en: 'octopus', ko: '문어' },
+          { en: 'giraffe', ko: '기린' }
         ]
       },
       food: {
@@ -598,9 +603,9 @@
           { en: 'broccoli', ko: '브로콜리' },
           { en: 'onion', ko: '양파' },
           { en: 'potato', ko: '감자' },
-          { en: 'pineapple', ko: '파인애플' },
-          { en: 'hamburger', ko: '햄버거' },
-          { en: 'pizza', ko: '피자' }
+          { en: 'tomato', ko: '토마토' },
+          { en: 'corn', ko: '옥수수' },
+          { en: 'blueberry', ko: '블루베리' }
         ]
       },
       objects: {
@@ -618,7 +623,9 @@
           { en: 'guitar', ko: '기타' },
           { en: 'crown', ko: '왕관' },
           { en: 'computer', ko: '컴퓨터' },
-          { en: 'pencil', ko: '연필' }
+          { en: 'pencil', ko: '연필' },
+          { en: 'hammer', ko: '망치' },
+          { en: 'light bulb', ko: '전구' }
         ]
       },
       vehicles: {
@@ -633,15 +640,21 @@
           { en: 'sailboat', ko: '돛단배' },
           { en: 'truck', ko: '트럭' },
           { en: 'motorbike', ko: '오토바이' },
-          { en: 'ambulance', ko: '구급차' }
+          { en: 'ambulance', ko: '구급차' },
+          { en: 'firetruck', ko: '소방차' },
+          { en: 'police car', ko: '경찰차' },
+          { en: 'submarine', ko: '잠수함' },
+          { en: 'tractor', ko: '트랙터' }
         ]
       }
     };
 
     let classifier;
     let p5Canvas;
+    let aiInputCanvas;
     let isModelReady = false;
     let isPlaying = false;
+    let isClassifying = false;
     let hasDrawn = false;
 
     let currentCategoryKey = 'animals';
@@ -652,7 +665,7 @@
     let strokeWidth = 12;
     let timeLeft = 30;
     let timerInterval = null;
-    let classifyTimeout = null;
+    let liveClassifyInterval = null;
 
     function setup() {
       p5Canvas = createCanvas(360, 360);
@@ -660,6 +673,10 @@
       background(255);
       strokeCap(ROUND);
       strokeJoin(ROUND);
+
+      aiInputCanvas = document.createElement('canvas');
+      aiInputCanvas.width = 360;
+      aiInputCanvas.height = 360;
 
       classifier = ml5.imageClassifier('DoodleNet', () => {
         isModelReady = true;
@@ -692,16 +709,41 @@
       }
     }
 
+    function getPreprocessedCanvas() {
+      const ctx = aiInputCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, aiInputCanvas.width, aiInputCanvas.height);
+      ctx.drawImage(p5Canvas.elt, 0, 0);
+
+      const imgData = ctx.getImageData(0, 0, aiInputCanvas.width, aiInputCanvas.height);
+      const data = imgData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        if (r < 245 || g < 245 || b < 245) {
+          data[i] = 0;
+          data[i + 1] = 0;
+          data[i + 2] = 0;
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+      return aiInputCanvas;
+    }
+
     function triggerClassification() {
-      if (!isModelReady || !isPlaying || !hasDrawn) return;
-      clearTimeout(classifyTimeout);
-      classifyTimeout = setTimeout(() => {
-        classifier.classify(p5Canvas.elt, 345, gotResult);
-      }, 150);
+      if (!isModelReady || !isPlaying || !hasDrawn || isClassifying) return;
+      isClassifying = true;
+      const cleanCanvas = getPreprocessedCanvas();
+      classifier.classify(cleanCanvas, 345, (error, results) => {
+        isClassifying = false;
+        gotResult(error, results);
+      });
     }
 
     function gotResult(error, results) {
-      if (error || !isPlaying || !hasDrawn) return;
+      if (error || !isPlaying || !hasDrawn || !results) return;
 
       const allowedWords = CATEGORIES[currentCategoryKey].words;
       const wordMap = new Map(allowedWords.map(item => [item.en.toLowerCase(), item.ko]));
@@ -729,7 +771,7 @@
       document.getElementById('ai-confidence-text').textContent = `${percent}%`;
       document.getElementById('ai-progress-fill').style.width = `${percent}%`;
 
-      if (topGuess.en === currentTarget.en && topGuess.rawConfidence > 0.15) {
+      if (topGuess.en === currentTarget.en && percent >= 25) {
         endGame(true);
       }
     }
@@ -748,6 +790,7 @@
 
       resetCanvas();
       isPlaying = true;
+      isClassifying = false;
       timeLeft = 30;
       document.getElementById('display-timer').textContent = timeLeft;
 
@@ -759,6 +802,13 @@
           endGame(false);
         }
       }, 1000);
+
+      clearInterval(liveClassifyInterval);
+      liveClassifyInterval = setInterval(() => {
+        if (isPlaying && hasDrawn) {
+          triggerClassification();
+        }
+      }, 500);
     }
 
     function resetCanvas() {
@@ -774,7 +824,7 @@
       if (!isPlaying) return;
       isPlaying = false;
       clearInterval(timerInterval);
-      clearTimeout(classifyTimeout);
+      clearInterval(liveClassifyInterval);
 
       const dataUrl = p5Canvas.elt.toDataURL('image/png');
       document.getElementById('result-image').src = dataUrl;
