@@ -8,19 +8,18 @@
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
     :root {
-      /* 네오 브루탈리즘 테마 컬러 파레트 */
       --bg: #fdfbf7;
       --black: #111111;
-      --border: 3px solid var(--black);
-      --border-thick: 4px solid var(--black);
+      --border: 3.5px solid var(--black);
+      --border-thick: 5px solid var(--black);
       
-      /* 팝(Pop) 컬러 */
       --yellow: #ffd83b;
-      --red: #ff4757;
-      --blue: #3e51ff;
-      --green: #2ed573;
-      --pink: #ff9ff3;
-      --cyan: #48dbfb;
+      --red: #ff334b;
+      --blue: #2563eb;
+      --green: #22c55e;
+      --pink: #ff70a6;
+      --cyan: #38bdf8;
+      --dice-red: #ff2a2a;
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,16 +31,14 @@
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       position: relative;
-      padding-top: 70px; /* 상단 고정 바 공간 확보 */
+      padding-top: 70px;
     }
     
-    /* 상단 고정 바 스타일 (네오 브루탈리즘) */
+    /* 상단 고정 바 */
     .fixed-top-bar {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
+      top: 0; left: 0;
+      width: 100%; height: 60px;
       background: var(--yellow);
       border-bottom: var(--border-thick);
       display: flex;
@@ -68,18 +65,14 @@
     }
 
     .fixed-top-bar .icon-btn {
-      width: 38px;
-      height: 38px;
+      width: 38px; height: 38px;
       background: white;
       border: var(--border);
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       box-shadow: 3px 3px 0 var(--black);
       cursor: pointer;
-      font-weight: 900;
-      font-size: 0.9rem;
+      font-weight: 900; font-size: 0.9rem;
       transition: all 0.1s ease;
       text-decoration: none;
       color: var(--black);
@@ -93,9 +86,8 @@
     }
 
     .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
-    a { color: inherit; transition: all 0.2s ease; text-decoration: none; }
+    a { color: inherit; text-decoration: none; }
     
-    /* 헤더 네비게이션 */
     .top {
       display: flex; justify-content: space-between; align-items: baseline;
       padding: 24px 0; 
@@ -115,21 +107,13 @@
     .top nav a { position: relative; padding: 4px 8px; }
     .top nav a:hover { background: var(--black); color: var(--bg); }
 
-    /* 좌우 흔들림(Wiggle) 키프레임 애니메이션 */
     @keyframes wiggle {
       0%, 100% { transform: rotate(var(--rot, 0deg)) translateX(0); }
       25% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
       50% { transform: rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
       75% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
     }
-    @keyframes wiggle-scale {
-      0%, 100% { transform: scale(1.1) rotate(var(--rot, 0deg)) translateX(0); }
-      25% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-      50% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
-      75% { transform: scale(1.1) rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-    }
 
-    /* 히어로 섹션 */
     .hero { padding: 80px 0 60px; border-bottom: var(--border-thick); }
     .hero .small { 
       display: inline-block; font-size: 1rem; font-weight: 800; 
@@ -138,7 +122,7 @@
     }
     .hero h1 {
       font-size: clamp(2.2rem, 5vw, 3.8rem);
-      line-height: 1.2; letter-spacing: -0.02em; font-weight: 900;
+      line-height: 1.2; font-weight: 900;
     }
     .hero h1 span { 
       display: inline-block;
@@ -147,17 +131,13 @@
       border: var(--border-thick);
       padding: 0 16px;
       box-shadow: 6px 6px 0 var(--black);
-      --rot: -2deg;
-      transform: rotate(var(--rot));
-      animation: wiggle 0.6s ease-in-out 1s;
+      transform: rotate(-2deg);
     }
-    .hero h1 span:hover { animation: wiggle 0.4s ease-in-out infinite; }
     .hero p { 
       max-width: 38em; margin-top: 24px; font-size: 1.1rem; font-weight: 600;
       border-left: 6px solid var(--black); padding-left: 20px;
     }
 
-    /* 시뮬레이터 메인 레이아웃 */
     .simulator-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -171,81 +151,120 @@
     .card {
       background: white;
       border: var(--border-thick);
-      box-shadow: 8px 8px 0 var(--black);
+      box-shadow: 10px 10px 0 var(--black);
       padding: 32px;
     }
     .card h3 {
       font-size: 1.4rem; font-weight: 900; margin-bottom: 20px;
       border-bottom: var(--border); padding-bottom: 8px;
       display: inline-block; background: var(--pink); padding: 4px 12px;
-      box-shadow: 3px 3px 0 var(--black);
+      box-shadow: 4px 4px 0 var(--black);
     }
 
-    /* 3D 주사위 스테이지 */
     .dice-stage {
       width: 100%;
-      height: 280px;
-      background: #f0f3f6;
-      border: var(--border);
+      height: 300px;
+      background: radial-gradient(circle, #fffbeb 0%, #fef3c7 100%);
+      border: var(--border-thick);
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 800px;
+      perspective: 1000px;
       overflow: hidden;
       margin-bottom: 24px;
-      box-shadow: inset 4px 4px 0 rgba(0,0,0,0.1);
+      box-shadow: inset 6px 6px 0 rgba(0,0,0,0.1);
+    }
+
+    /* 혜성/점선 패턴 백그라운드 효과 */
+    .dice-stage::before {
+      content: '';
+      position: absolute;
+      width: 200%; height: 200%;
+      background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+      background-size: 24px 24px;
+      opacity: 0.5;
+      transform: rotate(15deg);
+    }
+
+    /* 만화풍 하단 도트 그림자 */
+    .dice-stage::after {
+      content: '';
+      position: absolute;
+      bottom: 30px;
+      width: 110px; height: 22px;
+      background: repeating-radial-gradient(circle, #111111 0, #111111 3px, transparent 3px, transparent 8px);
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: shadowPulse 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes shadowPulse {
+      0% { transform: scale(0.9); opacity: 0.3; }
+      100% { transform: scale(1.1); opacity: 0.5; }
     }
 
     .dice {
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(30deg);
+      transform: rotateX(-25deg) rotateY(35deg);
       transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 2;
     }
 
     .dice.rolling {
-      animation: rollDice 0.8s ease-in-out;
+      animation: rollDice 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97);
     }
 
     @keyframes rollDice {
-      0% { transform: rotateX(0deg) rotateY(0deg) scale(1); }
-      50% { transform: rotateX(360deg) rotateY(360deg) scale(1.2); }
-      100% { transform: rotateX(720deg) rotateY(720deg) scale(1); }
+      0% { transform: rotateX(0deg) rotateY(0deg) scale(1) translateY(0); }
+      40% { transform: rotateX(360deg) rotateY(360deg) scale(1.25) translateY(-40px); }
+      80% { transform: rotateX(680deg) rotateY(680deg) scale(0.95) translateY(10px); }
+      100% { transform: rotateX(720deg) rotateY(720deg) scale(1) translateY(0); }
     }
 
     .dice-face {
       position: absolute;
-      width: 100px;
-      height: 100px;
-      background: white;
-      border: var(--border);
+      width: 110px;
+      height: 110px;
+      background: #ffffff;
+      border: var(--border-thick);
+      border-radius: 22px; /* 모서리가 둥근 주사위 */
       display: grid;
       grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-      padding: 12px;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+      padding: 14px;
+      box-shadow: inset -6px -6px 0 rgba(0,0,0,0.12);
+    }
+
+    /* 1의 눈은 특별히 굵고 강렬한 빨간색 카툰 점 */
+    .face-1 .dot {
+      background: var(--dice-red);
+      width: 22px;
+      height: 22px;
+      box-shadow: 2px 2px 0 var(--black);
     }
 
     .dot {
       background: var(--black);
       border-radius: 50%;
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       align-self: center;
       justify-self: center;
+      box-shadow: 1.5px 1.5px 0 rgba(0,0,0,0.25);
     }
 
-    /* 주사위 6면 배치 변환 */
-    .face-1 { transform: rotateY(0deg) translateZ(50px); }
-    .face-2 { transform: rotateY(-90deg) translateZ(50px); }
-    .face-3 { transform: rotateY(180deg) translateZ(50px); }
-    .face-4 { transform: rotateY(90deg) translateZ(50px); }
-    .face-5 { transform: rotateX(90deg) translateZ(50px); }
-    .face-6 { transform: rotateX(-90deg) translateZ(50px); }
+    /* 3D 6면 배치 (정육면체 너비/2인 55px 기준 입체감) */
+    .face-1 { transform: rotateY(0deg) translateZ(55px); }
+    .face-2 { transform: rotateY(-90deg) translateZ(55px); }
+    .face-3 { transform: rotateY(180deg) translateZ(55px); }
+    .face-4 { transform: rotateY(90deg) translateZ(55px); }
+    .face-5 { transform: rotateX(90deg) translateZ(55px); }
+    .face-6 { transform: rotateX(-90deg) translateZ(55px); }
 
-    /* 눈금 레이아웃 클래스 */
+    /* 눈금 레이아웃 */
     .d-center { grid-row: 2; grid-column: 2; }
     .d-top-left { grid-row: 1; grid-column: 1; }
     .d-bottom-right { grid-row: 3; grid-column: 3; }
@@ -266,7 +285,7 @@
       font-weight: 900;
       padding: 12px 20px;
       background: var(--yellow);
-      border: var(--border);
+      border: var(--border-thick);
       box-shadow: 4px 4px 0 var(--black);
       cursor: pointer;
       transition: all 0.1s;
@@ -293,21 +312,22 @@
     .custom-input-group input {
       flex: 1;
       padding: 10px;
-      border: var(--border);
-      font-weight: 800;
+      border: var(--border-thick);
+      font-weight: 900;
       font-size: 1rem;
       background: white;
+      box-shadow: 3px 3px 0 var(--black);
     }
 
-    /* 결과 집계 및 차트 영역 */
+    /* 통계 및 차트 */
     .stats-summary {
-      font-weight: 800;
-      font-size: 1.05rem;
+      font-weight: 900;
+      font-size: 1.1rem;
       margin-bottom: 20px;
       background: var(--yellow);
-      border: var(--border);
+      border: var(--border-thick);
       padding: 10px 16px;
-      box-shadow: 3px 3px 0 var(--black);
+      box-shadow: 4px 4px 0 var(--black);
       display: inline-block;
     }
 
@@ -321,7 +341,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      font-weight: 800;
+      font-weight: 900;
       font-size: 0.95rem;
     }
     .bar-label {
@@ -330,11 +350,12 @@
     }
     .bar-track {
       flex: 1;
-      height: 24px;
-      background: #eaeaea;
-      border: 2px solid var(--black);
+      height: 26px;
+      background: #f1f5f9;
+      border: var(--border);
       position: relative;
       overflow: hidden;
+      box-shadow: inset 2px 2px 0 rgba(0,0,0,0.1);
     }
     .bar-fill {
       height: 100%;
@@ -343,8 +364,8 @@
       transition: width 0.4s ease-out;
     }
     .bar-value {
-      width: 80px;
-      font-size: 0.85rem;
+      width: 90px;
+      font-size: 0.9rem;
     }
 
     footer { 
@@ -382,24 +403,24 @@
   <div class="top">
     <b>문태양</b>
     <nav>
-      <a href="#simulator">실습 11 · 3D 주사위 시뮬레이터</a>
+      <a href="#simulator">실습 11 · 3D 주사위</a>
     </nav>
   </div>
 
   <header class="hero">
     <p class="small">실습 11 · 11주차 중급 데이터 학습 도구</p>
-    <h1>3D 주사위 시뮬레이터와<br><span>결과 집계 차트</span> 만들기</h1>
-    <p>수학 및 통계 수업의 대량 확률 실험 물리적 한계를 극복하고, 3D 입체 주사위 회전 모션과 실시간 확률 통계 그래프를 확인합니다.</p>
+    <h1>카툰풍 스타일<br><span>3D 주사위 시뮬레이터</span></h1>
+    <p>모서리가 둥근 3D 주사위와 원색 카툰 그래픽, 강렬한 그림자 연출이 돋보이는 확률 통계 시뮬레이션 웹 앱입니다.</p>
   </header>
 
   <div class="simulator-container" id="simulator">
     <!-- 좌측: 3D 주사위 및 컨트롤 -->
     <div class="card">
-      <h3>3D 입체 주사위 시뮬레이터</h3>
+      <h3>3D 입체 주사위</h3>
       
       <div class="dice-stage">
         <div class="dice" id="diceObj">
-          <!-- 1면 -->
+          <!-- 1면 (빨간색 강조) -->
           <div class="dice-face face-1"><div class="dot d-center"></div></div>
           <!-- 2면 -->
           <div class="dice-face face-2"><div class="dot d-top-left"></div><div class="dot d-bottom-right"></div></div>
@@ -444,7 +465,6 @@
 </div>
 
 <script>
-  // 유튜브 BGM 플레이어 관련
   let ytPlayer;
   let isUserPaused = false;
   function onYouTubeIframeAPIReady() {
@@ -462,7 +482,6 @@
   document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, document.getElementsByTagName('script')[0]);
 
   document.addEventListener("DOMContentLoaded", () => {
-    // 실시간 시계
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
@@ -471,7 +490,6 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 음소거 토글
     const muteToggleBtn = document.getElementById('muteToggleBtn');
     const soundOnIcon = document.getElementById('soundOnIcon');
     const soundOffIcon = document.getElementById('soundOffIcon');
@@ -494,7 +512,7 @@
     window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
     window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
 
-    // 실습 11: 3D 주사위 시뮬레이터 로직
+    // 3D 주사위 시뮬레이터 로직
     let counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
     let totalRolls = 0;
 
@@ -502,7 +520,6 @@
     const totalStatsText = document.getElementById('totalStatsText');
     const chartContainer = document.getElementById('chartContainer');
 
-    // 3D 면 회전 각도 정의
     const faceRotations = {
       1: { x: 0, y: 0 },
       2: { x: 0, y: 90 },
@@ -547,7 +564,6 @@
           lastResult = res;
         }
 
-        // 마지막 결과에 맞추어 3D 주사위 최종 면 고정
         const rot = faceRotations[lastResult];
         diceObj.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
 
@@ -571,11 +587,10 @@
     document.getElementById('resetBtn').addEventListener('click', () => {
       counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
       totalRolls = 0;
-      diceObj.style.transform = `rotateX(-20deg) rotateY(30deg)`;
+      diceObj.style.transform = `rotateX(-25deg) rotateY(35deg)`;
       renderChart();
     });
 
-    // 초기 렌더링
     renderChart();
   });
 </script>
