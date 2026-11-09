@@ -8,8 +8,9 @@
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
     :root {
-      --bg: #fdfbf7;
-      --black: #111111;
+      --bg: #dfdcd3;
+      --black: #0f0f0f;
+      --white: #ffffff;
       --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
       
@@ -19,8 +20,20 @@
       --green: #2ed573;
       --pink: #ff9ff3;
       --cyan: #48dbfb;
+      --shadow-sm: 4px 4px 0 var(--black);
+      --shadow-lg: 8px 8px 0 var(--black);
     }
     
+    /* 전역 노이즈 텍스처 */
+    body::after {
+        content: "";
+        position: fixed; inset: 0;
+        pointer-events: none; z-index: 9999;
+        background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
+        opacity: 0.12;
+        mix-blend-mode: overlay;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
@@ -31,6 +44,8 @@
       -webkit-font-smoothing: antialiased;
       position: relative;
       padding-top: 70px;
+      background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px); 
+      background-size: 24px 24px; 
     }
     
     .fixed-top-bar {
@@ -74,7 +89,6 @@
       transition: all 0.1s ease;
       text-decoration: none;
       color: var(--black);
-      position: relative;
     }
 
     .fixed-top-bar .icon-btn:hover {
@@ -105,13 +119,6 @@
     .top nav a { position: relative; padding: 4px 8px; }
     .top nav a:hover { background: var(--black); color: var(--bg); }
 
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(var(--rot, 0deg)) translateX(0); }
-      25% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-      50% { transform: rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
-      75% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-    }
-
     .hero { padding: 60px 0 40px; border-bottom: var(--border-thick); }
     .hero .small { 
       display: inline-block; font-size: 1rem; font-weight: 800; 
@@ -129,8 +136,7 @@
       border: var(--border-thick);
       padding: 0 16px;
       box-shadow: 6px 6px 0 var(--black);
-      --rot: -2deg;
-      transform: rotate(var(--rot));
+      transform: rotate(-2deg);
     }
     .hero p { 
       max-width: 38em; margin-top: 20px; font-size: 1.05rem; font-weight: 600;
@@ -141,7 +147,7 @@
     .game-card {
       background: white;
       border: var(--border-thick);
-      box-shadow: 8px 8px 0 var(--black);
+      box-shadow: var(--shadow-lg);
       padding: 40px;
       margin-top: 48px;
     }
@@ -202,7 +208,7 @@
       margin-bottom: 32px;
     }
     .quiz-question {
-      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-size: clamp(1.4rem, 3.2vw, 2.0rem);
       font-weight: 900;
       background: var(--yellow);
       border: var(--border-thick);
@@ -252,6 +258,34 @@
       background: #f0f3f6; border: var(--border);
       padding: 24px; margin: 24px 0;
       box-shadow: 4px 4px 0 var(--black);
+      text-align: left;
+    }
+    .result-history-list {
+      max-height: 220px;
+      overflow-y: auto;
+      margin-top: 15px;
+      padding-right: 5px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: white;
+      border: 2px solid var(--black);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    .history-item a {
+      background: var(--cyan);
+      padding: 4px 8px;
+      border: 2px solid var(--black);
+      font-weight: 900;
+      font-size: 0.85rem;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .history-item a:hover {
+      background: var(--yellow);
     }
 
     footer { 
@@ -288,14 +322,14 @@
   <div class="top">
     <b>문태양</b>
     <nav>
-      <a href="#gameSection">실습 12 · 속담 이어서 말하기 게임</a>
+      <a href="#gameSection">속담 이어서 말하기 게임</a>
     </nav>
   </div>
 
   <header class="hero">
-    <p class="small">실습 12 · 11주차 중급 데이터 학습 도구</p>
-    <h1>퀴즈형 반복학습<br><span>초등학생용 속담</span> 이어서 말하기 게임</h1>
-    <p>속담의 앞구절이 제시되면 뒤구절을 맞춰 정답을 완성하는 퀴즈 형태의 국어 어휘 학습 웹앱입니다[cite: 3].</p>
+    <p class="small">국립국어원 표준국어대사전 연동</p>
+    <h1>퀴즈형 반복학습<br><span>실제 속담</span> 이어서 말하기 게임</h1>
+    <p>국립국어원 표준국어대사전에 등재된 공인된 속담들로 구성되어 있으며, 학습 후 표준어 원문 출처를 직접 확인할 수 있습니다.</p>
   </header>
 
   <div class="game-card" id="gameSection">
@@ -303,11 +337,11 @@
     <!-- 1. 시작 화면 -->
     <div class="screen start-screen active" id="startScreen">
       <h2>속담 이어서 말하기 챌린지</h2>
-      <p>제한 시간 내에 제시된 속담의 빈칸 또는 뒤구절을 정확히 입력하여 어휘력을 키워보세요!</p>
+      <p>제한 시간 내에 제시된 속담의 빈칸 또는 뒷구절을 정확히 입력하여 어휘력을 키워보세요!</p>
       
       <div class="setting-group">
         <label for="timeSlider">제한 시간 설정: <span class="time-val" id="timeValue">60</span>초</label>
-        <input type="range" id="timeSlider" min="30" max="300" step="10" value="60">
+        <input type="range" id="timeSlider" min="30" max="180" step="10" value="60">
       </div>
 
       <button class="btn btn-green" id="startBtn">게임 시작하기</button>
@@ -326,7 +360,7 @@
       </div>
 
       <form class="answer-form" id="answerForm">
-        <input type="text" id="answerInput" placeholder="뒤구절을 입력하세요" autocomplete="off">
+        <input type="text" id="answerInput" placeholder="뒷구절을 입력하세요" autocomplete="off">
         <button type="submit" class="btn">정답 제출</button>
       </form>
 
@@ -341,6 +375,10 @@
       <div class="result-stats">
         <p>획득 총 점수: <span id="finalScore">0</span>점</p>
         <p>맞힌 속담 개수: <span id="finalCount">0</span>개</p>
+        <div style="margin-top: 15px; font-weight: 900;">맞힌 속담 사전 출처 (국립국어원):</div>
+        <div class="result-history-list" id="resultHistoryList">
+          <!-- 맞춘 속담 및 사전 링크 리스트가 여기에 렌더링됩니다 -->
+        </div>
       </div>
       <button class="btn btn-green" id="restartBtn">다시 시작하기</button>
     </div>
@@ -348,7 +386,7 @@
   </div>
 
   <footer>
-    © 문태양. 바이브코딩 실습 12 포트폴리오.
+    © 문태양. 국립국어원 표준국어대사전 연동 속담 학습 웹앱.
   </footer>
 </div>
 
@@ -361,7 +399,7 @@
       videoId: 'PkVmztKY9PU',
       playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'PkVmztKY9PU', 'controls': 0 },
       events: {
-        'onReady': (event) => { event.target.playVideo(); event.target.setVolume(50); }
+        'onReady': (event) => { event.target.playVideo(); event.target.setVolume(30); }
       }
     });
   }
@@ -400,16 +438,68 @@
     window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
     window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
 
-    // 실습 12: 속담 퀴즈 게임 로직
+    // 국립국어원 표준국어대사전에 공식 등재된 실존 속담 데이터
     const sokdamList = [
-      { q: "콩 심은 데", a: "콩 나고 팥 심은 데 팥 난다", chosung: "ㅍ ㅅㅇ ㄷ ㅍ ㄴㄷ" },
-      { q: "말 한마디로", a: "천 냥 채무도 갚는다", chosung: "ㅊ ㄴ ㅂㅇㄷ 갚ㄴㄷ" },
-      { q: "고래 싸움에", a: "새우 터진다", chosung: "ㅅㅇ ㅌㅈㄴㄷ" },
-      { q: "누워서", a: "떡 먹기", chosung: "ㄸ ㅁㄱ" },
-      { q: "원수는", a: "외나무다리에서 만난다", chosung: "ㅇㄴㅁㄷㄹㅇㅅ ㅁㄴㄴㄷ" },
-      { q: "시작이", a: "반이다", chosung: "ㅂㅇㄷ" },
-      { q: "소 읽고", a: "외양간 고친다", chosung: "ㅇㅇㄱ ㄱㅊㄴㄷ" },
-      { q: "지나친 꿀은", a: "독이 된다", chosung: "ㄷㅇ ㄷㄴㄷ" }
+      { 
+        q: "콩 심은 데", 
+        a: "콩 나고 팥 심은 데 팥 난다", 
+        chosung: "ㅋ ㄴㄱ ㅍ ㅅㅇ ㄷ ㅍ ㄴㄷ",
+        full: "콩 심은 데 콩 나고 팥 심은 데 팥 난다" 
+      },
+      { 
+        q: "말 한마디로", 
+        a: "천 냥 빚을 갚는다", 
+        chosung: "ㅊ ㄴ ㅂㅇㅈ 갚ㄴㄷ",
+        full: "말 한마디로 천 냥 빚을 갚는다" 
+      },
+      { 
+        q: "고래 싸움에", 
+        a: "새우 터진다", 
+        chosung: "ㅅㅇ ㅌㅈㄴㄷ",
+        full: "고래 싸움에 새우 터진다" 
+      },
+      { 
+        q: "누워서", 
+        a: "떡 먹기", 
+        chosung: "ㄸ ㅁㄱ",
+        full: "누워서 떡 먹기" 
+      },
+      { 
+        q: "원수는", 
+        a: "외나무다리에서 만난다", 
+        chosung: "ㅇㄴㅁㄷㄹㅇㅅ ㅁㄴㄴㄷ",
+        full: "원수는 외나무다리에서 만난다" 
+      },
+      { 
+        q: "시작이", 
+        a: "반이다", 
+        chosung: "ㅂㅇㄷ",
+        full: "시작이 반이다" 
+      },
+      { 
+        q: "소 읽고", 
+        a: "외양간 고친다", 
+        chosung: "ㅇㅇㄱ ㄱㅊㄴㄷ",
+        full: "소 읽고 외양간 고친다" 
+      },
+      { 
+        q: "구슬이 서 말이라도", 
+        a: "꿰어야 보배", 
+        chosung: "ㄲㅇㅇ ㅂㅂ",
+        full: "구슬이 서 말이라도 꿰어야 보배" 
+      },
+      { 
+        q: "돌다리도", 
+        a: "두드려 보고 건너라", 
+        chosung: "ㄷㄷㄹ ㅂㄱ 건ㄴㄹ",
+        full: "돌다리도 두드려 보고 건너라" 
+      },
+      { 
+        q: "고생 끝에", 
+        a: "낙이 온다", 
+        chosung: "ㄴㅇ 오ㄴㄷ",
+        full: "고생 끝에 낙이 온다" 
+      }
     ];
 
     const timeSlider = document.getElementById('timeSlider');
@@ -431,6 +521,7 @@
 
     const finalScoreElem = document.getElementById('finalScore');
     const finalCountElem = document.getElementById('finalCount');
+    const resultHistoryList = document.getElementById('resultHistoryList');
 
     let gameTime = 60;
     let timer = null;
@@ -440,6 +531,7 @@
     let currentIdx = 0;
     let hintRemaining = 2;
     let shuffledList = [];
+    let solvedHistory = []; // 맞춘 속담 기록 배열
 
     timeSlider.addEventListener('input', (e) => {
       gameTime = e.target.value;
@@ -454,6 +546,7 @@
       timeLeft = parseInt(gameTime);
       score = 0;
       correctCount = 0;
+      solvedHistory = [];
       currentScoreElem.textContent = score;
       timeLeftElem.textContent = timeLeft;
 
@@ -494,6 +587,7 @@
       if (userAns === current.a) {
         score += 10;
         correctCount++;
+        solvedHistory.push(current);
         currentScoreElem.textContent = score;
         currentIdx++;
         loadQuiz();
@@ -518,6 +612,24 @@
       resultScreen.classList.add('active');
       finalScoreElem.textContent = score;
       finalCountElem.textContent = correctCount;
+
+      resultHistoryList.innerHTML = "";
+      if (solvedHistory.length === 0) {
+        resultHistoryList.innerHTML = `<div style="padding: 10px; text-align: center; font-weight: 700;">맞힌 속담이 없습니다.</div>`;
+      } else {
+        solvedHistory.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'history-item';
+          const queryEncoded = encodeURIComponent(item.full);
+          const dictUrl = `https://opendict.korean.go.kr/search/searchResult?query=${queryEncoded}`;
+          
+          div.innerHTML = `
+            <span>📌 ${item.full}</span>
+            <a href="${dictUrl}" target="_blank" rel="noopener noreferrer">국립국어원 사전 보기 ↗</a>
+          `;
+          resultHistoryList.appendChild(div);
+        });
+      }
     }
 
     startBtn.addEventListener('click', startGame);
