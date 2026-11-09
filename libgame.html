@@ -1,47 +1,77 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>도서관 지식 라운지 Pro - Neo Brutalism</title>
+    <title>문태양 - 도서관 지식 라운지 Pro</title>
     <style>
-        /* Neo Brutalism Base Theme */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
         :root {
-            --bg-color: #f4f0ea;
-            --main-yellow: #ffde00;
-            --main-pink: #ff007b;
-            --main-cyan: #00f0ff;
-            --main-green: #00ff66;
-            --main-purple: #9d4edd;
-            --dark: #000000;
-            --border-size: 4px;
-            --shadow-offset: 6px;
+            --bg: #fdfbf7;
+            --black: #111111;
+            --border: 3px solid var(--black);
+            --border-thick: 4px solid var(--black);
+            
+            --yellow: #ffd83b;
+            --red: #ff4757;
+            --blue: #3e51ff;
+            --green: #2ed573;
+            --pink: #ff9ff3;
+            --cyan: #48dbfb;
+            --purple: #9d4edd;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Arial Black', ui-sans-serif, system-ui, sans-serif;
+            font-family: "Pretendard Variable", Pretendard, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--dark);
-            padding: 20px;
+            background-color: var(--bg);
+            color: var(--black);
+            padding: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        /* 상단 고정 바 */
+        .fixed-top-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 60px;
+            background: var(--yellow);
+            border-bottom: var(--border-thick);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 2000;
+            box-shadow: 0 4px 0 var(--black);
+        }
+
+        .current-time {
+            font-weight: 900;
+            font-size: 0.95rem;
+            background: white;
+            border: var(--border);
+            padding: 4px 10px;
+            box-shadow: 2px 2px 0 var(--black);
         }
 
         .brutal-header {
-            background: var(--main-yellow);
-            border: var(--border-size) solid var(--dark);
-            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
-            padding: 15px 30px;
-            margin-bottom: 30px;
+            background: var(--yellow);
+            border: var(--border-thick);
+            box-shadow: 8px 8px 0px var(--black);
+            padding: 24px 30px;
+            margin-bottom: 25px;
             text-align: center;
             transform: rotate(-0.5deg);
             width: 100%;
@@ -49,9 +79,10 @@
         }
 
         .brutal-header h1 {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 4vw, 2.8rem);
             text-transform: uppercase;
-            letter-spacing: -1px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
         }
 
         .container {
@@ -64,55 +95,57 @@
 
         .brutal-card {
             background: #ffffff;
-            border: var(--border-size) solid var(--dark);
-            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--dark);
-            padding: 25px;
+            border: var(--border-thick);
+            box-shadow: 8px 8px 0px var(--black);
+            padding: 32px;
             position: relative;
         }
 
         .badge {
             display: inline-block;
             padding: 6px 12px;
-            font-weight: bold;
-            border: 2px solid var(--dark);
-            background: var(--main-cyan);
+            font-weight: 900;
+            border: var(--border);
+            background: var(--cyan);
             margin-bottom: 15px;
             text-transform: uppercase;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .grid-2 { grid-template-columns: 1fr; }
+            box-shadow: 2px 2px 0 var(--black);
+            transform: skew(-5deg);
         }
 
         /* Buttons */
         .brutal-btn {
             background: #ffffff;
-            border: var(--border-size) solid var(--dark);
+            border: var(--border-thick);
             padding: 12px 24px;
             font-size: 1.1rem;
-            font-weight: bold;
+            font-weight: 900;
             cursor: pointer;
-            box-shadow: 4px 4px 0px var(--dark);
+            box-shadow: 4px 4px 0px var(--black);
             transition: all 0.1s ease;
             text-align: center;
             display: inline-block;
         }
 
-        .brutal-btn:active, .brutal-btn.active {
-            transform: translate(4px, 4px);
-            box-shadow: 0px 0px 0px var(--dark);
+        .brutal-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--black);
+            background: var(--cyan);
         }
 
-        .brutal-btn.pink { background: var(--main-pink); color: white; }
-        .brutal-btn.cyan { background: var(--main-cyan); }
-        .brutal-btn.green { background: var(--main-green); }
-        .brutal-btn.yellow { background: var(--main-yellow); }
+        .brutal-btn:active, .brutal-btn.active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--black);
+        }
+
+        .brutal-btn.active {
+            background: var(--cyan);
+        }
+
+        .brutal-btn.pink { background: var(--pink); color: var(--black); }
+        .brutal-btn.cyan { background: var(--cyan); color: var(--black); }
+        .brutal-btn.green { background: var(--green); color: var(--black); }
+        .brutal-btn.yellow { background: var(--yellow); color: var(--black); }
 
         /* Navigation Tabs */
         .tab-menu {
@@ -128,11 +161,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--dark);
+            background: var(--black);
             color: #fff;
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
             font-size: 1.1rem;
+            font-weight: 900;
+            border: var(--border);
         }
 
         .card-grid {
@@ -148,62 +183,70 @@
         .memory-card {
             height: 110px;
             background: #ffffff;
-            border: var(--border-size) solid var(--dark);
-            box-shadow: 4px 4px 0px var(--dark);
+            border: var(--border);
+            box-shadow: 4px 4px 0px var(--black);
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
             padding: 10px;
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 0.95rem;
+            font-weight: 900;
             user-select: none;
             transition: transform 0.1s;
         }
 
+        .memory-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--black);
+        }
+
         .memory-card.flipped {
-            background: var(--main-yellow);
-            transform: scale(1.02);
+            background: var(--yellow);
         }
 
         .memory-card.matched {
-            background: var(--main-green);
+            background: var(--green);
             cursor: default;
-            box-shadow: 0px 0px 0px var(--dark);
-            transform: translate(4px, 4px);
-            opacity: 0.8;
+            box-shadow: 2px 2px 0px var(--black);
+            transform: translate(2px, 2px);
+            opacity: 0.85;
         }
 
         /* Golden Bell Styles */
         .timer-container {
             width: 100%;
-            background: #eee;
-            border: 3px solid var(--dark);
-            height: 25px;
-            margin-bottom: 20px;
+            background: #fff;
+            border: var(--border);
+            height: 28px;
+            margin-bottom: 24px;
             position: relative;
+            box-shadow: 3px 3px 0 var(--black);
+            overflow: hidden;
         }
 
         .timer-bar {
             height: 100%;
-            background: var(--main-pink);
+            background: var(--green);
             width: 100%;
             transition: width 0.1s linear;
         }
 
         .quiz-question {
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-            background: #fff;
-            padding: 20px;
-            border: var(--border-size) solid var(--dark);
+            font-size: 1.3rem;
+            margin-bottom: 24px;
+            background: #fdfbf7;
+            padding: 24px;
+            border: var(--border);
+            font-weight: 900;
+            box-shadow: 4px 4px 0 var(--black);
         }
 
         .quiz-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 16px;
         }
 
         @media (max-width: 600px) {
@@ -213,11 +256,12 @@
         .option-btn {
             background: #fff;
             text-align: left;
-            font-size: 1.05rem;
+            font-size: 1rem;
+            font-weight: 900;
         }
 
         .option-btn:hover {
-            background: var(--main-cyan);
+            background: var(--cyan);
         }
 
         /* Overlay views */
@@ -233,36 +277,45 @@
         /* Custom Quiz Input */
         textarea {
             width: 100%;
-            height: 150px;
-            border: var(--border-size) solid var(--dark);
-            padding: 15px;
+            height: 140px;
+            border: var(--border);
+            padding: 16px;
             font-family: monospace;
             font-size: 0.95rem;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             outline: none;
+            box-shadow: 3px 3px 0 var(--black);
+            background: #fff;
+            font-weight: 700;
         }
 
         textarea:focus {
-            background: #ffffea;
+            background: #fffbeb;
         }
 
         .toast {
             position: fixed;
-            bottom: 20px;
-            background: var(--main-purple);
+            bottom: 24px;
+            right: 24px;
+            background: var(--purple);
             color: white;
-            padding: 12px 25px;
-            border: 3px solid #000;
-            box-shadow: 4px 4px 0px #000;
-            font-weight: bold;
-            z-index: 100;
+            padding: 14px 24px;
+            border: var(--border-thick);
+            box-shadow: 6px 6px 0px var(--black);
+            font-weight: 900;
+            z-index: 1000;
             display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="brutal-header">
+    <div class="fixed-top-bar">
+        <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+        <div style="font-weight: 900; text-transform: uppercase;">문태양 · 도서관 지식 라운지 Pro</div>
+    </div>
+
+    <div class="brutal-header" style="margin-top: 20px;">
         <h1>Library Knowledge Lounge Pro</h1>
     </div>
 
@@ -276,13 +329,13 @@
         
         <!-- MODULE 1: KDC MATCHING GAME -->
         <div id="view-match" class="brutal-card">
-            <div class="badge" style="background: var(--main-purple); color: white;">중등 문헌정보 교육과정</div>
+            <div class="badge" style="background: var(--purple); color: white;">중등 문헌정보 교육과정</div>
             <h2>KDC 강목 짝맞추기 (10단위 분류)</h2>
-            <p style="margin-bottom: 20px; font-size: 0.95rem;">시작 시 3초 동안 전체 카드가 암기용으로 공개됩니다! 분류 기호와 해당하는 학문 주제를 올바르게 짝지어보세요.</p>
+            <p style="margin-bottom: 24px; font-weight: 700; font-size: 1.05rem;">시작 시 3초 동안 전체 카드가 암기용으로 공개됩니다! 분류 기호와 해당하는 학문 주제를 올바르게 짝지어보세요.</p>
 
-            <div id="match-start-screen" class="screen-overlay" style="background: #fff; border: 3px dashed #000;">
-                <h3 style="font-size: 1.5rem; margin-bottom: 15px;">KDC 10단위 분류법 탐험</h3>
-                <p style="margin-bottom: 20px;">무작위 배치된 총 8쌍(16장)의 카드 매칭 게임을 시작합니다.</p>
+            <div id="match-start-screen" class="screen-overlay" style="background: #fdfbf7; border: var(--border); box-shadow: 4px 4px 0 var(--black);">
+                <h3 style="font-size: 1.5rem; margin-bottom: 12px; font-weight: 900;">KDC 10단위 분류법 탐험</h3>
+                <p style="margin-bottom: 20px; font-weight: 700;">무작위 배치된 총 8쌍(16장)의 카드 매칭 게임을 시작합니다.</p>
                 <button class="brutal-btn yellow" onclick="startMatchGame()">탐험 시작하기</button>
             </div>
 
@@ -296,25 +349,25 @@
 
             <div id="match-complete-screen" class="screen-overlay" style="display: none;">
                 <span style="font-size: 3rem; margin-bottom: 10px;">🎉 CLEAR!</span>
-                <p style="font-size: 1.2rem; margin-bottom: 20px;">KDC 분류 체계를 완벽하게 매칭하셨습니다.</p>
+                <p style="font-size: 1.2rem; margin-bottom: 20px; font-weight: 900;">KDC 분류 체계를 완벽하게 매칭하셨습니다.</p>
                 <button class="brutal-btn green" onclick="startMatchGame()">다시 도전하기</button>
             </div>
         </div>
 
         <!-- MODULE 2: SPEED GOLDEN BELL -->
         <div id="view-bell" class="brutal-card" style="display: none;">
-            <div class="badge" style="background: var(--main-pink); color: white;">스피드 제한 15초</div>
+            <div class="badge" style="background: var(--pink); color: white;">스피드 제한 15초</div>
             <h2>도서관 스피드 골든벨</h2>
-            <p style="margin-bottom: 20px; font-size: 0.95rem;">제한 시간 내에 정답을 맞추세요! 남은 시간이 많을수록 타임 보너스 스코어가 추가 누적됩니다.</p>
+            <p style="margin-bottom: 24px; font-weight: 700; font-size: 1.05rem;">제한 시간 내에 정답을 맞추세요! 남은 시간이 많을수록 타임 보너스 스코어가 추가 누적됩니다.</p>
 
-            <div id="bell-start-screen" class="screen-overlay" style="background: #fff; border: 3px dashed #000;">
-                <h3 style="font-size: 1.5rem; margin-bottom: 15px;">도서관 상식 총점 배틀</h3>
-                <p style="margin-bottom: 20px;">총 10문제의 문헌정보 및 독서 상식 퀴즈가 무작위로 출제됩니다.</p>
+            <div id="bell-start-screen" class="screen-overlay" style="background: #fdfbf7; border: var(--border); box-shadow: 4px 4px 0 var(--black);">
+                <h3 style="font-size: 1.5rem; margin-bottom: 12px; font-weight: 900;">도서관 상식 총점 배틀</h3>
+                <p style="margin-bottom: 20px; font-weight: 700;">총 10문제의 문헌정보 및 독서 상식 퀴즈가 무작위로 출제됩니다.</p>
                 <button class="brutal-btn pink" onclick="startGoldenBell()">골든벨 스타트</button>
             </div>
 
             <div id="bell-game-area" style="display: none;">
-                <div class="game-status-bar" style="background: var(--main-pink); color: #000; border-bottom: 4px solid #000;">
+                <div class="game-status-bar" style="background: var(--yellow); color: var(--black);">
                     <div>🎯 SCORE: <span id="bell-score">0</span></div>
                     <div>📋 QUESTION: <span id="bell-progress">1 / 10</span></div>
                 </div>
@@ -327,16 +380,16 @@
 
             <div id="bell-complete-screen" class="screen-overlay" style="display: none;">
                 <span style="font-size: 3rem; margin-bottom: 10px;">🏆 FINISH!</span>
-                <h3 style="font-size: 1.8rem; margin-bottom: 15px;">최종 점수: <span id="bell-final-score">0</span>점</h3>
+                <h3 style="font-size: 1.8rem; margin-bottom: 20px; font-weight: 900;">최종 점수: <span id="bell-final-score">0</span>점</h3>
                 <button class="brutal-btn cyan" onclick="startGoldenBell()">처음부터 다시 하기</button>
             </div>
 
             <!-- Custom Quiz TSV Spreadsheet Parser Section -->
-            <div style="margin-top: 40px; border-top: 4px solid #000; padding-top: 25px;">
-                <h3 style="font-size: 1.3rem; margin-bottom: 10px;">📋 데이터 커스텀 확장 패널</h3>
-                <p style="font-size: 0.85rem; margin-bottom: 15px; color:#444;">엑셀이나 구글 스프레드시트에서 <strong>[문제, 보기1, 보기2, 보기3, 보기4, 정답번호(1~4)]</strong> 구조의 데이터 영역을 드래그 복사(Ctrl+C)한 후 아래에 붙여넣기(Ctrl+V) 하시면 나만의 전용 퀴즈 셋으로 즉시 변환됩니다.</p>
+            <div style="margin-top: 40px; border-top: 4px solid var(--black); padding-top: 25px;">
+                <h3 style="font-size: 1.3rem; margin-bottom: 10px; font-weight: 900;">📋 데이터 커스텀 확장 패널</h3>
+                <p style="font-size: 0.9rem; margin-bottom: 15px; font-weight: 700; color:#333;">엑셀이나 구글 스프레드시트에서 <strong>[문제, 보기1, 보기2, 보기3, 보기4, 정답번호(1~4)]</strong> 구조의 데이터 영역을 드래그 복사(Ctrl+C)한 후 아래에 붙여넣기(Ctrl+V) 하시면 나만의 전용 퀴즈 셋으로 즉시 변환됩니다.</p>
                 <textarea id="custom-tsv-input" placeholder="여기에 복사한 데이터를 붙여넣으세요...&#10;예시: 한국문학의 분류 코드는?&#9;KDC 810&#9;KDC 710&#9;KDC 610&#9;KDC 510&#9;1"></textarea>
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                     <button class="brutal-btn green" onclick="importCustomQuiz()">커스텀 퀴즈 빌드 및 적용</button>
                     <button class="brutal-btn" onclick="resetDefaultQuiz()">기본 퀴즈셋 복원</button>
                 </div>
@@ -348,6 +401,18 @@
     <div class="toast" id="toast-msg">시스템 브로드캐스트 메시지</div>
 
     <script>
+        // Real-time Clock
+        function updateClock() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+            document.getElementById('currentTimeDisplay').textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
         // Core KDC Dataset Master (Middle school standard)
         const kdcMasterPool = [
             { code: "000", name: "총류 (백과사전, 저널리즘)" },
@@ -412,7 +477,6 @@
             document.getElementById('view-match').style.display = target === 'match' ? 'block' : 'none';
             document.getElementById('view-bell').style.display = target === 'bell' ? 'block' : 'none';
             
-            // Clean intervals on view shift
             clearInterval(matchTimerInterval);
             clearInterval(bellTimerInterval);
         }
@@ -426,7 +490,6 @@
             matchScoreValue = 0;
             document.getElementById('match-score').textContent = matchScoreValue;
             
-            // Pick 8 random pairs from pool
             const shuffledPool = [...kdcMasterPool].sort(() => 0.5 - Math.random());
             const selectedPairs = shuffledPool.slice(0, 8);
             
@@ -436,7 +499,6 @@
                 matchCards.push({ id: index, type: 'name', text: item.name, pairId: index });
             });
             
-            // Shuffle final card layout array
             matchCards.sort(() => 0.5 - Math.random());
             
             const container = document.getElementById('card-container');
@@ -444,14 +506,13 @@
             
             matchCards.forEach((card, idx) => {
                 const cardEl = document.createElement('div');
-                cardEl.classList.add('memory-card', 'flipped'); // Start flipped for 3s preview
+                cardEl.classList.add('memory-card', 'flipped');
                 cardEl.dataset.index = idx;
                 cardEl.textContent = card.text;
                 cardEl.addEventListener('click', handleCardClick);
                 container.appendChild(cardEl);
             });
 
-            // 3 Seconds Absolute Memory Phase
             lockMatchBoard = true;
             let previewSeconds = 3;
             document.getElementById('match-timer-text').textContent = `👀 암기 시간: ${previewSeconds}초 남음`;
@@ -460,7 +521,6 @@
                 previewSeconds--;
                 if (previewSeconds <= 0) {
                     clearInterval(previewInterval);
-                    // Hide cards
                     const cards = document.querySelectorAll('.memory-card');
                     cards.forEach(c => c.classList.remove('flipped'));
                     lockMatchBoard = false;
@@ -492,9 +552,7 @@
         }
 
         function checkCardMatch() {
-            // Prevent clicking others during analytical verification
             if (firstCard.data.text === secondCard.data.text) {
-                // Clicked exact same element twice fallback guard
                 firstCard.el.classList.remove('flipped');
                 firstCard = null;
                 secondCard = null;
@@ -503,7 +561,6 @@
 
             lockMatchBoard = true;
             if (firstCard.data.pairId === secondCard.data.pairId) {
-                // Success Match detected
                 setTimeout(() => {
                     firstCard.el.classList.add('matched');
                     secondCard.el.classList.add('matched');
@@ -514,14 +571,12 @@
                     secondCard = null;
                     lockMatchBoard = false;
                     
-                    // Check Victory conditions
                     const totalMatched = document.querySelectorAll('.memory-card.matched').length;
                     if (totalMatched === matchCards.length) {
                         endMatchGameWithSuccess();
                     }
                 }, 300);
             } else {
-                // Match Failed
                 setTimeout(() => {
                     firstCard.el.classList.remove('flipped');
                     secondCard.el.classList.remove('flipped');
@@ -536,7 +591,6 @@
             document.getElementById('match-game-area').style.display = 'none';
             document.getElementById('match-complete-screen').style.display = 'flex';
         }
-
 
         /* --- MODULE 2: SPEED GOLDEN BELL QUIZ LOGIC --- */
         function startGoldenBell() {
@@ -579,11 +633,10 @@
                 optionsContainer.appendChild(btn);
             });
 
-            // Start countdown metrics (15 seconds total)
             bellTimeLeft = 150;
             const timerBar = document.getElementById('bell-timer-bar');
             timerBar.style.width = '100%';
-            timerBar.style.backgroundColor = 'var(--main-green)';
+            timerBar.style.backgroundColor = 'var(--green)';
 
             bellTimerInterval = setInterval(() => {
                 bellTimeLeft--;
@@ -591,9 +644,9 @@
                 timerBar.style.width = `${percentage}%`;
 
                 if (bellTimeLeft < 50) {
-                    timerBar.style.backgroundColor = 'var(--main-pink)';
+                    timerBar.style.backgroundColor = 'var(--red)';
                 } else if (bellTimeLeft < 100) {
-                    timerBar.style.backgroundColor = 'var(--main-yellow)';
+                    timerBar.style.backgroundColor = 'var(--yellow)';
                 }
 
                 if (bellTimeLeft <= 0) {
@@ -610,7 +663,6 @@
             const questionData = activeQuizSet[currentQuestionIndex];
             
             if (selectedNum === questionData.c) {
-                // Correct match calculations with time bonus parameters
                 const timeBonus = Math.floor(bellTimeLeft / 10);
                 const earnedPoints = 10 + timeBonus;
                 bellScoreValue += earnedPoints;
@@ -644,7 +696,6 @@
             for (let i = 0; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 
-                // Excel spreadsheet default structural copying splits rows via horizontal tabs
                 const columns = lines[i].split('\t');
                 
                 if (columns.length < 6) {
