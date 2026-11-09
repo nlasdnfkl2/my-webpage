@@ -173,6 +173,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       color: var(--black);
       box-shadow: var(--shadow-sm);
@@ -190,10 +191,6 @@
       cursor: not-allowed;
       background: #e0e0e0;
       box-shadow: 2px 2px 0 var(--black);
-    }
-
-    .cat-emoji {
-      font-size: 2.2rem;
     }
 
     #loading-status {
@@ -405,6 +402,17 @@
       box-shadow: var(--shadow-sm);
     }
 
+    .result-success-box {
+      max-width: 420px;
+      margin: 16px auto 24px;
+      padding: 16px 20px;
+      background: var(--green);
+      border: var(--border);
+      font-size: 1.25rem;
+      font-weight: 900;
+      box-shadow: var(--shadow-sm);
+    }
+
     .top3-list {
       list-style: none;
       max-width: 420px;
@@ -459,7 +467,7 @@
       </div>
       <h1>실시간으로 추론하는<br>AI 캐치마인드 앱</h1>
       <p class="subtitle">
-        그림을 그리는 동안 AI가 선택한 카테고리 안에서 무엇을 그리는지 실시간으로 유추하며, AI의 추측 TOP 3 안에 제시어가 포함되는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.
+        그림을 그리는 동안 AI가 선택한 카테고리 안에서 무엇을 그리는지 실시간으로 유추하며, 제시어와 일치하는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.
       </p>
 
       <section id="category-section">
@@ -468,19 +476,15 @@
         
         <div class="category-grid">
           <button class="cat-btn" data-cat="animals" disabled>
-            <span class="cat-emoji">🐾</span>
             <span>동물</span>
           </button>
           <button class="cat-btn" data-cat="food" disabled>
-            <span class="cat-emoji">🍎</span>
             <span>과일/채소</span>
           </button>
           <button class="cat-btn" data-cat="objects" disabled>
-            <span class="cat-emoji">🧸</span>
             <span>사물</span>
           </button>
           <button class="cat-btn" data-cat="vehicles" disabled>
-            <span class="cat-emoji">🚗</span>
             <span>교통수단</span>
           </button>
         </div>
@@ -500,7 +504,7 @@
 
         <div class="ai-live-box">
           <div class="ai-live-top">
-            <span id="ai-guess-text">🤖 AI 실시간 추측: 열심히 그리는 중...</span>
+            <span id="ai-guess-text">AI 실시간 추측: 열심히 그리는 중...</span>
             <span id="ai-confidence-text" style="background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</span>
           </div>
           <div class="progress-bar-bg">
@@ -543,8 +547,12 @@
         
         <h3 style="font-weight: 900; margin-bottom: 12px;">실제 정답: <span id="result-answer" style="color: var(--blue);">사자</span></h3>
         
-        <p style="margin-top: 16px; font-weight: 900;">AI의 추측 TOP 3 (주제 내 분석):</p>
-        <ul id="top3-list" class="top3-list"></ul>
+        <div id="success-answer-box" class="result-success-box hidden"></div>
+
+        <div id="fail-top3-wrapper" class="hidden">
+          <p style="margin-top: 16px; font-weight: 900;">AI의 추측 TOP 3 (주제 내 분석):</p>
+          <ul id="top3-list" class="top3-list"></ul>
+        </div>
 
         <button type="button" class="btn btn-primary" id="restart-btn">다른 문제 도전하기</button>
       </section>
@@ -681,7 +689,7 @@
       classifier = ml5.imageClassifier('DoodleNet', () => {
         isModelReady = true;
         const statusEl = document.getElementById('loading-status');
-        statusEl.textContent = '✅ AI 모델 준비 완료! 카테고리를 선택해 시작하세요.';
+        statusEl.textContent = 'AI 모델 준비 완료! 카테고리를 선택해 시작하세요.';
         statusEl.classList.add('ready');
         document.querySelectorAll('.cat-btn').forEach(btn => btn.disabled = false);
       });
@@ -764,21 +772,18 @@
         confidence: totalConf > 0 ? (item.rawConfidence / totalConf) : 0
       }));
 
-      const top3 = latestFilteredResults.slice(0, 3);
-      const topGuess = top3[0];
+      // 실시간 추론 UI에는 1순위 단일 항목만 표시
+      const topGuess = latestFilteredResults[0];
       const percent = Math.round(topGuess.confidence * 100);
 
-      const top3Text = top3
-        .map((item, idx) => `${idx + 1}위 ${item.ko}(${Math.round(item.confidence * 100)}%)`)
-        .join(' · ');
-
-      document.getElementById('ai-guess-text').textContent = `🤖 AI 실시간 TOP 3: ${top3Text}`;
+      document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${topGuess.ko}`;
       document.getElementById('ai-confidence-text').textContent = `${percent}%`;
       document.getElementById('ai-progress-fill').style.width = `${percent}%`;
 
-      // 주제 내 TOP 3 안에 현재 제시어(정답)가 포함되어 있으면 즉시 정답 처리
-      const isAnswerInTop3 = top3.some(item => item.en === currentTarget.en);
-      if (isAnswerInTop3) {
+      // 내부적으로는 TOP 3 내에 제시어가 포함되면 자동 정답 처리
+      const top3 = latestFilteredResults.slice(0, 3);
+      const isTargetInTop3 = top3.some(item => item.en === currentTarget.en);
+      if (isTargetInTop3) {
         endGame(true);
       }
     }
@@ -822,7 +827,7 @@
       background(255);
       hasDrawn = false;
       latestFilteredResults = [];
-      document.getElementById('ai-guess-text').textContent = '🤖 AI 실시간 추측: 열심히 그리는 중...';
+      document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 열심히 그리는 중...';
       document.getElementById('ai-confidence-text').textContent = '0%';
       document.getElementById('ai-progress-fill').style.width = '0%';
     }
@@ -838,27 +843,37 @@
       document.getElementById('result-answer').textContent = currentTarget.ko;
 
       const titleEl = document.getElementById('result-title');
-      if (isSuccess) {
-        titleEl.textContent = '🎉 정답입니다! AI 추측 TOP 3 안에 들었어요!';
-        titleEl.style.color = 'var(--green)';
-      } else {
-        titleEl.textContent = '⏰ 시간 종료! AI 분석 완료!';
-        titleEl.style.color = 'var(--black)';
-      }
-
+      const successBoxEl = document.getElementById('success-answer-box');
+      const failWrapperEl = document.getElementById('fail-top3-wrapper');
       const listEl = document.getElementById('top3-list');
-      listEl.innerHTML = '';
 
-      if (latestFilteredResults.length === 0) {
-        listEl.innerHTML = '<li class="top3-item">그려진 그림이 없어 분석하지 못했습니다.</li>';
+      if (isSuccess) {
+        titleEl.textContent = '정답입니다! AI가 그림을 맞혔어요!';
+        titleEl.style.color = 'var(--green)';
+
+        // 정답일 경우 TOP 3 목록 숨기고 정답어만 표시
+        failWrapperEl.classList.add('hidden');
+        successBoxEl.classList.remove('hidden');
+        successBoxEl.textContent = `AI 추측 결과: ${currentTarget.ko}`;
       } else {
-        latestFilteredResults.slice(0, 3).forEach((item, idx) => {
-          const li = document.createElement('li');
-          li.className = 'top3-item';
-          const isMatch = item.en === currentTarget.en ? ' ✅' : '';
-          li.innerHTML = `<span>${idx + 1}위. ${item.ko}${isMatch}</span> <span style="color: var(--blue);">${Math.round(item.confidence * 100)}%</span>`;
-          listEl.appendChild(li);
-        });
+        titleEl.textContent = '시간 종료! AI 분석 완료!';
+        titleEl.style.color = 'var(--black)';
+
+        // 오답일 경우에만 상위 3개 목록과 퍼센트 표시
+        successBoxEl.classList.add('hidden');
+        failWrapperEl.classList.remove('hidden');
+        listEl.innerHTML = '';
+
+        if (latestFilteredResults.length === 0) {
+          listEl.innerHTML = '<li class="top3-item">그려진 그림이 없어 분석하지 못했습니다.</li>';
+        } else {
+          latestFilteredResults.slice(0, 3).forEach((item, idx) => {
+            const li = document.createElement('li');
+            li.className = 'top3-item';
+            li.innerHTML = `<span>${idx + 1}위. ${item.ko}</span> <span style="color: var(--blue);">${Math.round(item.confidence * 100)}%</span>`;
+            listEl.appendChild(li);
+          });
+        }
       }
 
       document.getElementById('game-section').classList.add('hidden');
@@ -886,8 +901,8 @@
     document.getElementById('clear-btn').addEventListener('click', resetCanvas);
     document.getElementById('finish-btn').addEventListener('click', () => {
       const top3 = latestFilteredResults.slice(0, 3);
-      const isAnswerInTop3 = top3.some(item => item.en === currentTarget.en);
-      endGame(isAnswerInTop3);
+      const isTargetInTop3 = top3.some(item => item.en === currentTarget.en);
+      endGame(isTargetInTop3);
     });
 
     document.getElementById('restart-btn').addEventListener('click', () => {
