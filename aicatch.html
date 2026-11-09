@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>문태양 - CHRONOS & AI 캐치마인드</title>
+  <title>문태양 - 실시간 AI 캐치마인드</title>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
@@ -43,12 +43,10 @@
       -webkit-font-smoothing: antialiased;
       position: relative;
       padding-top: 70px;
-      /* 닷 패턴 배경 */
       background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px); 
       background-size: 24px 24px; 
     }
     
-    /* 상단 고정 바 */
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
@@ -160,6 +158,22 @@
       background: var(--yellow); border: var(--border-thick); padding: 14px 20px;
       box-shadow: var(--shadow-sm); text-align: center;
     }
+    
+    /* 실시간 추론 결과 표시 패널 */
+    .realtime-prediction-box {
+      background: var(--bg);
+      border: var(--border);
+      padding: 12px 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+    }
+    .rt-item { font-size: 1rem; }
+    .rt-item span { color: var(--blue); }
+
     .canvas-container {
       border: var(--border-thick); box-shadow: var(--shadow-lg); background: var(--white);
       display: flex; justify-content: center; margin-bottom: 16px; overflow: hidden; position: relative;
@@ -207,7 +221,6 @@
 
     footer { padding: 40px 0; color: var(--white); background: var(--black); font-size: 1rem; font-weight: 800; text-align: center; border-top: var(--border-thick); margin-top: 80px; }
 
-    /* 스피너 */
     .spinner-small {
       width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.2);
       border-top-color: var(--black); border-radius: 50%;
@@ -216,7 +229,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
   
-  <!-- ml5.js (DoodleNet 사용) API 키 없이 로컬 동작 -->
   <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
 </head>
 <body>
@@ -234,14 +246,14 @@
   <div class="top">
     <b>문태양</b>
     <nav>
-      <a href="#aiCatch">실습 15 · AI 캐치마인드</a>
+      <a href="#aiCatch">실습 15 · 실시간 AI 캐치마인드</a>
     </nav>
   </div>
 
   <header class="hero">
-    <p class="small">실습 15 · ml5.js DoodleNet 연동</p>
-    <h1>진짜 AI가 그림을 맞추는<br><span>AI 캐치마인드 앱</span></h1>
-    <p>API 키 입력 없이 브라우저에 내장된 <b>스케치 인식 AI 모델(DoodleNet)</b>이 여러분의 그림을 실시간으로 분석하여 무엇을 그렸는지 맞혀보는 완전 무료 인터랙티브 게임입니다.</p>
+    <p class="small">실습 15 · ml5.js DoodleNet 실시간 추론 연동</p>
+    <h1>실시간으로 추론하는<br><span>AI 캐치마인드 앱</span></h1>
+    <p>그림을 그리는 동안 AI가 실시간으로 무엇을 그리는지 유추하며, 제시어와 일치하는 순간 자동으로 정답 처리되는 실시간 인터랙티브 게임입니다.</p>
   </header>
 
   <div class="game-card" id="aiCatch">
@@ -277,6 +289,12 @@
         제시어: <span id="targetWord" style="color: var(--blue); font-size: 1.6rem; text-decoration: underline;">사자</span>
       </div>
 
+      <!-- 실시간 AI 추측 표시 바 -->
+      <div class="realtime-prediction-box">
+        <div class="rt-item">🤖 AI 실시간 추측: <span id="liveGuessText" style="font-size: 1.1rem;">열심히 그리는 중...</span></div>
+        <div class="rt-item" id="liveProbText" style="font-size: 0.9rem; background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</div>
+      </div>
+
       <div class="canvas-container">
         <canvas id="drawCanvas" width="600" height="360"></canvas>
       </div>
@@ -302,9 +320,7 @@
       <div class="ai-guess-box">
         <h3>실제 정답: <span id="ansText" style="color: var(--blue);">사자</span></h3>
         <p style="font-weight: 900; margin-bottom: 12px; font-size: 1.1rem;">AI의 추측 TOP 3:</p>
-        <div id="guessListContainer">
-          <!-- JS 렌더링 -->
-        </div>
+        <div id="guessListContainer"></div>
       </div>
       
       <button class="btn btn-green" id="restartBtn">다른 문제 도전하기</button>
@@ -313,13 +329,12 @@
   </div>
 
   <footer>
-    © 문태양. 바이브코딩 실습 15 포트폴리오.
+    © 문태양. 바이브코딩 실습 15 포트폴리오 (실시간 추론 연동).
   </footer>
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // 실시간 시계
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
@@ -349,7 +364,9 @@
     let currentWord = "";
     let timeLeft = 30;
     let timer = null;
+    let realtimeTimer = null;
     let classifier;
+    let isGameActive = false;
 
     const startScreen = document.getElementById('startScreen');
     const playScreen = document.getElementById('playScreen');
@@ -365,6 +382,8 @@
     const timeLeftElem = document.getElementById('timeLeft');
     const submitBtn = document.getElementById('submitBtn');
     const clearBtn = document.getElementById('clearBtn');
+    const liveGuessText = document.getElementById('liveGuessText');
+    const liveProbText = document.getElementById('liveProbText');
     
     const resultTitle = document.getElementById('resultTitle');
     const resultImg = document.getElementById('resultImg');
@@ -441,6 +460,37 @@
 
     clearBtn.addEventListener('click', clearCanvas);
 
+    // [핵심] 실시간 추론 루프 (그리는 동안 지속적으로 AI 분류 수행)
+    function startRealtimeClassification() {
+      if (realtimeTimer) clearInterval(realtimeTimer);
+      
+      realtimeTimer = setInterval(() => {
+        if (!isGameActive || !classifier) return;
+
+        classifier.classify(canvas, (error, results) => {
+          if (error || !results || results.length === 0) return;
+
+          const topResult = results[0];
+          const rawLabel = topResult.label;
+          const translated = dictionary[rawLabel] || rawLabel;
+          const prob = Math.round(topResult.confidence * 100);
+
+          liveGuessText.textContent = translated;
+          liveProbText.textContent = `${prob}%`;
+
+          // 실시간 일치 여부 확인 (신뢰도가 35% 이상이면서 제시어와 일치할 때 자동 정답 처리)
+          if (translated === currentWord && prob >= 35) {
+            if (isGameActive) {
+              isGameActive = false;
+              clearInterval(timer);
+              clearInterval(realtimeTimer);
+              showResult(true, results);
+            }
+          }
+        });
+      }, 800); // 0.8초마다 실시간 추론
+    }
+
     startBtn.addEventListener('click', () => {
       startScreen.classList.remove('active');
       resultScreen.classList.remove('active');
@@ -452,9 +502,12 @@
       targetWord.textContent = currentWord;
 
       clearCanvas();
+      liveGuessText.textContent = "열심히 그리는 중...";
+      liveProbText.textContent = "0%";
 
       timeLeft = 30;
       timeLeftElem.textContent = timeLeft;
+      isGameActive = true;
 
       if (timer) clearInterval(timer);
       timer = setInterval(() => {
@@ -462,13 +515,20 @@
         timeLeftElem.textContent = timeLeft;
         if (timeLeft <= 0) {
           clearInterval(timer);
-          submitDrawing();
+          isGameActive = false;
+          if (realtimeTimer) clearInterval(realtimeTimer);
+          submitDrawing(); // 시간 초과 시 최종 분석 제출
         }
       }, 1000);
+
+      startRealtimeClassification();
     });
 
     submitBtn.addEventListener('click', () => {
+      if (!isGameActive) return;
+      isGameActive = false;
       if (timer) clearInterval(timer);
+      if (realtimeTimer) clearInterval(realtimeTimer);
       submitDrawing();
     });
 
@@ -486,40 +546,48 @@
           return;
         }
 
-        playScreen.classList.remove('active');
-        resultScreen.classList.add('active');
-
-        resultImg.src = canvas.toDataURL('image/png');
-        ansText.textContent = currentWord;
-        guessListContainer.innerHTML = '';
-
         let isCorrect = false;
-        
         for (let i = 0; i < 3 && i < results.length; i++) {
           const rawLabel = results[i].label;
-          const prob = Math.round(results[i].confidence * 100);
           const translatedLabel = dictionary[rawLabel] || rawLabel;
-          const rowIsCorrect = (translatedLabel === currentWord);
-          if (rowIsCorrect) isCorrect = true;
-
-          const row = document.createElement('div');
-          row.className = `guess-row ${rowIsCorrect ? 'correct' : ''}`;
-          row.innerHTML = `
-            <div class="guess-rank">${i+1}위</div>
-            <div class="guess-name">${translatedLabel} ${rowIsCorrect ? '🎉 (정답!)' : ''}</div>
-            <div class="guess-prob">${prob}%</div>
-          `;
-          guessListContainer.appendChild(row);
+          if (translatedLabel === currentWord) isCorrect = true;
         }
 
-        if (isCorrect) {
-          resultTitle.textContent = "성공! AI가 그림을 알아맞혔습니다!";
-          resultTitle.style.color = "var(--green)";
-        } else {
-          resultTitle.textContent = "아쉽네요! AI가 정답을 맞히지 못했어요.";
-          resultTitle.style.color = "var(--pink)";
-        }
+        showResult(isCorrect, results);
       });
+    }
+
+    function showResult(isCorrect, results) {
+      playScreen.classList.remove('active');
+      resultScreen.classList.add('active');
+
+      resultImg.src = canvas.toDataURL('image/png');
+      ansText.textContent = currentWord;
+      guessListContainer.innerHTML = '';
+
+      for (let i = 0; i < 3 && i < results.length; i++) {
+        const rawLabel = results[i].label;
+        const prob = Math.round(results[i].confidence * 100);
+        const translatedLabel = dictionary[rawLabel] || rawLabel;
+        const rowIsCorrect = (translatedLabel === currentWord);
+
+        const row = document.createElement('div');
+        row.className = `guess-row ${rowIsCorrect ? 'correct' : ''}`;
+        row.innerHTML = `
+          <div class="guess-rank">${i+1}위</div>
+          <div class="guess-name">${translatedLabel} ${rowIsCorrect ? '🎉 (정답!)' : ''}</div>
+          <div class="guess-prob">${prob}%</div>
+        `;
+        guessListContainer.appendChild(row);
+      }
+
+      if (isCorrect) {
+        resultTitle.textContent = "성공! AI가 그림을 알아맞혔습니다!";
+        resultTitle.style.color = "var(--green)";
+      } else {
+        resultTitle.textContent = "아쉽네요! AI가 정답을 맞히지 못했어요.";
+        resultTitle.style.color = "var(--pink)";
+      }
     }
 
     restartBtn.addEventListener('click', () => {
