@@ -1,371 +1,1030 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>문태양 - 마음의 문장들 (Minimal Brutalist)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <style>
-        /* 네오 브루탈리즘 테마 변수 (기존 프로젝트들과 통일) */
-        :root {
-            --bg: #dfdcd3;
-            --black: #0f0f0f;
-            --yellow: #ffd83b;
-            --pink: #ff4757;
-            --cyan: #48dbfb;
-            --green: #2ed573;
-            --accent: #ff3b00;
-            --border-thick: 4px solid var(--black);
-            --border: 3px solid var(--black);
-            --shadow: 6px 6px 0 var(--black);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>문태양 - 마음의 문장들</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 
-        /* [실험적 효과 1] 배경 노이즈 필터 */
-        body::before {
-            content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 999;
-            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.08"/%3E%3C/svg%3E');
-        }
+    :root {
+      --bg: #fdfbf7;
+      --white: #ffffff;
+      --black: #111111;
+      --border: 3px solid var(--black);
+      --border-thick: 4px solid var(--black);
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            background-color: var(--bg); color: var(--black);
-            font-family: 'Noto Sans KR', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; word-break: keep-all; overflow-x: hidden;
-            transition: filter 0.3s ease;
-            padding-top: calc(80px + 2rem);
-        }
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
+    }
 
-        /* 상단 고정 바 */
-        .fixed-top-bar {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 60px;
-            background: var(--yellow);
-            border-bottom: var(--border-thick);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 24px;
-            z-index: 2000;
-            box-shadow: 0 4px 0 var(--black);
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-        .current-time {
-            font-weight: 900;
-            font-size: 0.95rem;
-            background: white;
-            border: var(--border);
-            padding: 4px 10px;
-            box-shadow: 2px 2px 0 var(--black);
-        }
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      padding-top: 70px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      word-break: keep-all;
+    }
 
-        /* [실험적 효과 2] 특정 요소 호버 시 화면 전체 색상 왜곡 */
-        body:has(.action-btn.youtube:hover) { filter: invert(0.1) sepia(1) hue-rotate(310deg) saturate(3); }
-        body:has(.action-btn.google:hover) { filter: invert(0.1) sepia(1) hue-rotate(180deg) saturate(2); }
+    /* 상단 고정 바 (portfolio_main 통일) */
+    .fixed-top-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 60px;
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 2000;
+      box-shadow: 0 4px 0 var(--black);
+    }
 
-        .app-container { width: 100%; max-width: 600px; padding: 2rem; position: relative; z-index: 10; }
+    .fixed-top-bar .current-time {
+      font-weight: 900;
+      font-size: 0.95rem;
+      background: var(--white);
+      border: var(--border);
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0 var(--black);
+    }
 
-        header {
-            margin-bottom: 3rem; text-align: left;
-            border-bottom: var(--border-thick); padding-bottom: 1rem;
-            display: flex; justify-content: space-between; align-items: flex-end;
-        }
+    .fixed-top-bar .icon-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
 
-        h1 {
-            font-family: 'Nanum Myeongjo', serif; font-size: 2.2rem; font-weight: 800;
-            letter-spacing: -1px; text-transform: uppercase;
-            text-shadow: 3px 3px 0 var(--accent);
-            cursor: crosshair;
-        }
-        
-        /* [실험적 효과 3] 제목 타이포그래피 호버 시 깨짐(글리치) 효과 */
-        h1:hover { animation: text-glitch 0.2s infinite; color: var(--bg); text-shadow: 3px 3px 0 var(--black), -2px -2px 0 var(--cyan); }
-        @keyframes text-glitch {
-            0% { transform: skew(0deg); }
-            25% { transform: skew(5deg) translate(-2px, 2px); }
-            75% { transform: skew(-5deg) translate(2px, -2px); }
-        }
+    .fixed-top-bar .icon-btn {
+      width: 38px; height: 38px;
+      background: var(--white);
+      border: var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      font-weight: 900; font-size: 0.9rem;
+      transition: all 0.1s ease;
+      text-decoration: none;
+      color: var(--black);
+    }
 
-        .subtitle { font-size: 0.95rem; font-weight: 700; background: var(--black); color: var(--bg); padding: 0.2rem 0.6rem; display: inline-block; }
+    .fixed-top-bar .icon-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+      background: var(--cyan);
+    }
 
-        /* 심플한 텍스트 기반 감정 리스트 */
-        .emotion-list {
-            display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 3rem;
-        }
+    .wrap {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
+      flex: 1;
+    }
 
-        .emotion-btn {
-            background: transparent; border: 3px solid var(--black);
-            color: var(--black); font-family: 'Noto Sans KR', sans-serif;
-            font-size: 1rem; font-weight: 900; padding: 0.6rem 1.2rem;
-            cursor: pointer; transition: all 0.15s;
-            text-transform: uppercase;
-        }
+    a { color: inherit; transition: all 0.2s ease; text-decoration: none; }
 
-        .emotion-btn:hover {
-            transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--black);
-            background: var(--bg);
-        }
+    /* 상단 브랜드 바 */
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      border-bottom: var(--border-thick);
+      font-size: 1rem;
+      font-weight: 800;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
 
-        .emotion-btn.active {
-            background: var(--black); color: var(--bg);
-            transform: translate(2px, 2px); box-shadow: inset 3px 3px 0 rgba(0,0,0,0.5);
-            border-color: var(--black);
-        }
-        
-        .emotion-btn[data-emotion="happy"].active { background: var(--cyan); border-color: var(--black); color: var(--black); }
-        .emotion-btn[data-emotion="sad"].active { background: #555; border-color: var(--black); color: #fff; }
-        .emotion-btn[data-emotion="burnout"].active { background: var(--accent); border-color: var(--black); color: #fff; }
-        .emotion-btn[data-emotion="anxious"].active { background: #ff00ff; border-color: var(--black); color: #fff; }
-        .emotion-btn[data-emotion="angry"].active { background: #ff0000; border-color: var(--black); color: #fff; }
-        .emotion-btn[data-emotion="peaceful"].active { background: var(--green); border-color: var(--black); color: var(--black); }
+    .top b {
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--black);
+      color: var(--yellow);
+      padding: 4px 12px;
+      transform: skew(-5deg);
+      display: inline-block;
+    }
 
-        /* 명언 카드 */
-        .quote-card {
-            background-color: #fff; border: var(--border-thick); box-shadow: var(--shadow);
-            padding: 3rem 2rem; display: none; position: relative;
-            transform: rotate(-1deg); transition: transform 0.2s;
-        }
+    .top nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-        .quote-card:hover { transform: rotate(0deg) translate(-2px, -2px); box-shadow: 8px 8px 0 var(--black); }
+    .top nav a, .top nav button {
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 800;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
+      color: var(--black);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        .quote-card.active {
-            display: block; animation: brutalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+    .top nav a:hover, .top nav button:hover {
+      background: var(--black);
+      color: var(--bg);
+    }
 
-        @keyframes brutalPop {
-            0% { transform: scale(0.9) translateY(20px) rotate(-3deg); opacity: 0; box-shadow: 0 0 0 var(--black); }
-            100% { transform: scale(1) translateY(0) rotate(-1deg); opacity: 1; box-shadow: var(--shadow); }
-        }
+    .saved-badge {
+      background: var(--red);
+      color: var(--white);
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 0 6px;
+      border: 2px solid var(--black);
+      line-height: 1.4;
+    }
 
-        .quote-text {
-            font-family: 'Nanum Myeongjo', serif; font-size: 1.4rem; font-weight: 800;
-            line-height: 1.6; margin-bottom: 2rem; text-align: left;
-            position: relative; z-index: 2;
-        }
+    /* 히어로 타이틀 영역 */
+    .hero {
+      padding: 52px 0 44px;
+      border-bottom: var(--border-thick);
+    }
 
-        .quote-text::after {
-            content: ""; position: absolute; left: -2%; top: 60%; width: 104%; height: 40%;
-            background: rgba(255, 220, 0, 0.5); z-index: -1; transform: rotate(-1deg);
-        }
+    .hero .small {
+      display: inline-block;
+      font-size: 0.95rem;
+      font-weight: 800;
+      background: var(--cyan);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: 4px 4px 0 var(--black);
+      margin-bottom: 20px;
+    }
 
-        .quote-source {
-            font-size: 1rem; font-weight: 900; color: var(--black); text-align: right;
-            border-top: 2px dashed var(--black); padding-top: 1rem; margin-bottom: 2rem;
-        }
+    .hero h1 {
+      font-size: clamp(2.1rem, 5vw, 3.3rem);
+      line-height: 1.25;
+      font-weight: 900;
+    }
 
-        .keyword-list { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .hero h1 span {
+      display: inline-block;
+      color: var(--black);
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 0 14px;
+      box-shadow: 6px 6px 0 var(--black);
+      transform: rotate(-2deg);
+    }
 
-        .keyword-btn {
-            background: var(--black); color: #fff; border: none; font-weight: 900;
-            padding: 0.3rem 0.8rem; font-size: 0.85rem; cursor: pointer;
-            text-transform: uppercase; transition: transform 0.1s;
-        }
+    .hero p {
+      max-width: 40em;
+      margin-top: 24px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-left: 6px solid var(--black);
+      padding-left: 18px;
+    }
 
-        .keyword-btn:hover { background: var(--accent); transform: scale(1.05) rotate(2deg); }
+    /* 감정 선택 섹션 */
+    .mood-section {
+      padding: 40px 0 80px;
+    }
 
-        .action-bar { display: flex; gap: 1rem; justify-content: flex-start; }
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-        .action-btn {
-            background: #fff; border: 3px solid var(--black); color: var(--black);
-            padding: 0.6rem 1rem; font-weight: 900; font-size: 0.9rem;
-            cursor: pointer; display: flex; align-items: center; gap: 0.4rem;
-            transition: all 0.15s; box-shadow: 3px 3px 0 var(--black);
-        }
+    .label {
+      display: inline-block;
+      font-size: 0.95rem;
+      font-weight: 900;
+      background: var(--black);
+      color: var(--white);
+      padding: 4px 14px;
+      text-transform: uppercase;
+      box-shadow: 4px 4px 0 var(--red);
+    }
 
-        .action-btn i { font-size: 1.2rem; }
-        .action-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); }
-        .action-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--black); }
-        
-        .action-btn.google:hover { background: var(--cyan); color: var(--black); border-color: var(--black); }
-        .action-btn.youtube:hover { background: #ff0000; color: #fff; border-color: var(--black); }
+    .random-quick-btn {
+      background: var(--pink);
+      border: var(--border);
+      padding: 6px 14px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--black);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.12s ease;
+    }
 
-        .initial-msg { font-weight: 900; font-size: 1.2rem; color: var(--black); text-align: center; margin-top: 3rem; text-decoration: underline; text-underline-offset: 4px; }
-        
-        .close-btn { position: absolute; top: -15px; right: -15px; background: var(--accent); color: #fff; border: var(--border-thick); width: 36px; height: 36px; border-radius: 50%; font-weight: 900; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 2px 2px 0 var(--black); }
-        .close-btn:hover { transform: scale(1.1) rotate(90deg); transition: transform 0.2s; }
-    </style>
+    .random-quick-btn:hover {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .emotion-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .emotion-btn {
+      background: var(--white);
+      border: var(--border-thick);
+      color: var(--black);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 900;
+      padding: 14px 16px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--black);
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .emotion-btn:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 7px 7px 0 var(--black);
+      background: var(--yellow);
+    }
+
+    .emotion-btn.active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .emotion-btn[data-emotion="happy"].active { background: var(--yellow); }
+    .emotion-btn[data-emotion="peaceful"].active { background: var(--green); }
+    .emotion-btn[data-emotion="sad"].active { background: var(--cyan); }
+    .emotion-btn[data-emotion="burnout"].active { background: var(--pink); }
+    .emotion-btn[data-emotion="anxious"].active { background: #a29bfe; }
+    .emotion-btn[data-emotion="angry"].active { background: var(--red); color: var(--white); }
+
+    /* 초기 안내 박스 */
+    .initial-msg {
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      padding: 44px 24px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.08rem;
+    }
+
+    .initial-msg.hidden {
+      display: none;
+    }
+
+    /* 명언 카드 (portfolio_main 브라우저 윈도우 스타일) */
+    .quote-card {
+      background-color: var(--white);
+      border: var(--border-thick);
+      box-shadow: 8px 8px 0 var(--black);
+      display: none;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .quote-card.active {
+      display: block;
+      animation: brutalPop 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes brutalPop {
+      0% { transform: scale(0.96) translateY(14px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .card-browser-bar {
+      height: 44px;
+      background: var(--cyan);
+      border-bottom: var(--border-thick);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .browser-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .browser-dot {
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--black);
+      border-radius: 50%;
+      background: var(--white);
+    }
+
+    .card-mood-badge {
+      margin-left: 6px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: var(--white);
+      color: var(--black);
+      border: 2px solid var(--black);
+      padding: 1px 10px;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .close-btn {
+      background: var(--red);
+      color: var(--white);
+      border: 2px solid var(--black);
+      width: 28px;
+      height: 28px;
+      font-weight: 900;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      transition: all 0.1s;
+    }
+
+    .close-btn:hover {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    .quote-body {
+      padding: 36px 32px 32px;
+    }
+
+    .quote-mark {
+      font-family: 'Nanum Myeongjo', serif;
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .quote-text {
+      font-family: 'Nanum Myeongjo', serif;
+      font-size: clamp(1.3rem, 3vw, 1.65rem);
+      font-weight: 800;
+      line-height: 1.65;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-text span.highlight {
+      background: linear-gradient(transparent 55%, rgba(255, 216, 59, 0.75) 55%);
+      padding: 0 2px;
+    }
+
+    .quote-source {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--black);
+      text-align: right;
+      border-top: 2px dashed var(--black);
+      padding-top: 14px;
+      margin-bottom: 22px;
+    }
+
+    .keyword-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 26px;
+    }
+
+    .keyword-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .keyword-btn {
+      background: var(--bg);
+      color: var(--black);
+      border: 2px solid var(--black);
+      font-weight: 900;
+      padding: 4px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.12s;
+    }
+
+    .keyword-btn:hover, .keyword-btn.active {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .filter-status-pill {
+      font-size: 0.8rem;
+      font-weight: 800;
+      background: var(--cyan);
+      border: 2px solid var(--black);
+      padding: 2px 10px;
+      display: none;
+    }
+
+    .filter-status-pill.visible {
+      display: inline-block;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: var(--white);
+      border: var(--border);
+      color: var(--black);
+      padding: 10px 16px;
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.12s;
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .action-btn i { font-size: 1.15rem; }
+
+    .action-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
+      background: var(--yellow);
+    }
+
+    .action-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .action-btn.primary { background: var(--yellow); }
+    .action-btn.primary:hover { background: var(--cyan); }
+    .action-btn.saved { background: var(--green); }
+    .action-btn.google:hover { background: var(--cyan); }
+    .action-btn.youtube:hover { background: var(--red); color: var(--white); }
+
+    /* 마음 보관함 모달 */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.78);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--white);
+      border: var(--border-thick);
+      padding: 32px;
+      max-width: 640px;
+      width: 100%;
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 10px 10px 0 var(--black);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--border-thick);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.4rem;
+      font-weight: 900;
+    }
+
+    .saved-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .saved-item {
+      background: var(--bg);
+      border: var(--border);
+      padding: 16px;
+      box-shadow: 4px 4px 0 var(--black);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .saved-item-text {
+      font-family: 'Nanum Myeongjo', serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+
+    .saved-item-meta {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #444;
+    }
+
+    .remove-saved-btn {
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 4px 10px;
+      font-weight: 900;
+      font-size: 0.8rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      white-space: nowrap;
+    }
+
+    .remove-saved-btn:hover {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    footer {
+      padding: 30px 0;
+      color: var(--white);
+      background: var(--black);
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-align: center;
+      border-top: var(--border-thick);
+      margin-top: auto;
+    }
+
+    @media (max-width: 680px) {
+      .hero { padding: 36px 0 32px; }
+      .emotion-list { grid-template-columns: repeat(2, 1fr); }
+      .quote-body { padding: 24px 20px; }
+      .action-bar .action-btn { flex: 1 1 calc(50% - 10px); justify-content: center; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- 상단 고정 바 -->
-<div class="fixed-top-bar">
+  <!-- 상단 고정 바 (portfolio_main 통일) -->
+  <div class="fixed-top-bar">
     <div class="current-time" id="currentTimeDisplay">--:--:--</div>
-    <div style="font-weight: 900; text-transform: uppercase;">문태양 · 마음의 문장들</div>
-</div>
+    <div class="icon-group">
+      <a href="index.html" class="icon-btn" title="포트폴리오 메인으로">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      </a>
+      <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+      </a>
+      <a href="mailto:nn80300@naver.com" class="icon-btn" title="Email">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+      </a>
+    </div>
+  </div>
 
-<div class="app-container">
-    <header>
-        <h1>마음의 문장들</h1>
-        <p class="subtitle">SELECT MOOD</p>
-    </header>
-
-    <div class="emotion-list">
-        <button class="emotion-btn" data-emotion="happy">행복 / 기쁨</button>
-        <button class="emotion-btn" data-emotion="peaceful">평온 / 여유</button>
-        <button class="emotion-btn" data-emotion="sad">우울 / 슬픔</button>
-        <button class="emotion-btn" data-emotion="burnout">지침 / 번아웃</button>
-        <button class="emotion-btn" data-emotion="anxious">불안 / 걱정</button>
-        <button class="emotion-btn" data-emotion="angry">분노 / 답답함</button>
+  <div class="wrap">
+    <div class="top">
+      <b>문태양</b>
+      <nav>
+        <a href="index.html">포트폴리오</a>
+        <button type="button" id="openSavedBtn">
+          마음 보관함 <span class="saved-badge" id="savedCountBadge">0</span>
+        </button>
+      </nav>
     </div>
 
-    <div class="initial-msg" id="initialMsg">오늘 당신의 감정은 어떤가요? 위에서 선택해주세요.</div>
+    <header class="hero">
+      <p class="small">감정 큐레이션 웹 앱 · 실습 4</p>
+      <h1>오늘의 기분에 건네는<br><span>마음의 문장들</span></h1>
+      <p>
+        지금 느끼는 감정을 선택하면 그 마음에 어울리는 한 구절을 건네드립니다. 주제 키워드로 연관 문장을 이어 읽거나 마음에 드는 문장을 보관함에 담아보세요.
+      </p>
+    </header>
 
-    <main class="quote-card" id="quoteCard">
-        <div class="close-btn" id="closeBtn" title="닫기">✕</div>
-        <div class="quote-text" id="quoteText">명언이 이곳에 표시됩니다.</div>
-        <div class="quote-source" id="quoteSource">- 발언자 -</div>
-        
-        <div class="keyword-list" id="keywordList"></div>
+    <section class="mood-section">
+      <div class="section-header-row">
+        <span class="label">Select Mood</span>
+        <button type="button" class="random-quick-btn" id="randomAnyBtn">
+          <i class="ph ph-shuffle"></i> 오늘의 랜덤 문장
+        </button>
+      </div>
 
-        <div class="action-bar">
-            <button class="action-btn" id="nextBtn" title="새로운 문장 뽑기">
-                <i class="ph ph-arrows-clockwise"></i> 다시
-            </button>
-            <button class="action-btn google" id="searchBtn" title="구글에서 키워드 검색">
-                <i class="ph ph-google-logo"></i> 검색
-            </button>
-            <button class="action-btn youtube" id="youtubeBtn" title="유튜브에서 관련 음악/명상 찾기">
-                <i class="ph ph-youtube-logo"></i> 힐링영상
-            </button>
+      <div class="emotion-list" id="emotionList">
+        <button type="button" class="emotion-btn" data-emotion="happy">행복 / 기쁨</button>
+        <button type="button" class="emotion-btn" data-emotion="peaceful">평온 / 여유</button>
+        <button type="button" class="emotion-btn" data-emotion="sad">우울 / 슬픔</button>
+        <button type="button" class="emotion-btn" data-emotion="burnout">지침 / 번아웃</button>
+        <button type="button" class="emotion-btn" data-emotion="anxious">불안 / 걱정</button>
+        <button type="button" class="emotion-btn" data-emotion="angry">분노 / 답답함</button>
+      </div>
+
+      <div class="initial-msg" id="initialMsg">
+        오늘 당신의 감정은 어떤가요? 위에서 기분을 선택하거나 랜덤 문장을 뽑아보세요.
+      </div>
+
+      <article class="quote-card" id="quoteCard">
+        <div class="card-browser-bar" id="cardBrowserBar">
+          <div class="browser-left">
+            <span class="browser-dot"></span>
+            <span class="browser-dot"></span>
+            <span class="browser-dot"></span>
+            <span class="card-mood-badge" id="cardMoodBadge">행복 / 기쁨</span>
+          </div>
+          <button type="button" class="close-btn" id="closeBtn" title="닫기" aria-label="명언 카드 닫기">✕</button>
         </div>
-    </main>
-</div>
 
-<script>
-    // --- 실시간 시계 연동 ---
+        <div class="quote-body">
+          <div class="quote-mark">“</div>
+          <div class="quote-text" id="quoteText">
+            <span class="highlight">명언이 이곳에 표시됩니다.</span>
+          </div>
+          <div class="quote-source" id="quoteSource">- 발언자 -</div>
+
+          <div class="keyword-row">
+            <div class="keyword-list" id="keywordList"></div>
+            <span class="filter-status-pill" id="filterStatusPill"></span>
+          </div>
+
+          <div class="action-bar">
+            <button type="button" class="action-btn primary" id="nextBtn">
+              <i class="ph ph-arrows-clockwise"></i> 다른 문장
+            </button>
+            <button type="button" class="action-btn" id="copyBtn">
+              <i class="ph ph-copy"></i> <span id="copyBtnText">복사</span>
+            </button>
+            <button type="button" class="action-btn" id="bookmarkBtn">
+              <i class="ph ph-bookmark-simple"></i> <span id="bookmarkBtnText">보관</span>
+            </button>
+            <button type="button" class="action-btn google" id="searchBtn">
+              <i class="ph ph-google-logo"></i> 검색
+            </button>
+            <button type="button" class="action-btn youtube" id="youtubeBtn">
+              <i class="ph ph-youtube-logo"></i> 힐링영상
+            </button>
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <!-- 마음 보관함 모달 -->
+  <div class="modal" id="savedModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>마음 보관함</h2>
+        <button type="button" class="close-btn" id="closeModalBtn" aria-label="보관함 닫기">✕</button>
+      </div>
+      <div class="saved-list" id="savedList"></div>
+    </div>
+  </div>
+
+  <footer>
+    © 문태양. 마음의 문장들.
+  </footer>
+
+  <script>
+    // 실시간 시계 (portfolio_main 통일)
     function updateClock() {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const dd = String(now.getDate()).padStart(2, '0');
-        const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
-        const timeEl = document.getElementById('currentTimeDisplay');
-        if (timeEl) timeEl.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+      const timeEl = document.getElementById('currentTimeDisplay');
+      if (timeEl) timeEl.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
     }
     updateClock();
     setInterval(updateClock, 1000);
 
+    const EMOTION_META = {
+      happy: { label: '행복 / 기쁨', color: 'var(--yellow)' },
+      peaceful: { label: '평온 / 여유', color: 'var(--green)' },
+      sad: { label: '우울 / 슬픔', color: 'var(--cyan)' },
+      burnout: { label: '지침 / 번아웃', color: 'var(--pink)' },
+      anxious: { label: '불안 / 걱정', color: '#a29bfe' },
+      angry: { label: '분노 / 답답함', color: 'var(--red)' }
+    };
+
     const quotesData = [
-        { id: 1, emotion: 'happy', text: "행복은 목적지가 아니라 여행 그 자체이다.", source: "랄프 왈도 에머슨", keyword: "행복" },
-        { id: 2, emotion: 'happy', text: "우리가 가진 것을 즐기는 것이야말로 진정한 풍요로움이다.", source: "에피쿠로스", keyword: "감사" },
-        { id: 3, emotion: 'happy', text: "가장 어두운 밤도 언젠가는 끝나고 해는 떠오른다.", source: "영화 <레미제라블>", keyword: "희망" },
-        { id: 4, emotion: 'peaceful', text: "단순하게 살아라. 현대인은 쓸데없는 일 때문에 얼마나 복잡한 삶을 살아가는가?", source: "이다 사우엘", keyword: "미니멀리즘" },
-        { id: 5, emotion: 'peaceful', text: "모든 것은 제자리에 있다. 서두를 필요가 없다.", source: "노자", keyword: "여유" },
-        { id: 6, emotion: 'peaceful', text: "침묵은 비어있는 것이 아니다. 그것은 해답으로 가득 차 있다.", source: "무명", keyword: "명상" },
-        { id: 7, emotion: 'sad', text: "슬픔이 그대의 삶을 삼키려 할 때, 그것이 지나갈 것임을 기억하라.", source: "에이브러햄 링컨", keyword: "시간" },
-        { id: 8, emotion: 'sad', text: "눈물을 흘려라. 눈물은 영혼을 씻어내는 비누다.", source: "조세프 루", keyword: "위로" },
-        { id: 9, emotion: 'sad', text: "때로는 무너져도 괜찮다. 별들도 무너져 내려야 새로운 은하를 만드니까.", source: "영화 <인터스텔라>", keyword: "회복" },
-        { id: 10, emotion: 'burnout', text: "휴식은 게으름이 아니다. 때로는 아무것도 하지 않는 것이 가장 큰 생산성이다.", source: "존 러복", keyword: "휴식" },
-        { id: 11, emotion: 'burnout', text: "모든 것을 완벽하게 하려는 강박을 내려놓아라. 당신은 이미 충분하다.", source: "브레네 브라운", keyword: "자존감" },
-        { id: 12, emotion: 'burnout', text: "가끔은 멈춰 서서 자신이 얼마나 멀리 왔는지 돌아볼 필요가 있다.", source: "영화 <월터의 상상은 현실이 된다>", keyword: "성장" },
-        { id: 13, emotion: 'anxious', text: "걱정의 40%는 절대 일어나지 않을 일이고, 30%는 이미 일어난 일이다.", source: "어니 젤린스키", keyword: "걱정" },
-        { id: 14, emotion: 'anxious', text: "두려움은 환상이다. 용기는 선택이다.", source: "윈스턴 처칠", keyword: "용기" },
-        { id: 15, emotion: 'anxious', text: "포스와 함께 하길. 불안은 미지의 것에 대한 저항일 뿐이다.", source: "영화 <스타워즈>", keyword: "마음챙김" },
-        { id: 16, emotion: 'angry', text: "분노는 다른 사람에게 던지기 위해 뜨거운 석탄을 쥐고 있는 것과 같다. 화상을 입는 것은 결국 자신이다.", source: "불교 격언", keyword: "통제" },
-        { id: 17, emotion: 'angry', text: "화를 내는 것은 쉬운 일이다. 그러나 올바른 사람에게, 올바른 정도로, 올바른 목적을 위해 화를 내는 것은 어렵다.", source: "아리스토텔레스", keyword: "지혜" },
-        { id: 18, emotion: 'angry', text: "깊게 숨을 들이마셔라. 당신이 통제할 수 없는 일에 에너지를 낭비하지 마라.", source: "스토아 철학", keyword: "평정심" }
+      { id: 1, emotion: 'happy', text: "행복은 목적지가 아니라 여행 그 자체이다.", source: "랄프 왈도 에머슨", keywords: ["행복", "여유", "철학"] },
+      { id: 2, emotion: 'happy', text: "우리가 가진 것을 즐기는 것이야말로 진정한 풍요로움이다.", source: "에피쿠로스", keywords: ["행복", "감사", "철학"] },
+      { id: 3, emotion: 'happy', text: "가장 어두운 밤도 언젠가는 끝나고 해는 떠오른다.", source: "영화 <레미제라블>", keywords: ["희망", "영화명대사", "용기"] },
+      { id: 4, emotion: 'happy', text: "기쁨을 나누면 두 배가 되고, 감사하는 마음은 일상을 축제로 바꾼다.", source: "알베르트 슈바이처", keywords: ["행복", "감사"] },
+      { id: 5, emotion: 'happy', text: "오늘 하루를 선물처럼 맞이하는 사람에게 매일이 특별한 날이 된다.", source: "영화 <어바웃 타임>", keywords: ["감사", "영화명대사", "여유"] },
+
+      { id: 6, emotion: 'peaceful', text: "단순하게 살아라. 현대인은 쓸데없는 일 때문에 얼마나 복잡한 삶을 살아가는가?", source: "이다 사우엘", keywords: ["여유", "평온", "휴식"] },
+      { id: 7, emotion: 'peaceful', text: "모든 것은 제자리에 있다. 서두를 필요가 없다.", source: "노자", keywords: ["여유", "평온", "철학"] },
+      { id: 8, emotion: 'peaceful', text: "침묵은 비어있는 것이 아니다. 그것은 해답으로 가득 차 있다.", source: "작자 미상", keywords: ["명상", "평온", "마음챙김"] },
+      { id: 9, emotion: 'peaceful', text: "바람이 불면 흔들리되 뿌리까지 뽑히지 않는 나무처럼 고요히 머물러라.", source: "법정 스님", keywords: ["평온", "마음챙김", "여유"] },
+      { id: 10, emotion: 'peaceful', text: "잠시 멈춰 차 한 잔의 온기를 느끼는 순간, 세상의 소음도 잦아든다.", source: "틱낫한", keywords: ["명상", "휴식", "마음챙김"] },
+
+      { id: 11, emotion: 'sad', text: "슬픔이 그대의 삶을 삼키려 할 때, 그것이 지나갈 것임을 기억하라.", source: "에이브러햄 링컨", keywords: ["위로", "희망", "회복"] },
+      { id: 12, emotion: 'sad', text: "눈물을 흘려라. 눈물은 영혼을 씻어내는 비누다.", source: "조세프 루", keywords: ["위로", "회복"] },
+      { id: 13, emotion: 'sad', text: "때로는 무너져도 괜찮다. 별들도 무너져 내려야 새로운 은하를 만드니까.", source: "영화 <인터스텔라>", keywords: ["위로", "회복", "영화명대사"] },
+      { id: 14, emotion: 'sad', text: "비 온 뒤에 땅이 굳듯, 오늘 흘린 눈물은 내일의 단단한 뿌리가 된다.", source: "헤르만 헤세", keywords: ["회복", "희망", "성장"] },
+      { id: 15, emotion: 'sad', text: "네가 얼마나 힘들었는지 다 헤아릴 수는 없지만, 나는 늘 네 편이다.", source: "영화 <굿 윌 헌팅>", keywords: ["위로", "영화명대사"] },
+
+      { id: 16, emotion: 'burnout', text: "휴식은 게으름이 아니다. 때로는 아무것도 하지 않는 것이 가장 큰 생산성이다.", source: "존 러복", keywords: ["휴식", "회복", "여유"] },
+      { id: 17, emotion: 'burnout', text: "모든 것을 완벽하게 하려는 강박을 내려놓아라. 당신은 이미 충분하다.", source: "브레네 브라운", keywords: ["자존감", "위로", "휴식"] },
+      { id: 18, emotion: 'burnout', text: "가끔은 멈춰 서서 자신이 얼마나 멀리 왔는지 돌아볼 필요가 있다.", source: "영화 <월터의 상상은 현실이 된다>", keywords: ["성장", "휴식", "영화명대사"] },
+      { id: 19, emotion: 'burnout', text: "활시위도 늘 당겨져 있으면 부러진다. 지친 마음에는 쉼표가 필요하다.", source: "세네카", keywords: ["휴식", "철학", "회복"] },
+      { id: 20, emotion: 'burnout', text: "속도가 아니라 방향이다. 잠시 걸음을 늦춰도 길은 사라지지 않는다.", source: "마하트마 간디", keywords: ["여유", "성장", "자존감"] },
+
+      { id: 21, emotion: 'anxious', text: "걱정의 40%는 절대 일어나지 않을 일이고, 30%는 이미 일어난 일이다.", source: "어니 젤린스키", keywords: ["용기", "마음챙김"] },
+      { id: 22, emotion: 'anxious', text: "두려움은 환상이다. 용기는 선택이다.", source: "윈스턴 처칠", keywords: ["용기", "성장"] },
+      { id: 23, emotion: 'anxious', text: "불안은 미래를 미리 앞당겨 걱정하는 습관일 뿐, 지금 이 순간에 집중하라.", source: "데일 카네기", keywords: ["마음챙김", "평온"] },
+      { id: 24, emotion: 'anxious', text: "폭풍우가 지나가길 기다리는 것이 아니라, 빗속에서 춤추는 법을 배우는 것이다.", source: "비비안 그린", keywords: ["용기", "희망", "성장"] },
+      { id: 25, emotion: 'anxious', text: "아직 오지 않은 내일의 짐을 오늘의 어깨에 미리 짊어지지 마라.", source: "오스왈드 챔버스", keywords: ["마음챙김", "위로"] },
+
+      { id: 26, emotion: 'angry', text: "분노는 다른 사람에게 던지기 위해 뜨거운 석탄을 쥐고 있는 것과 같다. 화상을 입는 것은 결국 자신이다.", source: "불교 격언", keywords: ["평온", "철학", "마음챙김"] },
+      { id: 27, emotion: 'angry', text: "화를 내는 것은 쉬운 일이다. 그러나 올바른 정도로 올바른 목적을 위해 화를 내는 것은 어렵다.", source: "아리스토텔레스", keywords: ["철학", "성장"] },
+      { id: 28, emotion: 'angry', text: "깊게 숨을 들이마셔라. 당신이 통제할 수 없는 일에 에너지를 낭비하지 마라.", source: "마르쿠스 아우렐리우스", keywords: ["평온", "철학", "명상"] },
+      { id: 29, emotion: 'angry', text: "감정의 파도가 높을 때는 닻을 내리고 물결이 잦아들기를 기다려라.", source: "세네카", keywords: ["평온", "여유", "철학"] },
+      { id: 30, emotion: 'angry', text: "한 번의 깊은 호흡이 열 마디의 후회스러운 말을 막아준다.", source: "작자 미상", keywords: ["명상", "마음챙김"] }
     ];
+
+    const STORAGE_KEY = 'taeyang_saved_quotes_v1';
+    let savedIds = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
 
     const emotionBtns = document.querySelectorAll('.emotion-btn');
     const quoteCard = document.getElementById('quoteCard');
+    const cardBrowserBar = document.getElementById('cardBrowserBar');
+    const cardMoodBadge = document.getElementById('cardMoodBadge');
     const initialMsg = document.getElementById('initialMsg');
     const quoteText = document.getElementById('quoteText');
     const quoteSource = document.getElementById('quoteSource');
     const keywordList = document.getElementById('keywordList');
+    const filterStatusPill = document.getElementById('filterStatusPill');
+
     const nextBtn = document.getElementById('nextBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const copyBtnText = document.getElementById('copyBtnText');
+    const bookmarkBtn = document.getElementById('bookmarkBtn');
+    const bookmarkBtnText = document.getElementById('bookmarkBtnText');
     const searchBtn = document.getElementById('searchBtn');
     const youtubeBtn = document.getElementById('youtubeBtn');
     const closeBtn = document.getElementById('closeBtn');
+    const randomAnyBtn = document.getElementById('randomAnyBtn');
 
-    let currentEmotion = '';
+    let filterState = { type: 'all', value: null };
     let currentQuote = null;
-    let lastShownId = -1; 
+    let lastShownId = -1;
 
-    function displayQuote(quoteArray) {
-        if (quoteArray.length === 0) return;
+    function saveStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...savedIds]));
+      document.getElementById('savedCountBadge').textContent = savedIds.size;
+    }
 
-        let availableQuotes = quoteArray;
-        if (quoteArray.length > 1) {
-            availableQuotes = quoteArray.filter(q => q.id !== lastShownId);
+    function updateBookmarkButton() {
+      if (!currentQuote) return;
+      const isSaved = savedIds.has(currentQuote.id);
+      bookmarkBtn.classList.toggle('saved', isSaved);
+      bookmarkBtnText.textContent = isSaved ? '보관됨' : '보관';
+    }
+
+    function getPoolByFilter() {
+      if (filterState.type === 'emotion') {
+        return quotesData.filter(q => q.emotion === filterState.value);
+      }
+      if (filterState.type === 'keyword') {
+        return quotesData.filter(q => q.keywords.includes(filterState.value));
+      }
+      return quotesData;
+    }
+
+    function showQuoteFromPool(pool) {
+      if (!pool || pool.length === 0) return;
+
+      const candidates = pool.length > 1
+        ? pool.filter(q => q.id !== lastShownId)
+        : pool;
+
+      const picked = candidates[Math.floor(Math.random() * candidates.length)];
+      currentQuote = picked;
+      lastShownId = picked.id;
+
+      const meta = EMOTION_META[picked.emotion] || { label: '마음의 문장', color: 'var(--cyan)' };
+      cardBrowserBar.style.background = meta.color;
+      cardMoodBadge.textContent = meta.label;
+
+      quoteText.innerHTML = `<span class="highlight">${picked.text}</span>`;
+      quoteSource.textContent = `— ${picked.source}`;
+
+      // 키워드 버튼 렌더링
+      keywordList.innerHTML = '';
+      picked.keywords.forEach(kw => {
+        const kwBtn = document.createElement('button');
+        kwBtn.type = 'button';
+        kwBtn.className = 'keyword-btn';
+        if (filterState.type === 'keyword' && filterState.value === kw) {
+          kwBtn.classList.add('active');
         }
-
-        const randomIndex = Math.floor(Math.random() * availableQuotes.length);
-        currentQuote = availableQuotes[randomIndex];
-        lastShownId = currentQuote.id;
-
-        quoteText.innerHTML = `${currentQuote.text}`;
-        quoteSource.textContent = `${currentQuote.source}`;
-        
-        keywordList.innerHTML = '';
-        const keywordBtn = document.createElement('button');
-        keywordBtn.className = 'keyword-btn';
-        keywordBtn.textContent = `#${currentQuote.keyword}`;
-        
-        keywordBtn.addEventListener('click', () => {
-            const relatedQuotes = quotesData.filter(q => q.keyword === currentQuote.keyword);
-            if(relatedQuotes.length > 0) displayQuote(relatedQuotes);
+        kwBtn.textContent = `#${kw}`;
+        kwBtn.addEventListener('click', () => {
+          emotionBtns.forEach(b => b.classList.remove('active'));
+          filterState = { type: 'keyword', value: kw };
+          const kwPool = getPoolByFilter();
+          filterStatusPill.textContent = `#${kw} 관련 문장 (${kwPool.length}편)`;
+          filterStatusPill.classList.add('visible');
+          showQuoteFromPool(kwPool);
         });
-        
-        keywordList.appendChild(keywordBtn);
-        initialMsg.style.display = 'none';
-        
-        quoteCard.classList.remove('active');
-        void quoteCard.offsetWidth;
-        quoteCard.classList.add('active');
+        keywordList.appendChild(kwBtn);
+      });
+
+      if (filterState.type !== 'keyword') {
+        filterStatusPill.classList.remove('visible');
+      }
+
+      copyBtnText.textContent = '복사';
+      updateBookmarkButton();
+
+      initialMsg.classList.add('hidden');
+      quoteCard.classList.remove('active');
+      void quoteCard.offsetWidth;
+      quoteCard.classList.add('active');
     }
 
     emotionBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            emotionBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            currentEmotion = btn.getAttribute('data-emotion');
-            const filteredQuotes = quotesData.filter(q => q.emotion === currentEmotion);
-            displayQuote(filteredQuotes);
-        });
+      btn.addEventListener('click', () => {
+        emotionBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const emotion = btn.dataset.emotion;
+        filterState = { type: 'emotion', value: emotion };
+        showQuoteFromPool(getPoolByFilter());
+      });
+    });
+
+    randomAnyBtn.addEventListener('click', () => {
+      emotionBtns.forEach(b => b.classList.remove('active'));
+      filterState = { type: 'all', value: null };
+      showQuoteFromPool(quotesData);
     });
 
     nextBtn.addEventListener('click', () => {
-        if (!currentEmotion) return;
-        const filteredQuotes = quotesData.filter(q => q.emotion === currentEmotion);
-        displayQuote(filteredQuotes);
+      showQuoteFromPool(getPoolByFilter());
     });
 
     closeBtn.addEventListener('click', () => {
-        quoteCard.classList.remove('active');
-        setTimeout(() => { quoteCard.style.display = 'none'; }, 300);
-        emotionBtns.forEach(b => b.classList.remove('active'));
-        currentEmotion = '';
-        initialMsg.style.display = 'block';
+      quoteCard.classList.remove('active');
+      emotionBtns.forEach(b => b.classList.remove('active'));
+      filterState = { type: 'all', value: null };
+      currentQuote = null;
+      initialMsg.classList.remove('hidden');
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      if (!currentQuote) return;
+      const copyStr = `"${currentQuote.text}" - ${currentQuote.source}`;
+      try {
+        await navigator.clipboard.writeText(copyStr);
+        copyBtnText.textContent = '복사 완료!';
+        setTimeout(() => { copyBtnText.textContent = '복사'; }, 1500);
+      } catch (e) {
+        copyBtnText.textContent = '복사 실패';
+      }
+    });
+
+    bookmarkBtn.addEventListener('click', () => {
+      if (!currentQuote) return;
+      if (savedIds.has(currentQuote.id)) {
+        savedIds.delete(currentQuote.id);
+      } else {
+        savedIds.add(currentQuote.id);
+      }
+      saveStorage();
+      updateBookmarkButton();
     });
 
     searchBtn.addEventListener('click', () => {
-        if (currentQuote && currentQuote.keyword) {
-            const searchQuery = encodeURIComponent(`${currentQuote.keyword} 명언 글귀`);
-            window.open(`https://www.google.com/search?q=${searchQuery}`, '_blank');
-        }
+      if (!currentQuote) return;
+      const primaryKw = currentQuote.keywords[0] || '';
+      const q = encodeURIComponent(`${currentQuote.source} ${primaryKw} 명언`);
+      window.open(`https://www.google.com/search?q=${q}`, '_blank', 'noopener,noreferrer');
     });
 
     youtubeBtn.addEventListener('click', () => {
-        if (!currentEmotion) return;
-        
-        const searchTerms = {
-            'happy': '기분 좋아지는 경쾌한 플레이리스트',
-            'peaceful': '마음이 편안해지는 잔잔한 피아노 지브리',
-            'sad': '우울할때 위로가 되는 노래',
-            'burnout': '지치고 힘들때 듣는 힐링 ASMR',
-            'anxious': '불안감 해소 명상 음악 주파수',
-            'angry': '스트레스 해소 락 플레이리스트'
-        };
-        
-        const term = searchTerms[currentEmotion] || '마음 힐링 음악';
-        const searchQuery = encodeURIComponent(term);
-        window.open(`https://www.youtube.com/results?search_query=${searchQuery}`, '_blank');
+      const emotionKey = (filterState.type === 'emotion' && filterState.value)
+        ? filterState.value
+        : (currentQuote ? currentQuote.emotion : 'peaceful');
+
+      const searchTerms = {
+        happy: '기분 좋아지는 경쾌한 플레이리스트',
+        peaceful: '마음이 편안해지는 잔잔한 피아노 연주',
+        sad: '우울할때 위로가 되는 잔잔한 음악',
+        burnout: '지치고 힘들때 듣는 힐링 사운드',
+        anxious: '불안감 해소 명상 음악',
+        angry: '스트레스 해소 시원한 플레이리스트'
+      };
+
+      const term = searchTerms[emotionKey] || '마음 힐링 음악';
+      window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(term)}`, '_blank', 'noopener,noreferrer');
     });
-</script>
+
+    // 마음 보관함 모달 관리
+    const savedModal = document.getElementById('savedModal');
+    const savedList = document.getElementById('savedList');
+
+    function renderSavedList() {
+      savedList.innerHTML = '';
+      const items = quotesData.filter(q => savedIds.has(q.id));
+
+      if (items.length === 0) {
+        savedList.innerHTML = `
+          <div style="text-align:center; padding: 32px 16px; font-weight: 800; background: var(--bg); border: var(--border);">
+            아직 보관한 문장이 없습니다. 마음에 와닿는 문장의 '보관' 버튼을 눌러보세요.
+          </div>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'saved-item';
+        const meta = EMOTION_META[item.emotion]?.label || '';
+        row.innerHTML = `
+          <div>
+            <div class="saved-item-text">“${item.text}”</div>
+            <div class="saved-item-meta">— ${item.source} · [${meta}]</div>
+          </div>
+          <button type="button" class="remove-saved-btn">삭제</button>
+        `;
+        row.querySelector('.remove-saved-btn').addEventListener('click', () => {
+          savedIds.delete(item.id);
+          saveStorage();
+          updateBookmarkButton();
+          renderSavedList();
+        });
+        savedList.appendChild(row);
+      });
+    }
+
+    document.getElementById('openSavedBtn').addEventListener('click', () => {
+      renderSavedList();
+      savedModal.style.display = 'flex';
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+      savedModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === savedModal) savedModal.style.display = 'none';
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && savedModal.style.display === 'flex') {
+        savedModal.style.display = 'none';
+      }
+    });
+
+    saveStorage();
+  </script>
 </body>
 </html>
