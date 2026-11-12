@@ -25,14 +25,15 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: var(--bg); 
-      color: var(--black); 
+      background: var(--bg);
+      color: var(--black);
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       position: relative;
       padding-top: 70px;
     }
     
+    /* 상단 고정 바 */
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
@@ -71,7 +72,7 @@
       box-shadow: 3px 3px 0 var(--black);
       cursor: pointer;
       font-weight: 900; font-size: 0.9rem;
-      transition: all 0.1s ease;
+      transition: all 0.12s ease;
       text-decoration: none;
       color: var(--black);
       position: relative;
@@ -83,55 +84,150 @@
       background: var(--cyan);
     }
 
+    .fixed-top-bar .icon-btn.music-playing {
+      background: var(--green);
+    }
+
+    .fixed-top-bar .icon-btn.music-muted {
+      background: #f1f2f6;
+      color: #555555;
+    }
+
+    /* 첫 접속 시 상단 양옆 라운드 음악 재생 선택 바 */
+    .music-prompt-bar {
+      position: fixed;
+      top: 74px;
+      left: 50%;
+      transform: translateX(-50%) translateY(0);
+      z-index: 1990;
+      background: #ffffff;
+      border: var(--border-thick);
+      border-radius: 9999px;
+      box-shadow: 6px 6px 0 var(--black);
+      padding: 8px 12px 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: max-content;
+      max-width: calc(100vw - 24px);
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .music-prompt-bar.is-hidden {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-18px);
+      pointer-events: none;
+    }
+
+    .music-prompt-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .music-prompt-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .music-prompt-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .pill-choice-btn {
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 900;
+      padding: 6px 16px;
+      border: var(--border);
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      transition: all 0.12s ease;
+      color: var(--black);
+      white-space: nowrap;
+    }
+
+    .pill-choice-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .pill-choice-btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .pill-choice-btn.yes {
+      background: var(--green);
+    }
+
+    .pill-choice-btn.no {
+      background: var(--bg);
+    }
+
+    .pill-choice-btn.no:hover {
+      background: var(--pink);
+    }
+
     .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
     a { color: inherit; transition: all 0.2s ease; text-decoration: none; }
 
     .top {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: 24px 0; 
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 0;
       border-bottom: var(--border-thick);
       font-size: 1rem; font-weight: 800;
+      gap: 16px;
+      flex-wrap: wrap;
     }
-    .top b { 
-      font-size: 1.4rem; 
-      letter-spacing: 0.05em; 
-      text-transform: uppercase; 
-      background: var(--black); 
+    .top b {
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--black);
       color: var(--yellow);
       padding: 4px 12px;
       transform: skew(-5deg);
+      display: inline-block;
     }
-    .top nav { display: flex; gap: 24px; }
-    .top nav a { position: relative; padding: 4px 8px; }
+    .top nav { display: flex; gap: 20px; }
+    .top nav a { position: relative; padding: 4px 10px; }
     .top nav a:hover { background: var(--black); color: var(--bg); }
 
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(var(--rot, 0deg)) translateX(0); }
-      25% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-      50% { transform: rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
-      75% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
-    }
-
     .hero { padding: 100px 0 80px; border-bottom: var(--border-thick); }
-    .hero .small { 
-      display: inline-block; font-size: 1rem; font-weight: 800; 
+    .hero .small {
+      display: inline-block; font-size: 1rem; font-weight: 800;
       background: var(--cyan); border: var(--border); padding: 4px 12px;
       box-shadow: 4px 4px 0 var(--black); margin-bottom: 24px;
     }
     .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
       line-height: 1.2; font-weight: 900;
     }
-    .hero h1 span { 
+    .hero h1 span {
       display: inline-block;
-      color: var(--black); 
+      color: var(--black);
       background: var(--yellow);
       border: var(--border-thick);
       padding: 0 16px;
       box-shadow: 6px 6px 0 var(--black);
       transform: rotate(-2deg);
     }
-    .hero p { 
+    .hero p {
       max-width: 36em; margin-top: 30px; font-size: 1.1rem; font-weight: 600;
       border-left: 6px solid var(--black); padding-left: 20px;
     }
@@ -162,32 +258,88 @@
     .two h3 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 6px; display: inline-block; }
 
     .work-group { margin-top: 60px; }
+    .work-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
     .work-group-title {
       display: inline-block;
       font-size: 1.1rem; font-weight: 900;
       border: var(--border); background: var(--yellow);
       padding: 6px 16px; box-shadow: 4px 4px 0 var(--black);
-      margin-bottom: 30px;
     }
 
-    .work { 
-      margin-top: 36px; padding: 24px; 
+    .work {
+      margin-top: 28px; padding: 24px;
       border: var(--border); background: white;
       box-shadow: 5px 5px 0 var(--black);
     }
+    .work-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
     .work h3 { font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .work .when { 
-      display: inline-block; font-size: 0.85rem; font-weight: 800; 
-      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 16px; 
+    .work .when {
+      display: inline-block; font-size: 0.85rem; font-weight: 800;
+      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 16px;
     }
 
-    .carousel-wrap { margin-top: 16px; position: relative; }
+    .project-link {
+      font-size: 0.85rem;
+      font-weight: 900;
+      background: var(--cyan);
+      color: var(--black);
+      border: 2px solid var(--black);
+      padding: 3px 10px;
+      box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.12s ease;
+    }
+    .project-link:hover {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .carousel-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .carousel-btn {
+      width: 34px;
+      height: 34px;
+      background: white;
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s ease;
+    }
+    .carousel-btn:hover {
+      background: var(--yellow);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .carousel-wrap { margin-top: 12px; position: relative; }
     .carousel {
       display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-      gap: 16px; padding-bottom: 12px;
+      gap: 16px; padding-bottom: 12px; scroll-behavior: smooth;
     }
+    .carousel::-webkit-scrollbar { height: 10px; }
+    .carousel::-webkit-scrollbar-track { background: var(--bg); border: 2px solid var(--black); }
+    .carousel::-webkit-scrollbar-thumb { background: var(--black); }
     .carousel img {
-      scroll-snap-align: start; flex: 0 0 75%; max-width: 380px; max-height: 280px;
+      scroll-snap-align: start; flex: 0 0 75%; max-width: 360px; max-height: 260px;
       object-fit: contain; padding: 12px;
       border: var(--border); background: #fff;
       box-shadow: 5px 5px 0 var(--black);
@@ -222,14 +374,43 @@
       position: absolute; bottom: -12px; right: -12px;
       background: var(--yellow); border: var(--border); padding: 4px 12px;
       font-weight: 900; font-size: 0.85rem; box-shadow: 3px 3px 0 var(--black);
+      pointer-events: none;
     }
 
     details { background: white; border: var(--border-thick); box-shadow: 5px 5px 0 var(--black); margin-top: 16px; }
-    summary { font-weight: 900; cursor: pointer; padding: 12px 20px; background: var(--pink); border-bottom: var(--border-thick); }
+    summary { font-weight: 900; cursor: pointer; padding: 12px 20px; background: var(--pink); }
+    details[open] summary { border-bottom: var(--border-thick); }
     .pdf-container { position: relative; padding-bottom: 141.4%; height: 0; background: #e0e0e0; }
     .pdf-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-    /* 컴팩트 앱 카드 그리드 (미리보기 크기 최적화) */
+    /* 앱 필터 탭 */
+    .app-filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .app-filter-btn {
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 900;
+      padding: 6px 14px;
+      background: white;
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+    .app-filter-btn:hover:not(.active) {
+      background: var(--cyan);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+    .app-filter-btn.active {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    /* 컴팩트 앱 카드 그리드 */
     .app-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 24px; margin-top: 20px;
@@ -239,6 +420,9 @@
       background: white; overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease; text-decoration: none;
       color: var(--black); box-shadow: 6px 6px 0 var(--black);
+    }
+    .app-card.is-filtered-out {
+      display: none;
     }
     .app-card:hover { transform: translate(-4px, -4px); box-shadow: 10px 10px 0 var(--black); }
 
@@ -251,7 +435,7 @@
     .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: white; }
 
     .mockup-window {
-      width: 100%; padding-top: 60%; position: relative; overflow: hidden; 
+      width: 100%; padding-top: 60%; position: relative; overflow: hidden;
       background: white; border-bottom: var(--border-thick);
     }
     .mockup-window iframe {
@@ -264,8 +448,8 @@
     }
 
     .app-info { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; background: white; }
-    .app-info .tech { 
-      font-size: 0.75rem; font-weight: 900; margin-bottom: 8px; 
+    .app-info .tech {
+      font-size: 0.75rem; font-weight: 900; margin-bottom: 8px;
       border: 2px solid var(--black); display: inline-block; align-self: flex-start;
       padding: 2px 8px; background: var(--yellow); box-shadow: 2px 2px 0 var(--black);
     }
@@ -277,18 +461,24 @@
       background: white; border: var(--border); box-shadow: 3px 3px 0 var(--black);
       transition: all 0.2s; color: var(--black); text-transform: uppercase;
     }
-    .app-card:hover .app-link-btn { 
+    .app-card:hover .app-link-btn {
       background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
     }
 
     .contact { padding: 100px 0; border-bottom: 0; text-align: center; }
     .contact h2 { font-size: 2.2rem; }
     .contact a {
-      display: inline-block; margin-top: 20px; text-decoration: none; font-size: 1.6rem;
+      display: inline-block; margin-top: 20px; text-decoration: none;
+      font-size: clamp(1.1rem, 4vw, 1.6rem);
       font-weight: 900; background: var(--yellow); border: var(--border-thick);
       padding: 10px 24px; box-shadow: 6px 6px 0 var(--black);
     }
-    footer { 
+    .contact a:hover {
+      background: var(--cyan);
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0 var(--black);
+    }
+    footer {
       padding: 30px 0; color: white; background: var(--black);
       font-size: 0.9rem; font-weight: 800; text-align: center;
       border-top: var(--border-thick);
@@ -314,7 +504,7 @@
     .nav-dot:hover::after { opacity: 1; }
 
     .brutal-reveal {
-      opacity: 0; transform: translateY(30px) scale(0.98); 
+      opacity: 0; transform: translateY(30px) scale(0.98);
       transition: opacity 0.5s, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .brutal-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
@@ -322,6 +512,22 @@
     @media (max-width: 992px) {
       .nav-assistant { top: auto; bottom: 16px; right: 16px; transform: none; flex-direction: row; }
       .nav-dot::after { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .two { grid-template-columns: 1fr; }
+      .hero { padding: 72px 0 60px; }
+      .music-prompt-bar {
+        padding: 7px 10px 7px 14px;
+        gap: 10px;
+      }
+      .music-prompt-text {
+        font-size: 0.84rem;
+      }
+      .pill-choice-btn {
+        padding: 5px 12px;
+        font-size: 0.82rem;
+      }
     }
   </style>
 </head>
@@ -339,10 +545,24 @@
     <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
     </a>
-    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
+    <button type="button" class="icon-btn music-wrap" id="muteToggleBtn" title="배경음악 재생 / 음소거">
       <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
       <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-    </div>
+    </button>
+  </div>
+</div>
+
+<!-- 첫 접속 시 상단 양옆 라운드 형태 음악 재생 선택 바 -->
+<div class="music-prompt-bar" id="musicPromptBar" role="dialog" aria-label="배경음악 재생 여부 선택">
+  <div class="music-prompt-text">
+    <span class="music-prompt-badge" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    </span>
+    <span>배경음악을 재생할까요?</span>
+  </div>
+  <div class="music-prompt-actions">
+    <button type="button" class="pill-choice-btn yes" id="musicYesBtn">예</button>
+    <button type="button" class="pill-choice-btn no" id="musicNoBtn">아니오</button>
   </div>
 </div>
 
@@ -396,20 +616,28 @@
     </div>
   </section>
 
-  <section id="work" class="scroll-section">
+  <section id="work">
     <p class="label">Activities</p>
     <h2 class="brutal-reveal">해본 것</h2>
     <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 실습 1부터 17까지 구현한 웹 앱 프로젝트 아카이브입니다.</p>
 
     <!-- Group 1: 시각 디자인 -->
     <div class="work-group scroll-section brutal-reveal" id="work-visual">
-      <div class="work-group-title">시각 디자인 및 3D 모델링</div>
+      <div class="work-group-header">
+        <div class="work-group-title">시각 디자인 및 3D 모델링</div>
+      </div>
       
       <article class="work brutal-reveal">
-        <h3>학교 마스코트 미니블록 디자인</h3>
+        <div class="work-head">
+          <h3>학교 마스코트 미니블록 디자인</h3>
+          <div class="carousel-controls">
+            <button type="button" class="carousel-btn" id="carouselPrev" aria-label="이전 이미지">&larr;</button>
+            <button type="button" class="carousel-btn" id="carouselNext" aria-label="다음 이미지">&rarr;</button>
+          </div>
+        </div>
         <p class="when">3학년</p>
         <div class="carousel-wrap">
-          <div class="carousel">
+          <div class="carousel" id="mascotCarousel">
             <img src="대각선.png" alt="미니블록 대각선">
             <img src="앞.png" alt="미니블록 앞면">
             <img src="옆.png" alt="미니블록 옆면">
@@ -433,14 +661,16 @@
 
     <!-- Group 2: 정책 및 논문 -->
     <div class="work-group scroll-section brutal-reveal" id="work-policy">
-      <div class="work-group-title">정책 기획 및 학술 연구</div>
+      <div class="work-group-header">
+        <div class="work-group-title">정책 기획 및 학술 연구</div>
+      </div>
       <article class="work brutal-reveal">
         <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구 <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a></h3>
         <p class="when">학술 연구 / OPEN-Qual 모형 개발</p>
         <details>
           <summary>논문 본문 미리보기 (클릭)</summary>
           <div class="pdf-container">
-            <iframe src="소논문_202300133_문태양.pdf" allowfullscreen></iframe>
+            <iframe src="소논문_202300133_문태양.pdf" title="학술 소논문 PDF 미리보기" allowfullscreen></iframe>
           </div>
         </details>
       </article>
@@ -448,13 +678,21 @@
 
     <!-- Group 3: 웹 앱 (실습 1 ~ 17 통합) -->
     <div class="work-group scroll-section brutal-reveal" id="work-web">
-      <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 17)</div>
+      <div class="work-group-header">
+        <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 17)</div>
+        <div class="app-filter-bar" id="appFilterBar">
+          <button type="button" class="app-filter-btn active" data-filter="all">전체 (13)</button>
+          <button type="button" class="app-filter-btn" data-filter="ai">AI · 시각화</button>
+          <button type="button" class="app-filter-btn" data-filter="edu">교육 · 교구</button>
+          <button type="button" class="app-filter-btn" data-filter="util">유틸리티 · 생활</button>
+        </div>
+      </div>
       
       <div class="app-grid">
         
-        <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="todo.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="todo.html" title="오늘의 할 일 관리 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">개인 프로젝트</div>
             <h3>오늘의 할 일 관리</h3>
@@ -463,9 +701,9 @@
           </div>
         </a>
 
-        <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="stamp.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="stamp.html" title="디지털 도장 생성기 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">개인 프로젝트</div>
             <h3>디지털 도장 생성기</h3>
@@ -474,9 +712,9 @@
           </div>
         </a>
 
-        <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="myeongeon.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="myeongeon.html" title="감정별 명언 추천 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">인터랙티브 웹 (실습 4)</div>
             <h3>감정별 명언 추천 앱</h3>
@@ -485,9 +723,9 @@
           </div>
         </a>
 
-        <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="cardgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="cardgame.html" title="기억력 짝맞추기 게임 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">디지털 교구 (실습 5)</div>
             <h3>기억력 짝맞추기 게임</h3>
@@ -496,9 +734,9 @@
           </div>
         </a>
 
-        <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="libgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="libgame.html" title="도서관 지식 라운지 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">학습 앱 (실습 6)</div>
             <h3>도서관 지식 라운지</h3>
@@ -507,9 +745,9 @@
           </div>
         </a>
 
-        <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="2d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="2d-viewer.html" title="평면도형 학습 도구 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 7)</div>
             <h3>평면도형 학습 도구</h3>
@@ -518,9 +756,9 @@
           </div>
         </a>
 
-        <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="3d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="3d-viewer.html" title="입체도형 학습 도구 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 7)</div>
             <h3>입체도형 학습 도구</h3>
@@ -529,9 +767,9 @@
           </div>
         </a>
 
-        <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="literacy.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="literacy.html" title="디지털 리터러시 다각형 차트 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">시각화 (실습 9)</div>
             <h3>디지털 리터러시 다각형 차트</h3>
@@ -540,9 +778,9 @@
           </div>
         </a>
 
-        <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="dice.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="dice.html" title="3D 주사위 시뮬레이터 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">통계 도구 (실습 11)</div>
             <h3>3D 주사위 시뮬레이터</h3>
@@ -551,9 +789,9 @@
           </div>
         </a>
 
-        <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="clockgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="clockgame.html" title="시계 읽기 연습 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 14)</div>
             <h3>시계 읽기 연습 앱</h3>
@@ -562,9 +800,9 @@
           </div>
         </a>
 
-        <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="aicatch.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="aicatch.html" title="AI 캐치마인드 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">AI 퀴즈 (실습 15)</div>
             <h3>AI 캐치마인드</h3>
@@ -573,9 +811,9 @@
           </div>
         </a>
 
-        <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="kkfood.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="kkfood.html" title="AI 칼로리 자동 계산 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">AI 영양 (실습 16)</div>
             <h3>AI 칼로리 자동 계산 앱</h3>
@@ -584,9 +822,9 @@
           </div>
         </a>
 
-        <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+        <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="phycheck.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">건강 관리 (실습 17)</div>
             <h3>운동 체크리스트 앱</h3>
@@ -611,8 +849,63 @@
 </div>
 
 <script>
-  let ytPlayer;
-  let isUserPaused = false;
+  let ytPlayer = null;
+  let isPlayerReady = false;
+  let isMuted = true;
+  let isUserPaused = true;
+  let pendingPlay = false;
+
+  function syncMusicButtonUI(playing) {
+    const muteToggleBtn = document.getElementById('muteToggleBtn');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundOffIcon = document.getElementById('soundOffIcon');
+    if (!muteToggleBtn || !soundOnIcon || !soundOffIcon) return;
+
+    if (playing) {
+      soundOnIcon.style.display = 'block';
+      soundOffIcon.style.display = 'none';
+      muteToggleBtn.classList.add('music-playing');
+      muteToggleBtn.classList.remove('music-muted');
+      muteToggleBtn.title = '배경음악 재생 중 (클릭 시 음소거)';
+    } else {
+      soundOnIcon.style.display = 'none';
+      soundOffIcon.style.display = 'block';
+      muteToggleBtn.classList.remove('music-playing');
+      muteToggleBtn.classList.add('music-muted');
+      muteToggleBtn.title = '배경음악 음소거됨 (클릭 시 재생)';
+    }
+  }
+
+  function applyMusicPreference(shouldPlay) {
+    const promptBar = document.getElementById('musicPromptBar');
+    if (promptBar) {
+      promptBar.classList.add('is-hidden');
+    }
+
+    if (shouldPlay) {
+      isMuted = false;
+      isUserPaused = false;
+      syncMusicButtonUI(true);
+
+      if (isPlayerReady && ytPlayer) {
+        ytPlayer.unMute();
+        ytPlayer.setVolume(50);
+        ytPlayer.playVideo();
+      } else {
+        pendingPlay = true;
+      }
+    } else {
+      isMuted = true;
+      isUserPaused = true;
+      pendingPlay = false;
+      syncMusicButtonUI(false);
+
+      if (isPlayerReady && ytPlayer) {
+        ytPlayer.mute();
+        ytPlayer.pauseVideo();
+      }
+    }
+  }
 
   function onYouTubeIframeAPIReady() {
     ytPlayer = new YT.Player('youtubePlayerContainer', {
@@ -620,15 +913,22 @@
       width: '0',
       videoId: 'PkVmztKY9PU',
       playerVars: {
-        'autoplay': 1,
+        'autoplay': 0,
         'loop': 1,
         'playlist': 'PkVmztKY9PU',
         'controls': 0
       },
       events: {
         'onReady': (event) => {
-          event.target.playVideo();
+          isPlayerReady = true;
           event.target.setVolume(50);
+          if (pendingPlay && !isMuted) {
+            event.target.unMute();
+            event.target.playVideo();
+            pendingPlay = false;
+          } else {
+            event.target.mute();
+          }
         }
       }
     });
@@ -640,6 +940,7 @@
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
   document.addEventListener("DOMContentLoaded", () => {
+    // 실시간 시계
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
@@ -652,41 +953,49 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    const muteToggleBtn = document.getElementById('muteToggleBtn');
-    const soundOnIcon = document.getElementById('soundOnIcon');
-    const soundOffIcon = document.getElementById('soundOffIcon');
-    let isMuted = false;
+    // 초기 상단 라운드 바 예 / 아니오 선택 처리
+    const musicYesBtn = document.getElementById('musicYesBtn');
+    const musicNoBtn = document.getElementById('musicNoBtn');
 
+    if (musicYesBtn) {
+      musicYesBtn.addEventListener('click', () => applyMusicPreference(true));
+    }
+    if (musicNoBtn) {
+      musicNoBtn.addEventListener('click', () => applyMusicPreference(false));
+    }
+
+    // 우측 상단 음악 아이콘 토글
+    const muteToggleBtn = document.getElementById('muteToggleBtn');
     if (muteToggleBtn) {
       muteToggleBtn.addEventListener('click', () => {
-        if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
+        const promptBar = document.getElementById('musicPromptBar');
+        if (promptBar && !promptBar.classList.contains('is-hidden')) {
+          promptBar.classList.add('is-hidden');
+        }
 
         if (isMuted) {
-          ytPlayer.unMute();
-          soundOnIcon.style.display = 'block';
-          soundOffIcon.style.display = 'none';
-          isMuted = false;
+          applyMusicPreference(true);
         } else {
-          ytPlayer.mute();
-          soundOnIcon.style.display = 'none';
-          soundOffIcon.style.display = 'block';
-          isMuted = true;
+          applyMusicPreference(false);
         }
       });
     }
 
+    // 브라우저 탭 전환 시 재생 상태 유지
     window.addEventListener('blur', () => {
-      if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+      if (isPlayerReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
         ytPlayer.pauseVideo();
       }
     });
 
     window.addEventListener('focus', () => {
-      if (!isUserPaused && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+      if (!isUserPaused && !isMuted && isPlayerReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+        ytPlayer.unMute();
         ytPlayer.playVideo();
       }
     });
 
+    // 스크롤 등장 애니메이션
     const revealElements = document.querySelectorAll('.brutal-reveal');
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -698,6 +1007,7 @@
     }, { threshold: 0.1 });
     revealElements.forEach(el => revealObserver.observe(el));
 
+    // 우측 네비게이션 도트 스크롤 스파이
     const sections = document.querySelectorAll('.scroll-section');
     const navDots = document.querySelectorAll('.nav-dot');
     let sectionRatios = {};
@@ -718,14 +1028,11 @@
 
       if (maxRatio > 0) {
         navDots.forEach(dot => {
-          dot.classList.remove('active');
-          if (dot.dataset.target === activeId) {
-            dot.classList.add('active');
-          }
+          dot.classList.toggle('active', dot.dataset.target === activeId);
         });
       }
     }, {
-      threshold: Array.from({length: 21}, (_, i) => i * 0.05) 
+      threshold: Array.from({ length: 21 }, (_, i) => i * 0.05)
     });
 
     sections.forEach(sec => spyObserver.observe(sec));
@@ -736,16 +1043,45 @@
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
           window.scrollTo({
-            top: targetElement.offsetTop - 60,
+            top: targetElement.offsetTop - 70,
             behavior: 'smooth'
           });
         }
       });
     });
 
+    // 이미지 플립 카드
     document.querySelectorAll('.flip-container').forEach(container => {
       container.addEventListener('click', () => {
         container.classList.toggle('is-flipped');
+      });
+    });
+
+    // 마스코트 캐러셀 좌우 이동 버튼
+    const mascotCarousel = document.getElementById('mascotCarousel');
+    const carouselPrev = document.getElementById('carouselPrev');
+    const carouselNext = document.getElementById('carouselNext');
+    if (mascotCarousel && carouselPrev && carouselNext) {
+      carouselPrev.addEventListener('click', () => {
+        mascotCarousel.scrollBy({ left: -340, behavior: 'smooth' });
+      });
+      carouselNext.addEventListener('click', () => {
+        mascotCarousel.scrollBy({ left: 340, behavior: 'smooth' });
+      });
+    }
+
+    // 웹 앱 카테고리 필터
+    const filterBtns = document.querySelectorAll('#appFilterBar .app-filter-btn');
+    const appCards = document.querySelectorAll('.app-grid .app-card');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        appCards.forEach(card => {
+          const match = filter === 'all' || card.dataset.cat === filter;
+          card.classList.toggle('is-filtered-out', !match);
+        });
       });
     });
   });
