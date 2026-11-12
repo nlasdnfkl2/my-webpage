@@ -3,51 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>문태양 - 실시간 AI 캐치마인드</title>
+  <title>문태양 - Portfolio</title>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
     :root {
-      --bg: #dfdcd3;
-      --black: #0f0f0f;
-      --white: #ffffff;
-      --yellow: #ffd83b;
-      --pink: #ff4757;
-      --cyan: #48dbfb;
-      --green: #2ed573;
-      --blue: #3e51ff;
-      
-      --border-thick: 4px solid var(--black);
+      --bg: #fdfbf7;
+      --black: #111111;
       --border: 3px solid var(--black);
-      --shadow-sm: 4px 4px 0 var(--black);
-      --shadow-lg: 8px 8px 0 var(--black);
+      --border-thick: 4px solid var(--black);
+      
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
     }
-
-    body::after {
-      content: "";
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 9999;
-      background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
-      opacity: 0.12;
-      mix-blend-mode: overlay;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard Variable', 'Noto Sans KR', sans-serif; }
-    html { scroll-behavior: smooth; }
     
-    body { 
-      background-color: var(--bg); 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg); 
       color: var(--black); 
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       position: relative;
-      background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px); 
-      background-size: 24px 24px; 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 90px 20px 60px;
+      padding-top: 70px;
     }
     
     .fixed-top-bar {
@@ -67,1192 +50,706 @@
     .fixed-top-bar .current-time {
       font-weight: 900;
       font-size: 0.95rem;
-      background: var(--white);
+      background: white;
       border: var(--border);
       padding: 4px 10px;
       box-shadow: 2px 2px 0 var(--black);
     }
 
     .fixed-top-bar .icon-group {
-      display: flex; gap: 12px; align-items: center;
-    }
-    .fixed-top-bar .icon-btn {
-      width: 38px; height: 38px; background: var(--white); border: var(--border); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 3px 3px 0 var(--black); cursor: pointer; font-weight: 900;
-      transition: all 0.1s ease; text-decoration: none; color: var(--black);
-    }
-    .fixed-top-bar .icon-btn:hover {
-      transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); background: var(--cyan);
+      display: flex;
+      gap: 12px;
+      align-items: center;
     }
 
-    .wrap { max-width: 900px; width: 100%; margin: 0 auto; }
-    
+    .fixed-top-bar .icon-btn {
+      width: 38px; height: 38px;
+      background: white;
+      border: var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      font-weight: 900; font-size: 0.9rem;
+      transition: all 0.1s ease;
+      text-decoration: none;
+      color: var(--black);
+      position: relative;
+    }
+
+    .fixed-top-bar .icon-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+      background: var(--cyan);
+    }
+
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+    a { color: inherit; transition: all 0.2s ease; text-decoration: none; }
+
     .top {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 0; border-bottom: var(--border-thick); font-size: 1rem; font-weight: 800;
-      margin-bottom: 30px;
-      gap: 12px;
-      flex-wrap: wrap;
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 24px 0; 
+      border-bottom: var(--border-thick);
+      font-size: 1rem; font-weight: 800;
     }
     .top b { 
-      font-size: 1.4rem; letter-spacing: 0.05em; text-transform: uppercase; 
-      background: var(--black); color: var(--yellow); padding: 4px 12px; transform: skew(-5deg);
-      box-shadow: 3px 3px 0 var(--pink);
-    }
-
-    .score-board {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .score-pill {
-      background: var(--white);
-      border: var(--border);
-      padding: 4px 12px;
-      font-weight: 900;
-      font-size: 0.95rem;
-      box-shadow: 3px 3px 0 var(--black);
-    }
-    .score-pill span {
-      color: var(--blue);
-    }
-
-    .container {
-      width: 100%;
-      max-width: 800px;
-      background: var(--white);
-      border: var(--border-thick);
-      border-radius: 0;
-      padding: 36px;
-      box-shadow: var(--shadow-lg);
-      text-align: center;
-      margin: 0 auto;
-    }
-
-    .badge {
-      background: var(--cyan);
-      color: var(--black);
-      padding: 6px 14px;
-      border: var(--border);
-      box-shadow: var(--shadow-sm);
-      font-weight: 900;
-      font-size: 0.9rem;
-      display: inline-block;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: clamp(1.8rem, 4vw, 2.4rem);
-      margin-bottom: 14px;
-      color: var(--black);
-      font-weight: 900;
-      text-transform: uppercase;
-      line-height: 1.25;
-    }
-
-    .subtitle {
-      color: #222;
-      font-size: 1.05rem;
-      font-weight: 700;
-      line-height: 1.6;
-      margin-bottom: 32px;
-      border-left: 6px solid var(--black);
-      padding: 8px 16px;
-      text-align: left;
-      background: var(--bg);
-    }
-
-    h2 {
-      font-size: 1.4rem;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-top: 20px;
-    }
-
-    .cat-btn {
-      background: var(--white);
-      border: var(--border);
-      border-radius: 0;
-      padding: 28px 16px;
-      font-size: 1.25rem;
-      font-weight: 900;
-      cursor: pointer;
-      transition: all 0.1s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--black);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .cat-btn:hover:not(:disabled) {
-      border-color: var(--black);
-      background: var(--yellow);
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0 var(--black);
-    }
-
-    .cat-btn:active:not(:disabled) {
-      transform: translate(2px, 2px);
-      box-shadow: 0 0 0 var(--black);
-    }
-
-    .cat-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      background: #e0e0e0;
-      box-shadow: 2px 2px 0 var(--black);
-    }
-
-    #loading-status {
-      margin-top: 24px;
-      padding: 16px;
-      background: var(--yellow);
-      color: var(--black);
-      border: var(--border);
-      font-size: 0.95rem;
-      font-weight: 900;
-      box-shadow: var(--shadow-sm);
-    }
-
-    #loading-status.ready {
-      background: var(--green);
-      color: var(--black);
-    }
-
-    .load-bar-wrap {
-      width: 100%;
-      height: 12px;
-      background: var(--white);
-      border: 2px solid var(--black);
-      margin-top: 10px;
-      overflow: hidden;
-    }
-
-    .load-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--blue);
-      transition: width 0.2s ease;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .game-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--pink);
-      color: var(--white);
-      padding: 14px 20px;
-      border: var(--border);
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-sm);
-      font-weight: 900;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .info-box {
-      font-size: 1rem;
-      font-weight: 900;
-    }
-
-    .target-word {
-      font-size: 1.45rem;
-      font-weight: 900;
+      font-size: 1.4rem; 
+      letter-spacing: 0.05em; 
+      text-transform: uppercase; 
+      background: var(--black); 
       color: var(--yellow);
-      text-shadow: 2px 2px 0 var(--black);
-      margin-left: 4px;
+      padding: 4px 12px;
+      transform: skew(-5deg);
+    }
+    .top nav { display: flex; gap: 24px; }
+    .top nav a { position: relative; padding: 4px 8px; }
+    .top nav a:hover { background: var(--black); color: var(--bg); }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(var(--rot, 0deg)) translateX(0); }
+      25% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
+      50% { transform: rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
+      75% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
     }
 
-    .timer-badge {
-      background: var(--black);
-      color: var(--white);
-      padding: 2px 10px;
-      border: 2px solid var(--white);
+    .hero { padding: 100px 0 80px; border-bottom: var(--border-thick); }
+    .hero .small { 
+      display: inline-block; font-size: 1rem; font-weight: 800; 
+      background: var(--cyan); border: var(--border); padding: 4px 12px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 24px;
     }
-
-    .timer-badge.urgent {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--black);
-      animation: pulse 0.6s infinite alternate;
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      line-height: 1.2; font-weight: 900;
     }
-
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.08); }
-    }
-
-    .ai-live-box {
-      background: var(--white);
-      border: var(--border);
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .ai-live-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 900;
-      font-size: 1.05rem;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      height: 14px;
-      background: #eee;
-      border: var(--border);
-      overflow: hidden;
-      box-shadow: 2px 2px 0 var(--black);
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--green);
-      transition: width 0.25s ease;
-    }
-
-    #canvas-wrapper {
-      display: flex;
-      justify-content: center;
-      margin: 0 auto 20px;
-      border: var(--border-thick);
-      box-shadow: var(--shadow-lg);
-      background: var(--white);
-      width: 100%;
-      max-width: 368px;
-    }
-
-    canvas {
-      border: none;
-      border-radius: 0;
-      cursor: crosshair;
-      touch-action: none;
-      background: #ffffff;
-      display: block;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 1 / 1;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      background: var(--bg);
-      padding: 14px 18px;
-      border: var(--border);
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-sm);
-      font-weight: 900;
-    }
-
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.95rem;
-      font-weight: 900;
-    }
-
-    .color-palette {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .color-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 2px solid var(--black);
-      box-shadow: 2px 2px 0 var(--black);
-      cursor: pointer;
-      transition: transform 0.1s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 900;
-    }
-
-    .color-btn:hover {
-      transform: scale(1.1);
-    }
-
-    .color-btn.active {
-      transform: scale(1.15);
-      box-shadow: 4px 4px 0 var(--black);
-      outline: 2px solid var(--black);
-      outline-offset: 2px;
-    }
-
-    .eraser-btn {
-      border-radius: 0;
-      width: auto;
-      padding: 0 10px;
-      background: var(--white);
-      color: var(--black);
-    }
-
-    .action-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    .btn {
-      padding: 14px 22px;
-      border-radius: 0;
-      border: var(--border);
-      font-size: 1rem;
-      font-weight: 900;
-      cursor: pointer;
-      transition: all 0.1s;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn:hover:not(:disabled) {
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0 var(--black);
-    }
-
-    .btn:active:not(:disabled) {
-      transform: translate(2px, 2px);
-      box-shadow: 0 0 0 var(--black);
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: var(--white);
-      color: var(--black);
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: var(--pink);
-      color: var(--white);
-    }
-
-    .btn-undo {
-      background: var(--white);
-      color: var(--black);
-    }
-
-    .btn-undo:hover:not(:disabled) {
-      background: var(--yellow);
-    }
-
-    .btn-primary {
-      background: var(--yellow);
-      color: var(--black);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--cyan);
-    }
-
-    .result-banner {
+    .hero h1 span { 
       display: inline-block;
-      padding: 10px 22px;
-      border: var(--border);
-      box-shadow: var(--shadow-sm);
-      font-size: 1.35rem;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-
-    .result-banner.success {
-      background: var(--green);
-      color: var(--black);
-    }
-
-    .result-banner.fail {
-      background: var(--pink);
-      color: var(--white);
-    }
-
-    .result-sub-info {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #444;
-      margin-bottom: 8px;
-    }
-
-    .result-snapshot {
-      width: 240px;
-      height: 240px;
+      color: var(--black); 
+      background: var(--yellow);
       border: var(--border-thick);
-      margin: 14px auto;
-      object-fit: contain;
-      background: var(--white);
-      box-shadow: var(--shadow-sm);
+      padding: 0 16px;
+      box-shadow: 6px 6px 0 var(--black);
+      transform: rotate(-2deg);
+    }
+    .hero p { 
+      max-width: 36em; margin-top: 30px; font-size: 1.1rem; font-weight: 600;
+      border-left: 6px solid var(--black); padding-left: 20px;
+    }
+    .hero .meta { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero .meta span {
+      background: var(--pink); border: var(--border); box-shadow: 3px 3px 0 var(--black);
+      padding: 6px 14px; font-size: 0.9rem; font-weight: 800;
     }
 
-    .top3-list {
-      list-style: none;
-      max-width: 420px;
-      margin: 16px auto 24px;
-      text-align: left;
+    section { padding: 80px 0; border-bottom: var(--border-thick); }
+    .label {
+      display: inline-block; font-size: 1rem; font-weight: 900;
+      background: var(--black); color: white; padding: 4px 16px;
+      margin-bottom: 20px; text-transform: uppercase;
+      box-shadow: 4px 4px 0 var(--red);
     }
 
-    .top3-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 18px;
-      background: var(--bg);
-      border: var(--border);
-      margin-bottom: 10px;
-      font-weight: 900;
-      box-shadow: var(--shadow-sm);
+    h2 { font-size: 2rem; font-weight: 900; margin-bottom: 20px; }
+    .lead { max-width: 38em; font-size: 1.05rem; font-weight: 600; }
+
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; }
+    .two div {
+      border: var(--border-thick); background: white;
+      padding: 24px; box-shadow: 6px 6px 0 var(--black);
+    }
+    .two div:nth-child(1) { background: #ffeaa7; }
+    .two div:nth-child(2) { background: #81ecec; }
+    .two h3 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 6px; display: inline-block; }
+
+    .work-group { margin-top: 60px; }
+    .work-group-title {
+      display: inline-block;
+      font-size: 1.1rem; font-weight: 900;
+      border: var(--border); background: var(--yellow);
+      padding: 6px 16px; box-shadow: 4px 4px 0 var(--black);
+      margin-bottom: 30px;
     }
 
-    footer {
-      margin-top: 40px;
-      font-size: 0.95rem;
-      color: var(--white);
-      background: var(--black);
+    .work { 
+      margin-top: 36px; padding: 24px; 
+      border: var(--border); background: white;
+      box-shadow: 5px 5px 0 var(--black);
+    }
+    .work h3 { font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .work .when { 
+      display: inline-block; font-size: 0.85rem; font-weight: 800; 
+      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 16px; 
+    }
+
+    .carousel-wrap { margin-top: 16px; position: relative; }
+    .carousel {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      gap: 16px; padding-bottom: 12px;
+    }
+    .carousel img {
+      scroll-snap-align: start; flex: 0 0 75%; max-width: 380px; max-height: 280px;
+      object-fit: contain; padding: 12px;
+      border: var(--border); background: #fff;
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .flip-container {
+      background-color: transparent;
+      perspective: 1000px;
+      margin-top: 16px;
       width: 100%;
-      max-width: 900px;
-      text-align: center;
-      padding: 18px;
-      border: var(--border-thick);
-      box-shadow: var(--shadow-sm);
-      font-weight: 800;
+      position: relative;
+    }
+    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; max-width: 400px; }
+    .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 300px; }
+    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 300px; }
+
+    .flip-inner {
+      position: relative; width: 100%; height: 100%;
+      text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d; cursor: pointer;
+    }
+    .flip-container.is-flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-front, .flip-back {
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden; border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black); background: white;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .flip-back { transform: rotateY(180deg); }
+    .flip-front img, .flip-back img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
+    .flip-hint {
+      position: absolute; bottom: -12px; right: -12px;
+      background: var(--yellow); border: var(--border); padding: 4px 12px;
+      font-weight: 900; font-size: 0.85rem; box-shadow: 3px 3px 0 var(--black);
     }
 
-    @media (max-width: 560px) {
-      .container { padding: 24px 18px; }
-      .category-grid { grid-template-columns: 1fr; }
-      .game-header { justify-content: center; text-align: center; }
-      .toolbar { justify-content: center; }
+    details { background: white; border: var(--border-thick); box-shadow: 5px 5px 0 var(--black); margin-top: 16px; }
+    summary { font-weight: 900; cursor: pointer; padding: 12px 20px; background: var(--pink); border-bottom: var(--border-thick); }
+    .pdf-container { position: relative; padding-bottom: 141.4%; height: 0; background: #e0e0e0; }
+    .pdf-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+    /* 컴팩트 앱 카드 그리드 (미리보기 크기 최적화) */
+    .app-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px; margin-top: 20px;
+    }
+    .app-card {
+      display: flex; flex-direction: column; border: var(--border-thick);
+      background: white; overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease; text-decoration: none;
+      color: var(--black); box-shadow: 6px 6px 0 var(--black);
+    }
+    .app-card:hover { transform: translate(-4px, -4px); box-shadow: 10px 10px 0 var(--black); }
+
+    .browser-bar {
+      height: 36px; background: var(--cyan); border-bottom: var(--border-thick);
+      display: flex; align-items: center; padding: 0 12px; gap: 8px;
+    }
+    .app-card:nth-child(2n) .browser-bar { background: var(--pink); }
+    .app-card:nth-child(3n) .browser-bar { background: var(--yellow); }
+    .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: white; }
+
+    .mockup-window {
+      width: 100%; padding-top: 60%; position: relative; overflow: hidden; 
+      background: white; border-bottom: var(--border-thick);
+    }
+    .mockup-window iframe {
+      position: absolute; top: 0; left: 0;
+      width: 400%; height: 400%; transform: scale(0.25); transform-origin: 0 0;
+      pointer-events: none; border: none;
+    }
+    .mockup-window img {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .app-info { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; background: white; }
+    .app-info .tech { 
+      font-size: 0.75rem; font-weight: 900; margin-bottom: 8px; 
+      border: 2px solid var(--black); display: inline-block; align-self: flex-start;
+      padding: 2px 8px; background: var(--yellow); box-shadow: 2px 2px 0 var(--black);
+    }
+    .app-info h3 { font-size: 1.15rem; margin-bottom: 8px; font-weight: 900; }
+    .app-info p { font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; flex-grow: 1; }
+
+    .app-link-btn {
+      align-self: flex-start; font-size: 0.85rem; font-weight: 900; padding: 8px 14px;
+      background: white; border: var(--border); box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.2s; color: var(--black); text-transform: uppercase;
+    }
+    .app-card:hover .app-link-btn { 
+      background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .contact { padding: 100px 0; border-bottom: 0; text-align: center; }
+    .contact h2 { font-size: 2.2rem; }
+    .contact a {
+      display: inline-block; margin-top: 20px; text-decoration: none; font-size: 1.6rem;
+      font-weight: 900; background: var(--yellow); border: var(--border-thick);
+      padding: 10px 24px; box-shadow: 6px 6px 0 var(--black);
+    }
+    footer { 
+      padding: 30px 0; color: white; background: var(--black);
+      font-size: 0.9rem; font-weight: 800; text-align: center;
+      border-top: var(--border-thick);
+    }
+
+    .nav-assistant {
+      position: fixed; top: 50%; right: 16px; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 10px;
+      background: white; border: var(--border-thick);
+      padding: 12px 10px; box-shadow: 5px 5px 0 var(--black); z-index: 1000;
+    }
+    .nav-dot {
+      width: 18px; height: 18px; background: white;
+      border: var(--border); transition: all 0.2s; cursor: pointer; position: relative;
+    }
+    .nav-dot.active { background: var(--red); box-shadow: 2px 2px 0 var(--black); transform: translate(-2px, -2px); }
+    .nav-dot::after {
+      content: attr(data-tooltip); position: absolute; right: 26px; top: 50%; transform: translateY(-50%);
+      background: var(--black); color: white; padding: 4px 10px; font-size: 0.8rem;
+      border: 2px solid var(--black); opacity: 0; pointer-events: none;
+      transition: opacity 0.2s; white-space: nowrap; font-weight: 800;
+    }
+    .nav-dot:hover::after { opacity: 1; }
+
+    .brutal-reveal {
+      opacity: 0; transform: translateY(30px) scale(0.98); 
+      transition: opacity 0.5s, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .brutal-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    @media (max-width: 992px) {
+      .nav-assistant { top: auto; bottom: 16px; right: 16px; transform: none; flex-direction: row; }
+      .nav-dot::after { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <div class="fixed-top-bar">
-    <div class="current-time" id="clock">--:--:--</div>
-    <div class="icon-group">
-      <a href="https://github.com/nlasdnfkl2" target="_blank" class="icon-btn" title="GitHub">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
-      </a>
+<div class="fixed-top-bar">
+  <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+  <div class="icon-group">
+    <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+    </a>
+    <a href="mailto:nn80300@naver.com" class="icon-btn" title="Email">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+    </a>
+    <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
+    </a>
+    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
+      <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+      <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
     </div>
   </div>
+</div>
 
-  <div class="wrap">
-    <div class="top">
-      <b>문태양</b>
-      <div class="score-board">
-        <div class="score-pill">연속 정답 <span id="streak-count">0</span>회</div>
-        <div class="score-pill">점수 <span id="total-score">0</span>점</div>
-      </div>
+<div id="youtubePlayerContainer" style="display:none;"></div>
+
+<div class="nav-assistant">
+  <div class="nav-dot active" data-tooltip="Intro" data-target="intro"></div>
+  <div class="nav-dot" data-tooltip="About" data-target="about"></div>
+  <div class="nav-dot" data-tooltip="Visual Design" data-target="work-visual"></div>
+  <div class="nav-dot" data-tooltip="Policy & Research" data-target="work-policy"></div>
+  <div class="nav-dot" data-tooltip="Web Apps (Lab 1-17)" data-target="work-web"></div>
+  <div class="nav-dot" data-tooltip="Contact" data-target="contact"></div>
+</div>
+
+<div class="wrap" id="top">
+  <div class="top">
+    <b>문태양</b>
+    <nav>
+      <a href="#about">소개</a>
+      <a href="#work-visual">활동</a>
+      <a href="#contact">연락</a>
+    </nav>
+  </div>
+
+  <header class="hero scroll-section brutal-reveal" id="intro">
+    <p class="small">상업정보교육과 · 문헌정보교육과 복수전공</p>
+    <h1>배우고, 엮어내어<br>작은 것을 <span>만들어</span> 봅니다.</h1>
+    <p>
+      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 기획안, 시각 디자인, 또는 실용적인 도구로 구현해 내는 과정을 즐깁니다.
+    </p>
+    <div class="meta">
+      <span>#교육과 지식정보</span>
+      <span>#시각 디자인</span>
+      <span>#기획 및 웹 앱 개발</span>
     </div>
+  </header>
 
-    <main class="container">
+  <section id="about" class="scroll-section brutal-reveal">
+    <p class="label">About</p>
+    <h2>지금 관심 있는 것</h2>
+    <p class="lead">상업정보와 문헌정보학을 함께 배우며, 정보를 사람들에게 더 유용하고 매력적으로 전달하는 방법을 고민합니다.</p>
+    <div class="two">
       <div>
-        <span class="badge">실시간 AI 스케치 퀴즈</span>
+        <h3>기획과 제안</h3>
+        <p>복잡한 문제를 분석하고 실현 가능한 아이디어로 풀어냅니다. 도서관 정책부터 지역 축제까지 공간과 사람을 잇는 기획을 시도합니다.</p>
       </div>
-      <h1>실시간으로 추론하는<br>AI 캐치마인드</h1>
-      <p class="subtitle">
-        제한 시간 30초 안에 제시어를 그려보세요. 그림을 그리는 동안 AI가 실시간으로 무엇인지 추측하며, 정답을 맞히면 즉시 다음 단계로 넘어갑니다.
-      </p>
+      <div>
+        <h3>시각화와 도구 제작</h3>
+        <p>추상적인 아이디어를 포스터와 그래픽으로 표현하고, 브라우저에서 바로 쓸 수 있는 인터랙티브 웹 앱을 직접 제작합니다.</p>
+      </div>
+    </div>
+  </section>
 
-      <section id="category-section">
-        <h2>카테고리 선택</h2>
-        <p style="color: #444; font-size: 0.95rem; margin-top: 6px; font-weight: 700;">그리기 주제 카테고리를 선택하세요</p>
+  <section id="work" class="scroll-section">
+    <p class="label">Activities</p>
+    <h2 class="brutal-reveal">해본 것</h2>
+    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 실습 1부터 17까지 구현한 웹 앱 프로젝트 아카이브입니다.</p>
+
+    <!-- Group 1: 시각 디자인 -->
+    <div class="work-group scroll-section brutal-reveal" id="work-visual">
+      <div class="work-group-title">시각 디자인 및 3D 모델링</div>
+      
+      <article class="work brutal-reveal">
+        <h3>학교 마스코트 미니블록 디자인</h3>
+        <p class="when">3학년</p>
+        <div class="carousel-wrap">
+          <div class="carousel">
+            <img src="대각선.png" alt="미니블록 대각선">
+            <img src="앞.png" alt="미니블록 앞면">
+            <img src="옆.png" alt="미니블록 옆면">
+            <img src="뒤.png" alt="미니블록 뒷면">
+          </div>
+        </div>
+      </article>
+
+      <article class="work brutal-reveal">
+        <h3>경기 전국체전 디자인</h3>
+        <p class="when">그래픽 디자인 공모</p>
+        <div class="flip-container ratio-poster">
+          <div class="flip-inner">
+            <div class="flip-front"><img src="양대회통합–엠블럼–260108-문태양.png" alt="엠블럼"></div>
+            <div class="flip-back"><img src="전국장애인체전–포스터–260108-문태양.png" alt="포스터"></div>
+          </div>
+          <div class="flip-hint">CLICK!</div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Group 2: 정책 및 논문 -->
+    <div class="work-group scroll-section brutal-reveal" id="work-policy">
+      <div class="work-group-title">정책 기획 및 학술 연구</div>
+      <article class="work brutal-reveal">
+        <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구 <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a></h3>
+        <p class="when">학술 연구 / OPEN-Qual 모형 개발</p>
+        <details>
+          <summary>논문 본문 미리보기 (클릭)</summary>
+          <div class="pdf-container">
+            <iframe src="소논문_202300133_문태양.pdf" allowfullscreen></iframe>
+          </div>
+        </details>
+      </article>
+    </div>
+
+    <!-- Group 3: 웹 앱 (실습 1 ~ 17 통합) -->
+    <div class="work-group scroll-section brutal-reveal" id="work-web">
+      <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 17)</div>
+      
+      <div class="app-grid">
         
-        <div class="category-grid">
-          <button class="cat-btn" data-cat="animals" disabled>
-            <span>동물</span>
-          </button>
-          <button class="cat-btn" data-cat="food" disabled>
-            <span>과일/채소</span>
-          </button>
-          <button class="cat-btn" data-cat="objects" disabled>
-            <span>사물</span>
-          </button>
-          <button class="cat-btn" data-cat="vehicles" disabled>
-            <span>교통수단</span>
-          </button>
-        </div>
-
-        <div id="loading-status">
-          <div id="loading-text">AI 화가 준비 중... 잠시만 기다려 주세요.</div>
-          <div class="load-bar-wrap" id="load-bar-wrap">
-            <div class="load-bar-fill" id="load-bar-fill"></div>
+        <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="todo.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">개인 프로젝트</div>
+            <h3>오늘의 할 일 관리</h3>
+            <p>직관적으로 목표를 추가하고 완료를 체크하는 가벼운 웹 도구입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
-        </div>
-      </section>
+        </a>
 
-      <section id="game-section" class="hidden">
-        <div class="game-header">
-          <div class="info-box">주제: <span id="display-category">동물</span></div>
-          <div class="info-box">제시어: <span id="display-target" class="target-word">사자</span></div>
-          <div class="info-box">남은 시간: <span id="display-timer" class="timer-badge">30초</span></div>
-        </div>
-
-        <div class="ai-live-box">
-          <div class="ai-live-top">
-            <span id="ai-guess-text">AI 실시간 추측: 그림을 그리기 시작하세요</span>
-            <span id="ai-confidence-text" style="background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</span>
+        <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="stamp.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">개인 프로젝트</div>
+            <h3>디지털 도장 생성기</h3>
+            <p>이름과 글꼴을 선택해 투명 도장 이미지를 실시간 생성·다운로드합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
-          <div class="progress-bar-bg">
-            <div id="ai-progress-fill" class="progress-bar-fill"></div>
+        </a>
+
+        <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="myeongeon.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">인터랙티브 웹 (실습 4)</div>
+            <h3>감정별 명언 추천 앱</h3>
+            <p>감정 상태에 따라 위로의 문장을 무작위로 제시합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
-        </div>
+        </a>
 
-        <div id="canvas-wrapper">
-          <canvas id="draw-canvas" width="360" height="360"></canvas>
-        </div>
-
-        <div class="toolbar">
-          <div class="tool-group">
-            <span>도구:</span>
-            <div class="color-palette" id="color-palette">
-              <button type="button" class="color-btn active" data-color="#111827" style="background-color: #111827;" title="검정"></button>
-              <button type="button" class="color-btn" data-color="#ff4757" style="background-color: #ff4757;" title="빨강"></button>
-              <button type="button" class="color-btn" data-color="#3e51ff" style="background-color: #3e51ff;" title="파랑"></button>
-              <button type="button" class="color-btn" data-color="#2ed573" style="background-color: #2ed573;" title="초록"></button>
-              <button type="button" class="color-btn" data-color="#ffd83b" style="background-color: #ffd83b;" title="노랑"></button>
-              <button type="button" class="color-btn eraser-btn" data-color="#ffffff" title="지우개">지우개</button>
-            </div>
+        <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="cardgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">디지털 교구 (실습 5)</div>
+            <h3>기억력 짝맞추기 게임</h3>
+            <p>초등학생 집중력 향상을 위한 2D 동물 짝맞추기 게임입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
+        </a>
 
-          <div class="tool-group">
-            <label for="stroke-slider">굵기:</label>
-            <input type="range" id="stroke-slider" min="4" max="28" value="12">
-            <span id="stroke-val">12px</span>
+        <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="libgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">학습 앱 (실습 6)</div>
+            <h3>도서관 지식 라운지</h3>
+            <p>KDC 강목 짝맞추기와 4지선다형 퀴즈를 통합 제공합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
           </div>
-        </div>
+        </a>
 
-        <div class="action-buttons">
-          <button type="button" class="btn btn-undo" id="undo-btn" disabled>실행 취소</button>
-          <button type="button" class="btn btn-secondary" id="clear-btn">전체 지우기</button>
-          <button type="button" class="btn btn-primary" id="finish-btn">그림 완성! 판정받기</button>
-        </div>
-      </section>
+        <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="2d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">수학 교구 (실습 7)</div>
+            <h3>평면도형 학습 도구</h3>
+            <p>도형 회전 및 뒤집기 조작을 시각적으로 확인하는 교구입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
 
-      <section id="result-section" class="hidden">
-        <div>
-          <h2 id="result-title" class="result-banner success">정답입니다!</h2>
-        </div>
-        <p id="result-bonus-text" class="result-sub-info"></p>
-        
-        <img id="result-image" class="result-snapshot" alt="내가 그린 그림">
-        
-        <h3 style="font-weight: 900; margin-bottom: 12px;">제시어: <span id="result-answer" style="color: var(--blue);">사자</span></h3>
-        
-        <div id="wrong-detail-box" class="hidden">
-          <p style="margin-top: 16px; font-weight: 900;">AI가 추측한 그림 TOP 3:</p>
-          <ul id="top3-list" class="top3-list"></ul>
-        </div>
+        <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="3d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">수학 교구 (실습 7)</div>
+            <h3>입체도형 학습 도구</h3>
+            <p>입체도형 회전 조작을 3D로 시각화하는 학습 도구입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
 
-        <div class="action-buttons" style="margin-top: 20px;">
-          <button type="button" class="btn btn-secondary" id="category-back-btn">카테고리 변경</button>
-          <button type="button" class="btn btn-primary" id="restart-btn">같은 주제 다음 문제</button>
-        </div>
-      </section>
-    </main>
-  </div>
+        <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="literacy.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">시각화 (실습 9)</div>
+            <h3>디지털 리터러시 다각형 차트</h3>
+            <p>역량 평가 결과를 사전/사후 레이더 차트로 분석합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="dice.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">통계 도구 (실습 11)</div>
+            <h3>3D 주사위 시뮬레이터</h3>
+            <p>페르소나 카툰풍 3D 주사위와 실시간 확률 집계 차트입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="clockgame.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">수학 교구 (실습 14)</div>
+            <h3>시계 읽기 연습 앱</h3>
+            <p>분침 이동에 따라 시침이 연동되는 초등 저학년 시계 연습 앱입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="aicatch.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">AI 퀴즈 (실습 15)</div>
+            <h3>AI 캐치마인드</h3>
+            <p>그림을 그리고 제미나이 AI 시각 분석 모델로 정답을 맞추는 앱입니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="kkfood.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">AI 영양 (실습 16)</div>
+            <h3>AI 칼로리 자동 계산 앱</h3>
+            <p>음식 사진을 분석해 칼로리와 영양성분을 추정하고 수정합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
+          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+          <div class="mockup-window"><iframe src="phycheck.html" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">건강 관리 (실습 17)</div>
+            <h3>운동 체크리스트 앱</h3>
+            <p>오늘의 운동 목록을 관리하고 달성 현황을 점검합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="scroll-section brutal-reveal contact">
+    <p class="label">Contact</p>
+    <h2>이야기하고 싶은 것이 있다면</h2>
+    <a href="mailto:nn80300@naver.com">nn80300@naver.com</a>
+  </section>
 
   <footer>
-    © 문태양. 실시간 AI 캐치마인드.
+    © 문태양. 개인 포트폴리오입니다.
   </footer>
+</div>
 
-  <script type="module">
-    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+<script>
+  let ytPlayer;
+  let isUserPaused = false;
 
-    env.allowLocalModels = false;
-    env.useBrowserCache = true;
+  function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('youtubePlayerContainer', {
+      height: '0',
+      width: '0',
+      videoId: 'PkVmztKY9PU',
+      playerVars: {
+        'autoplay': 1,
+        'loop': 1,
+        'playlist': 'PkVmztKY9PU',
+        'controls': 0
+      },
+      events: {
+        'onReady': (event) => {
+          event.target.playVideo();
+          event.target.setVolume(50);
+        }
+      }
+    });
+  }
 
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
-      document.getElementById('clock').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+      timeDisplay.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
     }
     updateClock();
     setInterval(updateClock, 1000);
 
-    const CATEGORIES = {
-      animals: {
-        name: '동물',
-        words: [
-          { en: 'lion', ko: '사자', label: 'a simple hand-drawn sketch of a lion with a mane' },
-          { en: 'cat', ko: '고양이', label: 'a simple hand-drawn sketch of a cat with whiskers' },
-          { en: 'dog', ko: '강아지', label: 'a simple hand-drawn sketch of a dog' },
-          { en: 'elephant', ko: '코끼리', label: 'a simple hand-drawn sketch of an elephant with a trunk' },
-          { en: 'rabbit', ko: '토끼', label: 'a simple hand-drawn sketch of a rabbit with long ears' },
-          { en: 'pig', ko: '돼지', label: 'a simple hand-drawn sketch of a pig' },
-          { en: 'fish', ko: '물고기', label: 'a simple hand-drawn sketch of a fish' },
-          { en: 'bird', ko: '새', label: 'a simple hand-drawn sketch of a flying bird' },
-          { en: 'penguin', ko: '펭귄', label: 'a simple hand-drawn sketch of a penguin' },
-          { en: 'butterfly', ko: '나비', label: 'a simple hand-drawn sketch of a butterfly' },
-          { en: 'turtle', ko: '거북이', label: 'a simple hand-drawn sketch of a turtle' },
-          { en: 'duck', ko: '오리', label: 'a simple hand-drawn sketch of a duck' },
-          { en: 'frog', ko: '개구리', label: 'a simple hand-drawn sketch of a frog' },
-          { en: 'shark', ko: '상어', label: 'a simple hand-drawn sketch of a shark' },
-          { en: 'whale', ko: '고래', label: 'a simple hand-drawn sketch of a whale' },
-          { en: 'octopus', ko: '문어', label: 'a simple hand-drawn sketch of an octopus' },
-          { en: 'giraffe', ko: '기린', label: 'a simple hand-drawn sketch of a giraffe with a long neck' }
-        ]
-      },
-      food: {
-        name: '과일/채소',
-        words: [
-          { en: 'apple', ko: '사과', label: 'a simple hand-drawn sketch of an apple fruit' },
-          { en: 'banana', ko: '바나나', label: 'a simple hand-drawn sketch of a yellow banana' },
-          { en: 'grapes', ko: '포도', label: 'a simple hand-drawn sketch of a bunch of grapes' },
-          { en: 'strawberry', ko: '딸기', label: 'a simple hand-drawn sketch of a strawberry' },
-          { en: 'watermelon', ko: '수박', label: 'a simple hand-drawn sketch of a slice of watermelon' },
-          { en: 'pineapple', ko: '파인애플', label: 'a simple hand-drawn sketch of a pineapple' },
-          { en: 'carrot', ko: '당근', label: 'a simple hand-drawn sketch of a carrot' },
-          { en: 'mushroom', ko: '버섯', label: 'a simple hand-drawn sketch of a mushroom' },
-          { en: 'broccoli', ko: '브로콜리', label: 'a simple hand-drawn sketch of broccoli' },
-          { en: 'tomato', ko: '토마토', label: 'a simple hand-drawn sketch of a tomato' },
-          { en: 'corn', ko: '옥수수', label: 'a simple hand-drawn sketch of corn on the cob' },
-          { en: 'cherry', ko: '체리', label: 'a simple hand-drawn sketch of cherries' },
-          { en: 'lemon', ko: '레몬', label: 'a simple hand-drawn sketch of a lemon' },
-          { en: 'peach', ko: '복숭아', label: 'a simple hand-drawn sketch of a peach' }
-        ]
-      },
-      objects: {
-        name: '사물',
-        words: [
-          { en: 'clock', ko: '시계', label: 'a simple hand-drawn sketch of a round clock' },
-          { en: 'umbrella', ko: '우산', label: 'a simple hand-drawn sketch of an open umbrella' },
-          { en: 'eyeglasses', ko: '안경', label: 'a simple hand-drawn sketch of eyeglasses' },
-          { en: 'cup', ko: '컵', label: 'a simple hand-drawn sketch of a coffee cup' },
-          { en: 'book', ko: '책', label: 'a simple hand-drawn sketch of an open book' },
-          { en: 'camera', ko: '카메라', label: 'a simple hand-drawn sketch of a camera' },
-          { en: 'scissors', ko: '가위', label: 'a simple hand-drawn sketch of scissors' },
-          { en: 'key', ko: '열쇠', label: 'a simple hand-drawn sketch of a key' },
-          { en: 'chair', ko: '의자', label: 'a simple hand-drawn sketch of a chair' },
-          { en: 'guitar', ko: '기타', label: 'a simple hand-drawn sketch of a guitar' },
-          { en: 'crown', ko: '왕관', label: 'a simple hand-drawn sketch of a royal crown' },
-          { en: 'laptop', ko: '노트북', label: 'a simple hand-drawn sketch of a laptop computer' },
-          { en: 'pencil', ko: '연필', label: 'a simple hand-drawn sketch of a pencil' },
-          { en: 'light bulb', ko: '전구', label: 'a simple hand-drawn sketch of a light bulb' }
-        ]
-      },
-      vehicles: {
-        name: '교통수단',
-        words: [
-          { en: 'car', ko: '자동차', label: 'a simple hand-drawn sketch of a car' },
-          { en: 'bus', ko: '버스', label: 'a simple hand-drawn sketch of a bus' },
-          { en: 'bicycle', ko: '자전거', label: 'a simple hand-drawn sketch of a bicycle' },
-          { en: 'airplane', ko: '비행기', label: 'a simple hand-drawn sketch of an airplane' },
-          { en: 'train', ko: '기차', label: 'a simple hand-drawn sketch of a train' },
-          { en: 'helicopter', ko: '헬리콥터', label: 'a simple hand-drawn sketch of a helicopter' },
-          { en: 'sailboat', ko: '돛단배', label: 'a simple hand-drawn sketch of a sailboat' },
-          { en: 'truck', ko: '트럭', label: 'a simple hand-drawn sketch of a truck' },
-          { en: 'motorcycle', ko: '오토바이', label: 'a simple hand-drawn sketch of a motorcycle' },
-          { en: 'rocket', ko: '로켓', label: 'a simple hand-drawn sketch of a space rocket' },
-          { en: 'submarine', ko: '잠수함', label: 'a simple hand-drawn sketch of a submarine' },
-          { en: 'hot air balloon', ko: '열기구', label: 'a simple hand-drawn sketch of a hot air balloon' }
-        ]
-      }
-    };
+    const muteToggleBtn = document.getElementById('muteToggleBtn');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundOffIcon = document.getElementById('soundOffIcon');
+    let isMuted = false;
 
-    let clipClassifier = null;
-    let isModelReady = false;
-    let isPlaying = false;
-    let hasDrawn = false;
-    let inferenceState = 'IDLE';
+    if (muteToggleBtn) {
+      muteToggleBtn.addEventListener('click', () => {
+        if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
 
-    let currentCategoryKey = 'animals';
-    let currentTarget = null;
-    const lastTargetByCat = {};
-    let latestRankedResults = [];
-
-    let score = 0;
-    let streak = 0;
-
-    let strokeColor = '#111827';
-    let strokeWidth = 12;
-    let timeLeft = 30;
-    let timerInterval = null;
-    let midStrokeInterval = null;
-
-    const canvas = document.getElementById('draw-canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-    let undoStack = [];
-
-    const cropCanvas = document.createElement('canvas');
-    cropCanvas.width = 224;
-    cropCanvas.height = 224;
-    const cropCtx = cropCanvas.getContext('2d');
-
-    async function initModel() {
-      const statusEl = document.getElementById('loading-status');
-      const textEl = document.getElementById('loading-text');
-      const barFill = document.getElementById('load-bar-fill');
-      const barWrap = document.getElementById('load-bar-wrap');
-
-      const fileProgress = new Map();
-
-      try {
-        clipClassifier = await pipeline(
-          'zero-shot-image-classification',
-          'Xenova/clip-vit-base-patch32',
-          {
-            quantized: true,
-            progress_callback: (data) => {
-              if (data.status === 'progress' && data.file) {
-                fileProgress.set(data.file, data.progress || 0);
-                let sum = 0;
-                fileProgress.forEach((v) => { sum += v; });
-                const avg = Math.round(sum / fileProgress.size);
-                barFill.style.width = `${avg}%`;
-                textEl.textContent = `게임 데이터 불러오는 중... (${avg}%)`;
-              } else if (data.status === 'ready') {
-                barFill.style.width = '100%';
-              }
-            }
-          }
-        );
-
-        isModelReady = true;
-        barWrap.classList.add('hidden');
-        textEl.textContent = '준비 완료! 원하는 카테고리를 선택해 시작하세요.';
-        statusEl.classList.add('ready');
-        document.querySelectorAll('.cat-btn').forEach(btn => btn.disabled = false);
-      } catch (err) {
-        console.error(err);
-        textEl.textContent = '데이터 로딩 중 오류가 발생했습니다. 페이지를 새로고침해 주세요.';
-      }
-    }
-
-    initModel();
-
-    function saveUndoState() {
-      if (undoStack.length >= 20) {
-        undoStack.shift();
-      }
-      undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-      document.getElementById('undo-btn').disabled = undoStack.length === 0;
-    }
-
-    function performUndo() {
-      if (!isPlaying || undoStack.length === 0) return;
-      const prevState = undoStack.pop();
-      ctx.putImageData(prevState, 0, 0);
-      document.getElementById('undo-btn').disabled = undoStack.length === 0;
-      checkCanvasHasInk();
-      if (hasDrawn) {
-        scheduleInference();
-      } else {
-        latestRankedResults = [];
-        document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림을 그리기 시작하세요';
-        document.getElementById('ai-confidence-text').textContent = '0%';
-        document.getElementById('ai-progress-fill').style.width = '0%';
-      }
-    }
-
-    function checkCanvasHasInk() {
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      for (let i = 0; i < imgData.length; i += 16) {
-        if (imgData[i] < 245 || imgData[i + 1] < 245 || imgData[i + 2] < 245) {
-          hasDrawn = true;
-          return;
+        if (isMuted) {
+          ytPlayer.unMute();
+          soundOnIcon.style.display = 'block';
+          soundOffIcon.style.display = 'none';
+          isMuted = false;
+        } else {
+          ytPlayer.mute();
+          soundOnIcon.style.display = 'none';
+          soundOffIcon.style.display = 'block';
+          isMuted = true;
         }
-      }
-      hasDrawn = false;
+      });
     }
 
-    function getCanvasCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches ? e.touches[0] : e;
-      return {
-        x: (touch.clientX - rect.left) * (canvas.width / rect.width),
-        y: (touch.clientY - rect.top) * (canvas.height / rect.height)
-      };
-    }
-
-    function startStroke(e) {
-      if (!isPlaying) return;
-      e.preventDefault();
-      saveUndoState();
-      isDrawing = true;
-      const pos = getCanvasCoords(e);
-      lastX = pos.x;
-      lastY = pos.y;
-
-      ctx.fillStyle = strokeColor;
-      ctx.beginPath();
-      ctx.arc(lastX, lastY, strokeWidth / 2, 0, Math.PI * 2);
-      ctx.fill();
-      if (strokeColor !== '#ffffff') hasDrawn = true;
-
-      clearInterval(midStrokeInterval);
-      midStrokeInterval = setInterval(() => {
-        if (isDrawing && isPlaying && hasDrawn) {
-          scheduleInference();
-        }
-      }, 1100);
-    }
-
-    function moveStroke(e) {
-      if (!isPlaying || !isDrawing) return;
-      e.preventDefault();
-      const pos = getCanvasCoords(e);
-
-      ctx.strokeStyle = strokeColor;
-      ctx.lineWidth = strokeWidth;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-
-      lastX = pos.x;
-      lastY = pos.y;
-      if (strokeColor !== '#ffffff') hasDrawn = true;
-    }
-
-    function endStroke() {
-      if (!isDrawing) return;
-      isDrawing = false;
-      clearInterval(midStrokeInterval);
-      if (strokeColor === '#ffffff') {
-        checkCanvasHasInk();
-      }
-      if (isPlaying && hasDrawn) {
-        scheduleInference();
-      }
-    }
-
-    canvas.addEventListener('mousedown', startStroke);
-    canvas.addEventListener('mousemove', moveStroke);
-    window.addEventListener('mouseup', endStroke);
-
-    canvas.addEventListener('touchstart', startStroke, { passive: false });
-    canvas.addEventListener('touchmove', moveStroke, { passive: false });
-    window.addEventListener('touchend', endStroke);
-
-    window.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-        if (isPlaying) {
-          e.preventDefault();
-          performUndo();
-        }
+    window.addEventListener('blur', () => {
+      if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+        ytPlayer.pauseVideo();
       }
     });
 
-    function prepareCroppedDataUrl() {
-      const w = canvas.width;
-      const h = canvas.height;
-      const imgData = ctx.getImageData(0, 0, w, h).data;
+    window.addEventListener('focus', () => {
+      if (!isUserPaused && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+        ytPlayer.playVideo();
+      }
+    });
 
-      let minX = w, minY = h, maxX = 0, maxY = 0;
-      let found = false;
-
-      for (let y = 0; y < h; y += 2) {
-        for (let x = 0; x < w; x += 2) {
-          const idx = (y * w + x) * 4;
-          if (imgData[idx] < 245 || imgData[idx + 1] < 245 || imgData[idx + 2] < 245) {
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
-            found = true;
-          }
+    const revealElements = document.querySelectorAll('.brutal-reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
         }
-      }
+      });
+    }, { threshold: 0.1 });
+    revealElements.forEach(el => revealObserver.observe(el));
 
-      cropCtx.fillStyle = '#ffffff';
-      cropCtx.fillRect(0, 0, 224, 224);
+    const sections = document.querySelectorAll('.scroll-section');
+    const navDots = document.querySelectorAll('.nav-dot');
+    let sectionRatios = {};
 
-      if (!found) {
-        cropCtx.drawImage(canvas, 0, 0, 224, 224);
-        return cropCanvas.toDataURL('image/png');
-      }
-
-      const boxW = Math.max(24, maxX - minX);
-      const boxH = Math.max(24, maxY - minY);
-      const maxSide = Math.max(boxW, boxH);
-      const pad = Math.round(maxSide * 0.16);
-      const targetSize = 224 - pad * 2;
-      const scale = targetSize / maxSide;
-
-      const drawW = boxW * scale;
-      const drawH = boxH * scale;
-      const offsetX = (224 - drawW) / 2;
-      const offsetY = (224 - drawH) / 2;
-
-      cropCtx.drawImage(canvas, minX, minY, boxW, boxH, offsetX, offsetY, drawW, drawH);
-      return cropCanvas.toDataURL('image/png');
-    }
-
-    async function evaluateCanvasOnce() {
-      const imageDataUrl = prepareCroppedDataUrl();
-      const words = CATEGORIES[currentCategoryKey].words;
-      const candidateLabels = words.map(w => w.label);
-      const labelMap = new Map(words.map(w => [w.label, w]));
-
-      const output = await clipClassifier(imageDataUrl, candidateLabels, {
-        hypothesis_template: '{}'
+    const spyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        sectionRatios[entry.target.id] = entry.intersectionRatio;
       });
 
-      if (Array.isArray(output) && output.length > 0) {
-        const totalScore = output.reduce((sum, item) => sum + item.score, 0);
-        latestRankedResults = output
-          .map((item) => {
-            const matched = labelMap.get(item.label);
-            return {
-              en: matched ? matched.en : item.label,
-              ko: matched ? matched.ko : item.label,
-              confidence: totalScore > 0 ? (item.score / totalScore) : 0
-            };
-          })
-          .sort((a, b) => b.confidence - a.confidence);
-      }
-    }
-
-    function scheduleInference() {
-      if (!isModelReady || !isPlaying || !hasDrawn) return;
-      if (inferenceState === 'RUNNING') {
-        inferenceState = 'QUEUED';
-        return;
-      }
-      runInferenceLoop();
-    }
-
-    async function runInferenceLoop() {
-      if (!isModelReady || !isPlaying || !hasDrawn) {
-        inferenceState = 'IDLE';
-        return;
-      }
-
-      inferenceState = 'RUNNING';
-
-      try {
-        await evaluateCanvasOnce();
-
-        if (!isPlaying || !hasDrawn) {
-          inferenceState = 'IDLE';
-          return;
+      let activeId = 'intro';
+      let maxRatio = 0;
+      for (const [id, ratio] of Object.entries(sectionRatios)) {
+        if (ratio > maxRatio) {
+          maxRatio = ratio;
+          activeId = id;
         }
+      }
 
-        if (latestRankedResults.length > 0) {
-          const words = CATEGORIES[currentCategoryKey].words;
-          const top1 = latestRankedResults[0];
-          const percent = Math.round(top1.confidence * 100);
-
-          document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${top1.ko}`;
-          document.getElementById('ai-confidence-text').textContent = `${percent}%`;
-          document.getElementById('ai-progress-fill').style.width = `${percent}%`;
-
-          const uniformBaseline = 1 / words.length;
-          if (top1.en === currentTarget.en && top1.confidence > uniformBaseline * 1.15) {
-            inferenceState = 'IDLE';
-            endGame(true);
-            return;
+      if (maxRatio > 0) {
+        navDots.forEach(dot => {
+          dot.classList.remove('active');
+          if (dot.dataset.target === activeId) {
+            dot.classList.add('active');
           }
-        }
-      } catch (err) {
-        console.error('추론 오류:', err);
+        });
       }
+    }, {
+      threshold: Array.from({length: 21}, (_, i) => i * 0.05) 
+    });
 
-      if (inferenceState === 'QUEUED' && isPlaying) {
-        inferenceState = 'IDLE';
-        runInferenceLoop();
-      } else {
-        inferenceState = 'IDLE';
-      }
-    }
+    sections.forEach(sec => spyObserver.observe(sec));
 
-    function startGame(catKey) {
-      currentCategoryKey = catKey;
-      const catData = CATEGORIES[catKey];
-      const candidates = catData.words.filter(w => w.en !== lastTargetByCat[catKey]);
-      const pool = candidates.length > 0 ? candidates : catData.words;
-      currentTarget = pool[Math.floor(Math.random() * pool.length)];
-      lastTargetByCat[catKey] = currentTarget.en;
-
-      document.getElementById('category-section').classList.add('hidden');
-      document.getElementById('result-section').classList.add('hidden');
-      document.getElementById('game-section').classList.remove('hidden');
-
-      document.getElementById('display-category').textContent = catData.name;
-      document.getElementById('display-target').textContent = currentTarget.ko;
-
-      resetCanvas(false);
-      isPlaying = true;
-      isDrawing = false;
-      inferenceState = 'IDLE';
-      timeLeft = 30;
-
-      const timerEl = document.getElementById('display-timer');
-      timerEl.textContent = `${timeLeft}초`;
-      timerEl.classList.remove('urgent');
-
-      const finishBtn = document.getElementById('finish-btn');
-      finishBtn.disabled = false;
-      finishBtn.textContent = '그림 완성! 판정받기';
-
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        timerEl.textContent = `${timeLeft}초`;
-        if (timeLeft <= 10) {
-          timerEl.classList.add('urgent');
-        }
-        if (timeLeft <= 0) {
-          endGame(false);
-        }
-      }, 1000);
-    }
-
-    function resetCanvas(recordUndo = true) {
-      if (recordUndo && hasDrawn) {
-        saveUndoState();
-      } else if (!recordUndo) {
-        undoStack = [];
-        document.getElementById('undo-btn').disabled = true;
-      }
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      hasDrawn = false;
-      latestRankedResults = [];
-      document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림을 그리기 시작하세요';
-      document.getElementById('ai-confidence-text').textContent = '0%';
-      document.getElementById('ai-progress-fill').style.width = '0%';
-    }
-
-    function updateScoreUI() {
-      document.getElementById('streak-count').textContent = streak;
-      document.getElementById('total-score').textContent = score;
-    }
-
-    function endGame(isSuccess) {
-      if (!isPlaying) return;
-      isPlaying = false;
-      isDrawing = false;
-      clearInterval(timerInterval);
-      clearInterval(midStrokeInterval);
-
-      const dataUrl = canvas.toDataURL('image/png');
-      document.getElementById('result-image').src = dataUrl;
-      document.getElementById('result-answer').textContent = currentTarget.ko;
-
-      const titleEl = document.getElementById('result-title');
-      const bonusEl = document.getElementById('result-bonus-text');
-      const wrongDetailBox = document.getElementById('wrong-detail-box');
-      const listEl = document.getElementById('top3-list');
-
-      if (isSuccess) {
-        streak += 1;
-        const earned = 100 + Math.max(0, timeLeft) * 10;
-        score += earned;
-        updateScoreUI();
-
-        titleEl.textContent = '정답입니다! AI가 그림을 맞혔습니다.';
-        titleEl.className = 'result-banner success';
-        bonusEl.textContent = `${timeLeft}초 남기고 성공 (+${earned}점 획득)`;
-        wrongDetailBox.classList.add('hidden');
-        listEl.innerHTML = '';
-      } else {
-        streak = 0;
-        updateScoreUI();
-
-        titleEl.textContent = '아쉽습니다! AI가 맞히지 못했습니다.';
-        titleEl.className = 'result-banner fail';
-        bonusEl.textContent = '다음 문제에서 다시 도전해 보세요.';
-        wrongDetailBox.classList.remove('hidden');
-        listEl.innerHTML = '';
-
-        if (latestRankedResults.length === 0) {
-          listEl.innerHTML = '<li class="top3-item">그려진 그림이 없어 판정하지 못했습니다.</li>';
-        } else {
-          latestRankedResults.slice(0, 3).forEach((item, idx) => {
-            const li = document.createElement('li');
-            li.className = 'top3-item';
-            li.innerHTML = `<span>${idx + 1}위. ${item.ko}</span> <span style="color: var(--blue);">${Math.round(item.confidence * 100)}%</span>`;
-            listEl.appendChild(li);
+    navDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const targetId = dot.dataset.target;
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 60,
+            behavior: 'smooth'
           });
         }
-      }
-
-      document.getElementById('game-section').classList.add('hidden');
-      document.getElementById('result-section').classList.remove('hidden');
-    }
-
-    document.querySelectorAll('.cat-btn').forEach(btn => {
-      btn.addEventListener('click', () => startGame(btn.dataset.cat));
-    });
-
-    document.querySelectorAll('.color-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        strokeColor = btn.dataset.color;
       });
     });
 
-    const strokeSlider = document.getElementById('stroke-slider');
-    strokeSlider.addEventListener('input', (e) => {
-      strokeWidth = Number(e.target.value);
-      document.getElementById('stroke-val').textContent = `${strokeWidth}px`;
+    document.querySelectorAll('.flip-container').forEach(container => {
+      container.addEventListener('click', () => {
+        container.classList.toggle('is-flipped');
+      });
     });
+  });
+</script>
 
-    document.getElementById('undo-btn').addEventListener('click', performUndo);
-    document.getElementById('clear-btn').addEventListener('click', () => resetCanvas(true));
-
-    document.getElementById('finish-btn').addEventListener('click', async () => {
-      if (!isPlaying) return;
-      const finishBtn = document.getElementById('finish-btn');
-      finishBtn.disabled = true;
-      finishBtn.textContent = '판정 중...';
-
-      if (hasDrawn && isModelReady) {
-        try {
-          await evaluateCanvasOnce();
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      const isTop1 = hasDrawn && latestRankedResults.length > 0 && latestRankedResults[0].en === currentTarget.en;
-      endGame(isTop1);
-    });
-
-    document.getElementById('restart-btn').addEventListener('click', () => {
-      startGame(currentCategoryKey);
-    });
-
-    document.getElementById('category-back-btn').addEventListener('click', () => {
-      document.getElementById('result-section').classList.add('hidden');
-      document.getElementById('category-section').classList.remove('hidden');
-    });
-  </script>
 </body>
 </html>
