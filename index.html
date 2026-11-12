@@ -288,7 +288,13 @@
     .work h3 { font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .work .when {
       display: inline-block; font-size: 0.85rem; font-weight: 800;
-      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 16px;
+      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 12px;
+    }
+    .work-desc {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #222222;
+      margin-bottom: 14px;
     }
 
     .project-link {
@@ -309,7 +315,16 @@
 
     .carousel-controls {
       display: flex;
+      align-items: center;
       gap: 8px;
+    }
+    .carousel-counter {
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: var(--bg);
+      border: 2px solid var(--black);
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0 var(--black);
     }
     .carousel-btn {
       width: 34px;
@@ -339,10 +354,60 @@
     .carousel::-webkit-scrollbar-track { background: var(--bg); border: 2px solid var(--black); }
     .carousel::-webkit-scrollbar-thumb { background: var(--black); }
     .carousel img {
-      scroll-snap-align: start; flex: 0 0 75%; max-width: 360px; max-height: 260px;
+      scroll-snap-align: start; flex: 0 0 75%; max-width: 360px; max-height: 280px;
       object-fit: contain; padding: 12px;
       border: var(--border); background: #fff;
       box-shadow: 5px 5px 0 var(--black);
+      cursor: zoom-in;
+      transition: transform 0.15s ease;
+    }
+    .carousel img:hover {
+      transform: translateY(-2px);
+    }
+
+    /* 카드뉴스 4컷 캐러셀 전용 비율 */
+    .carousel.cardnews-carousel img {
+      flex: 0 0 72%;
+      max-width: 320px;
+      max-height: 360px;
+    }
+
+    /* 플립 카드 컨트롤 및 영역 */
+    .flip-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .flip-state-btn {
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 5px 12px;
+      background: white;
+      border: 2px solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+    .flip-state-btn.active {
+      background: var(--yellow);
+    }
+    .zoom-pill-btn {
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 5px 12px;
+      background: var(--cyan);
+      border: 2px solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+    .zoom-pill-btn:hover {
+      background: var(--pink);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--black);
     }
 
     .flip-container {
@@ -352,9 +417,9 @@
       width: 100%;
       position: relative;
     }
-    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; max-width: 400px; }
-    .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 300px; }
-    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 300px; }
+    .flip-container.ratio-card { aspect-ratio: 1.58 / 1; max-width: 440px; }
+    .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 310px; }
+    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 310px; }
 
     .flip-inner {
       position: relative; width: 100%; height: 100%;
@@ -369,7 +434,21 @@
       display: flex; align-items: center; justify-content: center;
     }
     .flip-back { transform: rotateY(180deg); }
-    .flip-front img, .flip-back img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
+    .flip-front img, .flip-back img { width: 100%; height: 100%; object-fit: contain; padding: 14px; }
+    .side-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border: 2px solid var(--black);
+      background: var(--bg);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .flip-back .side-tag {
+      background: var(--green);
+    }
     .flip-hint {
       position: absolute; bottom: -12px; right: -12px;
       background: var(--yellow); border: var(--border); padding: 4px 12px;
@@ -463,6 +542,65 @@
     }
     .app-card:hover .app-link-btn {
       background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
+    }
+
+    /* 이미지 라이트박스 모달 */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.82);
+      backdrop-filter: blur(4px);
+      z-index: 3500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .lightbox-modal.open {
+      display: flex;
+    }
+    .lightbox-box {
+      background: white;
+      border: var(--border-thick);
+      box-shadow: 10px 10px 0 var(--black);
+      max-width: 820px;
+      width: 100%;
+      overflow: hidden;
+    }
+    .lightbox-bar {
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 0.95rem;
+    }
+    .lightbox-close {
+      background: var(--red);
+      color: white;
+      border: 2px solid var(--black);
+      width: 30px;
+      height: 30px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .lightbox-body {
+      padding: 20px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 75vh;
+    }
+    .lightbox-body img {
+      max-width: 100%;
+      max-height: 68vh;
+      object-fit: contain;
+      border: var(--border);
+      background: white;
     }
 
     .contact { padding: 100px 0; border-bottom: 0; text-align: center; }
@@ -626,33 +764,125 @@
       <div class="work-group-header">
         <div class="work-group-title">시각 디자인 및 3D 모델링</div>
       </div>
-      
+
+      <!-- 1. 대학 밴드부 홍보물 디자인 -->
       <article class="work brutal-reveal">
         <div class="work-head">
-          <h3>학교 마스코트 미니블록 디자인</h3>
+          <h3>대학 밴드부 홍보물 디자인</h3>
           <div class="carousel-controls">
-            <button type="button" class="carousel-btn" id="carouselPrev" aria-label="이전 이미지">&larr;</button>
-            <button type="button" class="carousel-btn" id="carouselNext" aria-label="다음 이미지">&rarr;</button>
+            <span class="carousel-counter" id="bandCounter">1 / 4</span>
+            <button type="button" class="carousel-btn" data-carousel-target="bandCarousel" data-dir="-1" aria-label="이전 카드">&larr;</button>
+            <button type="button" class="carousel-btn" data-carousel-target="bandCarousel" data-dir="1" aria-label="다음 카드">&rarr;</button>
           </div>
         </div>
-        <p class="when">3학년</p>
+        <p class="when">동아리 홍보 카드뉴스 · 4컷 시리즈</p>
+        <p class="work-desc">대학 밴드부 신입 부원 모집과 정기 공연 안내를 위해 제작한 4컷 카드뉴스 홍보물입니다. (클릭 시 확대)</p>
         <div class="carousel-wrap">
-          <div class="carousel" id="mascotCarousel">
-            <img src="대각선.png" alt="미니블록 대각선">
-            <img src="앞.png" alt="미니블록 앞면">
-            <img src="옆.png" alt="미니블록 옆면">
-            <img src="뒤.png" alt="미니블록 뒷면">
+          <div class="carousel cardnews-carousel" id="bandCarousel" data-counter-id="bandCounter" data-total="4">
+            <img src="컷1-4 (2).png" alt="밴드부 홍보물 1컷" data-zoom-title="대학 밴드부 홍보물 (1 / 4)">
+            <img src="컷2-4 (2).png" alt="밴드부 홍보물 2컷" data-zoom-title="대학 밴드부 홍보물 (2 / 4)">
+            <img src="컷3-4 (2).png" alt="밴드부 홍보물 3컷" data-zoom-title="대학 밴드부 홍보물 (3 / 4)">
+            <img src="컷4-4 (2).png" alt="밴드부 홍보물 4컷" data-zoom-title="대학 밴드부 홍보물 (4 / 4)">
           </div>
         </div>
       </article>
 
+      <!-- 2. 학과 과잠 디자인 -->
       <article class="work brutal-reveal">
-        <h3>경기 전국체전 디자인</h3>
-        <p class="when">그래픽 디자인 공모</p>
-        <div class="flip-container ratio-poster">
+        <div class="work-head">
+          <h3>학과 과잠 디자인</h3>
+          <div class="flip-toolbar">
+            <button type="button" class="flip-state-btn active" data-flip-id="jacketFlip" data-side="front">기존 디자인</button>
+            <button type="button" class="flip-state-btn" data-flip-id="jacketFlip" data-side="back">리뉴얼 시안</button>
+            <button type="button" class="zoom-pill-btn" data-zoom-flip="jacketFlip">크게 보기</button>
+          </div>
+        </div>
+        <p class="when">학과 단체복 리뉴얼 디자인</p>
+        <p class="work-desc">기존 과잠 디자인의 요소를 재해석하여 학과 정체성과 배색 균형을 개선한 시안입니다. 카드를 클릭하면 전·후 시안을 비교할 수 있습니다.</p>
+        <div class="flip-container ratio-card" id="jacketFlip" data-front-title="학과 과잠 디자인 · 기존 디자인" data-back-title="학과 과잠 디자인 · 리뉴얼 시안">
           <div class="flip-inner">
-            <div class="flip-front"><img src="양대회통합–엠블럼–260108-문태양.png" alt="엠블럼"></div>
-            <div class="flip-back"><img src="전국장애인체전–포스터–260108-문태양.png" alt="포스터"></div>
+            <div class="flip-front">
+              <span class="side-tag">BEFORE · 기존 디자인</span>
+              <img src="기존.jpg" alt="기존 과잠 디자인">
+            </div>
+            <div class="flip-back">
+              <span class="side-tag">AFTER · 리뉴얼 시안</span>
+              <img src="아트보드 1 - 복사본.png" alt="리뉴얼 과잠 디자인">
+            </div>
+          </div>
+          <div class="flip-hint">CLICK!</div>
+        </div>
+      </article>
+
+      <!-- 3. 제주 전국체전 메달 디자인 -->
+      <article class="work brutal-reveal">
+        <div class="work-head">
+          <h3>제주 전국체전 메달 디자인</h3>
+          <div class="flip-toolbar">
+            <button type="button" class="flip-state-btn active" data-flip-id="medalFlip" data-side="front">앞면</button>
+            <button type="button" class="flip-state-btn" data-flip-id="medalFlip" data-side="back">뒷면</button>
+            <button type="button" class="zoom-pill-btn" data-zoom-flip="medalFlip">크게 보기</button>
+          </div>
+        </div>
+        <p class="when">전국체육대회 메달 디자인 공모</p>
+        <p class="work-desc">제주의 자연 상징과 대회의 역동성을 앞면과 뒷면 양면 구조로 담아낸 메달 디자인입니다.</p>
+        <div class="flip-container ratio-medal" id="medalFlip" data-front-title="제주 전국체전 메달 디자인 · 앞면" data-back-title="제주 전국체전 메달 디자인 · 뒷면">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <span class="side-tag">FRONT · 앞면</span>
+              <img src="메달 앞면.png" alt="제주 전국체전 메달 앞면">
+            </div>
+            <div class="flip-back">
+              <span class="side-tag">BACK · 뒷면</span>
+              <img src="메달 뒷면.png" alt="제주 전국체전 메달 뒷면">
+            </div>
+          </div>
+          <div class="flip-hint">CLICK!</div>
+        </div>
+      </article>
+      
+      <!-- 4. 학교 마스코트 미니블록 디자인 -->
+      <article class="work brutal-reveal">
+        <div class="work-head">
+          <h3>학교 마스코트 미니블록 디자인</h3>
+          <div class="carousel-controls">
+            <span class="carousel-counter" id="mascotCounter">1 / 4</span>
+            <button type="button" class="carousel-btn" data-carousel-target="mascotCarousel" data-dir="-1" aria-label="이전 이미지">&larr;</button>
+            <button type="button" class="carousel-btn" data-carousel-target="mascotCarousel" data-dir="1" aria-label="다음 이미지">&rarr;</button>
+          </div>
+        </div>
+        <p class="when">3학년 · 3D 캐릭터 굿즈 모델링</p>
+        <div class="carousel-wrap">
+          <div class="carousel" id="mascotCarousel" data-counter-id="mascotCounter" data-total="4">
+            <img src="대각선.png" alt="미니블록 대각선" data-zoom-title="학교 마스코트 미니블록 (대각선)">
+            <img src="앞.png" alt="미니블록 앞면" data-zoom-title="학교 마스코트 미니블록 (앞면)">
+            <img src="옆.png" alt="미니블록 옆면" data-zoom-title="학교 마스코트 미니블록 (옆면)">
+            <img src="뒤.png" alt="미니블록 뒷면" data-zoom-title="학교 마스코트 미니블록 (뒷면)">
+          </div>
+        </div>
+      </article>
+
+      <!-- 5. 경기 전국체전 디자인 -->
+      <article class="work brutal-reveal">
+        <div class="work-head">
+          <h3>경기 전국체전 디자인</h3>
+          <div class="flip-toolbar">
+            <button type="button" class="flip-state-btn active" data-flip-id="gyeonggiFlip" data-side="front">엠블럼</button>
+            <button type="button" class="flip-state-btn" data-flip-id="gyeonggiFlip" data-side="back">포스터</button>
+            <button type="button" class="zoom-pill-btn" data-zoom-flip="gyeonggiFlip">크게 보기</button>
+          </div>
+        </div>
+        <p class="when">그래픽 디자인 공모</p>
+        <div class="flip-container ratio-poster" id="gyeonggiFlip" data-front-title="경기 전국체전 · 통합 엠블럼" data-back-title="경기 전국체전 · 장애인체전 포스터">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <span class="side-tag">EMBLEM</span>
+              <img src="양대회통합–엠블럼–260108-문태양.png" alt="엠블럼">
+            </div>
+            <div class="flip-back">
+              <span class="side-tag">POSTER</span>
+              <img src="전국장애인체전–포스터–260108-문태양.png" alt="포스터">
+            </div>
           </div>
           <div class="flip-hint">CLICK!</div>
         </div>
@@ -692,7 +922,7 @@
         
         <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="todo.html" title="오늘의 할 일 관리 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="todo.html" title="오늘의 할 일 관리 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">개인 프로젝트</div>
             <h3>오늘의 할 일 관리</h3>
@@ -703,7 +933,7 @@
 
         <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="stamp.html" title="디지털 도장 생성기 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="stamp.html" title="디지털 도장 생성기 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">개인 프로젝트</div>
             <h3>디지털 도장 생성기</h3>
@@ -714,7 +944,7 @@
 
         <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="myeongeon.html" title="감정별 명언 추천 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="myeongeon.html" title="감정별 명언 추천 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">인터랙티브 웹 (실습 4)</div>
             <h3>감정별 명언 추천 앱</h3>
@@ -725,7 +955,7 @@
 
         <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="cardgame.html" title="기억력 짝맞추기 게임 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="cardgame.html" title="기억력 짝맞추기 게임 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">디지털 교구 (실습 5)</div>
             <h3>기억력 짝맞추기 게임</h3>
@@ -736,7 +966,7 @@
 
         <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="libgame.html" title="도서관 지식 라운지 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="libgame.html" title="도서관 지식 라운지 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">학습 앱 (실습 6)</div>
             <h3>도서관 지식 라운지</h3>
@@ -747,7 +977,7 @@
 
         <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="2d-viewer.html" title="평면도형 학습 도구 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="2d-viewer.html" title="평면도형 학습 도구 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 7)</div>
             <h3>평면도형 학습 도구</h3>
@@ -758,7 +988,7 @@
 
         <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="3d-viewer.html" title="입체도형 학습 도구 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="3d-viewer.html" title="입체도형 학습 도구 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 7)</div>
             <h3>입체도형 학습 도구</h3>
@@ -769,7 +999,7 @@
 
         <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="literacy.html" title="디지털 리터러시 다각형 차트 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="literacy.html" title="디지털 리터러시 다각형 차트 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">시각화 (실습 9)</div>
             <h3>디지털 리터러시 다각형 차트</h3>
@@ -780,7 +1010,7 @@
 
         <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="dice.html" title="3D 주사위 시뮬레이터 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="dice.html" title="3D 주사위 시뮬레이터 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">통계 도구 (실습 11)</div>
             <h3>3D 주사위 시뮬레이터</h3>
@@ -791,7 +1021,7 @@
 
         <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="clockgame.html" title="시계 읽기 연습 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="clockgame.html" title="시계 읽기 연습 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 14)</div>
             <h3>시계 읽기 연습 앱</h3>
@@ -802,7 +1032,7 @@
 
         <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="aicatch.html" title="AI 캐치마인드 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="aicatch.html" title="AI 캐치마인드 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">AI 퀴즈 (실습 15)</div>
             <h3>AI 캐치마인드</h3>
@@ -813,7 +1043,7 @@
 
         <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="kkfood.html" title="AI 칼로리 자동 계산 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="kkfood.html" title="AI 칼로리 자동 계산 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">AI 영양 (실습 16)</div>
             <h3>AI 칼로리 자동 계산 앱</h3>
@@ -824,7 +1054,7 @@
 
         <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="mockup-window"><iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">건강 관리 (실습 17)</div>
             <h3>운동 체크리스트 앱</h3>
@@ -848,12 +1078,27 @@
   </footer>
 </div>
 
+<!-- 디자인 이미지 확대 보기 라이트박스 -->
+<div class="lightbox-modal" id="lightboxModal" role="dialog" aria-modal="true" aria-label="이미지 크게 보기">
+  <div class="lightbox-box">
+    <div class="lightbox-bar">
+      <span id="lightboxTitle">이미지 미리보기</span>
+      <button type="button" class="lightbox-close" id="lightboxCloseBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="lightbox-body">
+      <img id="lightboxImg" src="" alt="확대 이미지">
+    </div>
+  </div>
+</div>
+
 <script>
+  // 배경음악 단일 인스턴스 및 중복 재생 방지 상태
   let ytPlayer = null;
+  let isPlayerInitializing = false;
   let isPlayerReady = false;
-  let isMuted = true;
-  let isUserPaused = true;
+  let isMusicEnabled = false;
   let pendingPlay = false;
+  let isToggleLocked = false;
 
   function syncMusicButtonUI(playing) {
     const muteToggleBtn = document.getElementById('muteToggleBtn');
@@ -876,6 +1121,33 @@
     }
   }
 
+  function safeStartMusic() {
+    if (!isMusicEnabled || !isPlayerReady || !ytPlayer) return;
+    try {
+      ytPlayer.unMute();
+      ytPlayer.setVolume(50);
+      const state = typeof ytPlayer.getPlayerState === 'function' ? ytPlayer.getPlayerState() : -1;
+      // 이미 재생 중이거나 버퍼링 중이면 중복 호출하지 않음
+      if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
+        ytPlayer.playVideo();
+      }
+    } catch (e) {
+      console.warn('Audio play guard:', e);
+    }
+  }
+
+  function safeStopMusic() {
+    if (!isPlayerReady || !ytPlayer) return;
+    try {
+      ytPlayer.mute();
+      if (typeof ytPlayer.pauseVideo === 'function') {
+        ytPlayer.pauseVideo();
+      }
+    } catch (e) {
+      console.warn('Audio stop guard:', e);
+    }
+  }
+
   function applyMusicPreference(shouldPlay) {
     const promptBar = document.getElementById('musicPromptBar');
     if (promptBar) {
@@ -883,63 +1155,132 @@
     }
 
     if (shouldPlay) {
-      isMuted = false;
-      isUserPaused = false;
+      isMusicEnabled = true;
       syncMusicButtonUI(true);
 
       if (isPlayerReady && ytPlayer) {
-        ytPlayer.unMute();
-        ytPlayer.setVolume(50);
-        ytPlayer.playVideo();
+        pendingPlay = false;
+        safeStartMusic();
       } else {
         pendingPlay = true;
       }
     } else {
-      isMuted = true;
-      isUserPaused = true;
+      isMusicEnabled = false;
       pendingPlay = false;
       syncMusicButtonUI(false);
-
-      if (isPlayerReady && ytPlayer) {
-        ytPlayer.mute();
-        ytPlayer.pauseVideo();
-      }
+      safeStopMusic();
     }
   }
 
-  function onYouTubeIframeAPIReady() {
+  // YouTube IFrame API 싱글톤 초기화 (중복 인스턴스 원천 차단)
+  window.onYouTubeIframeAPIReady = function () {
+    if (ytPlayer || isPlayerInitializing) return;
+    isPlayerInitializing = true;
+
+    const container = document.getElementById('youtubePlayerContainer');
+    if (container) {
+      container.innerHTML = '';
+    }
+
     ytPlayer = new YT.Player('youtubePlayerContainer', {
       height: '0',
       width: '0',
       videoId: 'PkVmztKY9PU',
       playerVars: {
-        'autoplay': 0,
-        'loop': 1,
-        'playlist': 'PkVmztKY9PU',
-        'controls': 0
+        autoplay: 0,
+        loop: 1,
+        playlist: 'PkVmztKY9PU',
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        playsinline: 1
       },
       events: {
-        'onReady': (event) => {
+        onReady: (event) => {
+          isPlayerInitializing = false;
           isPlayerReady = true;
           event.target.setVolume(50);
-          if (pendingPlay && !isMuted) {
-            event.target.unMute();
-            event.target.playVideo();
+
+          if (isMusicEnabled || pendingPlay) {
             pendingPlay = false;
+            safeStartMusic();
           } else {
-            event.target.mute();
+            safeStopMusic();
+          }
+        },
+        onStateChange: (event) => {
+          // 사용자가 재생을 허용하지 않은 상태라면 어떤 경우에도 즉시 정지
+          if (!isMusicEnabled && (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING)) {
+            safeStopMusic();
           }
         }
       }
     });
+  };
+
+  (function loadYouTubeApiOnce() {
+    if (window.YT && typeof window.YT.Player === 'function') {
+      window.onYouTubeIframeAPIReady();
+      return;
+    }
+    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+      const tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+  })();
+
+  // 스크롤 시 지연 로딩되는 하위 미리보기 iframe 내부의 모든 오디오/미디어 차단
+  function silencePreviewIframe(iframe) {
+    try {
+      const win = iframe.contentWindow;
+      const doc = iframe.contentDocument;
+      if (!win || !doc) return;
+
+      doc.querySelectorAll('audio, video').forEach((media) => {
+        media.muted = true;
+        media.autoplay = false;
+        media.pause();
+      });
+
+      if (win.HTMLMediaElement && win.HTMLMediaElement.prototype) {
+        win.HTMLMediaElement.prototype.play = function () {
+          this.muted = true;
+          return Promise.resolve();
+        };
+      }
+
+      if (win.AudioContext) {
+        const OrigAC = win.AudioContext;
+        win.AudioContext = function () {
+          const ctx = new OrigAC();
+          if (ctx && typeof ctx.suspend === 'function') ctx.suspend();
+          return ctx;
+        };
+      }
+      if (win.webkitAudioContext) {
+        const OrigWAC = win.webkitAudioContext;
+        win.webkitAudioContext = function () {
+          const ctx = new OrigWAC();
+          if (ctx && typeof ctx.suspend === 'function') ctx.suspend();
+          return ctx;
+        };
+      }
+
+      const ytBox = doc.getElementById('youtubePlayerContainer');
+      if (ytBox) ytBox.remove();
+    } catch (e) {
+      // 동일 출처가 아닌 경우 브라우저 보안 정책에 의해 자동 격리됨
+    }
   }
 
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  const firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
   document.addEventListener("DOMContentLoaded", () => {
+    // 모든 미리보기 iframe에 오디오 차단 핸들러 연결
+    document.querySelectorAll('.mockup-window iframe').forEach((iframe) => {
+      iframe.addEventListener('load', () => silencePreviewIframe(iframe));
+    });
+
     // 실시간 시계
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
@@ -964,34 +1305,29 @@
       musicNoBtn.addEventListener('click', () => applyMusicPreference(false));
     }
 
-    // 우측 상단 음악 아이콘 토글
+    // 우측 상단 음악 아이콘 토글 (연타 중복 방지 디바운스 포함)
     const muteToggleBtn = document.getElementById('muteToggleBtn');
     if (muteToggleBtn) {
       muteToggleBtn.addEventListener('click', () => {
+        if (isToggleLocked) return;
+        isToggleLocked = true;
+        setTimeout(() => { isToggleLocked = false; }, 280);
+
         const promptBar = document.getElementById('musicPromptBar');
         if (promptBar && !promptBar.classList.contains('is-hidden')) {
           promptBar.classList.add('is-hidden');
         }
 
-        if (isMuted) {
-          applyMusicPreference(true);
-        } else {
-          applyMusicPreference(false);
-        }
+        applyMusicPreference(!isMusicEnabled);
       });
     }
 
-    // 브라우저 탭 전환 시 재생 상태 유지
-    window.addEventListener('blur', () => {
-      if (isPlayerReady && ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
-        ytPlayer.pauseVideo();
-      }
-    });
-
-    window.addEventListener('focus', () => {
-      if (!isUserPaused && !isMuted && isPlayerReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
-        ytPlayer.unMute();
-        ytPlayer.playVideo();
+    // 브라우저 탭 가시성 전환 시 단일 상태 유지
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        safeStopMusic();
+      } else if (isMusicEnabled) {
+        safeStartMusic();
       }
     });
 
@@ -1050,25 +1386,98 @@
       });
     });
 
-    // 이미지 플립 카드
+    // 플립 카드 클릭 및 상단 전환 버튼 동기화
+    function syncFlipButtons(flipId, isFlipped) {
+      document.querySelectorAll(`.flip-state-btn[data-flip-id="${flipId}"]`).forEach(btn => {
+        const wantBack = btn.dataset.side === 'back';
+        btn.classList.toggle('active', wantBack === isFlipped);
+      });
+    }
+
     document.querySelectorAll('.flip-container').forEach(container => {
       container.addEventListener('click', () => {
-        container.classList.toggle('is-flipped');
+        const flipped = container.classList.toggle('is-flipped');
+        if (container.id) syncFlipButtons(container.id, flipped);
       });
     });
 
-    // 마스코트 캐러셀 좌우 이동 버튼
-    const mascotCarousel = document.getElementById('mascotCarousel');
-    const carouselPrev = document.getElementById('carouselPrev');
-    const carouselNext = document.getElementById('carouselNext');
-    if (mascotCarousel && carouselPrev && carouselNext) {
-      carouselPrev.addEventListener('click', () => {
-        mascotCarousel.scrollBy({ left: -340, behavior: 'smooth' });
+    document.querySelectorAll('.flip-state-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const container = document.getElementById(btn.dataset.flipId);
+        if (!container) return;
+        const wantBack = btn.dataset.side === 'back';
+        container.classList.toggle('is-flipped', wantBack);
+        syncFlipButtons(btn.dataset.flipId, wantBack);
       });
-      carouselNext.addEventListener('click', () => {
-        mascotCarousel.scrollBy({ left: 340, behavior: 'smooth' });
+    });
+
+    // 다중 캐러셀 좌우 이동 버튼 및 카운터 업데이트
+    document.querySelectorAll('.carousel-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const carousel = document.getElementById(btn.dataset.carouselTarget);
+        if (!carousel) return;
+        const dir = Number(btn.dataset.dir) || 1;
+        carousel.scrollBy({ left: dir * 320, behavior: 'smooth' });
       });
+    });
+
+    document.querySelectorAll('.carousel[data-counter-id]').forEach(carousel => {
+      const counterEl = document.getElementById(carousel.dataset.counterId);
+      const total = Number(carousel.dataset.total) || carousel.querySelectorAll('img').length;
+      if (!counterEl) return;
+
+      carousel.addEventListener('scroll', () => {
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        if (maxScroll <= 0) return;
+        const ratio = Math.min(1, Math.max(0, carousel.scrollLeft / maxScroll));
+        const currentIdx = Math.min(total, Math.max(1, Math.round(ratio * (total - 1)) + 1));
+        counterEl.textContent = `${currentIdx} / ${total}`;
+      }, { passive: true });
+    });
+
+    // 이미지 확대 보기 라이트박스
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxTitle = document.getElementById('lightboxTitle');
+
+    function openLightbox(src, title) {
+      if (!src) return;
+      lightboxImg.src = src;
+      lightboxTitle.textContent = title || '이미지 미리보기';
+      lightboxModal.classList.add('open');
     }
+
+    function closeLightbox() {
+      lightboxModal.classList.remove('open');
+      lightboxImg.src = '';
+    }
+
+    document.querySelectorAll('.carousel img').forEach(img => {
+      img.addEventListener('click', () => {
+        openLightbox(img.getAttribute('src'), img.dataset.zoomTitle || img.alt);
+      });
+    });
+
+    document.querySelectorAll('.zoom-pill-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const container = document.getElementById(btn.dataset.zoomFlip);
+        if (!container) return;
+        const isFlipped = container.classList.contains('is-flipped');
+        const img = container.querySelector(isFlipped ? '.flip-back img' : '.flip-front img');
+        const title = isFlipped ? container.dataset.backTitle : container.dataset.frontTitle;
+        if (img) openLightbox(img.getAttribute('src'), title);
+      });
+    });
+
+    document.getElementById('lightboxCloseBtn').addEventListener('click', closeLightbox);
+    lightboxModal.addEventListener('click', (e) => {
+      if (e.target === lightboxModal) closeLightbox();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightboxModal.classList.contains('open')) {
+        closeLightbox();
+      }
+    });
 
     // 웹 앱 카테고리 필터
     const filterBtns = document.querySelectorAll('#appFilterBar .app-filter-btn');
