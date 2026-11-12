@@ -8,13 +8,10 @@
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
     :root {
-      --bg: #dfdcd3;
-      --surface: #ffffff;
-      --black: #0f0f0f;
+      --bg: #fdfbf7;
+      --black: #111111;
       --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
-      --shadow-sm: 4px 4px 0 var(--black);
-      --shadow-lg: 8px 8px 0 var(--black);
       
       --yellow: #ffd83b;
       --red: #ff4757;
@@ -23,25 +20,12 @@
       --pink: #ff9ff3;
       --cyan: #48dbfb;
     }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
-      opacity: 0.12;
-      mix-blend-mode: overlay;
-    }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background-color: var(--bg);
-      background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px);
-      background-size: 24px 24px;
+      background: var(--bg); 
       color: var(--black); 
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
@@ -66,7 +50,7 @@
     .fixed-top-bar .current-time {
       font-weight: 900;
       font-size: 0.95rem;
-      background: var(--surface);
+      background: white;
       border: var(--border);
       padding: 4px 10px;
       box-shadow: 2px 2px 0 var(--black);
@@ -80,7 +64,7 @@
 
     .fixed-top-bar .icon-btn {
       width: 38px; height: 38px;
-      background: var(--surface);
+      background: white;
       border: var(--border);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -99,20 +83,14 @@
       background: var(--cyan);
     }
 
-    .fixed-top-bar .icon-btn.is-playing {
-      background: var(--green);
-    }
-
-    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 48px; }
-    a { color: inherit; transition: all 0.15s ease; text-decoration: none; }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+    a { color: inherit; transition: all 0.2s ease; text-decoration: none; }
 
     .top {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: baseline;
       padding: 24px 0; 
       border-bottom: var(--border-thick);
       font-size: 1rem; font-weight: 800;
-      gap: 16px;
-      flex-wrap: wrap;
     }
     .top b { 
       font-size: 1.4rem; 
@@ -120,35 +98,29 @@
       text-transform: uppercase; 
       background: var(--black); 
       color: var(--yellow);
-      padding: 4px 14px;
+      padding: 4px 12px;
       transform: skew(-5deg);
-      box-shadow: 3px 3px 0 var(--red);
     }
-    .top nav { display: flex; gap: 12px; flex-wrap: wrap; }
-    .top nav a {
-      position: relative;
-      padding: 6px 12px;
-      background: var(--surface);
-      border: var(--border);
-      box-shadow: 3px 3px 0 var(--black);
-      font-weight: 900;
-    }
-    .top nav a:hover {
-      background: var(--black);
-      color: var(--yellow);
-      transform: translate(-2px, -2px);
-      box-shadow: 5px 5px 0 var(--red);
+    .top nav { display: flex; gap: 24px; }
+    .top nav a { position: relative; padding: 4px 8px; }
+    .top nav a:hover { background: var(--black); color: var(--bg); }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(var(--rot, 0deg)) translateX(0); }
+      25% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
+      50% { transform: rotate(calc(var(--rot, 0deg) + 4deg)) translateX(3px); }
+      75% { transform: rotate(calc(var(--rot, 0deg) - 4deg)) translateX(-3px); }
     }
 
-    .hero { padding: 88px 0 76px; border-bottom: var(--border-thick); }
+    .hero { padding: 100px 0 80px; border-bottom: var(--border-thick); }
     .hero .small { 
-      display: inline-block; font-size: 1rem; font-weight: 900; 
-      background: var(--cyan); border: var(--border); padding: 4px 14px;
-      box-shadow: var(--shadow-sm); margin-bottom: 24px;
+      display: inline-block; font-size: 1rem; font-weight: 800; 
+      background: var(--cyan); border: var(--border); padding: 4px 12px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 24px;
     }
     .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4.1rem);
-      line-height: 1.22; font-weight: 900;
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      line-height: 1.2; font-weight: 900;
     }
     .hero h1 span { 
       display: inline-block;
@@ -160,108 +132,64 @@
       transform: rotate(-2deg);
     }
     .hero p { 
-      max-width: 38em; margin-top: 30px; font-size: 1.1rem; font-weight: 700;
-      border-left: 6px solid var(--black); padding: 10px 20px;
-      background: rgba(255, 255, 255, 0.72);
+      max-width: 36em; margin-top: 30px; font-size: 1.1rem; font-weight: 600;
+      border-left: 6px solid var(--black); padding-left: 20px;
     }
-    .hero .meta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero .meta { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
     .hero .meta span {
       background: var(--pink); border: var(--border); box-shadow: 3px 3px 0 var(--black);
-      padding: 6px 14px; font-size: 0.9rem; font-weight: 900;
+      padding: 6px 14px; font-size: 0.9rem; font-weight: 800;
     }
 
     section { padding: 80px 0; border-bottom: var(--border-thick); }
     .label {
-      display: inline-block; font-size: 0.95rem; font-weight: 900;
-      background: var(--black); color: var(--surface); padding: 4px 16px;
+      display: inline-block; font-size: 1rem; font-weight: 900;
+      background: var(--black); color: white; padding: 4px 16px;
       margin-bottom: 20px; text-transform: uppercase;
       box-shadow: 4px 4px 0 var(--red);
     }
 
-    h2 { font-size: 2rem; font-weight: 900; margin-bottom: 16px; }
-    .lead { max-width: 40em; font-size: 1.05rem; font-weight: 700; color: #222; }
+    h2 { font-size: 2rem; font-weight: 900; margin-bottom: 20px; }
+    .lead { max-width: 38em; font-size: 1.05rem; font-weight: 600; }
 
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; }
     .two div {
-      border: var(--border-thick); background: var(--surface);
-      padding: 26px; box-shadow: 6px 6px 0 var(--black);
+      border: var(--border-thick); background: white;
+      padding: 24px; box-shadow: 6px 6px 0 var(--black);
     }
     .two div:nth-child(1) { background: #ffeaa7; }
     .two div:nth-child(2) { background: #81ecec; }
-    .two h3 { font-size: 1.3rem; margin-bottom: 12px; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 6px; display: inline-block; }
-    .two p { font-weight: 600; }
+    .two h3 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 6px; display: inline-block; }
 
     .work-group { margin-top: 60px; }
     .work-group-title {
       display: inline-block;
       font-size: 1.1rem; font-weight: 900;
       border: var(--border); background: var(--yellow);
-      padding: 6px 16px; box-shadow: var(--shadow-sm);
-      margin-bottom: 24px;
+      padding: 6px 16px; box-shadow: 4px 4px 0 var(--black);
+      margin-bottom: 30px;
     }
 
     .work { 
-      margin-top: 28px; padding: 26px; 
-      border: var(--border-thick); background: var(--surface);
-      box-shadow: 6px 6px 0 var(--black);
+      margin-top: 36px; padding: 24px; 
+      border: var(--border); background: white;
+      box-shadow: 5px 5px 0 var(--black);
     }
     .work h3 { font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .work .when { 
       display: inline-block; font-size: 0.85rem; font-weight: 800; 
-      background: var(--black); color: var(--surface); padding: 2px 10px; margin: 10px 0 16px; 
-    }
-
-    .project-link {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.85rem;
-      font-weight: 900;
-      background: var(--cyan);
-      color: var(--black);
-      border: var(--border);
-      padding: 4px 12px;
-      box-shadow: 3px 3px 0 var(--black);
-    }
-    .project-link:hover {
-      background: var(--yellow);
-      transform: translate(-2px, -2px);
-      box-shadow: 5px 5px 0 var(--black);
+      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 16px; 
     }
 
     .carousel-wrap { margin-top: 16px; position: relative; }
-    .carousel-controls {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .carousel-btn {
-      background: var(--yellow);
-      border: var(--border);
-      box-shadow: 3px 3px 0 var(--black);
-      padding: 4px 12px;
-      font-weight: 900;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-    .carousel-btn:hover {
-      background: var(--cyan);
-      transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0 var(--black);
-    }
-    .carousel-btn:active {
-      transform: translate(2px, 2px);
-      box-shadow: 0 0 0 var(--black);
-    }
     .carousel {
       display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
       gap: 16px; padding-bottom: 12px;
-      scroll-behavior: smooth;
     }
     .carousel img {
       scroll-snap-align: start; flex: 0 0 75%; max-width: 380px; max-height: 280px;
       object-fit: contain; padding: 12px;
-      border: var(--border); background: var(--surface);
+      border: var(--border); background: #fff;
       box-shadow: 5px 5px 0 var(--black);
     }
 
@@ -274,43 +202,42 @@
     }
     .flip-container.ratio-card { aspect-ratio: 1.58 / 1; max-width: 400px; }
     .flip-container.ratio-medal { aspect-ratio: 1 / 1; max-width: 300px; }
-    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 320px; }
+    .flip-container.ratio-poster { aspect-ratio: 1 / 1.35; max-width: 300px; }
 
     .flip-inner {
       position: relative; width: 100%; height: 100%;
-      text-align: center; transition: transform 0.75s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform-style: preserve-3d; cursor: pointer;
     }
     .flip-container.is-flipped .flip-inner { transform: rotateY(180deg); }
     .flip-front, .flip-back {
       position: absolute; width: 100%; height: 100%;
       backface-visibility: hidden; border: var(--border-thick);
-      box-shadow: 6px 6px 0 var(--black); background: var(--surface);
+      box-shadow: 6px 6px 0 var(--black); background: white;
       display: flex; align-items: center; justify-content: center;
     }
     .flip-back { transform: rotateY(180deg); }
     .flip-front img, .flip-back img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
     .flip-hint {
-      position: absolute; bottom: -14px; right: -12px;
+      position: absolute; bottom: -12px; right: -12px;
       background: var(--yellow); border: var(--border); padding: 4px 12px;
       font-weight: 900; font-size: 0.85rem; box-shadow: 3px 3px 0 var(--black);
-      pointer-events: none;
     }
 
-    details { background: var(--surface); border: var(--border-thick); box-shadow: 5px 5px 0 var(--black); margin-top: 16px; }
-    summary { font-weight: 900; cursor: pointer; padding: 12px 20px; background: var(--pink); }
-    details[open] summary { border-bottom: var(--border-thick); }
+    details { background: white; border: var(--border-thick); box-shadow: 5px 5px 0 var(--black); margin-top: 16px; }
+    summary { font-weight: 900; cursor: pointer; padding: 12px 20px; background: var(--pink); border-bottom: var(--border-thick); }
     .pdf-container { position: relative; padding-bottom: 141.4%; height: 0; background: #e0e0e0; }
     .pdf-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
+    /* 컴팩트 앱 카드 그리드 (미리보기 크기 최적화) */
     .app-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 24px; margin-top: 20px;
     }
     .app-card {
       display: flex; flex-direction: column; border: var(--border-thick);
-      background: var(--surface); overflow: hidden;
-      transition: transform 0.15s ease, box-shadow 0.15s ease; text-decoration: none;
+      background: white; overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease; text-decoration: none;
       color: var(--black); box-shadow: 6px 6px 0 var(--black);
     }
     .app-card:hover { transform: translate(-4px, -4px); box-shadow: 10px 10px 0 var(--black); }
@@ -321,97 +248,80 @@
     }
     .app-card:nth-child(2n) .browser-bar { background: var(--pink); }
     .app-card:nth-child(3n) .browser-bar { background: var(--yellow); }
-    .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: var(--surface); }
+    .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: white; }
 
     .mockup-window {
       width: 100%; padding-top: 60%; position: relative; overflow: hidden; 
-      background: #f3f1eb; border-bottom: var(--border-thick);
+      background: white; border-bottom: var(--border-thick);
     }
     .mockup-window iframe {
       position: absolute; top: 0; left: 0;
       width: 400%; height: 400%; transform: scale(0.25); transform-origin: 0 0;
       pointer-events: none; border: none;
-      background: var(--surface);
     }
     .mockup-window img {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
     }
 
-    .app-info { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; background: var(--surface); }
+    .app-info { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; background: white; }
     .app-info .tech { 
-      font-size: 0.78rem; font-weight: 900; margin-bottom: 10px; 
+      font-size: 0.75rem; font-weight: 900; margin-bottom: 8px; 
       border: 2px solid var(--black); display: inline-block; align-self: flex-start;
       padding: 2px 8px; background: var(--yellow); box-shadow: 2px 2px 0 var(--black);
     }
     .app-info h3 { font-size: 1.15rem; margin-bottom: 8px; font-weight: 900; }
-    .app-info p { font-size: 0.92rem; font-weight: 600; color: #333; margin-bottom: 16px; flex-grow: 1; }
+    .app-info p { font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; flex-grow: 1; }
 
     .app-link-btn {
       align-self: flex-start; font-size: 0.85rem; font-weight: 900; padding: 8px 14px;
-      background: var(--surface); border: var(--border); box-shadow: 3px 3px 0 var(--black);
-      transition: all 0.15s; color: var(--black);
+      background: white; border: var(--border); box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.2s; color: var(--black); text-transform: uppercase;
     }
     .app-card:hover .app-link-btn { 
-      background: var(--red); color: var(--surface); transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
+      background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
     }
 
-    .contact { padding: 90px 0; border-bottom: 0; text-align: center; }
-    .contact h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); }
+    .contact { padding: 100px 0; border-bottom: 0; text-align: center; }
+    .contact h2 { font-size: 2.2rem; }
     .contact a {
-      display: inline-block; margin-top: 20px; text-decoration: none;
-      font-size: clamp(1.1rem, 4vw, 1.6rem);
+      display: inline-block; margin-top: 20px; text-decoration: none; font-size: 1.6rem;
       font-weight: 900; background: var(--yellow); border: var(--border-thick);
-      padding: 12px 24px; box-shadow: 6px 6px 0 var(--black);
-      word-break: break-all;
+      padding: 10px 24px; box-shadow: 6px 6px 0 var(--black);
     }
-    .contact a:hover {
-      background: var(--cyan);
-      transform: translate(-3px, -3px);
-      box-shadow: 9px 9px 0 var(--black);
-    }
-
     footer { 
-      padding: 22px 16px; color: var(--surface); background: var(--black);
-      font-size: 0.92rem; font-weight: 800; text-align: center;
-      border: var(--border-thick);
-      box-shadow: 6px 6px 0 var(--red);
+      padding: 30px 0; color: white; background: var(--black);
+      font-size: 0.9rem; font-weight: 800; text-align: center;
+      border-top: var(--border-thick);
     }
 
     .nav-assistant {
       position: fixed; top: 50%; right: 16px; transform: translateY(-50%);
       display: flex; flex-direction: column; gap: 10px;
-      background: var(--surface); border: var(--border-thick);
+      background: white; border: var(--border-thick);
       padding: 12px 10px; box-shadow: 5px 5px 0 var(--black); z-index: 1000;
     }
     .nav-dot {
-      width: 18px; height: 18px; background: var(--surface);
+      width: 18px; height: 18px; background: white;
       border: var(--border); transition: all 0.2s; cursor: pointer; position: relative;
     }
     .nav-dot.active { background: var(--red); box-shadow: 2px 2px 0 var(--black); transform: translate(-2px, -2px); }
     .nav-dot::after {
       content: attr(data-tooltip); position: absolute; right: 26px; top: 50%; transform: translateY(-50%);
-      background: var(--black); color: var(--surface); padding: 4px 10px; font-size: 0.8rem;
+      background: var(--black); color: white; padding: 4px 10px; font-size: 0.8rem;
       border: 2px solid var(--black); opacity: 0; pointer-events: none;
       transition: opacity 0.2s; white-space: nowrap; font-weight: 800;
     }
     .nav-dot:hover::after { opacity: 1; }
 
     .brutal-reveal {
-      opacity: 0; transform: translateY(24px) scale(0.98); 
-      transition: opacity 0.45s, transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0; transform: translateY(30px) scale(0.98); 
+      transition: opacity 0.5s, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .brutal-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
 
     @media (max-width: 992px) {
       .nav-assistant { top: auto; bottom: 16px; right: 16px; transform: none; flex-direction: row; }
       .nav-dot::after { display: none; }
-    }
-
-    @media (max-width: 768px) {
-      .hero { padding: 64px 0 56px; }
-      section { padding: 60px 0; }
-      .two { grid-template-columns: 1fr; }
-      .work { padding: 20px; }
     }
   </style>
 </head>
@@ -429,10 +339,10 @@
     <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
     </a>
-    <button type="button" class="icon-btn music-wrap" id="muteToggleBtn" title="배경음악 재생/음소거" aria-label="배경음악 재생 또는 음소거">
+    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
       <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
       <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-    </button>
+    </div>
   </div>
 </div>
 
@@ -443,7 +353,7 @@
   <div class="nav-dot" data-tooltip="About" data-target="about"></div>
   <div class="nav-dot" data-tooltip="Visual Design" data-target="work-visual"></div>
   <div class="nav-dot" data-tooltip="Policy & Research" data-target="work-policy"></div>
-  <div class="nav-dot" data-tooltip="Web Apps" data-target="work-web"></div>
+  <div class="nav-dot" data-tooltip="Web Apps (Lab 1-17)" data-target="work-web"></div>
   <div class="nav-dot" data-tooltip="Contact" data-target="contact"></div>
 </div>
 
@@ -452,8 +362,7 @@
     <b>문태양</b>
     <nav>
       <a href="#about">소개</a>
-      <a href="#work-visual">디자인·연구</a>
-      <a href="#work-web">웹 앱</a>
+      <a href="#work-visual">활동</a>
       <a href="#contact">연락</a>
     </nav>
   </div>
@@ -462,7 +371,7 @@
     <p class="small">상업정보교육과 · 문헌정보교육과 복수전공</p>
     <h1>배우고, 엮어내어<br>작은 것을 <span>만들어</span> 봅니다.</h1>
     <p>
-      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 기획안, 시각 디자인, 또는 실용적인 웹 도구로 구현해 내는 과정을 즐깁니다.
+      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 기획안, 시각 디자인, 또는 실용적인 도구로 구현해 내는 과정을 즐깁니다.
     </p>
     <div class="meta">
       <span>#교육과 지식정보</span>
@@ -490,7 +399,7 @@
   <section id="work" class="scroll-section">
     <p class="label">Activities</p>
     <h2 class="brutal-reveal">해본 것</h2>
-    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 직접 구현한 웹 앱 프로젝트 아카이브입니다.</p>
+    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 실습 1부터 17까지 구현한 웹 앱 프로젝트 아카이브입니다.</p>
 
     <!-- Group 1: 시각 디자인 -->
     <div class="work-group scroll-section brutal-reveal" id="work-visual">
@@ -500,11 +409,7 @@
         <h3>학교 마스코트 미니블록 디자인</h3>
         <p class="when">3학년</p>
         <div class="carousel-wrap">
-          <div class="carousel-controls">
-            <button type="button" class="carousel-btn" id="carouselPrev" aria-label="이전 이미지">&larr; 이전</button>
-            <button type="button" class="carousel-btn" id="carouselNext" aria-label="다음 이미지">다음 &rarr;</button>
-          </div>
-          <div class="carousel" id="mascotCarousel">
+          <div class="carousel">
             <img src="대각선.png" alt="미니블록 대각선">
             <img src="앞.png" alt="미니블록 앞면">
             <img src="옆.png" alt="미니블록 옆면">
@@ -516,12 +421,12 @@
       <article class="work brutal-reveal">
         <h3>경기 전국체전 디자인</h3>
         <p class="when">그래픽 디자인 공모</p>
-        <div class="flip-container ratio-poster" id="posterFlipCard" role="button" tabindex="0" aria-label="엠블럼과 포스터 앞뒤 뒤집기">
+        <div class="flip-container ratio-poster">
           <div class="flip-inner">
             <div class="flip-front"><img src="양대회통합–엠블럼–260108-문태양.png" alt="엠블럼"></div>
             <div class="flip-back"><img src="전국장애인체전–포스터–260108-문태양.png" alt="포스터"></div>
           </div>
-          <div class="flip-hint" id="flipHintText">앞면: 엠블럼 · 클릭하여 뒤집기</div>
+          <div class="flip-hint">CLICK!</div>
         </div>
       </article>
     </div>
@@ -530,165 +435,162 @@
     <div class="work-group scroll-section brutal-reveal" id="work-policy">
       <div class="work-group-title">정책 기획 및 학술 연구</div>
       <article class="work brutal-reveal">
-        <h3>
-          <span>학술 소논문: 도서관 평가 모형 개선 방안 연구</span>
-          <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a>
-        </h3>
+        <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구 <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a></h3>
         <p class="when">학술 연구 / OPEN-Qual 모형 개발</p>
         <details>
           <summary>논문 본문 미리보기 (클릭)</summary>
           <div class="pdf-container">
-            <iframe src="소논문_202300133_문태양.pdf" title="도서관 평가 모형 개선 방안 연구 PDF"></iframe>
+            <iframe src="소논문_202300133_문태양.pdf" allowfullscreen></iframe>
           </div>
         </details>
       </article>
     </div>
 
-    <!-- Group 3: 웹 앱 -->
+    <!-- Group 3: 웹 앱 (실습 1 ~ 17 통합) -->
     <div class="work-group scroll-section brutal-reveal" id="work-web">
-      <div class="work-group-title">웹 앱 프로젝트 아카이브</div>
+      <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 17)</div>
       
       <div class="app-grid">
         
         <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="todo.html" title="오늘의 할 일 관리 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="todo.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">개인 프로젝트</div>
             <h3>오늘의 할 일 관리</h3>
-            <p>직관적으로 목표를 추가하고 완료 여부를 체크하는 가벼운 웹 도구입니다.</p>
+            <p>직관적으로 목표를 추가하고 완료를 체크하는 가벼운 웹 도구입니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="stamp.html" title="디지털 도장 생성기 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="stamp.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">개인 프로젝트</div>
             <h3>디지털 도장 생성기</h3>
-            <p>이름과 글꼴을 선택해 투명 배경 도장 이미지를 실시간으로 생성·다운로드합니다.</p>
+            <p>이름과 글꼴을 선택해 투명 도장 이미지를 실시간 생성·다운로드합니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="myeongeon.html" title="감정별 명언 추천 앱 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="myeongeon.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">인터랙티브 웹 (실습 4)</div>
             <h3>감정별 명언 추천 앱</h3>
-            <p>현재 감정 상태에 어울리는 위로와 응원의 문장을 무작위로 추천합니다.</p>
+            <p>감정 상태에 따라 위로의 문장을 무작위로 제시합니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="cardgame.html" title="기억력 짝맞추기 게임 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="cardgame.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">디지털 교구 (실습 5)</div>
             <h3>기억력 짝맞추기 게임</h3>
-            <p>초등학생의 집중력 향상을 돕는 2D 동물 카드 짝맞추기 게임입니다.</p>
+            <p>초등학생 집중력 향상을 위한 2D 동물 짝맞추기 게임입니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="libgame.html" title="도서관 지식 라운지 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="libgame.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">학습 앱 (실습 6)</div>
             <h3>도서관 지식 라운지</h3>
-            <p>한국십진분류법(KDC) 강목 짝맞추기와 4지선다형 퀴즈를 제공합니다.</p>
+            <p>KDC 강목 짝맞추기와 4지선다형 퀴즈를 통합 제공합니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="2d-viewer.html" title="평면도형 학습 도구 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="2d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 7)</div>
             <h3>평면도형 학습 도구</h3>
-            <p>평면도형의 돌리기 및 뒤집기 조작 결과를 시각적으로 확인하는 교구입니다.</p>
+            <p>도형 회전 및 뒤집기 조작을 시각적으로 확인하는 교구입니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="3d-viewer.html" title="입체도형 학습 도구 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="3d-viewer.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 7)</div>
             <h3>입체도형 학습 도구</h3>
-            <p>다양한 입체도형의 회전과 구조를 입체적으로 관찰하는 학습 도구입니다.</p>
+            <p>입체도형 회전 조작을 3D로 시각화하는 학습 도구입니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="literacy.html" title="디지털 리터러시 다각형 차트 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="literacy.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">시각화 (실습 9)</div>
             <h3>디지털 리터러시 다각형 차트</h3>
-            <p>역량 평가 결과를 사전·사후 비교 레이더 차트로 시각화해 분석합니다.</p>
+            <p>역량 평가 결과를 사전/사후 레이더 차트로 분석합니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="dice.html" title="3D 주사위 시뮬레이터 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="dice.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">통계 도구 (실습 11)</div>
             <h3>3D 주사위 시뮬레이터</h3>
-            <p>입체 주사위 굴리기 시뮬레이션과 실시간 눈금 확률 집계 차트입니다.</p>
+            <p>페르소나 카툰풍 3D 주사위와 실시간 확률 집계 차트입니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="clockgame.html" title="시계 읽기 연습 앱 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="clockgame.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">수학 교구 (실습 14)</div>
             <h3>시계 읽기 연습 앱</h3>
-            <p>분침 이동에 따라 시침이 연동되는 초등 저학년 시계 읽기 연습 앱입니다.</p>
+            <p>분침 이동에 따라 시침이 연동되는 초등 저학년 시계 연습 앱입니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="aicatch.html" title="실시간 AI 캐치마인드 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="aicatch.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">AI 퀴즈 (실습 15)</div>
-            <h3>실시간 AI 캐치마인드</h3>
-            <p>제한 시간 안에 제시어를 그리면 AI가 실시간으로 추측해 정답을 맞히는 스케치 퀴즈입니다.</p>
+            <h3>AI 캐치마인드</h3>
+            <p>그림을 그리고 제미나이 AI 시각 분석 모델로 정답을 맞추는 앱입니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="kkfood.html" title="AI 칼로리 자동 계산 앱 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="kkfood.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">AI 영양 (실습 16)</div>
             <h3>AI 칼로리 자동 계산 앱</h3>
-            <p>사진을 분석해 음식의 칼로리와 영양성분을 추정하고, 일반 사물은 0kcal로 판별합니다.</p>
+            <p>음식 사진을 분석해 칼로리와 영양성분을 추정하고 수정합니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
 
         <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe data-src="phycheck.html" title="운동 체크리스트 앱 미리보기" tabindex="-1"></iframe></div>
+          <div class="mockup-window"><iframe src="phycheck.html" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
             <div class="tech">건강 관리 (실습 17)</div>
             <h3>운동 체크리스트 앱</h3>
-            <p>오늘의 운동 루틴을 기록하고 달성 현황을 직관적으로 점검하는 앱입니다.</p>
+            <p>오늘의 운동 목록을 관리하고 달성 현황을 점검합니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
@@ -710,24 +612,7 @@
 
 <script>
   let ytPlayer;
-  let isUserMuted = false;
-
-  function syncAudioUI(playingAndUnmuted) {
-    const btn = document.getElementById('muteToggleBtn');
-    const soundOnIcon = document.getElementById('soundOnIcon');
-    const soundOffIcon = document.getElementById('soundOffIcon');
-    if (!btn || !soundOnIcon || !soundOffIcon) return;
-
-    if (playingAndUnmuted) {
-      soundOnIcon.style.display = 'block';
-      soundOffIcon.style.display = 'none';
-      btn.classList.add('is-playing');
-    } else {
-      soundOnIcon.style.display = 'none';
-      soundOffIcon.style.display = 'block';
-      btn.classList.remove('is-playing');
-    }
-  }
+  let isUserPaused = false;
 
   function onYouTubeIframeAPIReady() {
     ytPlayer = new YT.Player('youtubePlayerContainer', {
@@ -742,13 +627,8 @@
       },
       events: {
         'onReady': (event) => {
-          event.target.setVolume(45);
           event.target.playVideo();
-        },
-        'onStateChange': (event) => {
-          const isPlaying = event.data === YT.PlayerState.PLAYING;
-          const muted = typeof ytPlayer.isMuted === 'function' ? ytPlayer.isMuted() : isUserMuted;
-          syncAudioUI(isPlaying && !muted);
+          event.target.setVolume(50);
         }
       }
     });
@@ -773,36 +653,36 @@
     setInterval(updateClock, 1000);
 
     const muteToggleBtn = document.getElementById('muteToggleBtn');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundOffIcon = document.getElementById('soundOffIcon');
+    let isMuted = false;
+
     if (muteToggleBtn) {
       muteToggleBtn.addEventListener('click', () => {
-        if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+        if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
 
-        const state = ytPlayer.getPlayerState();
-        if (state !== YT.PlayerState.PLAYING) {
-          isUserMuted = false;
+        if (isMuted) {
           ytPlayer.unMute();
-          ytPlayer.playVideo();
-          syncAudioUI(true);
-          return;
-        }
-
-        if (ytPlayer.isMuted()) {
-          isUserMuted = false;
-          ytPlayer.unMute();
-          syncAudioUI(true);
+          soundOnIcon.style.display = 'block';
+          soundOffIcon.style.display = 'none';
+          isMuted = false;
         } else {
-          isUserMuted = true;
           ytPlayer.mute();
-          syncAudioUI(false);
+          soundOnIcon.style.display = 'none';
+          soundOffIcon.style.display = 'block';
+          isMuted = true;
         }
       });
     }
 
-    document.addEventListener('visibilitychange', () => {
-      if (!ytPlayer || typeof ytPlayer.pauseVideo !== 'function') return;
-      if (document.hidden) {
+    window.addEventListener('blur', () => {
+      if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
         ytPlayer.pauseVideo();
-      } else if (!isUserMuted) {
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      if (!isUserPaused && ytPlayer && typeof ytPlayer.playVideo === 'function') {
         ytPlayer.playVideo();
       }
     });
@@ -815,30 +695,8 @@
           revealObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.08 });
+    }, { threshold: 0.1 });
     revealElements.forEach(el => revealObserver.observe(el));
-
-    // 화면에 들어온 앱 카드만 순차적으로 미리보기 로드
-    const previewFrames = document.querySelectorAll('.mockup-window iframe[data-src]');
-    let loadDelayIndex = 0;
-    const iframeObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const frame = entry.target;
-          const src = frame.dataset.src;
-          if (src) {
-            const delay = (loadDelayIndex % 4) * 180;
-            loadDelayIndex++;
-            setTimeout(() => {
-              frame.src = src;
-            }, delay);
-            frame.removeAttribute('data-src');
-          }
-          iframeObserver.unobserve(frame);
-        }
-      });
-    }, { rootMargin: '160px 0px' });
-    previewFrames.forEach(frame => iframeObserver.observe(frame));
 
     const sections = document.querySelectorAll('.scroll-section');
     const navDots = document.querySelectorAll('.nav-dot');
@@ -878,44 +736,18 @@
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
           window.scrollTo({
-            top: targetElement.offsetTop - 70,
+            top: targetElement.offsetTop - 60,
             behavior: 'smooth'
           });
         }
       });
     });
 
-    const carousel = document.getElementById('mascotCarousel');
-    const prevBtn = document.getElementById('carouselPrev');
-    const nextBtn = document.getElementById('carouselNext');
-    if (carousel && prevBtn && nextBtn) {
-      prevBtn.addEventListener('click', () => {
-        carousel.scrollBy({ left: -320, behavior: 'smooth' });
+    document.querySelectorAll('.flip-container').forEach(container => {
+      container.addEventListener('click', () => {
+        container.classList.toggle('is-flipped');
       });
-      nextBtn.addEventListener('click', () => {
-        carousel.scrollBy({ left: 320, behavior: 'smooth' });
-      });
-    }
-
-    const posterCard = document.getElementById('posterFlipCard');
-    const flipHint = document.getElementById('flipHintText');
-    if (posterCard) {
-      const toggleFlip = () => {
-        const flipped = posterCard.classList.toggle('is-flipped');
-        if (flipHint) {
-          flipHint.textContent = flipped
-            ? '뒷면: 포스터 · 클릭하여 뒤집기'
-            : '앞면: 엠블럼 · 클릭하여 뒤집기';
-        }
-      };
-      posterCard.addEventListener('click', toggleFlip);
-      posterCard.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleFlip();
-        }
-      });
-    }
+    });
   });
 </script>
 
