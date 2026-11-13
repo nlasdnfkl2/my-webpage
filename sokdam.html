@@ -6,14 +6,14 @@
   <title>문태양 - 속담 이어서 말하기 게임</title>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-    
+
     :root {
       --bg: #dfdcd3;
       --black: #0f0f0f;
       --white: #ffffff;
       --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
-      
+
       --yellow: #ffd83b;
       --red: #ff4757;
       --blue: #3e51ff;
@@ -23,31 +23,34 @@
       --shadow-sm: 4px 4px 0 var(--black);
       --shadow-lg: 8px 8px 0 var(--black);
     }
-    
+
     /* 전역 노이즈 텍스처 */
     body::after {
-        content: "";
-        position: fixed; inset: 0;
-        pointer-events: none; z-index: 9999;
-        background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
-        opacity: 0.12;
-        mix-blend-mode: overlay;
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
+      opacity: 0.12;
+      mix-blend-mode: overlay;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: var(--bg); 
-      color: var(--black); 
+      background: var(--bg);
+      color: var(--black);
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       position: relative;
       padding-top: 70px;
-      background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px); 
-      background-size: 24px 24px; 
+      background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      word-break: keep-all;
     }
-    
+
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
@@ -65,7 +68,7 @@
     .fixed-top-bar .current-time {
       font-weight: 900;
       font-size: 0.95rem;
-      background: white;
+      background: var(--white);
       border: var(--border);
       padding: 4px 10px;
       box-shadow: 2px 2px 0 var(--black);
@@ -79,7 +82,7 @@
 
     .fixed-top-bar .icon-btn {
       width: 38px; height: 38px;
-      background: white;
+      background: var(--white);
       border: var(--border);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -97,133 +100,253 @@
       background: var(--cyan);
     }
 
-    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px 80px; }
     a { color: inherit; text-decoration: none; }
-    
+
     .top {
       display: flex; justify-content: space-between; align-items: baseline;
-      padding: 24px 0; 
+      padding: 24px 0;
       border-bottom: var(--border-thick);
       font-size: 1rem; font-weight: 800;
     }
-    .top b { 
-      font-size: 1.4rem; 
-      letter-spacing: 0.05em; 
-      text-transform: uppercase; 
-      background: var(--black); 
+    .top b {
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--black);
       color: var(--yellow);
       padding: 4px 12px;
       transform: skew(-5deg);
     }
-    .top nav { display: flex; gap: 24px; }
+    .top nav { display: flex; gap: 16px; }
     .top nav a { position: relative; padding: 4px 8px; }
     .top nav a:hover { background: var(--black); color: var(--bg); }
 
-    .hero { padding: 60px 0 40px; border-bottom: var(--border-thick); }
-    .hero .small { 
-      display: inline-block; font-size: 1rem; font-weight: 800; 
+    .hero { padding: 48px 0 36px; border-bottom: var(--border-thick); }
+    .hero .small {
+      display: inline-block; font-size: 0.95rem; font-weight: 900;
       background: var(--cyan); border: var(--border); padding: 4px 12px;
-      box-shadow: 4px 4px 0 var(--black); margin-bottom: 20px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 18px;
     }
     .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 1.2; font-weight: 900;
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      line-height: 1.25; font-weight: 900;
     }
-    .hero h1 span { 
+    .hero h1 span {
       display: inline-block;
-      color: var(--black); 
+      color: var(--black);
       background: var(--yellow);
       border: var(--border-thick);
       padding: 0 16px;
       box-shadow: 6px 6px 0 var(--black);
-      transform: rotate(-2deg);
+      transform: rotate(-1.5deg);
     }
-    .hero p { 
-      max-width: 38em; margin-top: 20px; font-size: 1.05rem; font-weight: 600;
+    .hero p {
+      max-width: 42em; margin-top: 20px; font-size: 1.04rem; font-weight: 600;
       border-left: 6px solid var(--black); padding-left: 20px;
     }
 
     /* 게임 카드 영역 */
     .game-card {
-      background: white;
+      background: var(--white);
       border: var(--border-thick);
       box-shadow: var(--shadow-lg);
-      padding: 40px;
-      margin-top: 48px;
+      padding: 36px;
+      margin-top: 40px;
     }
 
     .screen { display: none; }
     .screen.active { display: block; }
 
     /* 시작 화면 스타일 */
-    .start-screen h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 16px; }
-    .start-screen p { font-weight: 600; margin-bottom: 24px; }
+    .start-screen h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 12px; }
+    .start-screen p { font-weight: 600; margin-bottom: 20px; }
+
+    .registry-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--green);
+      border: var(--border);
+      padding: 12px 16px;
+      box-shadow: 4px 4px 0 var(--black);
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+
     .setting-group {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       background: #f9f6ef;
       border: var(--border);
-      padding: 20px;
+      padding: 18px 20px;
       box-shadow: 4px 4px 0 var(--black);
     }
-    .setting-group label { display: block; font-weight: 900; margin-bottom: 8px; }
+    .setting-group label { display: block; font-weight: 900; margin-bottom: 10px; }
     .setting-group input[type="range"] { width: 100%; accent-color: var(--black); cursor: pointer; }
     .time-val { font-weight: 900; color: var(--red); }
 
+    .count-chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .count-chip {
+      padding: 8px 16px;
+      background: var(--white);
+      border: var(--border);
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.1s;
+    }
+    .count-chip:hover { background: var(--cyan); }
+    .count-chip.selected {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    /* 등재 속담 검증 목록 Drawer */
+    .verified-list-drawer {
+      display: none;
+      margin-top: 16px;
+      background: #f9f6ef;
+      border: var(--border);
+      padding: 16px;
+      box-shadow: 4px 4px 0 var(--black);
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .verified-list-drawer.open { display: block; }
+    .verified-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: var(--white);
+      border: 2px solid var(--black);
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
     .btn {
       font-family: inherit;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 900;
-      padding: 14px 28px;
+      padding: 12px 24px;
       background: var(--yellow);
       border: var(--border);
       box-shadow: 4px 4px 0 var(--black);
       cursor: pointer;
       transition: all 0.1s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       transform: translate(-2px, -2px);
       box-shadow: 6px 6px 0 var(--black);
       background: var(--cyan);
     }
+    .btn:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
     .btn-green { background: var(--green); }
-    .btn-red { background: var(--red); color: white; }
+    .btn-red { background: var(--red); color: var(--white); }
+    .btn-blue { background: var(--blue); color: var(--white); }
+    .btn-white { background: var(--white); }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.88rem;
+      box-shadow: 3px 3px 0 var(--black);
+    }
 
     /* 게임 플레이 화면 스타일 */
     .game-header-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
       background: var(--pink);
       border: var(--border);
-      padding: 12px 20px;
+      padding: 12px 18px;
       font-weight: 900;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       box-shadow: 4px 4px 0 var(--black);
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
-    .timer-box { background: white; border: var(--border); padding: 4px 12px; }
+    .header-badges {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      background: var(--white);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .timer-box.paused {
+      background: var(--yellow);
+    }
+
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green);
+      border: 2px solid var(--black);
+      padding: 3px 10px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      box-shadow: 2px 2px 0 var(--black);
+    }
 
     .quiz-box {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
     .quiz-question {
-      font-size: clamp(1.4rem, 3.2vw, 2.0rem);
+      font-size: clamp(1.35rem, 3vw, 1.95rem);
       font-weight: 900;
       background: var(--yellow);
       border: var(--border-thick);
-      padding: 24px;
+      padding: 24px 20px;
       box-shadow: 6px 6px 0 var(--black);
-      margin-bottom: 20px;
-      display: inline-block;
+      margin-bottom: 14px;
       width: 100%;
     }
     .hint-box {
-      font-size: 1.2rem;
+      font-size: 1.08rem;
       font-weight: 800;
       color: var(--blue);
-      margin-bottom: 20px;
-      min-height: 35px;
+      min-height: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
     }
 
     .answer-form {
@@ -234,78 +357,237 @@
     }
     .answer-form input {
       flex: 1;
-      max-width: 400px;
-      padding: 14px 20px;
-      font-size: 1.2rem;
+      min-width: 240px;
+      max-width: 440px;
+      padding: 14px 18px;
+      font-family: inherit;
+      font-size: 1.15rem;
       font-weight: 900;
       border: var(--border-thick);
       box-shadow: 4px 4px 0 var(--black);
-      background: white;
+      background: var(--white);
+      outline: none;
+    }
+    .answer-form input:focus {
+      background: #fffdf2;
     }
 
     .action-btns {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       justify-content: center;
-      margin-top: 24px;
+      flex-wrap: wrap;
+      margin-top: 18px;
     }
 
-    /* 피드백 모달 / 오버레이 메시지 */
-    .feedback-banner {
-      margin-top: 20px;
-      padding: 16px;
-      text-align: center;
+    /* 한 문제 풀이 직후 결과 & 참고정보원 카드 */
+    .question-result-card {
+      display: none;
+      margin-top: 26px;
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      background: #f9f6ef;
+      overflow: hidden;
+    }
+    .question-result-card.active {
+      display: block;
+    }
+
+    .result-card-header {
+      padding: 14px 20px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      border-bottom: var(--border-thick);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .result-card-header.is-correct {
+      background: var(--green);
+      color: var(--black);
+    }
+    .result-card-header.is-wrong {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .result-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .answer-compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .compare-box {
+      background: var(--white);
+      border: var(--border);
+      padding: 12px 14px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+    .compare-box .label {
+      font-size: 0.85rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+      display: inline-block;
+      padding: 1px 8px;
+      border: 2px solid var(--black);
+    }
+    .compare-box.user-ans .label { background: #ffe3e6; }
+    .compare-box.correct-ans .label { background: var(--yellow); }
+    .compare-box .val {
+      font-size: 1.12rem;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .proverb-detail-box {
+      background: var(--white);
+      border: var(--border);
+      padding: 14px 16px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+    .proverb-full-title {
       font-size: 1.2rem;
       font-weight: 900;
-      border: var(--border);
-      box-shadow: 4px 4px 0 var(--black);
-      display: none;
+      margin-bottom: 6px;
     }
-    .feedback-banner.correct { background: var(--green); color: var(--black); }
-    .feedback-banner.incorrect { background: var(--red); color: white; }
+    .proverb-meaning {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #222;
+    }
 
-    /* 결과 화면 */
+    .reference-links-area {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .reference-links-title {
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+    .reference-btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ref-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      background: var(--cyan);
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.1s;
+    }
+    .ref-link-btn:hover {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+    .ref-link-btn.secondary {
+      background: var(--white);
+    }
+    .ref-link-btn.secondary:hover {
+      background: var(--pink);
+    }
+
+    .next-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 2px dashed var(--black);
+    }
+    .shortcut-hint {
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+    .kbd-key {
+      display: inline-block;
+      background: var(--white);
+      border: 2px solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+      padding: 1px 8px;
+      font-size: 0.85rem;
+      font-weight: 900;
+    }
+
+    /* 최종 결과 화면 */
     .result-screen { text-align: center; }
-    .result-screen h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 16px; }
+    .result-screen h2 { font-size: 2rem; font-weight: 900; margin-bottom: 16px; }
     .result-stats {
-      font-size: 1.3rem; font-weight: 800;
+      font-size: 1.15rem; font-weight: 800;
       background: #f0f3f6; border: var(--border);
-      padding: 24px; margin: 24px 0;
+      padding: 22px; margin: 20px 0;
       box-shadow: 4px 4px 0 var(--black);
       text-align: left;
     }
     .result-history-list {
-      max-height: 220px;
+      max-height: 300px;
       overflow-y: auto;
-      margin-top: 15px;
-      padding-right: 5px;
+      margin-top: 14px;
+      padding-right: 4px;
     }
     .history-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 12px;
-      background: white;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--white);
       border: 2px solid var(--black);
       margin-bottom: 8px;
       font-size: 0.95rem;
     }
-    .history-item a {
+    .history-status-tag {
+      padding: 2px 8px;
+      border: 2px solid var(--black);
+      font-size: 0.82rem;
+      font-weight: 900;
+      margin-right: 6px;
+    }
+    .history-status-tag.ok { background: var(--green); }
+    .history-status-tag.no { background: var(--red); color: var(--white); }
+
+    .history-links {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .history-links a {
       background: var(--cyan);
-      padding: 4px 8px;
+      padding: 4px 10px;
       border: 2px solid var(--black);
       font-weight: 900;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       box-shadow: 2px 2px 0 var(--black);
     }
-    .history-item a:hover {
+    .history-links a:hover {
       background: var(--yellow);
     }
 
-    footer { 
-      padding: 40px 0; color: white; background: var(--black);
-      font-size: 1rem; font-weight: 800; text-align: center;
-      border-top: var(--border-thick); margin-top: 80px;
+    footer {
+      padding: 36px 20px; color: var(--white); background: var(--black);
+      font-size: 0.95rem; font-weight: 800; text-align: center;
+      border-top: var(--border-thick); margin-top: 64px;
+    }
+
+    @media (max-width: 600px) {
+      .game-card { padding: 22px 16px; }
     }
   </style>
 </head>
@@ -323,7 +605,7 @@
     <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
     </a>
-    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
+    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글">
       <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
       <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
     </div>
@@ -341,67 +623,141 @@
   </div>
 
   <header class="hero">
-    <p class="small">국립국어원 표준국어대사전 연동</p>
+    <p class="small">국립국어원 표준국어대사전 · 우리말샘 연동</p>
     <h1>퀴즈형 반복학습<br><span>실제 속담</span> 이어서 말하기 게임</h1>
-    <p>국립국어원 표준국어대사전에 등재된 공인된 속담들로 구성되어 있으며, 학습 후 표준어 원문 출처를 직접 확인할 수 있습니다.</p>
+    <p>국립국어원 표준국어대사전에 실제로 등재된 속담만 엄선·검증하여 출제하며, 한 문제씩 풀이 직후 정답 해설과 공식 국어사전 참고정보원을 바로 확인할 수 있습니다.</p>
   </header>
 
   <div class="game-card" id="gameSection">
-    
+
     <!-- 1. 시작 화면 -->
     <div class="screen start-screen active" id="startScreen">
       <h2>속담 이어서 말하기 챌린지</h2>
-      <p>제한 시간 내에 제시된 속담의 빈칸 또는 뒷구절을 정확히 입력하여 어휘력을 키워보세요!</p>
-      
-      <div class="setting-group">
-        <label for="timeSlider">제한 시간 설정: <span class="time-val" id="timeValue">60</span>초</label>
-        <input type="range" id="timeSlider" min="30" max="180" step="10" value="60">
+      <p>제시된 속담의 뒷구절을 입력하고, 문제마다 정답과 표준국어대사전 풀이를 확인한 뒤 다음 문제로 넘어가 보세요.</p>
+
+      <div class="registry-status-bar">
+        <span id="verifiedSummaryText">국립국어원 표준국어대사전 실존 검증 속담: 총 25문항 필터링 완료</span>
+        <button type="button" class="btn btn-white btn-sm" id="toggleRegistryBtn">검증된 속담 목록 보기</button>
       </div>
 
-      <button class="btn btn-green" id="startBtn">게임 시작하기</button>
+      <div class="verified-list-drawer" id="verifiedListDrawer"></div>
+
+      <div class="setting-group">
+        <label>출제 문제 수 선택</label>
+        <div class="count-chips" id="questionCountChips">
+          <button type="button" class="count-chip" data-count="5">5문제</button>
+          <button type="button" class="count-chip selected" data-count="10">10문제</button>
+          <button type="button" class="count-chip" data-count="15">15문제</button>
+          <button type="button" class="count-chip" data-count="25">전체 25문제</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label for="timeSlider">제한 시간 설정 (결과 확인 중에는 타이머가 자동 일시정지됩니다): <span class="time-val" id="timeValue">90</span>초</label>
+        <input type="range" id="timeSlider" min="30" max="180" step="10" value="90">
+      </div>
+
+      <button type="button" class="btn btn-green" id="startBtn">게임 시작하기</button>
     </div>
 
     <!-- 2. 게임 플레이 화면 -->
     <div class="screen play-screen" id="playScreen">
       <div class="game-header-bar">
-        <div>점수: <span id="currentScore">0</span>점</div>
-        <div class="timer-box">남은 시간: <span id="timeLeft">60</span>초</div>
+        <div class="header-badges">
+          <div class="stat-box">진행: <span id="progressText">1 / 10</span></div>
+          <div class="stat-box">점수: <span id="currentScore">0</span>점</div>
+        </div>
+        <div class="stat-box timer-box" id="timerBox">남은 시간: <span id="timeLeft">90</span>초</div>
+      </div>
+
+      <div class="quiz-meta-row">
+        <span class="verified-badge">국립국어원 표준국어대사전 등재 검증 속담</span>
+        <span style="font-size: 0.88rem; font-weight: 800;" id="timerStateLabel">풀이 중 (타이머 작동 중)</span>
       </div>
 
       <div class="quiz-box">
-        <div class="quiz-question" id="questionText">콩 심은 데 콩 나고</div>
-        <div class="hint-box" id="hintText">초성 힌트: 팥 ㄷㄴㄷ</div>
+        <div class="quiz-question" id="questionText">콩 심은 데 ______</div>
+        <div class="hint-box" id="hintArea"></div>
       </div>
 
       <form class="answer-form" id="answerForm">
-        <input type="text" id="answerInput" placeholder="뒷구절을 입력하세요" autocomplete="off">
-        <button type="submit" class="btn" id="submitBtn">정답 제출</button>
+        <input type="text" id="answerInput" placeholder="속담의 뒷구절을 입력하세요" autocomplete="off">
+        <button type="submit" class="btn btn-green" id="submitBtn">정답 제출</button>
       </form>
 
-      <div class="action-btns">
-        <button class="btn btn-red" id="hintBtn" type="button">초성 힌트 보기 (남은 횟수: <span id="hintCount">2</span>)</button>
+      <div class="action-btns" id="quizHelperBtns">
+        <button class="btn btn-white btn-sm" id="chosungHintBtn" type="button">초성 힌트 (남은 횟수: <span id="chosungCount">2</span>)</button>
+        <button class="btn btn-white btn-sm" id="meaningHintBtn" type="button">뜻풀이 힌트 보기</button>
+        <button class="btn btn-red btn-sm" id="giveUpBtn" type="button">정답 바로 보기</button>
       </div>
 
-      <!-- 정답/오답 즉시 결과 피드백 배너 -->
-      <div class="feedback-banner" id="feedbackBanner"></div>
+      <!-- 한 문제씩 풀이 직후 표시되는 결과 + 참고정보원/사전 연결 패널 -->
+      <div class="question-result-card" id="questionResultCard">
+        <div class="result-card-header" id="resultCardHeader">
+          <span id="resultVerdictText">정답입니다! (+10점)</span>
+          <span id="resultSourceTag" style="font-size: 0.85rem; background: var(--white); color: var(--black); padding: 2px 10px; border: 2px solid var(--black);">표준국어대사전 등재</span>
+        </div>
+
+        <div class="result-card-body">
+          <div class="answer-compare-grid" id="answerCompareGrid">
+            <div class="compare-box user-ans" id="userAnswerCompareBox">
+              <span class="label">내가 입력한 답</span>
+              <div class="val" id="userSubmittedText">-</div>
+            </div>
+            <div class="compare-box correct-ans">
+              <span class="label">표준 정답 (뒷구절)</span>
+              <div class="val" id="standardAnswerText">-</div>
+            </div>
+          </div>
+
+          <div class="proverb-detail-box">
+            <div class="proverb-full-title" id="fullProverbText">콩 심은 데 콩 나고 팥 심은 데 팥 난다</div>
+            <div class="proverb-meaning" id="proverbMeaningText">모든 일은 근본에 따라 거기에 걸맞은 결과가 나타남을 비유적으로 이르는 말.</div>
+          </div>
+
+          <div class="reference-links-area">
+            <div class="reference-links-title">공식 참고정보원 및 국어사전에서 원문·용례 확인하기:</div>
+            <div class="reference-btn-group">
+              <a id="stdictLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="ref-link-btn">
+                국립국어원 표준국어대사전 ↗
+              </a>
+              <a id="opendictLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="ref-link-btn secondary">
+                국립국어원 우리말샘 ↗
+              </a>
+              <a id="naverDictLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="ref-link-btn secondary">
+                네이버 국어사전 ↗
+              </a>
+            </div>
+          </div>
+
+          <div class="next-action-bar">
+            <div class="shortcut-hint">
+              확인 후 <span class="kbd-key">Space</span> 키를 누르거나 오른쪽 버튼을 클릭하세요.
+            </div>
+            <button type="button" class="btn btn-yellow" id="nextQuestionBtn">
+              다음 문제로 넘어가기 (Space)
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- 3. 결과 화면 -->
+    <!-- 3. 최종 결과 화면 -->
     <div class="screen result-screen" id="resultScreen">
-      <h2>게임 종료!</h2>
+      <h2>챌린지 종료!</h2>
       <div class="result-stats">
         <p>획득 총 점수: <span id="finalScore">0</span>점</p>
-        <p>맞힌 속담 개수: <span id="finalCount">0</span>개</p>
-        <div style="margin-top: 15px; font-weight: 900;">맞힌 속담 사전 출처 (국립국어원):</div>
+        <p>맞힌 속담 개수: <span id="finalCount">0</span> / <span id="finalTotal">0</span>개</p>
+        <div style="margin-top: 16px; font-weight: 900;">풀이한 속담 기록 및 국립국어원 사전 출처:</div>
         <div class="result-history-list" id="resultHistoryList"></div>
       </div>
-      <button class="btn btn-green" id="restartBtn">다시 시작하기</button>
+      <button type="button" class="btn btn-green" id="restartBtn">다시 시작하기</button>
     </div>
 
   </div>
 
   <footer>
-    © 문태양. 국립국어원 표준국어대사전 연동 속담 학습 웹앱.
+    © 문태양. 국립국어원 표준국어대사전 · 우리말샘 연동 속담 학습 웹앱.
   </footer>
 </div>
 
@@ -453,20 +809,310 @@
     window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
     window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
 
-    // 국립국어원 표준국어대사전 실존 속담 데이터
-    const sokdamList = [
-      { q: "콩 심은 데", a: "콩 나고 팥 심은 데 팥 난다", chosung: "ㅋ ㄴㄱ ㅍ ㅅㅇ ㄷ ㅍ ㄴㄷ", full: "콩 심은 데 콩 나고 팥 심은 데 팥 난다" },
-      { q: "말 한마디로", a: "천 냥 빚을 갚는다", chosung: "ㅊ ㄴ ㅂㅇㅈ 갚ㄴㄷ", full: "말 한마디로 천 냥 빚을 갚는다" },
-      { q: "고래 싸움에", a: "새우 터진다", chosung: "ㅅㅇ ㅌㅈㄴㄷ", full: "고래 싸움에 새우 터진다" },
-      { q: "누워서", a: "떡 먹기", chosung: "ㄸ ㅁㄱ", full: "누워서 떡 먹기" },
-      { q: "원수는", a: "외나무다리에서 만난다", chosung: "ㅇㄴㅁㄷㄹㅇㅅ ㅁㄴㄴㄷ", full: "원수는 외나무다리에서 만난다" },
-      { q: "시작이", a: "반이다", chosung: "ㅂㅇㄷ", full: "시작이 반이다" },
-      { q: "소 읽고", a: "외양간 고친다", chosung: "ㅇㅇㄱ ㄱㅊㄴㄷ", full: "소 읽고 외양간 고친다" },
-      { q: "구슬이 서 말이라도", a: "꿰어야 보배", chosung: "ㄲㅇㅇ ㅂㅂ", full: "구슬이 서 말이라도 꿰어야 보배" },
-      { q: "돌다리도", a: "두드려 보고 건너라", chosung: "ㄷㄷㄹ ㅂㄱ 건ㄴㄹ", full: "돌다리도 두드려 보고 건너라" },
-      { q: "고생 끝에", a: "낙이 온다", chosung: "ㄴㅇ 오ㄴㄷ", full: "고생 끝에 낙이 온다" }
+    // =========================================================================
+    // 국립국어원 표준국어대사전 실제 등재 속담 원천 데이터 및 무결성 검증 필터
+    // =========================================================================
+    const RAW_PROVERB_CANDIDATES = [
+      {
+        q: "콩 심은 데",
+        a: "콩 나고 팥 심은 데 팥 난다",
+        variants: ["콩 나고 팥 심은 데 팥 난다"],
+        full: "콩 심은 데 콩 나고 팥 심은 데 팥 난다",
+        meaning: "모든 일은 근본에 따라 거기에 걸맞은 결과가 나타남을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "말 한마디로",
+        a: "천 냥 빚을 갚는다",
+        variants: ["천냥 빚을 갚는다", "천 냥 빚도 갚는다"],
+        full: "말 한마디로 천 냥 빚을 갚는다",
+        meaning: "말만 잘하면 어려운 일이나 불가능해 보이는 일도 해결할 수 있음을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "고래 싸움에",
+        a: "새우 등 터진다",
+        variants: ["새우 터진다", "새우등 터진다"],
+        full: "고래 싸움에 새우 등 터진다",
+        meaning: "강한 자들끼리 싸우는 통에 아무 상관 없는 약한 자가 중간에 끼어 피해를 입게 됨을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "누워서",
+        a: "떡 먹기",
+        variants: ["떡 먹기다"],
+        full: "누워서 떡 먹기",
+        meaning: "하기가 매우 쉬움을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "원수는",
+        a: "외나무다리에서 만난다",
+        variants: ["외나무다리에서 만난다"],
+        full: "원수는 외나무다리에서 만난다",
+        meaning: "꺼리고 싫어하는 대상일수록 피할 수 없는 곳에서 마주치게 됨을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "시작이",
+        a: "반이다",
+        variants: ["반이다"],
+        full: "시작이 반이다",
+        meaning: "무슨 일이든지 시작하기가 어렵지 일단 시작하면 일을 끝마치기는 그리 어렵지 아니함을 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "소 읽고",
+        a: "외양간 고친다",
+        variants: ["외양간 고치기"],
+        full: "소 읽고 외양간 고친다",
+        meaning: "일이 이미 잘못된 뒤에는 손을 써도 소용이 없음을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "구슬이 서 말이라도",
+        a: "꿰어야 보배",
+        variants: ["꿰어야 보배다"],
+        full: "구슬이 서 말이라도 꿰어야 보배",
+        meaning: "아무리 훌륭하고 좋은 것이라도 다듬고 정리하여 쓸모 있게 만들어 놓아야 값어치가 있음을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "돌다리도",
+        a: "두드려 보고 건너라",
+        variants: ["두들겨 보고 건너라"],
+        full: "돌다리도 두드려 보고 건너라",
+        meaning: "잘 아는 일이라도 세심하게 주의를 기울여 확인한 뒤에 실행하라는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "고생 끝에",
+        a: "낙이 온다",
+        variants: ["낙이 온다"],
+        full: "고생 끝에 낙이 온다",
+        meaning: "어려운 일이나 고된 일을 겪은 뒤에는 반드시 즐겁고 좋은 일이 생김을 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "가는 말이 고와야",
+        a: "오는 말이 곱다",
+        variants: ["오는 말이 곱다"],
+        full: "가는 말이 고와야 오는 말이 곱다",
+        meaning: "자기가 남에게 말이나 행동을 좋게 하여야 남도 자기에게 좋게 한다는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "낮말은 새가 듣고",
+        a: "밤말은 쥐가 듣는다",
+        variants: ["밤말은 쥐가 듣는다"],
+        full: "낮말은 새가 듣고 밤말은 쥐가 듣는다",
+        meaning: "아무도 듣지 않는 데서 한 말이라도 반드시 남의 귀에 들어가게 되니 말조심을 해야 한다는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "백지장도",
+        a: "맞들면 낫다",
+        variants: ["맞들면 낫다"],
+        full: "백지장도 맞들면 낫다",
+        meaning: "쉬운 일이라도 혼자 하는 것보다 여럿이 협력하여 하는 것이 훨씬 낫다는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "티끌 모아",
+        a: "태산",
+        variants: ["태산이다"],
+        full: "티끌 모아 태산",
+        meaning: "아무리 작은 것이라도 모이고 모이면 나중에 큰 덩어리가 됨을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "호랑이도",
+        a: "제 말 하면 온다",
+        variants: ["제 말 하면 온다"],
+        full: "호랑이도 제 말 하면 온다",
+        meaning: "그 자리에 없다고 흉을 보거나 이야기를 하면 공교롭게도 바로 그 사람이 나타남을 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "우물 안",
+        a: "개구리",
+        variants: ["개구리다"],
+        full: "우물 안 개구리",
+        meaning: "넓은 세상의 형편을 알지 못하고 자기가 보고 들은 좁은 식견만을 최고로 여기는 사람을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "등잔 밑이",
+        a: "어둡다",
+        variants: ["어둡다"],
+        full: "등잔 밑이 어둡다",
+        meaning: "가까이 있는 사람이나 물건에 대하여 오히려 잘 모르고 있음을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "천 리 길도",
+        a: "한 걸음부터",
+        variants: ["한 걸음부터다"],
+        full: "천 리 길도 한 걸음부터",
+        meaning: "무슨 일이나 그 일의 시작이 중요하며, 큰일도 작은 일에서부터 비롯됨을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "세 살 버릇",
+        a: "여든까지 간다",
+        variants: ["여든까지 간다"],
+        full: "세 살 버릇 여든까지 간다",
+        meaning: "어릴 때 몸에 밴 버릇은 늙어 죽을 때까지 고치기 힘들다는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "빈 수레가",
+        a: "요란하다",
+        variants: ["더 요란하다"],
+        full: "빈 수레가 요란하다",
+        meaning: "실속이 없는 사람일수록 겉으로 더 떠벌리고 수선을 피움을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "가랑비에",
+        a: "옷 젖는 줄 모른다",
+        variants: ["옷 젖는 줄 모른다"],
+        full: "가랑비에 옷 젖는 줄 모른다",
+        meaning: "아무리 사소한 것이라도 그것이 거듭되면 무시하지 못할 만큼 크게 됨을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "꿩 먹고",
+        a: "알 먹는다",
+        variants: ["알 먹기"],
+        full: "꿩 먹고 알 먹는다",
+        meaning: "한 가지 일을 하여 두 가지 이상의 이익을 동시에 얻음을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "서당 개 삼 년에",
+        a: "풍월을 읊는다",
+        variants: ["풍월을 읊조린다"],
+        full: "서당 개 삼 년에 풍월을 읊는다",
+        meaning: "어떤 분야에 전혀 지식이 없는 사람이라도 그 분야에 오래 있으면 자연히 어느 정도의 지식과 경험을 갖추게 됨을 비유적으로 이르는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "윗물이 맑아야",
+        a: "아랫물이 맑다",
+        variants: ["아랫물이 맑다"],
+        full: "윗물이 맑아야 아랫물이 맑다",
+        meaning: "윗사람이 옳고 바르게 행동하여야 아랫사람도 따라서 바르게 행동한다는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      },
+      {
+        q: "하늘이 무너져도",
+        a: "솟아날 구멍이 있다",
+        variants: ["솟아날 구멍은 있다"],
+        full: "하늘이 무너져도 솟아날 구멍이 있다",
+        meaning: "아무리 큰 재난을 당하여 도저히 빠져나갈 길이 없는 극한 상황에서도 살아날 방도는 생기게 마련이라는 말.",
+        registry: "국립국어원 표준국어대사전",
+        verified: true
+      }
     ];
 
+    // 실제 등재 속담 무결성 필터 함수
+    function filterVerifiedProverbs(list) {
+      const seen = new Set();
+      return list.filter(item => {
+        if (!item || item.verified !== true) return false;
+        if (!item.q || !item.a || !item.full || !item.meaning) return false;
+        const normalizedFull = item.full.replace(/\s+/g, '');
+        const normalizedCombined = (item.q + item.a).replace(/\s+/g, '');
+        // 앞구절+뒷구절이 실제 속담 원문과 일치하고, 한글 음절이 포함된 문장인지 검증
+        if (normalizedFull !== normalizedCombined) return false;
+        if (!/[가-힣]{4,}/.test(normalizedFull)) return false;
+        if (seen.has(normalizedFull)) return false;
+        seen.add(normalizedFull);
+        return true;
+      });
+    }
+
+    const verifiedSokdamList = filterVerifiedProverbs(RAW_PROVERB_CANDIDATES);
+
+    // 한글 유니코드 자모 분해 기반 정확한 초성 추출 함수
+    const CHOSUNG_LIST = [
+      'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ',
+      'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+    ];
+    function extractChosung(text) {
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        const code = text.charCodeAt(i);
+        if (code >= 0xAC00 && code <= 0xD7A3) {
+          const choIdx = Math.floor((code - 0xAC00) / 588);
+          result += CHOSUNG_LIST[choIdx];
+        } else {
+          result += text[i];
+        }
+      }
+      return result;
+    }
+
+    // 공식 국어사전 URL 생성기
+    function getReferenceUrls(proverbFull) {
+      const encoded = encodeURIComponent(proverbFull);
+      return {
+        stdict: `https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=${encoded}`,
+        opendict: `https://opendict.korean.go.kr/search/searchResult?query=${encoded}`,
+        naver: `https://ko.dict.naver.com/#/search?query=${encoded}`
+      };
+    }
+
+    // 시작 화면 검증 목록 UI 바인딩
+    document.getElementById('verifiedSummaryText').textContent =
+      `국립국어원 표준국어대사전 실존 검증 속담: 총 ${verifiedSokdamList.length}문항 필터링 완료`;
+
+    const verifiedListDrawer = document.getElementById('verifiedListDrawer');
+    verifiedSokdamList.forEach((item, idx) => {
+      const urls = getReferenceUrls(item.full);
+      const row = document.createElement('div');
+      row.className = 'verified-row';
+      row.innerHTML = `
+        <div>
+          <strong>${idx + 1}. ${item.full}</strong>
+          <div style="font-size:0.84rem; color:#333;">${item.meaning}</div>
+        </div>
+        <a href="${urls.stdict}" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="white-space:nowrap;">사전 ↗</a>
+      `;
+      verifiedListDrawer.appendChild(row);
+    });
+
+    document.getElementById('toggleRegistryBtn').addEventListener('click', (e) => {
+      const isOpen = verifiedListDrawer.classList.toggle('open');
+      e.target.textContent = isOpen ? '검증된 속담 목록 닫기' : '검증된 속담 목록 보기';
+    });
+
+    // DOM 참조
     const timeSlider = document.getElementById('timeSlider');
     const timeValue = document.getElementById('timeValue');
     const startBtn = document.getElementById('startBtn');
@@ -475,34 +1121,64 @@
     const playScreen = document.getElementById('playScreen');
     const resultScreen = document.getElementById('resultScreen');
 
+    const progressText = document.getElementById('progressText');
     const currentScoreElem = document.getElementById('currentScore');
+    const timerBox = document.getElementById('timerBox');
     const timeLeftElem = document.getElementById('timeLeft');
+    const timerStateLabel = document.getElementById('timerStateLabel');
+
     const questionText = document.getElementById('questionText');
-    const hintText = document.getElementById('hintText');
+    const hintArea = document.getElementById('hintArea');
     const answerForm = document.getElementById('answerForm');
     const answerInput = document.getElementById('answerInput');
     const submitBtn = document.getElementById('submitBtn');
-    const hintBtn = document.getElementById('hintBtn');
-    const hintCountElem = document.getElementById('hintCount');
-    const feedbackBanner = document.getElementById('feedbackBanner');
+    const chosungHintBtn = document.getElementById('chosungHintBtn');
+    const chosungCountElem = document.getElementById('chosungCount');
+    const meaningHintBtn = document.getElementById('meaningHintBtn');
+    const giveUpBtn = document.getElementById('giveUpBtn');
 
+    // 문제별 결과 카드 DOM
+    const questionResultCard = document.getElementById('questionResultCard');
+    const resultCardHeader = document.getElementById('resultCardHeader');
+    const resultVerdictText = document.getElementById('resultVerdictText');
+    const userSubmittedText = document.getElementById('userSubmittedText');
+    const standardAnswerText = document.getElementById('standardAnswerText');
+    const fullProverbText = document.getElementById('fullProverbText');
+    const proverbMeaningText = document.getElementById('proverbMeaningText');
+    const stdictLinkBtn = document.getElementById('stdictLinkBtn');
+    const opendictLinkBtn = document.getElementById('opendictLinkBtn');
+    const naverDictLinkBtn = document.getElementById('naverDictLinkBtn');
+    const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+
+    // 최종 결과 DOM
     const finalScoreElem = document.getElementById('finalScore');
     const finalCountElem = document.getElementById('finalCount');
+    const finalTotalElem = document.getElementById('finalTotal');
     const resultHistoryList = document.getElementById('resultHistoryList');
 
-    let gameTime = 60;
+    // 게임 상태 변수
+    let gameTime = 90;
+    let targetQuestionCount = 10;
     let timer = null;
-    let timeLeft = 60;
+    let timeLeft = 90;
     let score = 0;
     let correctCount = 0;
     let currentIdx = 0;
-    let hintRemaining = 2;
-    let shuffledList = [];
-    let solvedHistory = [];
-    let isPaused = false; // 타이머 일시정지 상태 플래그
+    let chosungRemaining = 2;
+    let sessionList = [];
+    let sessionHistory = [];
+    let isResultShowing = false; // 현재 문제 결과 확인 화면 표시 중 여부
+
+    document.querySelectorAll('#questionCountChips .count-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#questionCountChips .count-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        targetQuestionCount = parseInt(chip.dataset.count, 10);
+      });
+    });
 
     timeSlider.addEventListener('input', (e) => {
-      gameTime = e.target.value;
+      gameTime = parseInt(e.target.value, 10);
       timeValue.textContent = gameTime;
     });
 
@@ -511,124 +1187,225 @@
       resultScreen.classList.remove('active');
       playScreen.classList.add('active');
 
-      timeLeft = parseInt(gameTime);
+      timeLeft = gameTime;
       score = 0;
       correctCount = 0;
-      solvedHistory = [];
-      isPaused = false;
-      feedbackBanner.style.display = 'none';
+      sessionHistory = [];
+      isResultShowing = false;
+
       currentScoreElem.textContent = score;
       timeLeftElem.textContent = timeLeft;
 
-      shuffledList = [...sokdamList].sort(() => Math.random() - 0.5);
+      const shuffled = [...verifiedSokdamList].sort(() => Math.random() - 0.5);
+      sessionList = shuffled.slice(0, Math.min(targetQuestionCount, shuffled.length));
       currentIdx = 0;
+
       loadQuiz();
 
       if (timer) clearInterval(timer);
       timer = setInterval(() => {
-        if (!isPaused) {
+        if (!isResultShowing) {
           timeLeft--;
           timeLeftElem.textContent = timeLeft;
           if (timeLeft <= 0) {
             clearInterval(timer);
-            endGame();
+            endGame(true);
           }
         }
       }, 1000);
     }
 
     function loadQuiz() {
-      if (currentIdx >= shuffledList.length) {
-        shuffledList = [...sokdamList].sort(() => Math.random() - 0.5);
-        currentIdx = 0;
+      if (currentIdx >= sessionList.length) {
+        clearInterval(timer);
+        endGame(false);
+        return;
       }
-      const current = shuffledList[currentIdx];
-      questionText.textContent = current.q + " ______";
-      hintText.textContent = "";
-      hintRemaining = 2;
-      hintCountElem.textContent = hintRemaining;
-      answerInput.value = "";
-      feedbackBanner.style.display = 'none';
+
+      isResultShowing = false;
+      const current = sessionList[currentIdx];
+
+      progressText.textContent = `${currentIdx + 1} / ${sessionList.length}`;
+      questionText.textContent = `${current.q} ______`;
+      hintArea.innerHTML = '';
+
+      chosungRemaining = 2;
+      chosungCountElem.textContent = chosungRemaining;
+      chosungHintBtn.disabled = false;
+      meaningHintBtn.disabled = false;
+      giveUpBtn.disabled = false;
+
+      answerInput.value = '';
       answerInput.disabled = false;
       submitBtn.disabled = false;
+
+      questionResultCard.classList.remove('active');
+      timerBox.classList.remove('paused');
+      timerStateLabel.textContent = '풀이 중 (타이머 작동 중)';
+
       answerInput.focus();
+    }
+
+    // 띄어쓰기/마침표 정규화 후 표준 정답 및 사전 등재 이형태 매칭
+    function isAnswerMatch(userRaw, item) {
+      const clean = (str) => str.replace(/[\s.?!]+/g, '');
+      const u = clean(userRaw);
+      if (!u) return false;
+      if (u === clean(item.a)) return true;
+      if (Array.isArray(item.variants)) {
+        return item.variants.some(v => u === clean(v));
+      }
+      return false;
+    }
+
+    // 한 문제 풀이 완료 후 결과 패널 표시
+    function evaluateAndShowResult(userRaw, isGiveUp = false) {
+      if (isResultShowing) return;
+
+      const current = sessionList[currentIdx];
+      const trimmed = userRaw.trim();
+      const isCorrect = !isGiveUp && isAnswerMatch(trimmed, current);
+
+      // 타이머 일시정지 및 입력 잠금
+      isResultShowing = true;
+      answerInput.blur();
+      answerInput.disabled = true;
+      submitBtn.disabled = true;
+      chosungHintBtn.disabled = true;
+      meaningHintBtn.disabled = true;
+      giveUpBtn.disabled = true;
+
+      timerBox.classList.add('paused');
+      timerStateLabel.textContent = '결과 확인 중 (타이머 일시정지)';
+
+      if (isCorrect) {
+        score += 10;
+        correctCount++;
+        currentScoreElem.textContent = score;
+        resultCardHeader.className = 'result-card-header is-correct';
+        resultVerdictText.textContent = '정답입니다! (+10점)';
+      } else {
+        resultCardHeader.className = 'result-card-header is-wrong';
+        resultVerdictText.textContent = isGiveUp ? '정답 확인' : '오답입니다! 표준 정답을 확인해 보세요.';
+      }
+
+      userSubmittedText.textContent = isGiveUp ? '(정답 바로 보기 선택)' : (trimmed || '(미입력)');
+      standardAnswerText.textContent = current.a;
+      fullProverbText.textContent = current.full;
+      proverbMeaningText.textContent = current.meaning;
+
+      const urls = getReferenceUrls(current.full);
+      stdictLinkBtn.href = urls.stdict;
+      opendictLinkBtn.href = urls.opendict;
+      naverDictLinkBtn.href = urls.naver;
+
+      const isLast = currentIdx >= sessionList.length - 1;
+      nextQuestionBtn.textContent = isLast
+        ? '최종 결과 확인하기 (Space)'
+        : '다음 문제로 넘어가기 (Space)';
+
+      sessionHistory.push({
+        item: current,
+        userAnswer: isGiveUp ? '정답 확인' : trimmed,
+        isCorrect
+      });
+
+      questionResultCard.classList.add('active');
+    }
+
+    function goToNextQuestion() {
+      if (!isResultShowing) return;
+      currentIdx++;
+      loadQuiz();
     }
 
     answerForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (isPaused) return; // 이미 판정 대기 중이면 무시
+      if (isResultShowing) return;
+      if (!answerInput.value.trim()) {
+        answerInput.focus();
+        return;
+      }
+      evaluateAndShowResult(answerInput.value, false);
+    });
 
-      const userAns = answerInput.value.trim();
-      const current = shuffledList[currentIdx];
+    giveUpBtn.addEventListener('click', () => {
+      if (isResultShowing) return;
+      evaluateAndShowResult('', true);
+    });
 
-      // 타이머 일시정지
-      isPaused = true;
-      answerInput.disabled = true;
-      submitBtn.disabled = true;
+    chosungHintBtn.addEventListener('click', () => {
+      if (isResultShowing) return;
+      if (chosungRemaining > 0) {
+        chosungRemaining--;
+        chosungCountElem.textContent = chosungRemaining;
+        const current = sessionList[currentIdx];
+        const chosung = extractChosung(current.a);
+        let line = document.getElementById('chosungLine');
+        if (!line) {
+          line = document.createElement('div');
+          line.id = 'chosungLine';
+          hintArea.appendChild(line);
+        }
+        line.textContent = `초성 힌트: ${chosung}`;
+        if (chosungRemaining === 0) chosungHintBtn.disabled = true;
+      }
+      answerInput.focus();
+    });
 
-      if (userAns === current.a) {
-        score += 10;
-        correctCount++;
-        solvedHistory.push(current);
-        currentScoreElem.textContent = score;
+    meaningHintBtn.addEventListener('click', () => {
+      if (isResultShowing) return;
+      const current = sessionList[currentIdx];
+      let line = document.getElementById('meaningLine');
+      if (!line) {
+        line = document.createElement('div');
+        line.id = 'meaningLine';
+        line.style.color = '#111111';
+        hintArea.appendChild(line);
+      }
+      line.textContent = `뜻풀이 힌트: ${current.meaning}`;
+      meaningHintBtn.disabled = true;
+      answerInput.focus();
+    });
 
-        feedbackBanner.className = "feedback-banner correct";
-        feedbackBanner.textContent = "✨ 정답입니다! (+10점)";
-        feedbackBanner.style.display = 'block';
+    nextQuestionBtn.addEventListener('click', goToNextQuestion);
 
-        // 0.8초 후 자동으로 다음 문제 진행 및 타이머 재개
-        setTimeout(() => {
-          isPaused = false;
-          currentIdx++;
-          loadQuiz();
-        }, 800);
-      } else {
-        feedbackBanner.className = "feedback-banner incorrect";
-        feedbackBanner.textContent = `❌ 오답입니다! 정답: [${current.a}]`;
-        feedbackBanner.style.display = 'block';
-
-        // 오답일 경우 사용자가 확인 후 다음으로 넘어가도록 입력창 초기화 및 재개 버튼 제공 또는 1.2초 후 자동 재개
-        setTimeout(() => {
-          isPaused = false;
-          feedbackBanner.style.display = 'none';
-          answerInput.disabled = false;
-          submitBtn.disabled = false;
-          answerInput.value = "";
-          answerInput.focus();
-        }, 1500);
+    // 결과 확인 상태일 때 스페이스바(Space)로 다음 문제 즉시 이동
+    window.addEventListener('keydown', (e) => {
+      if (!playScreen.classList.contains('active')) return;
+      if (isResultShowing && (e.code === 'Space' || e.key === ' ') && !e.repeat) {
+        e.preventDefault();
+        goToNextQuestion();
       }
     });
 
-    hintBtn.addEventListener('click', () => {
-      if (isPaused) return;
-      if (hintRemaining > 0) {
-        hintRemaining--;
-        hintCountElem.textContent = hintRemaining;
-        hintText.textContent = "초성 힌트: " + shuffledList[currentIdx].chosung;
-      } else {
-        alert("힌트를 모두 소진했습니다!");
-      }
-    });
-
-    function endGame() {
+    function endGame(isTimeout) {
+      isResultShowing = false;
       playScreen.classList.remove('active');
       resultScreen.classList.add('active');
+
       finalScoreElem.textContent = score;
       finalCountElem.textContent = correctCount;
+      finalTotalElem.textContent = sessionList.length;
 
-      resultHistoryList.innerHTML = "";
-      if (solvedHistory.length === 0) {
-        resultHistoryList.innerHTML = `<div style="padding: 10px; text-align: center; font-weight: 700;">맞힌 속담이 없습니다.</div>`;
+      resultHistoryList.innerHTML = '';
+      if (sessionHistory.length === 0) {
+        resultHistoryList.innerHTML = `<div style="padding: 12px; text-align: center; font-weight: 700;">${isTimeout ? '제한 시간이 종료되었습니다.' : '풀이한 속담 기록이 없습니다.'}</div>`;
       } else {
-        solvedHistory.forEach(item => {
+        sessionHistory.forEach(entry => {
           const div = document.createElement('div');
           div.className = 'history-item';
-          const queryEncoded = encodeURIComponent(item.full);
-          const dictUrl = `https://opendict.korean.go.kr/search/searchResult?query=${queryEncoded}`;
-          
+          const urls = getReferenceUrls(entry.item.full);
+
           div.innerHTML = `
-            <span>📌 ${item.full}</span>
-            <a href="${dictUrl}" target="_blank" rel="noopener noreferrer">국립국어원 사전 보기 ↗</a>
+            <div>
+              <span class="history-status-tag ${entry.isCorrect ? 'ok' : 'no'}">${entry.isCorrect ? '정답' : '오답'}</span>
+              <strong>${entry.item.full}</strong>
+            </div>
+            <div class="history-links">
+              <a href="${urls.stdict}" target="_blank" rel="noopener noreferrer">표준국어대사전 ↗</a>
+              <a href="${urls.opendict}" target="_blank" rel="noopener noreferrer">우리말샘 ↗</a>
+            </div>
           `;
           resultHistoryList.appendChild(div);
         });
