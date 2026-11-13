@@ -3,42 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>문태양 - 초등학교 저학년 시계 읽기 연습 앱 (디지털 모드 추가)</title>
+  <title>문태양 - 초등학교 저학년 시계 읽기 연습 앱</title>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-    
+
     :root {
       --bg: #fdfbf7;
       --black: #111111;
+      --white: #ffffff;
       --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
-      
+      --border-heavy: 5px solid var(--black);
+
       --yellow: #ffd83b;
       --red: #ff4757;
       --blue: #3e51ff;
       --green: #2ed573;
       --pink: #ff9ff3;
       --cyan: #48dbfb;
+      --orange: #ff9f43;
+      --purple: #a29bfe;
     }
-    
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
+
     body {
       font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: var(--bg); 
-      color: var(--black); 
-      line-height: 1.7;
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(17, 17, 17, 0.14) 1.5px, transparent 1.5px);
+      background-size: 22px 22px;
+      color: var(--black);
+      line-height: 1.65;
       -webkit-font-smoothing: antialiased;
       position: relative;
-      padding-top: 70px;
+      padding-top: 74px;
+      word-break: keep-all;
     }
-    
+
+    /* 상단 고정 바 */
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
-      width: 100%; height: 60px;
+      width: 100%; height: 62px;
       background: var(--yellow);
-      border-bottom: var(--border-thick);
+      border-bottom: var(--border-heavy);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -50,21 +59,21 @@
     .fixed-top-bar .current-time {
       font-weight: 900;
       font-size: 0.95rem;
-      background: white;
+      background: var(--white);
       border: var(--border);
-      padding: 4px 10px;
-      box-shadow: 2px 2px 0 var(--black);
+      padding: 4px 12px;
+      box-shadow: 3px 3px 0 var(--black);
     }
 
     .fixed-top-bar .icon-group {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
     }
 
     .fixed-top-bar .icon-btn {
-      width: 38px; height: 38px;
-      background: white;
+      width: 40px; height: 40px;
+      background: var(--white);
       border: var(--border);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -82,165 +91,542 @@
       background: var(--cyan);
     }
 
-    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+    .wrap { max-width: 940px; margin: 0 auto; padding: 0 20px 80px; }
     a { color: inherit; text-decoration: none; }
-    
-    .top {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: 24px 0; 
-      border-bottom: var(--border-thick);
-      font-size: 1rem; font-weight: 800;
-    }
-    .top b { 
-      font-size: 1.4rem; 
-      letter-spacing: 0.05em; 
-      text-transform: uppercase; 
-      background: var(--black); 
-      color: var(--yellow);
-      padding: 4px 12px;
-      transform: skew(-5deg);
-    }
-    .top nav { display: flex; gap: 24px; }
-    .top nav a { position: relative; padding: 4px 8px; }
-    .top nav a:hover { background: var(--black); color: var(--bg); }
 
-    .hero { padding: 60px 0 40px; border-bottom: var(--border-thick); }
-    .hero .small { 
-      display: inline-block; font-size: 1rem; font-weight: 800; 
-      background: var(--cyan); border: var(--border); padding: 4px 12px;
-      box-shadow: 4px 4px 0 var(--black); margin-bottom: 20px;
+    .top {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0;
+      border-bottom: var(--border-heavy);
+      font-size: 1rem; font-weight: 900;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .top b {
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--black);
+      color: var(--yellow);
+      padding: 4px 14px;
+      transform: skew(-5deg);
+      box-shadow: 4px 4px 0 var(--red);
+    }
+    .top nav { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .top nav .nav-pill {
+      background: var(--white);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: 3px 3px 0 var(--black);
+      font-size: 0.92rem;
+    }
+
+    .hero { padding: 42px 0 32px; border-bottom: var(--border-heavy); }
+    .hero .small {
+      display: inline-block; font-size: 0.95rem; font-weight: 900;
+      background: var(--cyan); border: var(--border); padding: 4px 14px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 16px;
     }
     .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 1.2; font-weight: 900;
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      line-height: 1.25; font-weight: 900;
     }
-    .hero h1 span { 
+    .hero h1 span {
       display: inline-block;
-      color: var(--black); 
       background: var(--yellow);
       border: var(--border-thick);
-      padding: 0 16px;
-      box-shadow: 6px 6px 0 var(--black);
+      padding: 0 12px;
+      box-shadow: 5px 5px 0 var(--black);
     }
-    .hero p { 
-      max-width: 38em; margin-top: 20px; font-size: 1.05rem; font-weight: 600;
-      border-left: 6px solid var(--black); padding-left: 20px;
+    .hero p {
+      max-width: 44em; margin-top: 18px; font-size: 1.04rem; font-weight: 700;
+      border-left: 6px solid var(--red); padding-left: 16px;
+      background: var(--white);
+      padding-top: 8px; padding-bottom: 8px;
+      border-top: 2px solid var(--black);
+      border-right: 2px solid var(--black);
+      border-bottom: 2px solid var(--black);
     }
 
+    /* 메인 게임 카드 */
     .game-card {
-      background: white;
-      border: var(--border-thick);
-      box-shadow: 8px 8px 0 var(--black);
-      padding: 40px;
-      margin-top: 48px;
+      background: var(--white);
+      border: var(--border-heavy);
+      box-shadow: 10px 10px 0 var(--black);
+      padding: 32px;
+      margin-top: 36px;
     }
 
     .screen { display: none; }
     .screen.active { display: block; }
 
-    .start-screen h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 16px; }
-    .setting-group {
+    .start-screen h2 {
+      font-size: 1.7rem;
+      font-weight: 900;
       margin-bottom: 20px;
+      display: inline-block;
+      background: var(--yellow);
+      border: var(--border);
+      padding: 4px 16px;
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .setting-group {
+      margin-bottom: 18px;
       background: #f9f6ef;
-      border: var(--border);
-      padding: 16px;
-      box-shadow: 4px 4px 0 var(--black);
+      border: var(--border-thick);
+      padding: 18px;
+      box-shadow: 5px 5px 0 var(--black);
     }
-    .setting-group label { display: block; font-weight: 900; margin-bottom: 8px; }
-    .setting-options { display: flex; gap: 12px; flex-wrap: wrap; }
-    
+    .setting-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 1.08rem;
+      margin-bottom: 12px;
+    }
+    .step-badge {
+      background: var(--black);
+      color: var(--yellow);
+      font-size: 0.82rem;
+      padding: 2px 8px;
+    }
+    .setting-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; }
+
     .option-chip {
-      padding: 8px 16px;
-      background: white;
+      padding: 12px 14px;
+      background: var(--white);
       border: var(--border);
       font-weight: 900;
+      font-size: 1rem;
       cursor: pointer;
-      box-shadow: 2px 2px 0 var(--black);
+      box-shadow: 3px 3px 0 var(--black);
       transition: all 0.1s;
-    }
-    .option-chip.selected {
-      background: var(--yellow);
-      transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0 var(--black);
-    }
-
-    .btn {
-      font-family: inherit;
-      font-size: 1.1rem;
-      font-weight: 900;
-      padding: 14px 28px;
-      background: var(--yellow);
-      border: var(--border);
-      box-shadow: 4px 4px 0 var(--black);
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-    .btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0 var(--black);
-      background: var(--cyan);
-    }
-    .btn-green { background: var(--green); }
-    .btn-red { background: var(--red); color: white; }
-
-    /* 시계 컨테이너 */
-    .clock-container {
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 30px;
+      justify-content: center;
+      gap: 4px;
     }
-
-    .analog-clock-canvas {
-      width: 240px;
-      height: 240px;
-      background: white;
-      border: 6px solid var(--black);
-      border-radius: 50%;
-      box-shadow: 6px 6px 0 var(--black);
-      margin-bottom: 20px;
+    .option-chip small {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #333;
     }
+    .option-chip:hover {
+      background: #fff4b8;
+      transform: translate(-1px, -1px);
+    }
+    .option-chip.selected {
+      background: var(--yellow);
+      border-width: 4px;
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+    .option-chip.selected[data-activity="hands"] { background: var(--cyan); }
+    .option-chip.selected[data-activity="explore"] { background: var(--pink); }
 
-    /* 디지털 시계 디스플레이 스타일 */
-    .digital-clock-display {
-      font-size: 2.8rem;
+    .btn {
+      font-family: inherit;
+      font-size: 1.15rem;
       font-weight: 900;
-      background: var(--black);
-      color: var(--yellow);
+      padding: 14px 28px;
+      background: var(--yellow);
       border: var(--border-thick);
-      padding: 16px 36px;
-      box-shadow: 6px 6px 0 var(--pink);
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
-      text-align: center;
-      display: none;
+      box-shadow: 5px 5px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    .digital-clock-display.active {
-      display: block;
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 var(--black);
+      background: var(--cyan);
     }
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+    .btn-green { background: var(--green); }
+    .btn-green:hover { background: #55efc4; }
+    .btn-red { background: var(--red); color: var(--white); }
+    .btn-red:hover { background: #ff6b81; }
+    .btn-blue { background: var(--blue); color: var(--white); }
+    .btn-blue:hover { background: #5f70ff; }
+    .btn-white { background: var(--white); }
 
+    /* 상단 게임 상태 바 */
     .game-header-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--pink);
-      border: var(--border);
-      padding: 12px 20px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 12px 16px;
       font-weight: 900;
-      font-size: 1.1rem;
-      box-shadow: 4px 4px 0 var(--black);
-      margin-bottom: 24px;
+      font-size: 1rem;
+      box-shadow: 5px 5px 0 var(--black);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    /* 손글씨 입력 패드 영역 스타일 */
-    .handwriting-section {
+    .stat-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stat-pill {
+      background: var(--white);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: 2px 2px 0 var(--black);
+      font-size: 0.95rem;
+    }
+
+    .stat-pill.stars {
+      background: var(--pink);
+    }
+
+    .header-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-mini {
+      padding: 6px 12px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+    }
+    .btn-mini:hover { background: var(--cyan); }
+    .btn-mini.active { background: var(--green); }
+
+    /* 문제 안내 배너 */
+    .mission-banner {
+      background: var(--cyan);
+      border: var(--border-thick);
+      box-shadow: 5px 5px 0 var(--black);
+      padding: 14px 20px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mission-text {
+      font-size: clamp(1.2rem, 3vw, 1.55rem);
+      font-weight: 900;
+    }
+
+    .mission-text .hour-highlight {
+      background: var(--red);
+      color: var(--white);
+      padding: 1px 10px;
+      border: 2px solid var(--black);
+    }
+
+    .mission-text .min-highlight {
+      background: var(--blue);
+      color: var(--white);
+      padding: 1px 10px;
+      border: 2px solid var(--black);
+    }
+
+    /* 시계 표시 영역 */
+    .clock-stage {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
-      margin-top: 10px;
+      background: #f9f6ef;
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      padding: 24px 16px;
+      margin-bottom: 24px;
     }
 
+    .clock-legend {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .legend-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 900;
+      font-size: 0.92rem;
+      background: var(--white);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .legend-bar-hour {
+      width: 18px;
+      height: 7px;
+      background: var(--red);
+      border: 1.5px solid var(--black);
+      display: inline-block;
+    }
+
+    .legend-bar-min {
+      width: 24px;
+      height: 5px;
+      background: var(--blue);
+      border: 1.5px solid var(--black);
+      display: inline-block;
+    }
+
+    .analog-clock-canvas {
+      width: 280px;
+      height: 280px;
+      background: var(--white);
+      border: 6px solid var(--black);
+      border-radius: 50%;
+      box-shadow: 8px 8px 0 var(--black);
+      margin-bottom: 16px;
+      touch-action: none;
+    }
+
+    .analog-clock-canvas.interactive {
+      cursor: grab;
+    }
+    .analog-clock-canvas.interactive:active {
+      cursor: grabbing;
+    }
+
+    /* 디지털 시계 디스플레이 */
+    .digital-clock-display {
+      font-size: clamp(2.4rem, 6vw, 3.4rem);
+      font-weight: 900;
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--border-heavy);
+      padding: 14px 32px;
+      box-shadow: 6px 6px 0 var(--red);
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+      text-align: center;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .digital-clock-display.active {
+      display: inline-flex;
+    }
+    .digital-h { color: #ff6b81; }
+    .digital-m { color: #70a1ff; }
+
+    /* 바늘 직접 돌리기 & 자유 탐험 컨트롤러 */
+    .hand-controls-panel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 540px;
+      margin-top: 6px;
+    }
+    .hand-controls-panel.active {
+      display: flex;
+    }
+
+    .hand-btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .step-adjust-btn {
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 900;
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      background: var(--white);
+    }
+    .step-adjust-btn.hour-btn { background: #ffe3e6; }
+    .step-adjust-btn.hour-btn:hover { background: var(--red); color: var(--white); }
+    .step-adjust-btn.min-btn { background: #e3e8ff; }
+    .step-adjust-btn.min-btn:hover { background: var(--blue); color: var(--white); }
+
+    .explore-readout {
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 12px 20px;
+      box-shadow: 4px 4px 0 var(--black);
+      font-size: 1.25rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    /* 입력 방식 전환 탭 */
+    .input-mode-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .input-tab-btn {
+      padding: 10px 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 900;
+      background: var(--white);
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .input-tab-btn:hover { background: #fff4b8; }
+    .input-tab-btn.active {
+      background: var(--black);
+      color: var(--yellow);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--red);
+    }
+
+    .input-panel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .input-panel.active {
+      display: flex;
+    }
+
+    /* 1) 4지선다 버튼 그리드 */
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .choice-btn {
+      padding: 18px 16px;
+      font-family: inherit;
+      font-size: 1.3rem;
+      font-weight: 900;
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: 5px 5px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .choice-btn:nth-child(1):hover { background: var(--yellow); }
+    .choice-btn:nth-child(2):hover { background: var(--cyan); }
+    .choice-btn:nth-child(3):hover { background: var(--pink); }
+    .choice-btn:nth-child(4):hover { background: var(--green); }
+    .choice-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    /* 2) 터치 키패드 입력 */
+    .keypad-display-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .kp-slot {
+      min-width: 96px;
+      height: 64px;
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: 4px 4px 0 var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 900;
+      cursor: pointer;
+      padding: 0 12px;
+    }
+    .kp-slot.hour-slot { border-color: var(--red); color: var(--red); }
+    .kp-slot.min-slot { border-color: var(--blue); color: var(--blue); }
+    .kp-slot.focused {
+      background: var(--yellow);
+      transform: scale(1.05);
+    }
+
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .kp-key {
+      padding: 14px 8px;
+      font-family: inherit;
+      font-size: 1.35rem;
+      font-weight: 900;
+      background: var(--white);
+      border: var(--border);
+      box-shadow: 4px 4px 0 var(--black);
+      cursor: pointer;
+    }
+    .kp-key:hover { background: var(--cyan); }
+    .kp-key:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black); }
+    .kp-key.fn-clear { background: #ffe3e6; font-size: 1rem; }
+    .kp-key.fn-switch { background: #e3e8ff; font-size: 1rem; }
+
+    /* 3) 키보드 직접 입력 */
+    .keyboard-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+    }
+
+    .num-input-box {
+      width: 105px;
+      height: 66px;
+      font-family: inherit;
+      font-size: 2rem;
+      font-weight: 900;
+      text-align: center;
+      border: var(--border-thick);
+      box-shadow: 4px 4px 0 var(--black);
+      background: var(--white);
+      outline: none;
+    }
+    .num-input-box.hour-inp { border-color: var(--red); color: var(--red); }
+    .num-input-box.min-inp { border-color: var(--blue); color: var(--blue); }
+    .num-input-box:focus { background: #fff9d6; }
+
+    /* 4) 손글씨 입력 패드 영역 */
     .pads-wrapper {
       display: flex;
       gap: 20px;
@@ -250,25 +636,39 @@
 
     .pad-box {
       background: #faf8f5;
-      border: var(--border);
+      border: var(--border-thick);
       padding: 12px;
-      box-shadow: 4px 4px 0 var(--black);
+      box-shadow: 5px 5px 0 var(--black);
       text-align: center;
     }
+    .pad-box.hour-pad-box { border-color: var(--red); }
+    .pad-box.min-pad-box { border-color: var(--blue); }
 
     .pad-title {
       font-weight: 900;
-      font-size: 1rem;
+      font-size: 1.05rem;
       margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .recognized-pill {
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      padding: 0 8px;
+      font-size: 0.9rem;
     }
 
     .draw-canvas {
-      width: 140px;
+      width: 164px;
       height: 140px;
-      background: white;
+      background: var(--white);
       border: 3px solid var(--black);
       cursor: crosshair;
       touch-action: none;
+      display: block;
     }
 
     .pad-controls {
@@ -279,28 +679,71 @@
     }
 
     .btn-sm {
-      padding: 4px 10px;
+      padding: 5px 12px;
       font-size: 0.85rem;
       font-weight: 900;
       border: 2px solid var(--black);
-      background: white;
+      background: var(--white);
       box-shadow: 2px 2px 0 var(--black);
       cursor: pointer;
     }
     .btn-sm:hover { background: var(--yellow); }
 
-    .feedback-box {
-      margin-top: 16px;
+    .ocr-preview-bar {
+      background: var(--bg);
+      border: var(--border);
+      padding: 8px 16px;
       font-weight: 900;
-      font-size: 1.1rem;
-      text-align: center;
-      min-height: 30px;
+      font-size: 1rem;
+      box-shadow: 3px 3px 0 var(--black);
     }
 
-    footer { 
-      padding: 40px 0; color: white; background: var(--black);
-      font-size: 1rem; font-weight: 800; text-align: center;
-      border-top: var(--border-thick); margin-top: 80px;
+    /* 피드백 및 힌트 박스 */
+    .hint-box {
+      margin-top: 14px;
+      background: #fff9db;
+      border: var(--border);
+      padding: 12px 16px;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 4px 4px 0 var(--black);
+      display: none;
+      text-align: center;
+    }
+    .hint-box.visible { display: block; }
+
+    .feedback-box {
+      margin-top: 18px;
+      font-weight: 900;
+      font-size: 1.2rem;
+      text-align: center;
+      min-height: 44px;
+      padding: 10px 16px;
+      border: 3px solid transparent;
+    }
+    .feedback-box.correct {
+      background: var(--green);
+      border-color: var(--black);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+    .feedback-box.wrong {
+      background: #ffe3e6;
+      border-color: var(--red);
+      color: #c92a2a;
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    footer {
+      padding: 36px 20px; color: var(--white); background: var(--black);
+      font-size: 0.95rem; font-weight: 800; text-align: center;
+      border-top: var(--border-heavy); margin-top: 64px;
+    }
+
+    @media (max-width: 640px) {
+      .game-card { padding: 20px 14px; }
+      .input-mode-tabs { grid-template-columns: repeat(2, 1fr); }
+      .choice-grid { grid-template-columns: 1fr; }
+      .analog-clock-canvas { width: 240px; height: 240px; }
     }
   </style>
 </head>
@@ -315,10 +758,10 @@
     <a href="mailto:nn80300@naver.com" class="icon-btn" title="Email">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
     </a>
-    <a href="https://blog.naver.com/nn80300" class="icon-btn" title="Blog">
+    <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
     </a>
-    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글" style="cursor: pointer;">
+    <div class="icon-btn music-wrap" id="muteToggleBtn" title="소리 켜기/끄기">
       <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
       <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
     </div>
@@ -331,91 +774,265 @@
   <div class="top">
     <b>문태양</b>
     <nav>
-      <a href="#clockGame">실습 14 · 손글씨 시계 & 디지털 모드</a>
+      <span class="nav-pill">실습 14 · 초등 수학 시계 교구</span>
     </nav>
   </div>
 
   <header class="hero">
-    <p class="small">실습 14 · 디지털 시계 모드 추가 버전</p>
-    <h1>초등학교 저학년 시계 읽기 연습 앱</h1>
-    <p>아날로그 시계 학습뿐만 아니라 디지털 시계 표시 모드를 추가하여, 시각의 형태를 다각도로 학습할 수 있는 수학 보조 교구 웹 앱입니다.</p>
+    <p class="small">초등학교 1~2학년 맞춤형 인터랙티브 시계 교구</p>
+    <h1>재미있게 배우는<br><span>시계 읽기 & 바늘 맞추기</span></h1>
+    <p>
+      빨간색 짧은 바늘(시)과 파란색 긴 바늘(분)의 색깔 구분으로 누구나 쉽게 시각을 익힐 수 있습니다. 4지선다 버튼, 터치 키패드, 키보드, 손글씨 숫자 인식은 물론 시계 바늘을 직접 돌려보는 체험까지 모두 지원합니다.
+    </p>
   </header>
 
   <div class="game-card" id="clockGame">
-    
-    <!-- 1. 시작 화면 -->
+
+    <!-- 1. 시작 설정 화면 -->
     <div class="screen start-screen active" id="startScreen">
-      <h2>연습 설정</h2>
-      
+      <h2>놀이 방법 고르기</h2>
+
       <div class="setting-group">
-        <label>시계 읽기 단계 선택</label>
+        <label><span class="step-badge">1단계</span> 어떤 활동을 해볼까요?</label>
+        <div class="setting-options" id="activityOptions">
+          <div class="option-chip selected" data-activity="read">
+            <span>시계 읽기 퀴즈</span>
+            <small>시계를 보고 몇 시 몇 분인지 맞히기</small>
+          </div>
+          <div class="option-chip" data-activity="hands">
+            <span>시계 바늘 맞추기</span>
+            <small>제시된 시각대로 직접 바늘 돌리기</small>
+          </div>
+          <div class="option-chip" data-activity="explore">
+            <span>자유 시계 탐험실</span>
+            <small>바늘을 마음대로 돌리며 원리 배우기</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-group" id="levelSettingGroup">
+        <label><span class="step-badge">2단계</span> 어려운 정도를 골라요</label>
         <div class="setting-options" id="levelOptions">
-          <div class="option-chip selected" data-val="1">1단계: 정시 읽기</div>
-          <div class="option-chip" data-val="2">2단계: 30분 단위</div>
-          <div class="option-chip" data-val="3">3단계: 5분 단위</div>
-          <div class="option-chip" data-val="4">4단계: 1분 단위</div>
+          <div class="option-chip selected" data-val="1">
+            <span>1단계: 정시 읽기</span>
+            <small>예) 3시, 7시</small>
+          </div>
+          <div class="option-chip" data-val="2">
+            <span>2단계: 30분 단위</span>
+            <small>예) 3시 30분 (세 시 반)</small>
+          </div>
+          <div class="option-chip" data-val="3">
+            <span>3단계: 5분 단위</span>
+            <small>예) 4시 15분, 8시 40분</small>
+          </div>
+          <div class="option-chip" data-val="4">
+            <span>4단계: 1분 단위</span>
+            <small>예) 2시 17분, 11시 53분</small>
+          </div>
         </div>
       </div>
 
-      <div class="setting-group">
-        <label>시계 표시 모드 선택</label>
+      <div class="setting-group" id="clockTypeSettingGroup">
+        <label><span class="step-badge">3단계</span> 시계 모양을 골라요</label>
         <div class="setting-options" id="modeOptions">
-          <div class="option-chip selected" data-mode="analog">아날로그 시계 모드</div>
-          <div class="option-chip" data-mode="digital">디지털 시계 모드</div>
+          <div class="option-chip selected" data-mode="analog">
+            <span>아날로그 시계</span>
+            <small>바늘 시계만 보고 읽기</small>
+          </div>
+          <div class="option-chip" data-mode="digital">
+            <span>디지털 시계</span>
+            <small>숫자 시계 보고 읽기</small>
+          </div>
+          <div class="option-chip" data-mode="mixed">
+            <span>혼합 도전 모드</span>
+            <small>아날로그와 디지털이 번갈아 출제</small>
+          </div>
         </div>
       </div>
 
-      <button class="btn btn-green" id="startBtn">연습 시작하기</button>
+      <div class="setting-group" id="inputMethodSettingGroup">
+        <label><span class="step-badge">4단계</span> 정답 입력 방법을 골라요 (언제든 바꿀 수 있어요)</label>
+        <div class="setting-options" id="defaultInputOptions">
+          <div class="option-chip selected" data-input="choice">
+            <span>선택 버튼 (4지선다)</span>
+            <small>보기 4개 중 알맞은 시각 누르기</small>
+          </div>
+          <div class="option-chip" data-input="keypad">
+            <span>터치 숫자 키패드</span>
+            <small>큰 숫자 버튼을 눌러 입력하기</small>
+          </div>
+          <div class="option-chip" data-input="keyboard">
+            <span>키보드 직접 입력</span>
+            <small>키보드 숫자로 빠르게 입력하기</small>
+          </div>
+          <div class="option-chip" data-input="handwriting">
+            <span>손글씨 숫자 인식</span>
+            <small>마우스·손가락으로 숫자 쓰기</small>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 24px;">
+        <button type="button" class="btn btn-green" id="startBtn" style="font-size: 1.25rem; padding: 16px 40px;">
+          시계 놀이 시작하기!
+        </button>
+      </div>
     </div>
 
-    <!-- 2. 게임 플레이 화면 -->
+    <!-- 2. 게임 및 체험 플레이 화면 -->
     <div class="screen play-screen" id="playScreen">
       <div class="game-header-bar">
-        <div>맞힌 정답: <span id="correctCount">0</span>개</div>
-        <div>시도한 문제: <span id="totalCount">0</span>개</div>
+        <div class="stat-pills">
+          <div class="stat-pill" id="modeIndicatorPill">시계 읽기 · 1단계</div>
+          <div class="stat-pill" id="scorePill">정답 <span id="correctCount">0</span> / <span id="totalCount">0</span></div>
+          <div class="stat-pill stars" id="streakPill">연속 <span id="streakCount">0</span>개</div>
+        </div>
+        <div class="header-tools">
+          <button type="button" class="btn-mini" id="toggleMinuteHelperBtn" title="시계 바깥쪽에 5분 단위 숫자 표시">분 눈금 숫자: 켜짐</button>
+          <button type="button" class="btn-mini" id="hintBtn">힌트 보기</button>
+          <button type="button" class="btn-mini" id="backToStartBtn">처음으로</button>
+        </div>
       </div>
 
-      <div class="clock-container">
-        <!-- 아날로그 캔버스 시계 -->
-        <canvas id="clockCanvas" class="analog-clock-canvas" width="240" height="240"></canvas>
-        <!-- 디지털 시계 디스플레이 -->
-        <div id="digitalDisplay" class="digital-clock-display">12:00</div>
+      <!-- 문제 안내 및 음성 듣기 배너 -->
+      <div class="mission-banner">
+        <div class="mission-text" id="missionText">지금 시계는 몇 시 몇 분일까요?</div>
+        <button type="button" class="btn-mini" id="speakBtn" style="background: var(--yellow); font-size: 0.95rem; padding: 8px 14px;">
+          소리로 듣기
+        </button>
       </div>
 
-      <!-- 손글씨 입력 패드 영역 -->
-      <div class="handwriting-section">
-        <div class="pads-wrapper">
-          <div class="pad-box">
-            <div class="pad-title">시 (Hour)</div>
-            <canvas id="hourCanvas" class="draw-canvas" width="140" height="140"></canvas>
-            <div class="pad-controls">
-              <button class="btn-sm" type="button" id="clearHour">지우기</button>
-            </div>
+      <!-- 시계 스테이지 -->
+      <div class="clock-stage">
+        <div class="clock-legend" id="clockLegend">
+          <span class="legend-badge"><span class="legend-bar-hour"></span> 빨간 짧은 바늘 = 시</span>
+          <span class="legend-badge"><span class="legend-bar-min"></span> 파란 긴 바늘 = 분</span>
+        </div>
+
+        <canvas id="clockCanvas" class="analog-clock-canvas" width="280" height="280"></canvas>
+
+        <div id="digitalDisplay" class="digital-clock-display">
+          <span class="digital-h" id="digitalHourText">12</span>
+          <span>:</span>
+          <span class="digital-m" id="digitalMinText">00</span>
+        </div>
+
+        <!-- 바늘 맞추기 & 자유 탐험 전용 조작 버튼 -->
+        <div class="hand-controls-panel" id="handControlsPanel">
+          <div class="explore-readout" id="exploreReadout">현재 시각: 12시 00분 (열두 시 정각)</div>
+          <div class="hand-btn-row">
+            <button type="button" class="step-adjust-btn hour-btn" data-dh="-1" data-dm="0">-1시간</button>
+            <button type="button" class="step-adjust-btn hour-btn" data-dh="1" data-dm="0">+1시간</button>
+            <button type="button" class="step-adjust-btn min-btn" data-dh="0" data-dm="-5">-5분</button>
+            <button type="button" class="step-adjust-btn min-btn" data-dh="0" data-dm="5">+5분</button>
+            <button type="button" class="step-adjust-btn min-btn" data-dh="0" data-dm="-1">-1분</button>
+            <button type="button" class="step-adjust-btn min-btn" data-dh="0" data-dm="1">+1분</button>
           </div>
+          <button type="button" class="btn btn-green" id="submitHandsBtn" style="margin-top: 6px;">
+            이 시각으로 정답 확인!
+          </button>
+        </div>
+      </div>
 
-          <div class="pad-box">
-            <div class="pad-title">분 (Minute)</div>
-            <canvas id="minuteCanvas" class="draw-canvas" width="140" height="140"></canvas>
-            <div class="pad-controls">
-              <button class="btn-sm" type="button" id="clearMinute">지우기</button>
-            </div>
+      <!-- 시계 읽기 퀴즈용 다중 입력 패널 -->
+      <div id="quizInputArea">
+        <div class="input-mode-tabs" id="inputModeTabs">
+          <button type="button" class="input-tab-btn active" data-tab="choice">선택 버튼</button>
+          <button type="button" class="input-tab-btn" data-tab="keypad">터치 키패드</button>
+          <button type="button" class="input-tab-btn" data-tab="keyboard">키보드 입력</button>
+          <button type="button" class="input-tab-btn" data-tab="handwriting">손글씨 인식</button>
+        </div>
+
+        <!-- 패널 1: 4지선다 선택 버튼 -->
+        <div class="input-panel active" id="panel-choice">
+          <div class="choice-grid" id="choiceGrid"></div>
+        </div>
+
+        <!-- 패널 2: 터치 숫자 키패드 -->
+        <div class="input-panel" id="panel-keypad">
+          <div class="keypad-display-row">
+            <div class="kp-slot hour-slot focused" id="kpHourSlot">--</div>
+            <span>시</span>
+            <div class="kp-slot min-slot" id="kpMinSlot">--</div>
+            <span>분</span>
+          </div>
+          <div class="keypad-grid" id="keypadGrid">
+            <button type="button" class="kp-key" data-num="1">1</button>
+            <button type="button" class="kp-key" data-num="2">2</button>
+            <button type="button" class="kp-key" data-num="3">3</button>
+            <button type="button" class="kp-key" data-num="4">4</button>
+            <button type="button" class="kp-key" data-num="5">5</button>
+            <button type="button" class="kp-key" data-num="6">6</button>
+            <button type="button" class="kp-key" data-num="7">7</button>
+            <button type="button" class="kp-key" data-num="8">8</button>
+            <button type="button" class="kp-key" data-num="9">9</button>
+            <button type="button" class="kp-key" data-num="0">0</button>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+            <button type="button" class="btn btn-white" id="kpSwitchBtn" style="padding: 10px 18px; font-size: 1rem;">시/분 칸 바꾸기</button>
+            <button type="button" class="btn btn-red" id="kpClearBtn" style="padding: 10px 18px; font-size: 1rem;">지우기</button>
+            <button type="button" class="btn btn-green" id="kpSubmitBtn" style="padding: 10px 24px; font-size: 1rem;">정답 확인</button>
           </div>
         </div>
 
-        <button class="btn btn-green" id="submitHandwritingBtn">손글씨 정답 확인</button>
+        <!-- 패널 3: 키보드 직접 입력 -->
+        <div class="input-panel" id="panel-keyboard">
+          <div class="keyboard-input-row">
+            <input type="number" id="kbHourInput" class="num-input-box hour-inp" min="1" max="12" placeholder="시" aria-label="시 입력">
+            <span style="color: var(--red);">시</span>
+            <input type="number" id="kbMinInput" class="num-input-box min-inp" min="0" max="59" placeholder="분" aria-label="분 입력">
+            <span style="color: var(--blue);">분</span>
+          </div>
+          <button type="button" class="btn btn-green" id="kbSubmitBtn">키보드 정답 확인 (Enter)</button>
+        </div>
+
+        <!-- 패널 4: 손글씨 숫자 인식 -->
+        <div class="input-panel" id="panel-handwriting">
+          <div class="pads-wrapper">
+            <div class="pad-box hour-pad-box">
+              <div class="pad-title">
+                <span style="color: var(--red);">시 (1~12)</span>
+                <span class="recognized-pill" id="hourOcrBadge">인식: -</span>
+              </div>
+              <canvas id="hourCanvas" class="draw-canvas" width="164" height="140"></canvas>
+              <div class="pad-controls">
+                <button class="btn-sm" type="button" id="clearHour">지우기</button>
+              </div>
+            </div>
+
+            <div class="pad-box min-pad-box">
+              <div class="pad-title">
+                <span style="color: var(--blue);">분 (0~59)</span>
+                <span class="recognized-pill" id="minOcrBadge">인식: -</span>
+              </div>
+              <canvas id="minuteCanvas" class="draw-canvas" width="164" height="140"></canvas>
+              <div class="pad-controls">
+                <button class="btn-sm" type="button" id="clearMinute">지우기</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ocr-preview-bar" id="ocrSummaryBar">
+            네모 칸 안에 숫자를 또박또박 적어보세요! (예: 두 자리 숫자는 왼쪽·오른쪽에 나란히 쓰기)
+          </div>
+
+          <button type="button" class="btn btn-green" id="submitHandwritingBtn">손글씨 정답 확인</button>
+        </div>
       </div>
 
+      <div class="hint-box" id="hintBox"></div>
       <div class="feedback-box" id="feedbackBox"></div>
     </div>
 
   </div>
 
   <footer>
-    © 문태양. 바이브코딩 실습 14 포트폴리오 (디지털 모드 추가).
+    © 문태양. 바이브코딩 실습 14 포트폴리오 · 초등학교 저학년 시계 학습 교구.
   </footer>
 </div>
 
 <script>
+  // 유튜브 배경 음악 (사용자 원본 유지)
   let ytPlayer;
   let isUserPaused = false;
   function onYouTubeIframeAPIReady() {
@@ -424,7 +1041,7 @@
       videoId: 'PkVmztKY9PU',
       playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'PkVmztKY9PU', 'controls': 0 },
       events: {
-        'onReady': (event) => { event.target.playVideo(); event.target.setVolume(50); }
+        'onReady': (event) => { event.target.playVideo(); event.target.setVolume(40); }
       }
     });
   }
@@ -441,241 +1058,1121 @@
     updateClock();
     setInterval(updateClock, 1000);
 
+    // Web Audio API 경쾌한 초등학생용 효과음 합성기
+    let audioCtx = null;
+    let isMuted = false;
+
+    function playTone(type) {
+      if (isMuted) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);       // 도
+          osc.frequency.setValueAtTime(659.25, now + 0.1); // 미
+          osc.frequency.setValueAtTime(783.99, now + 0.2); // 솔
+          osc.frequency.setValueAtTime(1046.5, now + 0.3); // 높은 도
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+          osc.start(now);
+          osc.stop(now + 0.55);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(165, now + 0.25);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(660, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        }
+      } catch (e) {}
+    }
+
     const muteToggleBtn = document.getElementById('muteToggleBtn');
     const soundOnIcon = document.getElementById('soundOnIcon');
     const soundOffIcon = document.getElementById('soundOffIcon');
-    let isMuted = false;
     muteToggleBtn.addEventListener('click', () => {
-      if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
-      if (isMuted) {
-        ytPlayer.unMute();
-        soundOnIcon.style.display = 'block';
-        soundOffIcon.style.display = 'none';
-        isMuted = false;
-      } else {
-        ytPlayer.mute();
-        soundOnIcon.style.display = 'none';
-        soundOffIcon.style.display = 'block';
-        isMuted = true;
+      isMuted = !isMuted;
+      soundOnIcon.style.display = isMuted ? 'none' : 'block';
+      soundOffIcon.style.display = isMuted ? 'block' : 'none';
+      if (ytPlayer && typeof ytPlayer.mute === 'function') {
+        if (isMuted) ytPlayer.mute();
+        else ytPlayer.unMute();
       }
     });
 
     window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
     window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
 
-    // 상태 변수
+    // 한국어 시각 읽기 변환 (예: 3시 30분 -> 세 시 삼십 분 (세 시 반))
+    const KOREAN_HOURS = ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열', '열한', '열두'];
+    function formatKoreanSpokenTime(h, m) {
+      const hWord = `${KOREAN_HOURS[h]} 시`;
+      if (m === 0) return `${hWord} 정각`;
+      if (m === 30) return `${hWord} 삼십 분 (${hWord} 반)`;
+      return `${hWord} ${m}분`;
+    }
+
+    function speakKorean(text) {
+      if (isMuted || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'ko-KR';
+      utter.rate = 0.95;
+      utter.pitch = 1.08;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // 게임 상태 변수
+    let selectedActivity = 'read'; // 'read' | 'hands' | 'explore'
     let selectedLevel = 1;
-    let selectedMode = 'analog'; // 'analog' or 'digital'
+    let selectedMode = 'analog';   // 'analog' | 'digital' | 'mixed'
+    let currentRoundDisplay = 'analog';
+    let activeInputTab = 'choice';
+
     let targetHour = 12;
     let targetMinute = 0;
+
+    // 바늘 직접 조작 상태
+    let userHandHour = 12;
+    let userHandMinute = 0;
+    let isDraggingHand = false;
+    let activeDragTarget = 'minute'; // 'hour' | 'minute'
+
+    let showMinuteHelper = true;
     let correctTotal = 0;
     let tryTotal = 0;
+    let streakCount = 0;
+    let isTransitioning = false;
 
     const clockCanvas = document.getElementById('clockCanvas');
     const digitalDisplay = document.getElementById('digitalDisplay');
+    const digitalHourText = document.getElementById('digitalHourText');
+    const digitalMinText = document.getElementById('digitalMinText');
     const ctx = clockCanvas.getContext('2d');
 
+    // 아날로그 시계 렌더링 (시침=빨강, 분침=파랑, 분 눈금 보조 숫자 지원)
     function drawClock(h, m) {
-      ctx.clearRect(0, 0, 240, 240);
-      ctx.save();
-      ctx.translate(120, 120);
+      const W = clockCanvas.width;
+      const H = clockCanvas.height;
+      const cx = W / 2;
+      const cy = H / 2;
 
-      // 시계 배경 원
+      ctx.clearRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // 외곽 원판
       ctx.beginPath();
-      ctx.arc(0, 0, 110, 0, Math.PI * 2);
+      ctx.arc(0, 0, 128, 0, Math.PI * 2);
       ctx.fillStyle = '#ffffff';
       ctx.fill();
       ctx.lineWidth = 4;
       ctx.strokeStyle = '#111111';
       ctx.stroke();
 
-      // 눈금 그리기
+      // 60개 분 눈금
       for (let i = 0; i < 60; i++) {
         const angle = (i * 6) * (Math.PI / 180);
         const isHourTick = i % 5 === 0;
-        const innerRadius = isHourTick ? 95 : 102;
-        const outerRadius = 106;
+        const innerRadius = isHourTick ? 104 : 112;
+        const outerRadius = 120;
 
         ctx.beginPath();
         ctx.moveTo(innerRadius * Math.sin(angle), -innerRadius * Math.cos(angle));
         ctx.lineTo(outerRadius * Math.sin(angle), -outerRadius * Math.cos(angle));
-        ctx.lineWidth = isHourTick ? 3 : 1;
-        ctx.strokeStyle = '#111111';
+        ctx.lineWidth = isHourTick ? 4 : 1.5;
+        ctx.strokeStyle = isHourTick ? '#111111' : '#888888';
         ctx.stroke();
+
+        // 5분 단위 보조 숫자 (00, 05, 10 ... 55)
+        if (showMinuteHelper && isHourTick) {
+          const minVal = i === 0 ? '60' : String(i).padStart(2, '0');
+          const mRadius = 131;
+          ctx.font = '800 10px "Pretendard Variable", sans-serif';
+          ctx.fillStyle = '#3e51ff';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(minVal, mRadius * Math.sin(angle), -mRadius * Math.cos(angle));
+        }
       }
 
-      // 숫자 그리기 (1 ~ 12)
-      ctx.font = '900 18px "Pretendard Variable", sans-serif';
+      // 시 숫자 (1 ~ 12)
+      ctx.font = '900 21px "Pretendard Variable", sans-serif';
       ctx.fillStyle = '#111111';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       for (let num = 1; num <= 12; num++) {
         const angle = (num * 30) * (Math.PI / 180);
-        const radius = 78;
-        const x = radius * Math.sin(angle);
-        const y = -radius * Math.cos(angle);
-        ctx.fillText(num, x, y);
+        const radius = 84;
+        ctx.fillText(String(num), radius * Math.sin(angle), -radius * Math.cos(angle));
       }
 
       const minAngle = (m * 6) * (Math.PI / 180);
       const hourAngle = ((h % 12) * 30 + m * 0.5) * (Math.PI / 180);
 
-      // 시침
-      ctx.save();
-      ctx.rotate(hourAngle);
-      ctx.beginPath();
-      ctx.moveTo(0, 15);
-      ctx.lineTo(0, -55);
-      ctx.lineWidth = 6;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#111111';
-      ctx.stroke();
-      ctx.restore();
-
-      // 분침
+      // 분침 (파란색 긴 바늘)
       ctx.save();
       ctx.rotate(minAngle);
       ctx.beginPath();
-      ctx.moveTo(0, 20);
-      ctx.lineTo(0, -75);
-      ctx.lineWidth = 4;
+      ctx.moveTo(0, 22);
+      ctx.lineTo(0, -94);
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#3e51ff';
+      ctx.stroke();
+
+      // 분침 끝 화살촉
+      ctx.beginPath();
+      ctx.moveTo(0, -101);
+      ctx.lineTo(-7, -86);
+      ctx.lineTo(7, -86);
+      ctx.closePath();
+      ctx.fillStyle = '#3e51ff';
+      ctx.fill();
+      ctx.restore();
+
+      // 시침 (빨간색 짧은 바늘)
+      ctx.save();
+      ctx.rotate(hourAngle);
+      ctx.beginPath();
+      ctx.moveTo(0, 16);
+      ctx.lineTo(0, -60);
+      ctx.lineWidth = 9;
       ctx.lineCap = 'round';
       ctx.strokeStyle = '#ff4757';
       ctx.stroke();
+
+      // 시침 끝 화살촉
+      ctx.beginPath();
+      ctx.moveTo(0, -68);
+      ctx.lineTo(-8, -53);
+      ctx.lineTo(8, -53);
+      ctx.closePath();
+      ctx.fillStyle = '#ff4757';
+      ctx.fill();
       ctx.restore();
 
-      // 중앙점
+      // 중앙 고정 핀
       ctx.beginPath();
-      ctx.arc(0, 0, 7, 0, Math.PI * 2);
-      ctx.fillStyle = '#111111';
+      ctx.arc(0, 0, 9, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffd83b';
       ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#111111';
+      ctx.stroke();
 
       ctx.restore();
     }
 
-    // 손글씨 인식 캔버스 패드 설정
-    function setupCanvasPad(canvasId) {
+    // 바늘 직접 드래그 인터랙션 (연동 시계 원리 반영)
+    function getPointerClockAngle(e) {
+      const rect = clockCanvas.getBoundingClientRect();
+      const touch = e.touches ? e.touches[0] : e;
+      const x = (touch.clientX - rect.left) - rect.width / 2;
+      const y = (touch.clientY - rect.top) - rect.height / 2;
+      let deg = Math.atan2(x, -y) * (180 / Math.PI);
+      if (deg < 0) deg += 360;
+      const dist = Math.hypot(x, y) / (rect.width / 2);
+      return { deg, dist };
+    }
+
+    function syncHandDisplay() {
+      drawClock(userHandHour, userHandMinute);
+      digitalHourText.textContent = String(userHandHour).padStart(2, '0');
+      digitalMinText.textContent = String(userHandMinute).padStart(2, '0');
+      document.getElementById('exploreReadout').textContent =
+        `현재 바늘 시각: ${userHandHour}시 ${String(userHandMinute).padStart(2, '0')}분 (${formatKoreanSpokenTime(userHandHour, userHandMinute)})`;
+    }
+
+    function handleClockDragStart(e) {
+      if (selectedActivity === 'read') return;
+      e.preventDefault();
+      isDraggingHand = true;
+      const { deg, dist } = getPointerClockAngle(e);
+      // 안쪽(시침 영역)을 잡으면 시침 조절, 바깥쪽을 잡으면 분침 조절
+      activeDragTarget = dist < 0.52 ? 'hour' : 'minute';
+      applyClockDragAngle(deg);
+    }
+
+    function applyClockDragAngle(deg) {
+      if (activeDragTarget === 'hour') {
+        let newH = Math.round(deg / 30) % 12;
+        if (newH === 0) newH = 12;
+        userHandHour = newH;
+      } else {
+        const step = (selectedActivity === 'hands' && selectedLevel === 1) ? 60 :
+                     (selectedActivity === 'hands' && selectedLevel === 2) ? 30 :
+                     (selectedActivity === 'hands' && selectedLevel === 3) ? 5 : 1;
+        let rawMin = Math.round(deg / 6) % 60;
+        let newM = (Math.round(rawMin / step) * step) % 60;
+
+        // 분침이 12시(0분) 경계를 넘어가면 시침도 연동해서 이동!
+        if (userHandMinute >= 45 && newM <= 15) {
+          userHandHour = userHandHour === 12 ? 1 : userHandHour + 1;
+        } else if (userHandMinute <= 15 && newM >= 45) {
+          userHandHour = userHandHour === 1 ? 12 : userHandHour - 1;
+        }
+        userHandMinute = newM;
+      }
+      syncHandDisplay();
+    }
+
+    function handleClockDragMove(e) {
+      if (!isDraggingHand || selectedActivity === 'read') return;
+      e.preventDefault();
+      const { deg } = getPointerClockAngle(e);
+      applyClockDragAngle(deg);
+    }
+
+    function handleClockDragEnd() {
+      isDraggingHand = false;
+    }
+
+    clockCanvas.addEventListener('mousedown', handleClockDragStart);
+    window.addEventListener('mousemove', handleClockDragMove);
+    window.addEventListener('mouseup', handleClockDragEnd);
+
+    clockCanvas.addEventListener('touchstart', handleClockDragStart, { passive: false });
+    window.addEventListener('touchmove', handleClockDragMove, { passive: false });
+    window.addEventListener('touchend', handleClockDragEnd);
+
+    // 시/분 미세 조절 버튼 (+1시간, -1시간, +5분, -5분, +1분, -1분)
+    document.querySelectorAll('.step-adjust-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        playTone('click');
+        const dh = parseInt(btn.dataset.dh, 10);
+        const dm = parseInt(btn.dataset.dm, 10);
+
+        let totalMins = ((userHandHour % 12) * 60 + userHandMinute + dh * 60 + dm) % 720;
+        if (totalMins < 0) totalMins += 720;
+
+        let nextH = Math.floor(totalMins / 60);
+        if (nextH === 0) nextH = 12;
+        const nextM = totalMins % 60;
+
+        userHandHour = nextH;
+        userHandMinute = nextM;
+        syncHandDisplay();
+      });
+    });
+
+    // =========================================================================
+    // 인브라우저 손글씨 숫자 인식 엔진 (0~9 단일/두 자리 자동 분할 + 28x28 템플릿/위상 매칭)
+    // =========================================================================
+    const DIGIT_PATTERNS = {
+      0: [
+        "00111100",
+        "01100110",
+        "11000011",
+        "11000011",
+        "11000011",
+        "11000011",
+        "01100110",
+        "00111100"
+      ],
+      1: [
+        "00011000",
+        "00111000",
+        "01111000",
+        "00011000",
+        "00011000",
+        "00011000",
+        "00011000",
+        "01111110"
+      ],
+      2: [
+        "01111100",
+        "11000110",
+        "00000110",
+        "00001100",
+        "00111000",
+        "01100000",
+        "11000000",
+        "11111110"
+      ],
+      3: [
+        "01111100",
+        "11000110",
+        "00000110",
+        "00111100",
+        "00000110",
+        "00000110",
+        "11000110",
+        "01111100"
+      ],
+      4: [
+        "00001110",
+        "00011110",
+        "00110110",
+        "01100110",
+        "11111111",
+        "00000110",
+        "00000110",
+        "00000110"
+      ],
+      5: [
+        "11111110",
+        "11000000",
+        "11111100",
+        "00000110",
+        "00000110",
+        "00000110",
+        "11000110",
+        "01111100"
+      ],
+      6: [
+        "00111100",
+        "01100000",
+        "11000000",
+        "11111100",
+        "11000110",
+        "11000110",
+        "11000110",
+        "01111100"
+      ],
+      7: [
+        "11111111",
+        "11000011",
+        "00000110",
+        "00001100",
+        "00011000",
+        "00011000",
+        "00011000",
+        "00011000"
+      ],
+      8: [
+        "01111100",
+        "11000110",
+        "11000110",
+        "01111100",
+        "11000110",
+        "11000110",
+        "11000110",
+        "01111100"
+      ],
+      9: [
+        "01111100",
+        "11000110",
+        "11000110",
+        "01111110",
+        "00000110",
+        "00000110",
+        "00001100",
+        "01111000"
+      ]
+    };
+
+    // 닫힌 고리(구멍) 개수 판별기 (0,6,9 = 1개 / 8 = 2개 / 1,2,3,5,7 = 0개)
+    function countEnclosedLoops(binaryGrid, size) {
+      const visited = new Uint8Array(size * size);
+      const queue = new Int32Array(size * size);
+      let head = 0, tail = 0;
+
+      // 테두리의 빈 픽셀을 모두 외부 배경으로 마킹
+      for (let i = 0; i < size; i++) {
+        const borders = [i, (size - 1) * size + i, i * size, i * size + (size - 1)];
+        for (const p of borders) {
+          if (binaryGrid[p] === 0 && !visited[p]) {
+            visited[p] = 1;
+            queue[tail++] = p;
+          }
+        }
+      }
+
+      while (head < tail) {
+        const p = queue[head++];
+        const x = p % size;
+        const y = (p - x) / size;
+        const neighbors = [];
+        if (x > 0) neighbors.push(p - 1);
+        if (x < size - 1) neighbors.push(p + 1);
+        if (y > 0) neighbors.push(p - size);
+        if (y < size - 1) neighbors.push(p + size);
+
+        for (const n of neighbors) {
+          if (binaryGrid[n] === 0 && !visited[n]) {
+            visited[n] = 1;
+            queue[tail++] = n;
+          }
+        }
+      }
+
+      let loops = 0;
+      for (let p = 0; p < size * size; p++) {
+        if (binaryGrid[p] === 0 && !visited[p]) {
+          // 내부 구멍 컴포넌트 발견
+          let area = 0;
+          let qh = 0, qt = 0;
+          visited[p] = 1;
+          queue[qt++] = p;
+          while (qh < qt) {
+            const cur = queue[qh++];
+            area++;
+            const cx = cur % size;
+            const cy = (cur - cx) / size;
+            if (cx > 0 && binaryGrid[cur - 1] === 0 && !visited[cur - 1]) { visited[cur - 1] = 1; queue[qt++] = cur - 1; }
+            if (cx < size - 1 && binaryGrid[cur + 1] === 0 && !visited[cur + 1]) { visited[cur + 1] = 1; queue[qt++] = cur + 1; }
+            if (cy > 0 && binaryGrid[cur - size] === 0 && !visited[cur - size]) { visited[cur - size] = 1; queue[qt++] = cur - size; }
+            if (cy < size - 1 && binaryGrid[cur + size] === 0 && !visited[cur + size]) { visited[cur + size] = 1; queue[qt++] = cur + size; }
+          }
+          if (area >= 3) loops++;
+        }
+      }
+      return loops;
+    }
+
+    function classifySingleDigitCrop(srcCanvas, x0, y0, x1, y1) {
+      const boxW = Math.max(1, x1 - x0 + 1);
+      const boxH = Math.max(1, y1 - y0 + 1);
+      const aspect = boxW / boxH;
+
+      // 매우 홀쭉한 세로획은 숫자 1로 우선 판정
+      if (aspect < 0.34 && boxH > 26) {
+        return 1;
+      }
+
+      const G = 16;
+      const norm = document.createElement('canvas');
+      norm.width = G;
+      norm.height = G;
+      const nctx = norm.getContext('2d');
+      nctx.clearRect(0, 0, G, G);
+
+      const scale = (G - 2) / Math.max(boxW, boxH);
+      const dw = boxW * scale;
+      const dh = boxH * scale;
+      const ox = (G - dw) / 2;
+      const oy = (G - dh) / 2;
+
+      nctx.drawImage(srcCanvas, x0, y0, boxW, boxH, ox, oy, dw, dh);
+      const imgData = nctx.getImageData(0, 0, G, G).data;
+
+      const bin = new Uint8Array(G * G);
+      for (let i = 0; i < G * G; i++) {
+        bin[i] = imgData[i * 4 + 3] > 35 ? 1 : 0;
+      }
+
+      const loops = countEnclosedLoops(bin, G);
+
+      // 8x8 다운샘플 벡터 생성
+      const vec = new Float32Array(64);
+      for (let gy = 0; gy < 8; gy++) {
+        for (let gx = 0; gx < 8; gx++) {
+          let sum = 0;
+          for (let dy = 0; dy < 2; dy++) {
+            for (let dx = 0; dx < 2; dx++) {
+              sum += bin[(gy * 2 + dy) * G + (gx * 2 + dx)];
+            }
+          }
+          vec[gy * 8 + gx] = sum / 4;
+        }
+      }
+
+      let bestDigit = 0;
+      let bestScore = -Infinity;
+
+      for (let d = 0; d <= 9; d++) {
+        const pat = DIGIT_PATTERNS[d];
+        let dot = 0, normA = 0, normB = 0;
+        for (let r = 0; r < 8; r++) {
+          for (let c = 0; c < 8; c++) {
+            const a = vec[r * 8 + c];
+            const b = pat[r][c] === '1' ? 1 : 0;
+            dot += a * b;
+            normA += a * a;
+            normB += b * b;
+          }
+        }
+        let sim = (normA > 0 && normB > 0) ? (dot / (Math.sqrt(normA) * Math.sqrt(normB))) : 0;
+
+        // 위상(구멍 개수) 보정
+        if (loops >= 2) {
+          if (d === 8) sim += 0.35;
+          else sim -= 0.15;
+        } else if (loops === 1) {
+          if ([0, 6, 9, 4].includes(d)) sim += 0.22;
+          else sim -= 0.18;
+        } else {
+          if ([1, 2, 3, 5, 7, 4].includes(d)) sim += 0.12;
+          if ([0, 8].includes(d)) sim -= 0.22;
+        }
+
+        // 가로/세로 비율 보정
+        if (d === 1 && aspect < 0.48) sim += 0.22;
+        if (d !== 1 && aspect < 0.36) sim -= 0.2;
+
+        if (sim > bestScore) {
+          bestScore = sim;
+          bestDigit = d;
+        }
+      }
+
+      return bestDigit;
+    }
+
+    function recognizeCanvasNumber(canvasEl) {
+      const w = canvasEl.width;
+      const h = canvasEl.height;
+      const c = canvasEl.getContext('2d');
+      const data = c.getImageData(0, 0, w, h).data;
+
+      // X축 잉크 투영으로 1자리 또는 2자리 숫자 자동 분리
+      const colHasInk = new Uint8Array(w);
+      let anyInk = false;
+      for (let x = 0; x < w; x++) {
+        for (let y = 0; y < h; y++) {
+          if (data[(y * w + x) * 4 + 3] > 35) {
+            colHasInk[x] = 1;
+            anyInk = true;
+            break;
+          }
+        }
+      }
+      if (!anyInk) return null;
+
+      // 연속된 X 구간 추출 (작은 끊김 3px 이내 병합)
+      const segments = [];
+      let inSeg = false;
+      let startX = 0;
+      let emptyGap = 0;
+
+      for (let x = 0; x < w; x++) {
+        if (colHasInk[x]) {
+          if (!inSeg) {
+            inSeg = true;
+            startX = x;
+          }
+          emptyGap = 0;
+        } else if (inSeg) {
+          emptyGap++;
+          if (emptyGap > 4) {
+            segments.push({ x0: startX, x1: x - emptyGap });
+            inSeg = false;
+          }
+        }
+      }
+      if (inSeg) {
+        segments.push({ x0: startX, x1: w - 1 });
+      }
+
+      // 노이즈 점 제거 (폭 3px 미만 무시)
+      const validSegs = segments.filter(s => (s.x1 - s.x0) >= 3).slice(0, 2);
+      if (validSegs.length === 0) return null;
+
+      let resultStr = '';
+      for (const seg of validSegs) {
+        let minY = h, maxY = 0;
+        for (let y = 0; y < h; y++) {
+          for (let x = seg.x0; x <= seg.x1; x++) {
+            if (data[(y * w + x) * 4 + 3] > 35) {
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+        if (maxY >= minY) {
+          const digit = classifySingleDigitCrop(canvasEl, seg.x0, minY, seg.x1, maxY);
+          resultStr += String(digit);
+        }
+      }
+
+      return resultStr ? parseInt(resultStr, 10) : null;
+    }
+
+    let recognizedHourVal = null;
+    let recognizedMinVal = null;
+
+    function updateHandwritingOCR() {
+      const hCanvas = document.getElementById('hourCanvas');
+      const mCanvas = document.getElementById('minuteCanvas');
+      recognizedHourVal = recognizeCanvasNumber(hCanvas);
+      recognizedMinVal = recognizeCanvasNumber(mCanvas);
+
+      document.getElementById('hourOcrBadge').textContent =
+        recognizedHourVal !== null ? `인식: ${recognizedHourVal}시` : '인식: -';
+      document.getElementById('minOcrBadge').textContent =
+        recognizedMinVal !== null ? `인식: ${recognizedMinVal}분` : '인식: -';
+
+      const summary = document.getElementById('ocrSummaryBar');
+      if (recognizedHourVal !== null || recognizedMinVal !== null) {
+        const hStr = recognizedHourVal !== null ? `${recognizedHourVal}시` : '?시';
+        const mStr = recognizedMinVal !== null ? `${String(recognizedMinVal).padStart(2, '0')}분` : '?분';
+        summary.textContent = `지금 쓴 글자 인식 결과: [ ${hStr} ${mStr} ]`;
+      } else {
+        summary.textContent = '네모 칸 안에 숫자를 또박또박 적어보세요! (두 자리는 나란히 쓰기)';
+      }
+    }
+
+    function setupCanvasPad(canvasId, onStrokeDone) {
       const canvas = document.getElementById(canvasId);
-      const c = canvas.getContext('2d');
+      const c = canvas.getContext('2d', { willReadFrequently: true });
       let isDrawing = false;
 
-      c.lineWidth = 8;
+      c.lineWidth = 9;
       c.lineCap = 'round';
+      c.lineJoin = 'round';
       c.strokeStyle = '#111111';
 
       function getPos(e) {
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
       }
 
       canvas.addEventListener('mousedown', (e) => { isDrawing = true; const p = getPos(e); c.beginPath(); c.moveTo(p.x, p.y); });
       canvas.addEventListener('mousemove', (e) => { if (!isDrawing) return; const p = getPos(e); c.lineTo(p.x, p.y); c.stroke(); });
-      window.addEventListener('mouseup', () => { isDrawing = false; });
+      window.addEventListener('mouseup', () => {
+        if (isDrawing) {
+          isDrawing = false;
+          onStrokeDone();
+        }
+      });
 
-      canvas.addEventListener('touchstart', (e) => { isDrawing = true; const p = getPos(e); c.beginPath(); c.moveTo(p.x, p.y); e.preventDefault(); });
-      canvas.addEventListener('touchmove', (e) => { if (!isDrawing) return; const p = getPos(e); c.lineTo(p.x, p.y); c.stroke(); e.preventDefault(); });
-      window.addEventListener('touchend', () => { isDrawing = false; });
+      canvas.addEventListener('touchstart', (e) => { isDrawing = true; const p = getPos(e); c.beginPath(); c.moveTo(p.x, p.y); e.preventDefault(); }, { passive: false });
+      canvas.addEventListener('touchmove', (e) => { if (!isDrawing) return; const p = getPos(e); c.lineTo(p.x, p.y); c.stroke(); e.preventDefault(); }, { passive: false });
+      window.addEventListener('touchend', () => {
+        if (isDrawing) {
+          isDrawing = false;
+          onStrokeDone();
+        }
+      });
 
       return {
-        clear: () => { c.clearRect(0, 0, canvas.width, canvas.height); },
-        isEmpty: () => {
-          const px = c.getImageData(0, 0, canvas.width, canvas.height).data;
-          for (let i = 3; i < px.length; i += 4) {
-            if (px[i] > 0) return false;
-          }
-          return true;
+        clear: () => {
+          c.clearRect(0, 0, canvas.width, canvas.height);
+          onStrokeDone();
         }
       };
     }
 
-    const hourPad = setupCanvasPad('hourCanvas');
-    const minutePad = setupCanvasPad('minuteCanvas');
+    const hourPad = setupCanvasPad('hourCanvas', updateHandwritingOCR);
+    const minutePad = setupCanvasPad('minuteCanvas', updateHandwritingOCR);
 
-    document.getElementById('clearHour').onclick = hourPad.clear;
-    document.getElementById('clearMinute').onclick = minutePad.clear;
+    document.getElementById('clearHour').onclick = () => { playTone('click'); hourPad.clear(); };
+    document.getElementById('clearMinute').onclick = () => { playTone('click'); minutePad.clear(); };
 
-    // 단계 선택 칩 이벤트
-    document.querySelectorAll('#levelOptions .option-chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        document.querySelectorAll('#levelOptions .option-chip').forEach(c => c.classList.remove('selected'));
-        e.target.classList.add('selected');
-        selectedLevel = parseInt(e.target.dataset.val);
+    // 시작 화면 옵션 칩 선택 로직
+    function bindChipGroup(selector, callback) {
+      document.querySelectorAll(selector).forEach(chip => {
+        chip.addEventListener('click', () => {
+          playTone('click');
+          document.querySelectorAll(selector).forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          callback(chip);
+        });
+      });
+    }
+
+    bindChipGroup('#activityOptions .option-chip', (chip) => {
+      selectedActivity = chip.dataset.activity;
+      const isExplore = selectedActivity === 'explore';
+      const isHands = selectedActivity === 'hands';
+      document.getElementById('levelSettingGroup').style.display = isExplore ? 'none' : 'block';
+      document.getElementById('clockTypeSettingGroup').style.display = (isExplore || isHands) ? 'none' : 'block';
+      document.getElementById('inputMethodSettingGroup').style.display = (isExplore || isHands) ? 'none' : 'block';
+    });
+
+    bindChipGroup('#levelOptions .option-chip', (chip) => {
+      selectedLevel = parseInt(chip.dataset.val, 10);
+    });
+
+    bindChipGroup('#modeOptions .option-chip', (chip) => {
+      selectedMode = chip.dataset.mode;
+    });
+
+    bindChipGroup('#defaultInputOptions .option-chip', (chip) => {
+      activeInputTab = chip.dataset.input;
+    });
+
+    // 플레이 화면 내 입력 방식 탭 전환
+    function switchInputTab(tabName) {
+      activeInputTab = tabName;
+      document.querySelectorAll('.input-tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.input-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `panel-${tabName}`);
+      });
+      if (tabName === 'keyboard') {
+        document.getElementById('kbHourInput').focus();
+      }
+    }
+
+    document.querySelectorAll('.input-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        playTone('click');
+        switchInputTab(btn.dataset.tab);
       });
     });
 
-    // 모드 선택 칩 이벤트
-    document.querySelectorAll('#modeOptions .option-chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        document.querySelectorAll('#modeOptions .option-chip').forEach(c => c.classList.remove('selected'));
-        e.target.classList.add('selected');
-        selectedMode = e.target.dataset.mode;
+    // 터치 키패드 상태 및 이벤트
+    let kpTarget = 'hour'; // 'hour' | 'min'
+    let kpHourStr = '';
+    let kpMinStr = '';
+
+    function renderKeypadSlots() {
+      const hSlot = document.getElementById('kpHourSlot');
+      const mSlot = document.getElementById('kpMinSlot');
+      hSlot.textContent = kpHourStr || '--';
+      mSlot.textContent = kpMinStr || '--';
+      hSlot.classList.toggle('focused', kpTarget === 'hour');
+      mSlot.classList.toggle('focused', kpTarget === 'min');
+    }
+
+    document.getElementById('kpHourSlot').addEventListener('click', () => { kpTarget = 'hour'; renderKeypadSlots(); });
+    document.getElementById('kpMinSlot').addEventListener('click', () => { kpTarget = 'min'; renderKeypadSlots(); });
+    document.getElementById('kpSwitchBtn').addEventListener('click', () => {
+      playTone('click');
+      kpTarget = kpTarget === 'hour' ? 'min' : 'hour';
+      renderKeypadSlots();
+    });
+    document.getElementById('kpClearBtn').addEventListener('click', () => {
+      playTone('click');
+      if (kpTarget === 'hour') kpHourStr = '';
+      else kpMinStr = '';
+      renderKeypadSlots();
+    });
+
+    document.querySelectorAll('#keypadGrid .kp-key').forEach(key => {
+      key.addEventListener('click', () => {
+        playTone('click');
+        const digit = key.dataset.num;
+        if (kpTarget === 'hour') {
+          if (kpHourStr.length >= 2) kpHourStr = digit;
+          else kpHourStr += digit;
+          const val = parseInt(kpHourStr, 10);
+          // 2~9 입력 시 또는 2자리 완성 시 자동으로 분 칸으로 이동
+          if ((kpHourStr.length === 1 && val >= 2) || kpHourStr.length === 2) {
+            kpTarget = 'min';
+          }
+        } else {
+          if (kpMinStr.length >= 2) kpMinStr = digit;
+          else kpMinStr += digit;
+        }
+        renderKeypadSlots();
       });
     });
 
-    const startBtn = document.getElementById('startBtn');
-    const startScreen = document.getElementById('startScreen');
-    const playScreen = document.getElementById('playScreen');
-    const submitHandwritingBtn = document.getElementById('submitHandwritingBtn');
-    const feedbackBox = document.getElementById('feedbackBox');
-    const correctCountElem = document.getElementById('correctCount');
-    const totalCountElem = document.getElementById('totalCount');
+    // 4지선다 선택지 생성기
+    function renderMultipleChoices() {
+      const grid = document.getElementById('choiceGrid');
+      grid.innerHTML = '';
 
-    startBtn.addEventListener('click', () => {
-      startScreen.classList.remove('active');
-      playScreen.classList.add('active');
+      const options = [{ h: targetHour, m: targetMinute }];
+      const usedKeys = new Set([`${targetHour}:${targetMinute}`]);
 
-      // 모드에 따라 뷰 전환
-      if (selectedMode === 'digital') {
-        clockCanvas.style.display = 'none';
+      while (options.length < 4) {
+        let dh = targetHour;
+        let dm = targetMinute;
+        const r = Math.random();
+        if (r < 0.35) {
+          // 시침 착각 오답 (예: 앞/뒤 숫자)
+          dh = ((targetHour + (Math.random() < 0.5 ? 1 : 10)) % 12) + 1;
+        } else if (r < 0.7) {
+          // 분침 착각 오답
+          if (selectedLevel === 1) {
+            dh = Math.floor(Math.random() * 12) + 1;
+          } else if (selectedLevel === 2) {
+            dm = targetMinute === 0 ? 30 : 0;
+          } else if (selectedLevel === 3) {
+            dm = Math.floor(Math.random() * 12) * 5;
+          } else {
+            dm = Math.floor(Math.random() * 60);
+          }
+        } else {
+          dh = Math.floor(Math.random() * 12) + 1;
+          dm = selectedLevel === 1 ? 0 :
+               selectedLevel === 2 ? (Math.random() < 0.5 ? 0 : 30) :
+               selectedLevel === 3 ? Math.floor(Math.random() * 12) * 5 :
+               Math.floor(Math.random() * 60);
+        }
+
+        const key = `${dh}:${dm}`;
+        if (!usedKeys.has(key)) {
+          usedKeys.add(key);
+          options.push({ h: dh, m: dm });
+        }
+      }
+
+      // 셔플
+      for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [options[i], options[j]] = [options[j], options[i]];
+      }
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'choice-btn';
+        btn.innerHTML = `<span style="color:var(--red);">${opt.h}시</span> <span style="color:var(--blue);">${String(opt.m).padStart(2, '0')}분</span>`;
+        btn.addEventListener('click', () => checkAnswer(opt.h, opt.m));
+        grid.appendChild(btn);
+      });
+    }
+
+    // 힌트 생성기
+    function buildHintMessage() {
+      if (selectedActivity === 'hands') {
+        const minPos = targetMinute === 0 ? '12' : (targetMinute % 5 === 0 ? String(targetMinute / 5) : `${Math.floor(targetMinute / 5)}와 ${Math.floor(targetMinute / 5) + 1} 사이`);
+        return `힌트: 빨간 짧은 바늘(시)을 숫자 ${targetHour} 쪽으로, 파란 긴 바늘(분)을 눈금 ${targetMinute}분(${minPos} 방향)으로 맞추세요!`;
+      }
+      if (currentRoundDisplay === 'digital') {
+        return `힌트: 콜론(:) 왼쪽의 빨간 숫자(${targetHour})가 '시', 오른쪽의 파란 숫자(${String(targetMinute).padStart(2, '0')})가 '분'이에요!`;
+      }
+      const nextH = targetHour === 12 ? 1 : targetHour + 1;
+      const hourDesc = targetMinute === 0
+        ? `빨간 짧은 바늘이 정확히 ${targetHour}을 가리키고 있어요.`
+        : `빨간 짧은 바늘이 ${targetHour}과 ${nextH} 사이에 있으니 '${targetHour}시'예요!`;
+      const minDesc = targetMinute === 0
+        ? `파란 긴 바늘이 12를 가리키므로 '00분(정각)'이에요.`
+        : `파란 긴 바늘이 가리키는 눈금을 5씩 세어보면 '${targetMinute}분'이에요.`;
+      return `힌트: ${hourDesc} ${minDesc}`;
+    }
+
+    // 새 문제 출제 및 화면 구성
+    function generateNewProblem() {
+      isTransitioning = false;
+      const feedbackBox = document.getElementById('feedbackBox');
+      const hintBox = document.getElementById('hintBox');
+      feedbackBox.textContent = '';
+      feedbackBox.className = 'feedback-box';
+      hintBox.classList.remove('visible');
+
+      if (selectedActivity === 'explore') {
+        userHandHour = 3;
+        userHandMinute = 0;
+        clockCanvas.style.display = 'block';
+        clockCanvas.classList.add('interactive');
         digitalDisplay.classList.add('active');
+        document.getElementById('clockLegend').style.display = 'flex';
+        document.getElementById('handControlsPanel').classList.add('active');
+        document.getElementById('submitHandsBtn').style.display = 'none';
+        document.getElementById('quizInputArea').style.display = 'none';
+        document.getElementById('scorePill').style.display = 'none';
+        document.getElementById('streakPill').style.display = 'none';
+        document.getElementById('hintBtn').style.display = 'none';
+        document.getElementById('modeIndicatorPill').textContent = '자유 시계 탐험실';
+        document.getElementById('missionText').textContent = '시계 바늘을 손가락이나 마우스로 직접 돌려보세요!';
+        syncHandDisplay();
+        return;
+      }
+
+      // 퀴즈 또는 바늘 맞추기 문제 생성
+      document.getElementById('scorePill').style.display = 'block';
+      document.getElementById('streakPill').style.display = 'block';
+      document.getElementById('hintBtn').style.display = 'inline-block';
+
+      targetHour = Math.floor(Math.random() * 12) + 1;
+      if (selectedLevel === 1) targetMinute = 0;
+      else if (selectedLevel === 2) targetMinute = Math.random() < 0.5 ? 0 : 30;
+      else if (selectedLevel === 3) targetMinute = Math.floor(Math.random() * 12) * 5;
+      else targetMinute = Math.floor(Math.random() * 60);
+
+      if (selectedActivity === 'hands') {
+        document.getElementById('modeIndicatorPill').textContent = `바늘 맞추기 · ${selectedLevel}단계`;
+        document.getElementById('missionText').innerHTML =
+          `목표 시각: <span class="hour-highlight">${targetHour}시</span> <span class="min-highlight">${String(targetMinute).padStart(2, '0')}분</span> 을 만들어 보세요!`;
+
+        userHandHour = 12;
+        userHandMinute = 0;
+        clockCanvas.style.display = 'block';
+        clockCanvas.classList.add('interactive');
+        digitalDisplay.classList.remove('active');
+        document.getElementById('clockLegend').style.display = 'flex';
+        document.getElementById('handControlsPanel').classList.add('active');
+        document.getElementById('submitHandsBtn').style.display = 'inline-flex';
+        document.getElementById('quizInputArea').style.display = 'none';
+        syncHandDisplay();
+        speakKorean(`${targetHour}시 ${targetMinute === 0 ? '정각' : targetMinute + '분'}을 만들어 보세요.`);
+        return;
+      }
+
+      // 시계 읽기 퀴즈 모드
+      clockCanvas.classList.remove('interactive');
+      document.getElementById('handControlsPanel').classList.remove('active');
+      document.getElementById('quizInputArea').style.display = 'block';
+
+      currentRoundDisplay = selectedMode === 'mixed'
+        ? (Math.random() < 0.5 ? 'analog' : 'digital')
+        : selectedMode;
+
+      const modeLabel = currentRoundDisplay === 'analog' ? '아날로그' : '디지털';
+      document.getElementById('modeIndicatorPill').textContent = `${modeLabel} 읽기 · ${selectedLevel}단계`;
+      document.getElementById('missionText').textContent = '지금 시계는 몇 시 몇 분일까요?';
+
+      if (currentRoundDisplay === 'digital') {
+        clockCanvas.style.display = 'none';
+        document.getElementById('clockLegend').style.display = 'none';
+        digitalDisplay.classList.add('active');
+        digitalHourText.textContent = String(targetHour).padStart(2, '0');
+        digitalMinText.textContent = String(targetMinute).padStart(2, '0');
       } else {
         clockCanvas.style.display = 'block';
+        document.getElementById('clockLegend').style.display = 'flex';
         digitalDisplay.classList.remove('active');
-      }
-
-      generateNewProblem();
-    });
-
-    function generateNewProblem() {
-      targetHour = Math.floor(Math.random() * 12) + 1;
-      if (selectedLevel === 1) {
-        targetMinute = 0;
-      } else if (selectedLevel === 2) {
-        targetMinute = Math.random() < 0.5 ? 0 : 30;
-      } else if (selectedLevel === 3) {
-        targetMinute = Math.floor(Math.random() * 12) * 5;
-      } else {
-        targetMinute = Math.floor(Math.random() * 60);
-      }
-
-      if (selectedMode === 'digital') {
-        digitalDisplay.textContent = `${String(targetHour).padStart(2, '0')}:${String(targetMinute).padStart(2, '0')}`;
-      } else {
         drawClock(targetHour, targetMinute);
       }
 
+      // 입력 패널 초기화
+      renderMultipleChoices();
+
+      kpHourStr = '';
+      kpMinStr = '';
+      kpTarget = 'hour';
+      renderKeypadSlots();
+
+      document.getElementById('kbHourInput').value = '';
+      document.getElementById('kbMinInput').value = '';
+
       hourPad.clear();
       minutePad.clear();
-      feedbackBox.textContent = '';
+      switchInputTab(activeInputTab);
     }
 
-    submitHandwritingBtn.addEventListener('click', () => {
-      if (hourPad.isEmpty() || minutePad.isEmpty()) {
-        feedbackBox.textContent = "시와 분 입력 패드에 모두 손글씨로 숫자를 적어주세요!";
-        feedbackBox.style.color = "var(--red)";
+    // 정답 검증 공통 함수
+    function checkAnswer(ansHour, ansMinute) {
+      if (isTransitioning) return;
+
+      const feedbackBox = document.getElementById('feedbackBox');
+      if (Number.isNaN(ansHour) || Number.isNaN(ansMinute) || ansHour < 1 || ansHour > 12 || ansMinute < 0 || ansMinute > 59) {
+        playTone('wrong');
+        feedbackBox.textContent = '시는 1~12 사이, 분은 0~59 사이 숫자로 입력해 주세요!';
+        feedbackBox.className = 'feedback-box wrong';
         return;
       }
 
       tryTotal++;
-      totalCountElem.textContent = tryTotal;
+      document.getElementById('totalCount').textContent = tryTotal;
 
-      correctTotal++;
-      correctCountElem.textContent = correctTotal;
-      feedbackBox.textContent = `🎉 완벽합니다! 정답은 ${targetHour}시 ${targetMinute}분입니다!`;
-      feedbackBox.style.color = "var(--green)";
-      setTimeout(generateNewProblem, 2000);
+      if (ansHour === targetHour && ansMinute === targetMinute) {
+        isTransitioning = true;
+        correctTotal++;
+        streakCount++;
+        document.getElementById('correctCount').textContent = correctTotal;
+        document.getElementById('streakCount').textContent = streakCount;
+
+        playTone('correct');
+        const spoken = formatKoreanSpokenTime(targetHour, targetMinute);
+        feedbackBox.textContent = `정답이에요! [ ${targetHour}시 ${String(targetMinute).padStart(2, '0')}분 · ${spoken} ] 참 잘했어요!`;
+        feedbackBox.className = 'feedback-box correct';
+        speakKorean(`정답입니다! ${spoken}`);
+
+        setTimeout(generateNewProblem, 1800);
+      } else {
+        streakCount = 0;
+        document.getElementById('streakCount').textContent = streakCount;
+        playTone('wrong');
+        feedbackBox.textContent = `아쉬워요! 입력한 시각은 ${ansHour}시 ${String(ansMinute).padStart(2, '0')}분이에요. 다시 한 번 살펴볼까요?`;
+        feedbackBox.className = 'feedback-box wrong';
+        speakKorean('아쉬워요. 다시 한 번 확인해 보세요.');
+      }
+    }
+
+    // 각 입력 방식별 제출 핸들러
+    document.getElementById('kpSubmitBtn').addEventListener('click', () => {
+      const h = parseInt(kpHourStr, 10);
+      const m = kpMinStr === '' ? (selectedLevel === 1 ? 0 : NaN) : parseInt(kpMinStr, 10);
+      checkAnswer(h, m);
+    });
+
+    function handleKeyboardSubmit() {
+      const hVal = document.getElementById('kbHourInput').value.trim();
+      const mVal = document.getElementById('kbMinInput').value.trim();
+      const h = parseInt(hVal, 10);
+      const m = mVal === '' ? (selectedLevel === 1 ? 0 : NaN) : parseInt(mVal, 10);
+      checkAnswer(h, m);
+    }
+
+    document.getElementById('kbSubmitBtn').addEventListener('click', handleKeyboardSubmit);
+    document.getElementById('kbHourInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('kbMinInput').focus();
+    });
+    document.getElementById('kbMinInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleKeyboardSubmit();
+    });
+
+    document.getElementById('submitHandwritingBtn').addEventListener('click', () => {
+      if (recognizedHourVal === null || recognizedMinVal === null) {
+        playTone('wrong');
+        const feedbackBox = document.getElementById('feedbackBox');
+        feedbackBox.textContent = '시와 분 네모 칸에 모두 손글씨로 숫자를 적어주세요!';
+        feedbackBox.className = 'feedback-box wrong';
+        return;
+      }
+      checkAnswer(recognizedHourVal, recognizedMinVal);
+    });
+
+    document.getElementById('submitHandsBtn').addEventListener('click', () => {
+      checkAnswer(userHandHour, userHandMinute);
+    });
+
+    // 상단 보조 도구 버튼들
+    document.getElementById('toggleMinuteHelperBtn').addEventListener('click', (e) => {
+      playTone('click');
+      showMinuteHelper = !showMinuteHelper;
+      e.target.textContent = showMinuteHelper ? '분 눈금 숫자: 켜짐' : '분 눈금 숫자: 꺼짐';
+      e.target.classList.toggle('active', showMinuteHelper);
+      if (selectedActivity === 'read') drawClock(targetHour, targetMinute);
+      else drawClock(userHandHour, userHandMinute);
+    });
+
+    document.getElementById('hintBtn').addEventListener('click', () => {
+      playTone('click');
+      const hintBox = document.getElementById('hintBox');
+      hintBox.textContent = buildHintMessage();
+      hintBox.classList.toggle('visible');
+    });
+
+    document.getElementById('speakBtn').addEventListener('click', () => {
+      if (selectedActivity === 'explore') {
+        speakKorean(`현재 시각은 ${formatKoreanSpokenTime(userHandHour, userHandMinute)}입니다.`);
+      } else if (selectedActivity === 'hands') {
+        speakKorean(`${formatKoreanSpokenTime(targetHour, targetMinute)}을 만들어 보세요.`);
+      } else {
+        speakKorean('지금 시계는 몇 시 몇 분일까요?');
+      }
+    });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      playTone('click');
+      correctTotal = 0;
+      tryTotal = 0;
+      streakCount = 0;
+      document.getElementById('correctCount').textContent = '0';
+      document.getElementById('totalCount').textContent = '0';
+      document.getElementById('streakCount').textContent = '0';
+
+      document.getElementById('startScreen').classList.remove('active');
+      document.getElementById('playScreen').classList.add('active');
+      generateNewProblem();
+    });
+
+    document.getElementById('backToStartBtn').addEventListener('click', () => {
+      playTone('click');
+      document.getElementById('playScreen').classList.remove('active');
+      document.getElementById('startScreen').classList.add('active');
     });
   });
 </script>
