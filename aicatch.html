@@ -16,6 +16,8 @@
       --cyan: #48dbfb;
       --green: #2ed573;
       --blue: #3e51ff;
+      --purple: #a29bfe;
+      --orange: #ff9f43;
       
       --border-thick: 4px solid var(--black);
       --border: 3px solid var(--black);
@@ -48,6 +50,7 @@
       align-items: center;
       min-height: 100vh;
       padding: 90px 20px 60px;
+      word-break: keep-all;
     }
     
     .fixed-top-bar {
@@ -105,6 +108,7 @@
       display: flex;
       gap: 10px;
       align-items: center;
+      flex-wrap: wrap;
     }
     .score-pill {
       background: var(--white);
@@ -120,7 +124,7 @@
 
     .container {
       width: 100%;
-      max-width: 800px;
+      max-width: 820px;
       background: var(--white);
       border: var(--border-thick);
       border-radius: 0;
@@ -153,12 +157,12 @@
 
     .subtitle {
       color: #222;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       font-weight: 700;
       line-height: 1.6;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       border-left: 6px solid var(--black);
-      padding: 8px 16px;
+      padding: 10px 16px;
       text-align: left;
       background: var(--bg);
     }
@@ -169,19 +173,98 @@
       text-transform: uppercase;
     }
 
+    /* 모델 선택 패널 */
+    .model-selector-box {
+      background: var(--bg);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .model-selector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .model-selector-title {
+      font-size: 0.92rem;
+      font-weight: 900;
+      background: var(--black);
+      color: var(--yellow);
+      padding: 2px 10px;
+    }
+
+    .model-selector-desc {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #333;
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .model-opt-btn {
+      background: var(--white);
+      border: var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.1s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .model-opt-btn:hover:not(:disabled) {
+      background: var(--yellow);
+      transform: translate(-1px, -1px);
+    }
+
+    .model-opt-btn.active {
+      background: var(--cyan);
+      box-shadow: 1px 1px 0 var(--black);
+      transform: translate(2px, 2px);
+    }
+
+    .model-opt-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .model-opt-name {
+      font-weight: 900;
+      font-size: 0.9rem;
+    }
+
+    .model-opt-tag {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #222;
+    }
+
     .category-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
-      margin-top: 20px;
+      margin-top: 18px;
     }
 
     .cat-btn {
       background: var(--white);
       border: var(--border);
       border-radius: 0;
-      padding: 28px 16px;
-      font-size: 1.25rem;
+      padding: 22px 16px;
+      font-size: 1.2rem;
       font-weight: 900;
       cursor: pointer;
       transition: all 0.1s ease;
@@ -189,8 +272,21 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 4px;
       color: var(--black);
       box-shadow: var(--shadow-sm);
+    }
+
+    .cat-btn.color-special {
+      grid-column: 1 / -1;
+      background: #fff9db;
+      border-width: 4px;
+    }
+
+    .cat-btn-sub {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #444;
     }
 
     .cat-btn:hover:not(:disabled) {
@@ -256,7 +352,7 @@
       color: var(--white);
       padding: 14px 20px;
       border: var(--border);
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       box-shadow: var(--shadow-sm);
       font-weight: 900;
       flex-wrap: wrap;
@@ -266,14 +362,26 @@
     .info-box {
       font-size: 1rem;
       font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .target-word {
-      font-size: 1.45rem;
+      font-size: 1.42rem;
       font-weight: 900;
       color: var(--yellow);
       text-shadow: 2px 2px 0 var(--black);
-      margin-left: 4px;
+    }
+
+    .target-color-hint {
+      font-size: 0.78rem;
+      font-weight: 900;
+      background: var(--white);
+      color: var(--black);
+      border: 2px solid var(--black);
+      padding: 1px 8px;
+      text-shadow: none;
     }
 
     .timer-badge {
@@ -298,12 +406,13 @@
     .ai-live-box {
       background: var(--white);
       border: var(--border);
-      padding: 16px 20px;
-      margin-bottom: 20px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
       display: flex;
       flex-direction: column;
       gap: 10px;
       box-shadow: var(--shadow-sm);
+      text-align: left;
     }
 
     .ai-live-top {
@@ -312,6 +421,62 @@
       align-items: center;
       font-weight: 900;
       font-size: 1.05rem;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ai-sub-telemetry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.83rem;
+      font-weight: 800;
+      background: var(--bg);
+      border: 2px solid var(--black);
+      padding: 6px 10px;
+    }
+
+    .detected-colors-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .color-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 1px 7px;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .color-chip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid var(--black);
+      display: inline-block;
+    }
+
+    .color-bonus-tag {
+      background: var(--green);
+      color: var(--black);
+      border: 2px solid var(--black);
+      padding: 1px 7px;
+      font-size: 0.76rem;
+      font-weight: 900;
+    }
+
+    .runner-ups-text {
+      color: #333;
+      font-size: 0.8rem;
+      font-weight: 800;
     }
 
     .progress-bar-bg {
@@ -327,13 +492,13 @@
       height: 100%;
       width: 0%;
       background: var(--green);
-      transition: width 0.25s ease;
+      transition: width 0.22s ease;
     }
 
     #canvas-wrapper {
       display: flex;
       justify-content: center;
-      margin: 0 auto 20px;
+      margin: 0 auto 18px;
       border: var(--border-thick);
       box-shadow: var(--shadow-lg);
       background: var(--white);
@@ -353,37 +518,49 @@
       aspect-ratio: 1 / 1;
     }
 
+    canvas.fill-cursor {
+      cursor: cell;
+    }
+
     .toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg);
+      padding: 14px 18px;
+      border: var(--border);
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-sm);
+      font-weight: 900;
+    }
+
+    .toolbar-row {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 14px;
-      background: var(--bg);
-      padding: 14px 18px;
-      border: var(--border);
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-sm);
-      font-weight: 900;
+      gap: 12px;
     }
 
     .tool-group {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 0.95rem;
+      gap: 8px;
+      font-size: 0.92rem;
       font-weight: 900;
+      flex-wrap: wrap;
     }
 
     .color-palette {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .color-btn {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: 2px solid var(--black);
       box-shadow: 2px 2px 0 var(--black);
@@ -407,12 +584,25 @@
       outline-offset: 2px;
     }
 
-    .eraser-btn {
-      border-radius: 0;
-      width: auto;
-      padding: 0 10px;
+    .mode-pill-btn {
       background: var(--white);
-      color: var(--black);
+      border: 2px solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+      padding: 4px 10px;
+      font-size: 0.84rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .mode-pill-btn:hover {
+      background: var(--yellow);
+    }
+
+    .mode-pill-btn.active {
+      background: var(--cyan);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--black);
     }
 
     .action-buttons {
@@ -423,10 +613,10 @@
     }
 
     .btn {
-      padding: 14px 22px;
+      padding: 13px 20px;
       border-radius: 0;
       border: var(--border);
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 900;
       cursor: pointer;
       transition: all 0.1s;
@@ -515,7 +705,7 @@
 
     .top3-list {
       list-style: none;
-      max-width: 420px;
+      max-width: 440px;
       margin: 16px auto 24px;
       text-align: left;
     }
@@ -545,11 +735,12 @@
       font-weight: 800;
     }
 
-    @media (max-width: 560px) {
+    @media (max-width: 640px) {
       .container { padding: 24px 18px; }
+      .model-grid { grid-template-columns: 1fr; }
       .category-grid { grid-template-columns: 1fr; }
       .game-header { justify-content: center; text-align: center; }
-      .toolbar { justify-content: center; }
+      .toolbar-row { justify-content: center; }
     }
   </style>
 </head>
@@ -558,7 +749,7 @@
   <div class="fixed-top-bar">
     <div class="current-time" id="clock">--:--:--</div>
     <div class="icon-group">
-      <a href="https://github.com/nlasdnfkl2" target="_blank" class="icon-btn" title="GitHub">
+      <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
       </a>
     </div>
@@ -575,34 +766,64 @@
 
     <main class="container">
       <div>
-        <span class="badge">실시간 AI 스케치 퀴즈</span>
+        <span class="badge">실시간 AI 비전 + 색상 추론 퀴즈</span>
       </div>
       <h1>실시간으로 추론하는<br>AI 캐치마인드</h1>
       <p class="subtitle">
-        제한 시간 30초 안에 제시어를 그려보세요. 그림을 그리는 동안 AI가 실시간으로 무엇인지 추측하며, 정답을 맞히면 즉시 다음 단계로 넘어갑니다.
+        제한 시간 30초 안에 제시어를 그려보세요. 업그레이드된 고해상도 패치 비전 모델(SigLIP / CLIP-16)과 실시간 픽셀 색상 분석 엔진이 형태와 색깔을 함께 판독합니다.
       </p>
 
       <section id="category-section">
+        <!-- 인브라우저 AI 모델 선택기 -->
+        <div class="model-selector-box">
+          <div class="model-selector-header">
+            <span class="model-selector-title">인브라우저 비전 모델</span>
+            <span class="model-selector-desc" id="active-model-badge">현재: SigLIP-Base-16 (고정밀·색상 특화)</span>
+          </div>
+          <div class="model-grid" id="model-grid">
+            <button type="button" class="model-opt-btn active" data-model="Xenova/siglip-base-patch16-224" data-label="SigLIP-Base-16 (고정밀·색상 특화)">
+              <span class="model-opt-name">SigLIP-Base-16 (추천)</span>
+              <span class="model-opt-tag">16px 고밀도 패치 · 색상/속성 최강</span>
+            </button>
+            <button type="button" class="model-opt-btn" data-model="Xenova/clip-vit-base-patch16" data-label="CLIP-ViT-Base-16 (고해상도)">
+              <span class="model-opt-name">CLIP-Base-16</span>
+              <span class="model-opt-tag">기존 대비 4배 해상도 스케치 인식</span>
+            </button>
+            <button type="button" class="model-opt-btn" data-model="Xenova/clip-vit-base-patch32" data-label="CLIP-ViT-Base-32 (초경량·고속)">
+              <span class="model-opt-name">CLIP-Base-32</span>
+              <span class="model-opt-tag">초경량 빠른 로딩 · 저사양 기기용</span>
+            </button>
+          </div>
+        </div>
+
         <h2>카테고리 선택</h2>
         <p style="color: #444; font-size: 0.95rem; margin-top: 6px; font-weight: 700;">그리기 주제 카테고리를 선택하세요</p>
         
         <div class="category-grid">
-          <button class="cat-btn" data-cat="animals" disabled>
+          <button type="button" class="cat-btn" data-cat="animals" disabled>
             <span>동물</span>
+            <span class="cat-btn-sub">17종 · 고유 색상 보너스 지원</span>
           </button>
-          <button class="cat-btn" data-cat="food" disabled>
+          <button type="button" class="cat-btn" data-cat="food" disabled>
             <span>과일/채소</span>
+            <span class="cat-btn-sub">14종 · 빨강·노랑·초록 색상 구별</span>
           </button>
-          <button class="cat-btn" data-cat="objects" disabled>
+          <button type="button" class="cat-btn" data-cat="objects" disabled>
             <span>사물</span>
+            <span class="cat-btn-sub">14종 · 다중 프롬프트 정밀 추론</span>
           </button>
-          <button class="cat-btn" data-cat="vehicles" disabled>
+          <button type="button" class="cat-btn" data-cat="vehicles" disabled>
             <span>교통수단</span>
+            <span class="cat-btn-sub">12종 · 윤곽 + 색상 결합 판정</span>
+          </button>
+          <button type="button" class="cat-btn color-special" data-cat="color_challenge" disabled>
+            <span>컬러 챌린지 (색상 + 사물 동시 판정)</span>
+            <span class="cat-btn-sub">제시된 색깔과 사물을 모두 정확히 칠해야 정답 인정!</span>
           </button>
         </div>
 
         <div id="loading-status">
-          <div id="loading-text">AI 화가 준비 중... 잠시만 기다려 주세요.</div>
+          <div id="loading-text">AI 비전 모델 불러오는 중... 잠시만 기다려 주세요.</div>
           <div class="load-bar-wrap" id="load-bar-wrap">
             <div class="load-bar-fill" id="load-bar-fill"></div>
           </div>
@@ -612,7 +833,10 @@
       <section id="game-section" class="hidden">
         <div class="game-header">
           <div class="info-box">주제: <span id="display-category">동물</span></div>
-          <div class="info-box">제시어: <span id="display-target" class="target-word">사자</span></div>
+          <div class="info-box">
+            제시어: <span id="display-target" class="target-word">사자</span>
+            <span id="display-color-hint" class="target-color-hint">추천색: 노랑/주황</span>
+          </div>
           <div class="info-box">남은 시간: <span id="display-timer" class="timer-badge">30초</span></div>
         </div>
 
@@ -620,6 +844,12 @@
           <div class="ai-live-top">
             <span id="ai-guess-text">AI 실시간 추측: 그림을 그리기 시작하세요</span>
             <span id="ai-confidence-text" style="background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</span>
+          </div>
+          <div class="ai-sub-telemetry">
+            <div class="detected-colors-wrap" id="detected-colors-wrap">
+              <span>감지 색상: 없음</span>
+            </div>
+            <div class="runner-ups-text" id="ai-runnerups-text">2위 · 3위 대기 중</div>
           </div>
           <div class="progress-bar-bg">
             <div id="ai-progress-fill" class="progress-bar-fill"></div>
@@ -631,27 +861,41 @@
         </div>
 
         <div class="toolbar">
-          <div class="tool-group">
-            <span>도구:</span>
-            <div class="color-palette" id="color-palette">
-              <button type="button" class="color-btn active" data-color="#111827" style="background-color: #111827;" title="검정"></button>
-              <button type="button" class="color-btn" data-color="#ff4757" style="background-color: #ff4757;" title="빨강"></button>
-              <button type="button" class="color-btn" data-color="#3e51ff" style="background-color: #3e51ff;" title="파랑"></button>
-              <button type="button" class="color-btn" data-color="#2ed573" style="background-color: #2ed573;" title="초록"></button>
-              <button type="button" class="color-btn" data-color="#ffd83b" style="background-color: #ffd83b;" title="노랑"></button>
-              <button type="button" class="color-btn eraser-btn" data-color="#ffffff" title="지우개">지우개</button>
+          <div class="toolbar-row">
+            <div class="tool-group">
+              <span>색상:</span>
+              <div class="color-palette" id="color-palette">
+                <button type="button" class="color-btn active" data-color="#111827" data-cname="검정" style="background-color: #111827;" title="검정"></button>
+                <button type="button" class="color-btn" data-color="#ff4757" data-cname="빨강" style="background-color: #ff4757;" title="빨강"></button>
+                <button type="button" class="color-btn" data-color="#ff9f43" data-cname="주황" style="background-color: #ff9f43;" title="주황"></button>
+                <button type="button" class="color-btn" data-color="#ffd83b" data-cname="노랑" style="background-color: #ffd83b;" title="노랑"></button>
+                <button type="button" class="color-btn" data-color="#2ed573" data-cname="초록" style="background-color: #2ed573;" title="초록"></button>
+                <button type="button" class="color-btn" data-color="#3e51ff" data-cname="파랑" style="background-color: #3e51ff;" title="파랑"></button>
+                <button type="button" class="color-btn" data-color="#a29bfe" data-cname="보라" style="background-color: #a29bfe;" title="보라"></button>
+                <button type="button" class="color-btn" data-color="#8b5a2b" data-cname="갈색" style="background-color: #8b5a2b;" title="갈색"></button>
+                <button type="button" class="color-btn" data-color="#ff85c0" data-cname="분홍" style="background-color: #ff85c0;" title="분홍"></button>
+              </div>
             </div>
           </div>
 
-          <div class="tool-group">
-            <label for="stroke-slider">굵기:</label>
-            <input type="range" id="stroke-slider" min="4" max="28" value="12">
-            <span id="stroke-val">12px</span>
+          <div class="toolbar-row">
+            <div class="tool-group">
+              <span>도구:</span>
+              <button type="button" class="mode-pill-btn active" id="tool-pen-btn" title="단축키 P">펜 (P)</button>
+              <button type="button" class="mode-pill-btn" id="tool-fill-btn" title="영역 내부 색 채우기 (단축키 F)">채우기 (F)</button>
+              <button type="button" class="mode-pill-btn" id="tool-eraser-btn" title="지우개 (단축키 E)">지우개 (E)</button>
+            </div>
+
+            <div class="tool-group">
+              <label for="stroke-slider">굵기:</label>
+              <input type="range" id="stroke-slider" min="4" max="28" value="12">
+              <span id="stroke-val">12px</span>
+            </div>
           </div>
         </div>
 
         <div class="action-buttons">
-          <button type="button" class="btn btn-undo" id="undo-btn" disabled>실행 취소</button>
+          <button type="button" class="btn btn-undo" id="undo-btn" disabled>실행 취소 (Ctrl+Z)</button>
           <button type="button" class="btn btn-secondary" id="clear-btn">전체 지우기</button>
           <button type="button" class="btn btn-primary" id="finish-btn">그림 완성! 판정받기</button>
         </div>
@@ -662,6 +906,7 @@
           <h2 id="result-title" class="result-banner success">정답입니다!</h2>
         </div>
         <p id="result-bonus-text" class="result-sub-info"></p>
+        <p id="result-color-summary" class="result-sub-info" style="color: var(--black);"></p>
         
         <img id="result-image" class="result-snapshot" alt="내가 그린 그림">
         
@@ -697,87 +942,126 @@
     updateClock();
     setInterval(updateClock, 1000);
 
+    // 색상 메타데이터 (RGB + 표시용 HEX)
+    const COLOR_PALETTE_META = {
+      '검정': '#111827',
+      '빨강': '#ff4757',
+      '주황': '#ff9f43',
+      '노랑': '#ffd83b',
+      '초록': '#2ed573',
+      '파랑': '#3e51ff',
+      '보라': '#a29bfe',
+      '갈색': '#8b5a2b',
+      '분홍': '#ff85c0'
+    };
+
+    // 다중 프롬프트 + 고유 색상 스키마가 포함된 카테고리 사전
     const CATEGORIES = {
       animals: {
         name: '동물',
         words: [
-          { en: 'lion', ko: '사자', label: 'a simple hand-drawn sketch of a lion with a mane' },
-          { en: 'cat', ko: '고양이', label: 'a simple hand-drawn sketch of a cat with whiskers' },
-          { en: 'dog', ko: '강아지', label: 'a simple hand-drawn sketch of a dog' },
-          { en: 'elephant', ko: '코끼리', label: 'a simple hand-drawn sketch of an elephant with a trunk' },
-          { en: 'rabbit', ko: '토끼', label: 'a simple hand-drawn sketch of a rabbit with long ears' },
-          { en: 'pig', ko: '돼지', label: 'a simple hand-drawn sketch of a pig' },
-          { en: 'fish', ko: '물고기', label: 'a simple hand-drawn sketch of a fish' },
-          { en: 'bird', ko: '새', label: 'a simple hand-drawn sketch of a flying bird' },
-          { en: 'penguin', ko: '펭귄', label: 'a simple hand-drawn sketch of a penguin' },
-          { en: 'butterfly', ko: '나비', label: 'a simple hand-drawn sketch of a butterfly' },
-          { en: 'turtle', ko: '거북이', label: 'a simple hand-drawn sketch of a turtle' },
-          { en: 'duck', ko: '오리', label: 'a simple hand-drawn sketch of a duck' },
-          { en: 'frog', ko: '개구리', label: 'a simple hand-drawn sketch of a frog' },
-          { en: 'shark', ko: '상어', label: 'a simple hand-drawn sketch of a shark' },
-          { en: 'whale', ko: '고래', label: 'a simple hand-drawn sketch of a whale' },
-          { en: 'octopus', ko: '문어', label: 'a simple hand-drawn sketch of an octopus' },
-          { en: 'giraffe', ko: '기린', label: 'a simple hand-drawn sketch of a giraffe with a long neck' }
+          { en: 'lion', ko: '사자', colors: ['노랑', '주황', '갈색'], prompts: ['a simple hand-drawn sketch of a lion with a mane', 'a yellow and orange drawing of a lion face'] },
+          { en: 'cat', ko: '고양이', colors: ['검정', '주황', '노랑'], prompts: ['a simple hand-drawn sketch of a cat with whiskers and pointed ears', 'a cute doodle of a cat face'] },
+          { en: 'dog', ko: '강아지', colors: ['갈색', '검정', '노랑'], prompts: ['a simple hand-drawn sketch of a dog with floppy ears', 'a cute doodle of a puppy'] },
+          { en: 'elephant', ko: '코끼리', colors: ['파랑', '검정'], prompts: ['a simple hand-drawn sketch of an elephant with a long trunk', 'a drawing of an elephant side view'] },
+          { en: 'rabbit', ko: '토끼', colors: ['분홍', '검정'], prompts: ['a simple hand-drawn sketch of a rabbit with two long ears', 'a cute drawing of a bunny'] },
+          { en: 'pig', ko: '돼지', colors: ['분홍'], prompts: ['a simple hand-drawn sketch of a pig with a round snout', 'a pink drawing of a pig'] },
+          { en: 'fish', ko: '물고기', colors: ['파랑', '주황', '노랑'], prompts: ['a simple hand-drawn sketch of a swimming fish with fins and tail', 'a colorful drawing of a fish'] },
+          { en: 'bird', ko: '새', colors: ['파랑', '노랑', '빨강'], prompts: ['a simple hand-drawn sketch of a flying bird with wings and beak', 'a drawing of a small bird'] },
+          { en: 'penguin', ko: '펭귄', colors: ['검정', '주황', '노랑'], prompts: ['a simple hand-drawn sketch of a penguin standing upright', 'a black and white drawing of a penguin'] },
+          { en: 'butterfly', ko: '나비', colors: ['노랑', '분홍', '보라', '주황'], prompts: ['a simple hand-drawn sketch of a butterfly with symmetric wings', 'a colorful drawing of a butterfly'] },
+          { en: 'turtle', ko: '거북이', colors: ['초록', '갈색'], prompts: ['a simple hand-drawn sketch of a turtle with a patterned shell', 'a green drawing of a turtle'] },
+          { en: 'duck', ko: '오리', colors: ['노랑', '주황'], prompts: ['a simple hand-drawn sketch of a yellow duck with a bill', 'a drawing of a swimming duck'] },
+          { en: 'frog', ko: '개구리', colors: ['초록'], prompts: ['a simple hand-drawn sketch of a green frog with big eyes', 'a drawing of a frog'] },
+          { en: 'shark', ko: '상어', colors: ['파랑', '검정'], prompts: ['a simple hand-drawn sketch of a shark with a dorsal fin and sharp teeth', 'a drawing of a shark'] },
+          { en: 'whale', ko: '고래', colors: ['파랑'], prompts: ['a simple hand-drawn sketch of a whale spouting water', 'a blue drawing of a whale'] },
+          { en: 'octopus', ko: '문어', colors: ['빨강', '분홍', '보라'], prompts: ['a simple hand-drawn sketch of an octopus with eight tentacles', 'a red drawing of an octopus'] },
+          { en: 'giraffe', ko: '기린', colors: ['노랑', '주황', '갈색'], prompts: ['a simple hand-drawn sketch of a giraffe with a very long neck and spots', 'a yellow and brown drawing of a giraffe'] }
         ]
       },
       food: {
         name: '과일/채소',
         words: [
-          { en: 'apple', ko: '사과', label: 'a simple hand-drawn sketch of an apple fruit' },
-          { en: 'banana', ko: '바나나', label: 'a simple hand-drawn sketch of a yellow banana' },
-          { en: 'grapes', ko: '포도', label: 'a simple hand-drawn sketch of a bunch of grapes' },
-          { en: 'strawberry', ko: '딸기', label: 'a simple hand-drawn sketch of a strawberry' },
-          { en: 'watermelon', ko: '수박', label: 'a simple hand-drawn sketch of a slice of watermelon' },
-          { en: 'pineapple', ko: '파인애플', label: 'a simple hand-drawn sketch of a pineapple' },
-          { en: 'carrot', ko: '당근', label: 'a simple hand-drawn sketch of a carrot' },
-          { en: 'mushroom', ko: '버섯', label: 'a simple hand-drawn sketch of a mushroom' },
-          { en: 'broccoli', ko: '브로콜리', label: 'a simple hand-drawn sketch of broccoli' },
-          { en: 'tomato', ko: '토마토', label: 'a simple hand-drawn sketch of a tomato' },
-          { en: 'corn', ko: '옥수수', label: 'a simple hand-drawn sketch of corn on the cob' },
-          { en: 'cherry', ko: '체리', label: 'a simple hand-drawn sketch of cherries' },
-          { en: 'lemon', ko: '레몬', label: 'a simple hand-drawn sketch of a lemon' },
-          { en: 'peach', ko: '복숭아', label: 'a simple hand-drawn sketch of a peach' }
+          { en: 'apple', ko: '사과', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a red apple with a stem and leaf', 'a red fruit drawing of an apple'] },
+          { en: 'banana', ko: '바나나', colors: ['노랑'], prompts: ['a simple hand-drawn sketch of a curved yellow banana', 'a yellow banana fruit drawing'] },
+          { en: 'grapes', ko: '포도', colors: ['보라', '초록'], prompts: ['a simple hand-drawn sketch of a bunch of purple grapes', 'a cluster of grapes drawing'] },
+          { en: 'strawberry', ko: '딸기', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a red strawberry with seeds and green leaves', 'a red strawberry drawing'] },
+          { en: 'watermelon', ko: '수박', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a red watermelon slice with green rind and black seeds', 'a drawing of a watermelon wedge'] },
+          { en: 'pineapple', ko: '파인애플', colors: ['노랑', '초록'], prompts: ['a simple hand-drawn sketch of a pineapple with spiky crown leaves', 'a yellow pineapple drawing'] },
+          { en: 'carrot', ko: '당근', colors: ['주황', '초록'], prompts: ['a simple hand-drawn sketch of an orange carrot with green leafy top', 'an orange carrot vegetable drawing'] },
+          { en: 'mushroom', ko: '버섯', colors: ['빨강', '갈색'], prompts: ['a simple hand-drawn sketch of a spotted mushroom cap and stem', 'a drawing of a toadstool mushroom'] },
+          { en: 'broccoli', ko: '브로콜리', colors: ['초록'], prompts: ['a simple hand-drawn sketch of green broccoli florets', 'a green broccoli vegetable drawing'] },
+          { en: 'tomato', ko: '토마토', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a round red tomato with green calyx', 'a shiny red tomato drawing'] },
+          { en: 'corn', ko: '옥수수', colors: ['노랑', '초록'], prompts: ['a simple hand-drawn sketch of yellow corn on the cob with husks', 'a yellow corn cob drawing'] },
+          { en: 'cherry', ko: '체리', colors: ['빨강'], prompts: ['a simple hand-drawn sketch of two red cherries joined by stems', 'a pair of red cherries drawing'] },
+          { en: 'lemon', ko: '레몬', colors: ['노랑'], prompts: ['a simple hand-drawn sketch of an oval yellow lemon citrus fruit', 'a bright yellow lemon drawing'] },
+          { en: 'peach', ko: '복숭아', colors: ['분홍', '주황'], prompts: ['a simple hand-drawn sketch of a pink peach fruit with a cleft', 'a pink peach drawing'] }
         ]
       },
       objects: {
         name: '사물',
         words: [
-          { en: 'clock', ko: '시계', label: 'a simple hand-drawn sketch of a round clock' },
-          { en: 'umbrella', ko: '우산', label: 'a simple hand-drawn sketch of an open umbrella' },
-          { en: 'eyeglasses', ko: '안경', label: 'a simple hand-drawn sketch of eyeglasses' },
-          { en: 'cup', ko: '컵', label: 'a simple hand-drawn sketch of a coffee cup' },
-          { en: 'book', ko: '책', label: 'a simple hand-drawn sketch of an open book' },
-          { en: 'camera', ko: '카메라', label: 'a simple hand-drawn sketch of a camera' },
-          { en: 'scissors', ko: '가위', label: 'a simple hand-drawn sketch of scissors' },
-          { en: 'key', ko: '열쇠', label: 'a simple hand-drawn sketch of a key' },
-          { en: 'chair', ko: '의자', label: 'a simple hand-drawn sketch of a chair' },
-          { en: 'guitar', ko: '기타', label: 'a simple hand-drawn sketch of a guitar' },
-          { en: 'crown', ko: '왕관', label: 'a simple hand-drawn sketch of a royal crown' },
-          { en: 'laptop', ko: '노트북', label: 'a simple hand-drawn sketch of a laptop computer' },
-          { en: 'pencil', ko: '연필', label: 'a simple hand-drawn sketch of a pencil' },
-          { en: 'light bulb', ko: '전구', label: 'a simple hand-drawn sketch of a light bulb' }
+          { en: 'clock', ko: '시계', colors: ['검정', '파랑'], prompts: ['a simple hand-drawn sketch of a round analog clock with clock hands', 'a wall clock drawing'] },
+          { en: 'umbrella', ko: '우산', colors: ['파랑', '빨강', '노랑'], prompts: ['a simple hand-drawn sketch of an open umbrella with curved handle', 'a colorful umbrella drawing'] },
+          { en: 'eyeglasses', ko: '안경', colors: ['검정'], prompts: ['a simple hand-drawn sketch of eyeglasses with two round lenses', 'a drawing of spectacles glasses'] },
+          { en: 'cup', ko: '컵', colors: ['파랑', '빨강', '갈색'], prompts: ['a simple hand-drawn sketch of a coffee mug cup with a handle', 'a drawing of a teacup'] },
+          { en: 'book', ko: '책', colors: ['파랑', '빨강', '갈색'], prompts: ['a simple hand-drawn sketch of an open book with pages', 'a drawing of a textbook'] },
+          { en: 'camera', ko: '카메라', colors: ['검정', '파랑'], prompts: ['a simple hand-drawn sketch of a camera with a round lens and shutter button', 'a drawing of a photo camera'] },
+          { en: 'scissors', ko: '가위', colors: ['검정', '빨강', '파랑'], prompts: ['a simple hand-drawn sketch of open scissors with two finger loops', 'a drawing of scissors'] },
+          { en: 'key', ko: '열쇠', colors: ['노랑', '주황', '검정'], prompts: ['a simple hand-drawn sketch of a vintage key with teeth', 'a golden key drawing'] },
+          { en: 'chair', ko: '의자', colors: ['갈색', '검정'], prompts: ['a simple hand-drawn sketch of a wooden chair with backrest and four legs', 'a drawing of a chair'] },
+          { en: 'guitar', ko: '기타', colors: ['갈색', '주황'], prompts: ['a simple hand-drawn sketch of an acoustic guitar with strings', 'a brown guitar instrument drawing'] },
+          { en: 'crown', ko: '왕관', colors: ['노랑', '주황'], prompts: ['a simple hand-drawn sketch of a golden royal crown with jewels', 'a yellow crown drawing'] },
+          { en: 'laptop', ko: '노트북', colors: ['검정', '파랑'], prompts: ['a simple hand-drawn sketch of an open laptop computer with screen and keyboard', 'a drawing of a notebook computer'] },
+          { en: 'pencil', ko: '연필', colors: ['노랑', '분홍'], prompts: ['a simple hand-drawn sketch of a sharpened wooden pencil with eraser', 'a yellow pencil drawing'] },
+          { en: 'light bulb', ko: '전구', colors: ['노랑'], prompts: ['a simple hand-drawn sketch of a glowing yellow light bulb', 'a drawing of an incandescent bulb'] }
         ]
       },
       vehicles: {
         name: '교통수단',
         words: [
-          { en: 'car', ko: '자동차', label: 'a simple hand-drawn sketch of a car' },
-          { en: 'bus', ko: '버스', label: 'a simple hand-drawn sketch of a bus' },
-          { en: 'bicycle', ko: '자전거', label: 'a simple hand-drawn sketch of a bicycle' },
-          { en: 'airplane', ko: '비행기', label: 'a simple hand-drawn sketch of an airplane' },
-          { en: 'train', ko: '기차', label: 'a simple hand-drawn sketch of a train' },
-          { en: 'helicopter', ko: '헬리콥터', label: 'a simple hand-drawn sketch of a helicopter' },
-          { en: 'sailboat', ko: '돛단배', label: 'a simple hand-drawn sketch of a sailboat' },
-          { en: 'truck', ko: '트럭', label: 'a simple hand-drawn sketch of a truck' },
-          { en: 'motorcycle', ko: '오토바이', label: 'a simple hand-drawn sketch of a motorcycle' },
-          { en: 'rocket', ko: '로켓', label: 'a simple hand-drawn sketch of a space rocket' },
-          { en: 'submarine', ko: '잠수함', label: 'a simple hand-drawn sketch of a submarine' },
-          { en: 'hot air balloon', ko: '열기구', label: 'a simple hand-drawn sketch of a hot air balloon' }
+          { en: 'car', ko: '자동차', colors: ['빨강', '파랑', '노랑'], prompts: ['a simple hand-drawn sketch of a car with wheels and windows', 'a side view drawing of an automobile car'] },
+          { en: 'bus', ko: '버스', colors: ['노랑', '파랑', '초록'], prompts: ['a simple hand-drawn sketch of a long passenger bus with many windows', 'a yellow school bus drawing'] },
+          { en: 'bicycle', ko: '자전거', colors: ['빨강', '파랑', '검정'], prompts: ['a simple hand-drawn sketch of a bicycle with two wheels and handlebars', 'a drawing of a bike'] },
+          { en: 'airplane', ko: '비행기', colors: ['파랑', '검정'], prompts: ['a simple hand-drawn sketch of an airplane with wings and tail', 'a drawing of a flying plane'] },
+          { en: 'train', ko: '기차', colors: ['검정', '빨강', '파랑'], prompts: ['a simple hand-drawn sketch of a locomotive train on railway tracks', 'a drawing of a train'] },
+          { en: 'helicopter', ko: '헬리콥터', colors: ['초록', '파랑', '빨강'], prompts: ['a simple hand-drawn sketch of a helicopter with top rotor blades', 'a drawing of a chopper helicopter'] },
+          { en: 'sailboat', ko: '돛단배', colors: ['파랑', '빨강', '노랑'], prompts: ['a simple hand-drawn sketch of a sailboat with triangular sails on water', 'a drawing of a sailing boat'] },
+          { en: 'truck', ko: '트럭', colors: ['파랑', '빨강', '초록'], prompts: ['a simple hand-drawn sketch of a cargo pickup truck with wheels', 'a drawing of a delivery truck'] },
+          { en: 'motorcycle', ko: '오토바이', colors: ['빨강', '검정'], prompts: ['a simple hand-drawn sketch of a motorcycle motorbike with two wheels', 'a drawing of a motorbike'] },
+          { en: 'rocket', ko: '로켓', colors: ['빨강', '주황', '파랑'], prompts: ['a simple hand-drawn sketch of a space rocket launching with flames', 'a drawing of a spaceship rocket'] },
+          { en: 'submarine', ko: '잠수함', colors: ['노랑', '파랑'], prompts: ['a simple hand-drawn sketch of an underwater submarine with periscope', 'a yellow submarine drawing'] },
+          { en: 'hot air balloon', ko: '열기구', colors: ['빨강', '노랑', '파랑', '분홍'], prompts: ['a simple hand-drawn sketch of a colorful hot air balloon with basket', 'a drawing of a hot air balloon'] }
+        ]
+      },
+      color_challenge: {
+        name: '컬러 챌린지',
+        isColorChallenge: true,
+        words: [
+          { en: 'red_apple', ko: '빨간 사과', requiredColor: '빨강', colors: ['빨강'], prompts: ['a hand-drawn bright red apple fruit', 'a red colored drawing of an apple'] },
+          { en: 'yellow_banana', ko: '노란 바나나', requiredColor: '노랑', colors: ['노랑'], prompts: ['a hand-drawn bright yellow banana', 'a yellow colored drawing of a banana'] },
+          { en: 'blue_whale', ko: '파란 고래', requiredColor: '파랑', colors: ['파랑'], prompts: ['a hand-drawn blue whale swimming', 'a blue colored drawing of a whale'] },
+          { en: 'green_frog', ko: '초록 개구리', requiredColor: '초록', colors: ['초록'], prompts: ['a hand-drawn green frog', 'a green colored drawing of a frog'] },
+          { en: 'purple_grapes', ko: '보라 포도', requiredColor: '보라', colors: ['보라'], prompts: ['a hand-drawn bunch of purple grapes', 'a purple colored drawing of grapes'] },
+          { en: 'orange_carrot', ko: '주황 당근', requiredColor: '주황', colors: ['주황'], prompts: ['a hand-drawn orange carrot vegetable', 'an orange colored drawing of a carrot'] },
+          { en: 'pink_pig', ko: '분홍 돼지', requiredColor: '분홍', colors: ['분홍'], prompts: ['a hand-drawn pink pig', 'a pink colored drawing of a pig'] },
+          { en: 'red_car', ko: '빨간 자동차', requiredColor: '빨강', colors: ['빨강'], prompts: ['a hand-drawn red car with wheels', 'a red colored drawing of an automobile'] },
+          { en: 'yellow_crown', ko: '노란 왕관', requiredColor: '노랑', colors: ['노랑'], prompts: ['a hand-drawn golden yellow royal crown', 'a yellow colored drawing of a crown'] },
+          { en: 'blue_umbrella', ko: '파란 우산', requiredColor: '파랑', colors: ['파랑'], prompts: ['a hand-drawn open blue umbrella', 'a blue colored drawing of an umbrella'] },
+          { en: 'green_turtle', ko: '초록 거북이', requiredColor: '초록', colors: ['초록'], prompts: ['a hand-drawn green turtle with shell', 'a green colored drawing of a turtle'] },
+          { en: 'brown_dog', ko: '갈색 강아지', requiredColor: '갈색', colors: ['갈색'], prompts: ['a hand-drawn brown puppy dog', 'a brown colored drawing of a dog'] }
         ]
       }
     };
 
+    const MODEL_FALLBACK_CHAIN = [
+      { id: 'Xenova/siglip-base-patch16-224', label: 'SigLIP-Base-16 (고정밀·색상 특화)' },
+      { id: 'Xenova/clip-vit-base-patch16', label: 'CLIP-ViT-Base-16 (고해상도)' },
+      { id: 'Xenova/clip-vit-base-patch32', label: 'CLIP-ViT-Base-32 (초경량·고속)' }
+    ];
+
     let clipClassifier = null;
+    let activeModelId = MODEL_FALLBACK_CHAIN[0].id;
     let isModelReady = false;
     let isPlaying = false;
     let hasDrawn = false;
@@ -787,11 +1071,13 @@
     let currentTarget = null;
     const lastTargetByCat = {};
     let latestRankedResults = [];
+    let latestDetectedColors = [];
 
     let score = 0;
     let streak = 0;
 
     let strokeColor = '#111827';
+    let currentTool = 'pen'; // 'pen' | 'fill' | 'eraser'
     let strokeWidth = 12;
     let timeLeft = 30;
     let timerInterval = null;
@@ -802,25 +1088,47 @@
     let isDrawing = false;
     let lastX = 0;
     let lastY = 0;
+    let midX = 0;
+    let midY = 0;
     let undoStack = [];
 
     const cropCanvas = document.createElement('canvas');
     cropCanvas.width = 224;
     cropCanvas.height = 224;
-    const cropCtx = cropCanvas.getContext('2d');
+    const cropCtx = cropCanvas.getContext('2d', { willReadFrequently: true });
 
-    async function initModel() {
+    function setModelButtonsDisabled(disabled) {
+      document.querySelectorAll('.model-opt-btn').forEach(btn => {
+        btn.disabled = disabled;
+      });
+    }
+
+    function setCategoryButtonsDisabled(disabled) {
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.disabled = disabled;
+      });
+    }
+
+    async function loadVisionModel(modelId, modelLabel, allowFallback = true) {
       const statusEl = document.getElementById('loading-status');
       const textEl = document.getElementById('loading-text');
       const barFill = document.getElementById('load-bar-fill');
       const barWrap = document.getElementById('load-bar-wrap');
+
+      isModelReady = false;
+      setModelButtonsDisabled(true);
+      setCategoryButtonsDisabled(true);
+      statusEl.classList.remove('ready');
+      barWrap.classList.remove('hidden');
+      barFill.style.width = '0%';
+      textEl.textContent = `[${modelLabel}] 모델 불러오는 중...`;
 
       const fileProgress = new Map();
 
       try {
         clipClassifier = await pipeline(
           'zero-shot-image-classification',
-          'Xenova/clip-vit-base-patch32',
+          modelId,
           {
             quantized: true,
             progress_callback: (data) => {
@@ -830,7 +1138,7 @@
                 fileProgress.forEach((v) => { sum += v; });
                 const avg = Math.round(sum / fileProgress.size);
                 barFill.style.width = `${avg}%`;
-                textEl.textContent = `게임 데이터 불러오는 중... (${avg}%)`;
+                textEl.textContent = `[${modelLabel}] 불러오는 중... (${avg}%)`;
               } else if (data.status === 'ready') {
                 barFill.style.width = '100%';
               }
@@ -838,21 +1146,140 @@
           }
         );
 
+        activeModelId = modelId;
         isModelReady = true;
         barWrap.classList.add('hidden');
-        textEl.textContent = '준비 완료! 원하는 카테고리를 선택해 시작하세요.';
+        textEl.textContent = `준비 완료! (${modelLabel}) — 카테고리를 선택해 시작하세요.`;
         statusEl.classList.add('ready');
-        document.querySelectorAll('.cat-btn').forEach(btn => btn.disabled = false);
+        document.getElementById('active-model-badge').textContent = `현재: ${modelLabel}`;
+
+        document.querySelectorAll('.model-opt-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.model === modelId);
+        });
+        setModelButtonsDisabled(false);
+        setCategoryButtonsDisabled(false);
       } catch (err) {
-        console.error(err);
-        textEl.textContent = '데이터 로딩 중 오류가 발생했습니다. 페이지를 새로고침해 주세요.';
+        console.error('모델 로딩 실패:', modelId, err);
+        if (allowFallback) {
+          const fallback = MODEL_FALLBACK_CHAIN.find(m => m.id !== modelId);
+          if (fallback) {
+            textEl.textContent = `모델 전환 중... 대체 모델(${fallback.label})을 불러옵니다.`;
+            await loadVisionModel(fallback.id, fallback.label, false);
+            return;
+          }
+        }
+        setModelButtonsDisabled(false);
+        textEl.textContent = '모델 로딩 중 오류가 발생했습니다. 다른 모델을 선택하거나 새로고침해 주세요.';
       }
     }
 
-    initModel();
+    // 초기 기본 모델 로드 (SigLIP-Base-16)
+    loadVisionModel(MODEL_FALLBACK_CHAIN[0].id, MODEL_FALLBACK_CHAIN[0].label, true);
+
+    document.querySelectorAll('.model-opt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.model === activeModelId && isModelReady) return;
+        loadVisionModel(btn.dataset.model, btn.dataset.label, true);
+      });
+    });
+
+    // RGB -> HSL 변환 및 픽셀 색상 분석기 (실시간 색깔 인식)
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h = 0, s = 0;
+      const l = (max + min) / 2;
+
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+          case g: h = ((b - r) / d + 2); break;
+          case b: h = ((r - g) / d + 4); break;
+        }
+        h *= 60;
+      }
+      return { h, s, l };
+    }
+
+    function classifyPixelColorName(r, g, b) {
+      const { h, s, l } = rgbToHsl(r, g, b);
+      if (l < 0.22 || (s < 0.16 && l < 0.65)) return '검정';
+      if ((h >= 312 || h < 14) && l >= 0.60 && s >= 0.22) return '분홍';
+      if ((h >= 338 || h < 14) && s >= 0.22) return '빨강';
+      if (h >= 14 && h < 42 && l < 0.48 && s >= 0.18) return '갈색';
+      if (h >= 14 && h < 42 && l >= 0.48 && s >= 0.22) return '주황';
+      if (h >= 42 && h < 72 && s >= 0.22) return '노랑';
+      if (h >= 72 && h < 165 && s >= 0.18) return '초록';
+      if (h >= 165 && h < 258 && s >= 0.18) return '파랑';
+      if (h >= 258 && h < 312 && s >= 0.18) return '보라';
+      return '검정';
+    }
+
+    function analyzeCanvasColors() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const data = ctx.getImageData(0, 0, w, h).data;
+      const counts = {};
+      let totalInkPixels = 0;
+
+      for (let y = 0; y < h; y += 2) {
+        for (let x = 0; x < w; x += 2) {
+          const idx = (y * w + x) * 4;
+          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+          if (r > 240 && g > 240 && b > 240) continue;
+          const cname = classifyPixelColorName(r, g, b);
+          counts[cname] = (counts[cname] || 0) + 1;
+          totalInkPixels++;
+        }
+      }
+
+      if (totalInkPixels === 0) {
+        latestDetectedColors = [];
+        renderDetectedColorsUI([]);
+        return [];
+      }
+
+      const ranked = Object.entries(counts)
+        .map(([name, count]) => ({
+          name,
+          ratio: count / totalInkPixels,
+          hex: COLOR_PALETTE_META[name] || '#111827'
+        }))
+        .filter(item => item.ratio >= 0.04)
+        .sort((a, b) => b.ratio - a.ratio);
+
+      latestDetectedColors = ranked;
+      renderDetectedColorsUI(ranked);
+      return ranked;
+    }
+
+    function renderDetectedColorsUI(rankedColors) {
+      const wrap = document.getElementById('detected-colors-wrap');
+      if (!rankedColors || rankedColors.length === 0) {
+        wrap.innerHTML = '<span>감지 색상: 없음</span>';
+        return;
+      }
+
+      const chipsHtml = rankedColors.slice(0, 3).map(c =>
+        `<span class="color-chip"><span class="color-chip-dot" style="background:${c.hex};"></span>${c.name} ${Math.round(c.ratio * 100)}%</span>`
+      ).join('');
+
+      let bonusHtml = '';
+      if (currentTarget && Array.isArray(currentTarget.colors)) {
+        const matched = rankedColors.find(c => c.name !== '검정' && currentTarget.colors.includes(c.name) && c.ratio >= 0.08);
+        if (matched) {
+          bonusHtml = `<span class="color-bonus-tag">색상 일치 (${matched.name}) +보너스</span>`;
+        }
+      }
+
+      wrap.innerHTML = `<span>감지 색상:</span>${chipsHtml}${bonusHtml}`;
+    }
 
     function saveUndoState() {
-      if (undoStack.length >= 20) {
+      if (undoStack.length >= 25) {
         undoStack.shift();
       }
       undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
@@ -865,12 +1292,14 @@
       ctx.putImageData(prevState, 0, 0);
       document.getElementById('undo-btn').disabled = undoStack.length === 0;
       checkCanvasHasInk();
+      analyzeCanvasColors();
       if (hasDrawn) {
         scheduleInference();
       } else {
         latestRankedResults = [];
         document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림을 그리기 시작하세요';
         document.getElementById('ai-confidence-text').textContent = '0%';
+        document.getElementById('ai-runnerups-text').textContent = '2위 · 3위 대기 중';
         document.getElementById('ai-progress-fill').style.width = '0%';
       }
     }
@@ -886,6 +1315,106 @@
       hasDrawn = false;
     }
 
+    // 고속 Flood Fill (페인트통 색 채우기)
+    function hexToRgb(hex) {
+      const clean = hex.replace('#', '');
+      return {
+        r: parseInt(clean.slice(0, 2), 16),
+        g: parseInt(clean.slice(2, 4), 16),
+        b: parseInt(clean.slice(4, 6), 16)
+      };
+    }
+
+    function floodFillAt(startX, startY, fillHex) {
+      const w = canvas.width;
+      const h = canvas.height;
+      const x0 = Math.max(0, Math.min(w - 1, Math.floor(startX)));
+      const y0 = Math.max(0, Math.min(h - 1, Math.floor(startY)));
+
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+      const targetRgb = hexToRgb(fillHex);
+
+      const startIdx = (y0 * w + x0) * 4;
+      const sr = data[startIdx];
+      const sg = data[startIdx + 1];
+      const sb = data[startIdx + 2];
+
+      if (
+        Math.abs(sr - targetRgb.r) < 10 &&
+        Math.abs(sg - targetRgb.g) < 10 &&
+        Math.abs(sb - targetRgb.b) < 10
+      ) {
+        return;
+      }
+
+      saveUndoState();
+
+      const visited = new Uint8Array(w * h);
+      const queue = new Int32Array(w * h);
+      let head = 0;
+      let tail = 0;
+
+      const tolerance = 52;
+      const matchesStart = (idx) => {
+        return (
+          Math.abs(data[idx] - sr) <= tolerance &&
+          Math.abs(data[idx + 1] - sg) <= tolerance &&
+          Math.abs(data[idx + 2] - sb) <= tolerance
+        );
+      };
+
+      const startPos = y0 * w + x0;
+      visited[startPos] = 1;
+      queue[tail++] = startPos;
+
+      while (head < tail) {
+        const pos = queue[head++];
+        const px = pos % w;
+        const py = (pos - px) / w;
+        const dIdx = pos * 4;
+
+        data[dIdx] = targetRgb.r;
+        data[dIdx + 1] = targetRgb.g;
+        data[dIdx + 2] = targetRgb.b;
+        data[dIdx + 3] = 255;
+
+        if (px > 0) {
+          const nPos = pos - 1;
+          if (!visited[nPos] && matchesStart(nPos * 4)) {
+            visited[nPos] = 1;
+            queue[tail++] = nPos;
+          }
+        }
+        if (px < w - 1) {
+          const nPos = pos + 1;
+          if (!visited[nPos] && matchesStart(nPos * 4)) {
+            visited[nPos] = 1;
+            queue[tail++] = nPos;
+          }
+        }
+        if (py > 0) {
+          const nPos = pos - w;
+          if (!visited[nPos] && matchesStart(nPos * 4)) {
+            visited[nPos] = 1;
+            queue[tail++] = nPos;
+          }
+        }
+        if (py < h - 1) {
+          const nPos = pos + w;
+          if (!visited[nPos] && matchesStart(nPos * 4)) {
+            visited[nPos] = 1;
+            queue[tail++] = nPos;
+          }
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+      hasDrawn = true;
+      analyzeCanvasColors();
+      scheduleInference();
+    }
+
     function getCanvasCoords(e) {
       const rect = canvas.getBoundingClientRect();
       const touch = e.touches ? e.touches[0] : e;
@@ -898,53 +1427,71 @@
     function startStroke(e) {
       if (!isPlaying) return;
       e.preventDefault();
+      const pos = getCanvasCoords(e);
+
+      if (currentTool === 'fill') {
+        floodFillAt(pos.x, pos.y, strokeColor);
+        return;
+      }
+
       saveUndoState();
       isDrawing = true;
-      const pos = getCanvasCoords(e);
       lastX = pos.x;
       lastY = pos.y;
+      midX = pos.x;
+      midY = pos.y;
 
-      ctx.fillStyle = strokeColor;
+      const activeDrawColor = currentTool === 'eraser' ? '#ffffff' : strokeColor;
+      ctx.fillStyle = activeDrawColor;
       ctx.beginPath();
       ctx.arc(lastX, lastY, strokeWidth / 2, 0, Math.PI * 2);
       ctx.fill();
-      if (strokeColor !== '#ffffff') hasDrawn = true;
+      if (currentTool !== 'eraser') hasDrawn = true;
 
       clearInterval(midStrokeInterval);
       midStrokeInterval = setInterval(() => {
         if (isDrawing && isPlaying && hasDrawn) {
+          analyzeCanvasColors();
           scheduleInference();
         }
-      }, 1100);
+      }, 950);
     }
 
     function moveStroke(e) {
-      if (!isPlaying || !isDrawing) return;
+      if (!isPlaying || !isDrawing || currentTool === 'fill') return;
       e.preventDefault();
       const pos = getCanvasCoords(e);
+      const activeDrawColor = currentTool === 'eraser' ? '#ffffff' : strokeColor;
 
-      ctx.strokeStyle = strokeColor;
+      // 2차 베지어 곡선 스무딩으로 부드러운 획 렌더링
+      const nextMidX = (lastX + pos.x) / 2;
+      const nextMidY = (lastY + pos.y) / 2;
+
+      ctx.strokeStyle = activeDrawColor;
       ctx.lineWidth = strokeWidth;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
       ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(pos.x, pos.y);
+      ctx.moveTo(midX, midY);
+      ctx.quadraticCurveTo(lastX, lastY, nextMidX, nextMidY);
       ctx.stroke();
 
       lastX = pos.x;
       lastY = pos.y;
-      if (strokeColor !== '#ffffff') hasDrawn = true;
+      midX = nextMidX;
+      midY = nextMidY;
+      if (currentTool !== 'eraser') hasDrawn = true;
     }
 
     function endStroke() {
       if (!isDrawing) return;
       isDrawing = false;
       clearInterval(midStrokeInterval);
-      if (strokeColor === '#ffffff') {
+      if (currentTool === 'eraser') {
         checkCanvasHasInk();
       }
+      analyzeCanvasColors();
       if (isPlaying && hasDrawn) {
         scheduleInference();
       }
@@ -958,15 +1505,33 @@
     canvas.addEventListener('touchmove', moveStroke, { passive: false });
     window.addEventListener('touchend', endStroke);
 
+    function setActiveTool(toolName) {
+      currentTool = toolName;
+      document.getElementById('tool-pen-btn').classList.toggle('active', toolName === 'pen');
+      document.getElementById('tool-fill-btn').classList.toggle('active', toolName === 'fill');
+      document.getElementById('tool-eraser-btn').classList.toggle('active', toolName === 'eraser');
+      canvas.classList.toggle('fill-cursor', toolName === 'fill');
+    }
+
+    document.getElementById('tool-pen-btn').addEventListener('click', () => setActiveTool('pen'));
+    document.getElementById('tool-fill-btn').addEventListener('click', () => setActiveTool('fill'));
+    document.getElementById('tool-eraser-btn').addEventListener('click', () => setActiveTool('eraser'));
+
     window.addEventListener('keydown', (e) => {
+      if (!isPlaying) return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-        if (isPlaying) {
-          e.preventDefault();
-          performUndo();
-        }
+        e.preventDefault();
+        performUndo();
+      } else if (e.key.toLowerCase() === 'p') {
+        setActiveTool('pen');
+      } else if (e.key.toLowerCase() === 'f') {
+        setActiveTool('fill');
+      } else if (e.key.toLowerCase() === 'e') {
+        setActiveTool('eraser');
       }
     });
 
+    // 추론 전처리: 중심 크롭 + 얇은 선 보강(인식률 향상)
     function prepareCroppedDataUrl() {
       const w = canvas.width;
       const h = canvas.height;
@@ -999,7 +1564,7 @@
       const boxW = Math.max(24, maxX - minX);
       const boxH = Math.max(24, maxY - minY);
       const maxSide = Math.max(boxW, boxH);
-      const pad = Math.round(maxSide * 0.16);
+      const pad = Math.round(maxSide * 0.14);
       const targetSize = 224 - pad * 2;
       const scale = targetSize / maxSide;
 
@@ -1009,30 +1574,106 @@
       const offsetY = (224 - drawH) / 2;
 
       cropCtx.drawImage(canvas, minX, minY, boxW, boxH, offsetX, offsetY, drawW, drawH);
+
+      // 얇은 선이 축소 시 흐려지는 것을 막기 위한 경량 1px 최소값 필터 (선 선명도 보강)
+      const cImg = cropCtx.getImageData(0, 0, 224, 224);
+      const src = cImg.data;
+      const copy = new Uint8ClampedArray(src);
+      for (let y = 1; y < 223; y++) {
+        for (let x = 1; x < 223; x++) {
+          const idx = (y * 224 + x) * 4;
+          if (copy[idx] > 235 && copy[idx + 1] > 235 && copy[idx + 2] > 235) {
+            const left = idx - 4;
+            const up = idx - 224 * 4;
+            if (copy[left] < 200 || copy[left + 1] < 200 || copy[left + 2] < 200) {
+              src[idx] = Math.round((copy[idx] + copy[left]) * 0.5);
+              src[idx + 1] = Math.round((copy[idx + 1] + copy[left + 1]) * 0.5);
+              src[idx + 2] = Math.round((copy[idx + 2] + copy[left + 2]) * 0.5);
+            } else if (copy[up] < 200 || copy[up + 1] < 200 || copy[up + 2] < 200) {
+              src[idx] = Math.round((copy[idx] + copy[up]) * 0.5);
+              src[idx + 1] = Math.round((copy[idx + 1] + copy[up + 1]) * 0.5);
+              src[idx + 2] = Math.round((copy[idx + 2] + copy[up + 2]) * 0.5);
+            }
+          }
+        }
+      }
+      cropCtx.putImageData(cImg, 0, 0);
+
       return cropCanvas.toDataURL('image/png');
     }
 
+    // 다중 프롬프트 앙상블 + 색상-의미 결합 추론 엔진
     async function evaluateCanvasOnce() {
       const imageDataUrl = prepareCroppedDataUrl();
-      const words = CATEGORIES[currentCategoryKey].words;
-      const candidateLabels = words.map(w => w.label);
-      const labelMap = new Map(words.map(w => [w.label, w]));
+      const detectedColors = analyzeCanvasColors();
+      const catObj = CATEGORIES[currentCategoryKey];
+      const words = catObj.words;
+
+      const candidateLabels = [];
+      const promptToWord = new Map();
+
+      words.forEach(w => {
+        w.prompts.forEach(p => {
+          candidateLabels.push(p);
+          promptToWord.set(p, w);
+        });
+      });
 
       const output = await clipClassifier(imageDataUrl, candidateLabels, {
         hypothesis_template: '{}'
       });
 
       if (Array.isArray(output) && output.length > 0) {
-        const totalScore = output.reduce((sum, item) => sum + item.score, 0);
-        latestRankedResults = output
-          .map((item) => {
-            const matched = labelMap.get(item.label);
-            return {
-              en: matched ? matched.en : item.label,
-              ko: matched ? matched.ko : item.label,
-              confidence: totalScore > 0 ? (item.score / totalScore) : 0
-            };
-          })
+        const wordScoresMap = new Map();
+        words.forEach(w => wordScoresMap.set(w.en, []));
+
+        output.forEach(item => {
+          const w = promptToWord.get(item.label);
+          if (w) {
+            wordScoresMap.get(w.en).push(item.score);
+          }
+        });
+
+        // 유채색 감지 목록
+        const chromaticColors = detectedColors.filter(c => c.name !== '검정' && c.ratio >= 0.08);
+        const dominantChromatic = chromaticColors.length > 0 ? chromaticColors[0] : null;
+
+        const rawEntries = words.map(w => {
+          const scores = wordScoresMap.get(w.en) || [0];
+          const maxScore = Math.max(...scores);
+          const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+          // 앙상블 결합 점수
+          let combined = maxScore * 0.65 + avgScore * 0.35;
+
+          // 색상 결합 보정: 사용자가 유채색을 칠한 경우 사물의 고유 색상과 매칭
+          if (dominantChromatic && Array.isArray(w.colors) && w.colors.length > 0) {
+            if (w.colors[0] === dominantChromatic.name) {
+              combined *= 1.24;
+            } else if (w.colors.includes(dominantChromatic.name)) {
+              combined *= 1.14;
+            } else if (catObj.isColorChallenge) {
+              combined *= 0.72;
+            } else if (dominantChromatic.ratio >= 0.25) {
+              combined *= 0.92;
+            }
+          }
+
+          return {
+            en: w.en,
+            ko: w.ko,
+            requiredColor: w.requiredColor || null,
+            raw: combined
+          };
+        });
+
+        const totalRaw = rawEntries.reduce((sum, item) => sum + item.raw, 0);
+        latestRankedResults = rawEntries
+          .map(item => ({
+            en: item.en,
+            ko: item.ko,
+            requiredColor: item.requiredColor,
+            confidence: totalRaw > 0 ? (item.raw / totalRaw) : 0
+          }))
           .sort((a, b) => b.confidence - a.confidence);
       }
     }
@@ -1044,6 +1685,22 @@
         return;
       }
       runInferenceLoop();
+    }
+
+    function isTargetSatisfied(top1) {
+      if (!top1 || top1.en !== currentTarget.en) return false;
+      const catObj = CATEGORIES[currentCategoryKey];
+      const uniformBaseline = 1 / catObj.words.length;
+      if (top1.confidence <= uniformBaseline * 1.18) return false;
+
+      // 컬러 챌린지 모드에서는 지정 색상이 실제로 12% 이상 칠해졌는지 함께 검증
+      if (catObj.isColorChallenge && currentTarget.requiredColor) {
+        const reqColorStat = latestDetectedColors.find(c => c.name === currentTarget.requiredColor);
+        if (!reqColorStat || reqColorStat.ratio < 0.12) {
+          return false;
+        }
+      }
+      return true;
     }
 
     async function runInferenceLoop() {
@@ -1063,16 +1720,29 @@
         }
 
         if (latestRankedResults.length > 0) {
-          const words = CATEGORIES[currentCategoryKey].words;
           const top1 = latestRankedResults[0];
           const percent = Math.round(top1.confidence * 100);
 
-          document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${top1.ko}`;
+          const catObj = CATEGORIES[currentCategoryKey];
+          let statusSuffix = '';
+          if (catObj.isColorChallenge && top1.en === currentTarget.en && currentTarget.requiredColor) {
+            const reqColorStat = latestDetectedColors.find(c => c.name === currentTarget.requiredColor);
+            if (!reqColorStat || reqColorStat.ratio < 0.12) {
+              statusSuffix = ` (${currentTarget.requiredColor} 색칠 필요!)`;
+            }
+          }
+
+          document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${top1.ko}${statusSuffix}`;
           document.getElementById('ai-confidence-text').textContent = `${percent}%`;
           document.getElementById('ai-progress-fill').style.width = `${percent}%`;
 
-          const uniformBaseline = 1 / words.length;
-          if (top1.en === currentTarget.en && top1.confidence > uniformBaseline * 1.15) {
+          const runnerText = latestRankedResults
+            .slice(1, 3)
+            .map((r, i) => `${i + 2}위 ${r.ko} ${Math.round(r.confidence * 100)}%`)
+            .join(' · ');
+          document.getElementById('ai-runnerups-text').textContent = runnerText || '후보 분석 중';
+
+          if (isTargetSatisfied(top1)) {
             inferenceState = 'IDLE';
             endGame(true);
             return;
@@ -1105,6 +1775,18 @@
       document.getElementById('display-category').textContent = catData.name;
       document.getElementById('display-target').textContent = currentTarget.ko;
 
+      const colorHintEl = document.getElementById('display-color-hint');
+      if (catData.isColorChallenge && currentTarget.requiredColor) {
+        colorHintEl.textContent = `필수색: ${currentTarget.requiredColor}`;
+        colorHintEl.style.background = COLOR_PALETTE_META[currentTarget.requiredColor] || '#ffd83b';
+        colorHintEl.style.color = ['파랑', '빨강', '갈색', '검정'].includes(currentTarget.requiredColor) ? '#ffffff' : '#0f0f0f';
+      } else if (currentTarget.colors && currentTarget.colors.length > 0) {
+        colorHintEl.textContent = `추천색: ${currentTarget.colors.slice(0, 2).join('/')}`;
+        colorHintEl.style.background = '#ffffff';
+        colorHintEl.style.color = '#0f0f0f';
+      }
+
+      setActiveTool('pen');
       resetCanvas(false);
       isPlaying = true;
       isDrawing = false;
@@ -1143,8 +1825,11 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       hasDrawn = false;
       latestRankedResults = [];
+      latestDetectedColors = [];
+      renderDetectedColorsUI([]);
       document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림을 그리기 시작하세요';
       document.getElementById('ai-confidence-text').textContent = '0%';
+      document.getElementById('ai-runnerups-text').textContent = '2위 · 3위 대기 중';
       document.getElementById('ai-progress-fill').style.width = '0%';
     }
 
@@ -1166,18 +1851,37 @@
 
       const titleEl = document.getElementById('result-title');
       const bonusEl = document.getElementById('result-bonus-text');
+      const colorSummaryEl = document.getElementById('result-color-summary');
       const wrongDetailBox = document.getElementById('wrong-detail-box');
       const listEl = document.getElementById('top3-list');
 
+      if (latestDetectedColors.length > 0) {
+        const summaryStr = latestDetectedColors
+          .slice(0, 3)
+          .map(c => `${c.name}(${Math.round(c.ratio * 100)}%)`)
+          .join(', ');
+        colorSummaryEl.textContent = `AI 감지 색상 분포: ${summaryStr}`;
+      } else {
+        colorSummaryEl.textContent = '';
+      }
+
       if (isSuccess) {
         streak += 1;
-        const earned = 100 + Math.max(0, timeLeft) * 10;
+        const catObj = CATEGORIES[currentCategoryKey];
+        const colorBonus = (currentTarget.colors || []).some(col =>
+          latestDetectedColors.some(dc => dc.name === col && dc.ratio >= 0.1)
+        ) ? 50 : 0;
+        const modeBonus = catObj.isColorChallenge ? 50 : 0;
+        const earned = 100 + Math.max(0, timeLeft) * 10 + colorBonus + modeBonus;
         score += earned;
         updateScoreUI();
 
         titleEl.textContent = '정답입니다! AI가 그림을 맞혔습니다.';
         titleEl.className = 'result-banner success';
-        bonusEl.textContent = `${timeLeft}초 남기고 성공 (+${earned}점 획득)`;
+        const bonusParts = [`${timeLeft}초 남기고 성공`];
+        if (colorBonus > 0) bonusParts.push(`색상 일치 +${colorBonus}`);
+        if (modeBonus > 0) bonusParts.push(`컬러챌린지 +${modeBonus}`);
+        bonusEl.textContent = `${bonusParts.join(' · ')} (총 +${earned}점 획득)`;
         wrongDetailBox.classList.add('hidden');
         listEl.innerHTML = '';
       } else {
@@ -1186,7 +1890,12 @@
 
         titleEl.textContent = '아쉽습니다! AI가 맞히지 못했습니다.';
         titleEl.className = 'result-banner fail';
-        bonusEl.textContent = '다음 문제에서 다시 도전해 보세요.';
+        const catObj = CATEGORIES[currentCategoryKey];
+        if (catObj.isColorChallenge && currentTarget.requiredColor) {
+          bonusEl.textContent = `형태와 지정 색상(${currentTarget.requiredColor})이 모두 충분히 표현되어야 합니다.`;
+        } else {
+          bonusEl.textContent = '다음 문제에서 다시 도전해 보세요.';
+        }
         wrongDetailBox.classList.remove('hidden');
         listEl.innerHTML = '';
 
@@ -1215,6 +1924,9 @@
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         strokeColor = btn.dataset.color;
+        if (currentTool === 'eraser') {
+          setActiveTool('pen');
+        }
       });
     });
 
@@ -1241,8 +1953,12 @@
         }
       }
 
-      const isTop1 = hasDrawn && latestRankedResults.length > 0 && latestRankedResults[0].en === currentTarget.en;
-      endGame(isTop1);
+      const top1 = hasDrawn && latestRankedResults.length > 0 ? latestRankedResults[0] : null;
+      const isOk = Boolean(top1 && top1.en === currentTarget.en && (
+        !CATEGORIES[currentCategoryKey].isColorChallenge ||
+        (latestDetectedColors.find(c => c.name === currentTarget.requiredColor)?.ratio || 0) >= 0.12
+      ));
+      endGame(isOk);
     });
 
     document.getElementById('restart-btn').addEventListener('click', () => {
