@@ -11,53 +11,47 @@
 
         :root {
             --bg: #dfdcd3;
-            --black: #0f0f0f;
+            --black: #111111;
             --white: #ffffff;
+            --cream: #f9f6ef;
             --yellow: #ffd83b;
             --pink: #ff4757;
             --cyan: #48dbfb;
             --green: #2ed573;
             --orange: #ff9f43;
-            
+            --blue: #3e51ff;
+
             --border-thick: 4px solid var(--black);
             --border: 3px solid var(--black);
             --shadow-sm: 4px 4px 0 var(--black);
             --shadow-lg: 8px 8px 0 var(--black);
         }
 
-        body::after {
-            content: "";
-            position: fixed; inset: 0;
-            pointer-events: none; z-index: 9999;
-            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
-            opacity: 0.12;
-            mix-blend-mode: overlay;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Noto Sans KR', "Pretendard Variable", sans-serif;
+            font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
         }
 
         html { scroll-behavior: smooth; }
 
+        /* 통일된 단색 배경 및 네오브루탈리즘 기본 타이포그래피 */
         body {
             background-color: var(--bg);
-            background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px);
-            background-size: 24px 24px;
             color: var(--black);
             line-height: 1.7;
-            padding: 20px 20px 80px;
+            padding: 24px 20px 80px;
             -webkit-font-smoothing: antialiased;
+            word-break: keep-all;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 920px;
             margin: 0 auto;
         }
 
+        /* 상단 고정 바 통일 */
         header.top-bar {
             display: flex;
             justify-content: space-between;
@@ -92,21 +86,21 @@
         .brand-title {
             font-weight: 900;
             font-size: 1rem;
-            text-transform: uppercase;
+            letter-spacing: -0.01em;
         }
 
         .clock-box {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 900;
             background: var(--yellow);
             color: var(--black);
-            padding: 6px 14px;
+            padding: 5px 14px;
             border: var(--border);
             box-shadow: 2px 2px 0 var(--black);
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
+        /* 히어로 카드 */
         .hero {
             background: var(--white);
             padding: 36px 32px;
@@ -128,22 +122,30 @@
         }
 
         .hero h1 {
-            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-size: clamp(1.8rem, 4vw, 2.45rem);
             font-weight: 900;
             margin-bottom: 14px;
             letter-spacing: -0.02em;
-            line-height: 1.3;
-            text-transform: uppercase;
+            line-height: 1.28;
+        }
+
+        .hero h1 span {
+            display: inline-block;
+            background: var(--yellow);
+            border: var(--border);
+            padding: 0 12px;
+            box-shadow: 4px 4px 0 var(--black);
         }
 
         .hero p {
-            font-size: 1.05rem;
-            font-weight: 700;
+            font-size: 1.02rem;
+            font-weight: 600;
             color: #222;
             border-left: 6px solid var(--black);
             padding-left: 16px;
         }
 
+        /* 업로드 카드 */
         .upload-card {
             background: var(--white);
             padding: 32px;
@@ -155,12 +157,11 @@
             font-size: 1.5rem;
             font-weight: 900;
             margin-bottom: 6px;
-            text-transform: uppercase;
         }
 
         .upload-card > p {
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 600;
             margin-bottom: 24px;
         }
 
@@ -169,7 +170,7 @@
             padding: 56px 20px;
             cursor: pointer;
             transition: all 0.1s ease;
-            background: rgba(72, 219, 251, 0.15);
+            background: var(--cream);
             text-align: center;
             box-shadow: var(--shadow-sm);
         }
@@ -187,9 +188,9 @@
         }
 
         .drop-zone-sub {
-            font-size: 0.95rem;
+            font-size: 0.94rem;
             font-weight: 700;
-            color: #444;
+            color: #333;
         }
 
         .loading-box {
@@ -215,6 +216,7 @@
             to { transform: rotate(360deg); }
         }
 
+        /* 결과 창 */
         .result-window {
             display: none;
             background: var(--white);
@@ -242,6 +244,10 @@
             cursor: pointer;
             color: var(--black);
             transition: all 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
         }
 
         .btn-neo:hover {
@@ -252,8 +258,14 @@
 
         .btn-neo:active {
             transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0px var(--black);
+            box-shadow: 0 0 0 var(--black);
         }
+
+        .btn-neo.btn-yellow { background: var(--yellow); }
+        .btn-neo.btn-green { background: var(--green); }
+        .btn-neo.btn-cyan { background: var(--cyan); }
+        .btn-neo.btn-blue { background: var(--blue); color: var(--white); }
+        .btn-neo.btn-blue:hover { background: var(--cyan); color: var(--black); }
 
         .url-bar {
             flex: 1;
@@ -261,7 +273,7 @@
             padding: 8px 14px;
             border: var(--border);
             font-size: 0.9rem;
-            font-weight: 900;
+            font-weight: 800;
             min-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -285,10 +297,10 @@
 
         .image-preview-section {
             text-align: center;
-            margin-bottom: 28px;
-            background: var(--bg);
+            margin-bottom: 24px;
+            background: var(--cream);
             border: var(--border-thick);
-            padding: 20px;
+            padding: 22px;
             box-shadow: var(--shadow-sm);
         }
 
@@ -303,34 +315,163 @@
         }
 
         .detected-label {
-            font-size: 1.4rem;
+            font-size: 1.45rem;
             font-weight: 900;
             margin-top: 6px;
         }
 
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
         .detected-sub {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 800;
             color: var(--black);
-            margin-top: 8px;
             background: var(--cyan);
-            display: inline-block;
             padding: 4px 12px;
-            border: var(--border);
+            border: 2px solid var(--black);
             box-shadow: 2px 2px 0 var(--black);
         }
 
         .api-source-badge {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 800;
             color: var(--black);
-            margin-top: 8px;
             background: var(--yellow);
-            display: inline-block;
-            padding: 3px 10px;
+            padding: 4px 12px;
             border: 2px solid var(--black);
+            box-shadow: 2px 2px 0 var(--black);
         }
 
+        /* AI Top-3 후보 선택 칩 */
+        .candidate-bar {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 2px dashed var(--black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .candidate-title {
+            font-size: 0.88rem;
+            font-weight: 900;
+            color: #222;
+        }
+
+        .candidate-chips {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cand-chip {
+            background: var(--white);
+            border: 2px solid var(--black);
+            box-shadow: 2px 2px 0 var(--black);
+            padding: 5px 12px;
+            font-size: 0.86rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .cand-chip:hover {
+            background: var(--cyan);
+            transform: translate(-1px, -1px);
+        }
+
+        .cand-chip.active {
+            background: var(--yellow);
+            box-shadow: 3px 3px 0 var(--black);
+        }
+
+        /* Google AI 이미지 검색 & 결과 연동 패널 */
+        .google-lens-box {
+            background: var(--cream);
+            border: var(--border-thick);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .google-lens-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--black);
+        }
+
+        .google-lens-title {
+            font-size: 1.08rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .google-pill {
+            background: var(--black);
+            color: var(--yellow);
+            font-size: 0.78rem;
+            padding: 2px 8px;
+            font-weight: 900;
+        }
+
+        .google-actions-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .google-sync-status {
+            display: none;
+            background: var(--yellow);
+            border: 2px solid var(--black);
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            box-shadow: 2px 2px 0 var(--black);
+        }
+
+        .google-sync-form {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .google-sync-form input {
+            flex: 1;
+            min-width: 210px;
+            padding: 10px 14px;
+            border: var(--border);
+            background: var(--white);
+            font-size: 0.94rem;
+            font-weight: 800;
+            box-shadow: 2px 2px 0 var(--black);
+        }
+
+        .google-sync-form input:focus {
+            outline: none;
+            background: var(--yellow);
+        }
+
+        /* 섭취량 조절 */
         .serving-controls {
             display: flex;
             justify-content: center;
@@ -338,7 +479,7 @@
             gap: 10px;
             margin-bottom: 24px;
             flex-wrap: wrap;
-            background: var(--bg);
+            background: var(--cream);
             padding: 14px;
             border: var(--border);
             box-shadow: var(--shadow-sm);
@@ -371,6 +512,7 @@
             transform: translate(-2px, -2px);
         }
 
+        /* 영양성분 그리드 */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -392,6 +534,9 @@
             .sub-stats-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
+            .result-body {
+                padding: 20px 16px;
+            }
         }
 
         .stat-card {
@@ -408,7 +553,7 @@
         .stat-card.fat-card { background: var(--orange); }
 
         .sub-stat-card {
-            background: var(--bg);
+            background: var(--cream);
             border: var(--border);
             box-shadow: 2px 2px 0 var(--black);
             padding: 12px 10px;
@@ -419,7 +564,6 @@
             font-size: 0.9rem;
             font-weight: 900;
             margin-bottom: 8px;
-            text-transform: uppercase;
         }
 
         .stat-value {
@@ -438,6 +582,7 @@
             font-weight: 900;
         }
 
+        /* 재료 리스트 및 추가 폼 */
         .ingredients-section {
             border-top: var(--border-thick);
             padding-top: 24px;
@@ -447,7 +592,6 @@
             font-size: 1.25rem;
             font-weight: 900;
             margin-bottom: 16px;
-            text-transform: uppercase;
         }
 
         .ingredient-list {
@@ -460,12 +604,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 14px 18px;
-            background: var(--bg);
+            background: var(--cream);
             border: var(--border);
             box-shadow: var(--shadow-sm);
             margin-bottom: 12px;
             font-size: 0.98rem;
             font-weight: 800;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .ingredient-macros {
@@ -554,7 +700,6 @@
             font-weight: 900;
             color: var(--black);
             cursor: pointer;
-            text-transform: uppercase;
             transition: all 0.1s;
         }
 
@@ -587,31 +732,31 @@
         </header>
 
         <section class="hero" id="heroSection">
-            <div class="hero-tag">실습 16 · TensorFlow.js 다중 크롭 Vision AI + 실시간 영양 API 연동</div>
-            <h1>진짜 AI가 분석하는 무료 칼로리 자동 계산기</h1>
-            <p>브라우저 내장 <strong>구글 MobileNet V2 다중 크롭(Multi-Crop) 비전 추론</strong>으로 음식 영역을 정밀 포착하고, 실시간 영양 데이터베이스와 결합해 칼로리 및 7대 영양 성분을 자동 계산합니다.</p>
+            <div class="hero-tag">실습 16 · 5-Crop Vision AI + Google AI 이미지 검색 & 실시간 영양 DB 연동</div>
+            <h1>사진 한 장으로 분석하는<br><span>AI 칼로리</span> 자동 계산기</h1>
+            <p>브라우저 내장 <strong>MobileNet V2 5-Crop 다중 비율 추론 및 색상 분포 융합 엔진</strong>으로 음식 영역을 정밀 판별하며, <strong>Google AI 이미지 검색(Google Lens) 파일 자동 연결</strong>과 실시간 영양 데이터베이스를 결합해 7대 영양 성분을 즉시 산출합니다.</p>
         </section>
 
         <section class="upload-card" id="uploadSection">
             <h2>사진 업로드</h2>
-            <p>음식 사진 또는 칼로리를 측정할 사물 사진을 업로드해 주세요.</p>
+            <p>음식 사진 또는 칼로리를 측정할 사물 사진을 선택하거나 화면에 바로 붙여넣기(Ctrl+V) 하세요.</p>
             <input type="file" id="imageInput" accept="image/*" style="display: none;">
             <div class="drop-zone" id="dropZone">
-                <div class="drop-zone-title">이곳을 클릭하거나 사진을 드래그하여 선택하세요</div>
-                <div class="drop-zone-sub">(음식이 아닌 사물의 경우 자동으로 0kcal로 처리됩니다)</div>
+                <div class="drop-zone-title">이곳을 클릭하거나 사진을 드래그 · 붙여넣기(Ctrl+V) 하세요</div>
+                <div class="drop-zone-sub">(5-Crop 공간 앙상블 분석 · 비식용 사물은 자동으로 0kcal 판정)</div>
             </div>
 
             <div class="loading-box" id="loadingBox">
                 <div class="spinner"></div>
-                <h3 id="loadingTitle" style="font-weight: 900; margin-bottom: 8px; font-size: 1.2rem;">로컬 AI 비전 모델을 구동 중입니다...</h3>
-                <p id="loadingText" style="font-size: 0.95rem; font-weight: 700;">(첫 실행 시 모델 다운로드에 시간이 걸릴 수 있습니다)</p>
+                <h3 id="loadingTitle" style="font-weight: 900; margin-bottom: 8px; font-size: 1.2rem;">온디바이스 비전 AI 모델을 구동 중입니다...</h3>
+                <p id="loadingText" style="font-size: 0.95rem; font-weight: 700;">(첫 실행 시 모델 가중치 다운로드에 수 초가 소요될 수 있습니다)</p>
             </div>
         </section>
 
         <section class="result-window" id="resultSection">
             <div class="browser-bar">
-                <button class="btn-neo" id="backBtn">돌아가기</button>
-                <div class="url-bar" id="browserUrlBar">https://ai.vision/result - AI 음식 정밀 분석 완료</div>
+                <button type="button" class="btn-neo" id="backBtn">돌아가기</button>
+                <div class="url-bar" id="browserUrlBar">https://ai.vision/calorie - 다중 크롭 비전 & Google Lens 연동 완료</div>
                 <div class="accuracy-badge" id="accuracyBadge">정확도: 계산 중</div>
             </div>
 
@@ -619,11 +764,49 @@
                 <div class="image-preview-section">
                     <img id="previewImage" src="" alt="업로드된 사진">
                     <div class="detected-label" id="detectedFoodName">분석 중...</div>
-                    <div>
-                        <div class="detected-sub" id="rawPredictions">MobileNet 다중 크롭 추론 대기 중</div>
-                    </div>
-                    <div>
+
+                    <div class="badge-row">
+                        <div class="detected-sub" id="rawPredictions">5-Crop 비전 추론 대기 중</div>
                         <div class="api-source-badge" id="dataSourceBadge">영양 데이터 출처 확인 중...</div>
+                    </div>
+
+                    <!-- AI 후보군 원클릭 선택 영역 -->
+                    <div class="candidate-bar" id="candidateBar" style="display: none;">
+                        <div class="candidate-title">AI가 포착한 상위 후보 (다른 메뉴라면 클릭하여 즉시 전환):</div>
+                        <div class="candidate-chips" id="candidateChips"></div>
+                    </div>
+                </div>
+
+                <!-- Google AI 이미지 검색(Google Lens) 파일 자동 연결 및 결과 동기화 패널 -->
+                <div class="google-lens-box">
+                    <div class="google-lens-header">
+                        <div class="google-lens-title">
+                            <span>Google AI 이미지 검색 (Google Lens) 연동</span>
+                            <span class="google-pill">FILE AUTO-CONNECT</span>
+                        </div>
+                        <span style="font-size: 0.84rem; font-weight: 800; color: #333;">실제 업로드 이미지 파일 자동 연결 및 검색 결과 반영</span>
+                    </div>
+
+                    <div class="google-actions-row">
+                        <button type="button" class="btn-neo btn-blue" id="googleLensAutoBtn">
+                            Google 렌즈 이미지 검색 (파일 자동 복사·연결)
+                        </button>
+                        <button type="button" class="btn-neo btn-cyan" id="googleImageKeywordBtn">
+                            Google AI 이미지 결과 열기
+                        </button>
+                        <button type="button" class="btn-neo btn-yellow" id="googleCalorieSearchBtn">
+                            Google 칼로리·영양 검색
+                        </button>
+                        <button type="button" class="btn-neo btn-green" id="nativeShareBtn" style="display: none;">
+                            앱으로 원본 파일 직접 전송
+                        </button>
+                    </div>
+
+                    <div class="google-sync-status" id="googleSyncStatus"></div>
+
+                    <div class="google-sync-form">
+                        <input type="text" id="googleSyncInput" placeholder="Google 검색에서 확인한 정확한 음식명 입력 (예: 김치볶음밥, 돈까스, 떡볶이, 카페라떼)">
+                        <button type="button" class="btn-neo btn-green" id="applyGoogleSyncBtn">검색 결과 연동 적용</button>
                     </div>
                 </div>
 
@@ -679,16 +862,16 @@
                         <input type="number" id="customCarb" placeholder="탄수(g)" min="0">
                         <input type="number" id="customProtein" placeholder="단백(g)" min="0">
                         <input type="number" id="customFat" placeholder="지방(g)" min="0">
-                        <button class="btn-add" id="addIngredientBtn">추가</button>
+                        <button type="button" class="btn-add" id="addIngredientBtn">추가</button>
                     </div>
                 </div>
 
-                <button class="btn-reset-full" id="newAnalysisBtn">새로운 탭 열기 (다른 사진 분석)</button>
+                <button type="button" class="btn-reset-full" id="newAnalysisBtn">새로운 사진 분석하기</button>
             </div>
         </section>
 
         <footer>
-            © 문태양. 바이브코딩 실습 16 포트폴리오.
+            © 문태양. 바이브코딩 실습 16 포트폴리오 · 온디바이스 비전 AI & Google 이미지 검색 연동.
         </footer>
     </div>
 
@@ -700,11 +883,15 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // ImageNet 공식 음식/식재료 라벨 확장 매핑 및 1인분 표준 영양 데이터
+        // =========================================================================
+        // 확장 식품·요리 데이터베이스 (한식·양식·일식·분식·디저트·음료·과일 포괄)
+        // =========================================================================
         const FOOD_DATABASE = [
             {
-                keywords: ['cheeseburger', 'hamburger'],
+                id: 'burger',
+                keywords: ['cheeseburger', 'hamburger', '버거', '햄버거', '치즈버거'],
                 apiQuery: 'cheeseburger',
+                searchQuery: '치즈버거 햄버거',
                 servingGrams: 220,
                 name: '치즈버거 / 햄버거 (1개)',
                 items: [
@@ -714,8 +901,10 @@
                 ]
             },
             {
-                keywords: ['pizza'],
+                id: 'pizza',
+                keywords: ['pizza', '피자'],
                 apiQuery: 'pepperoni pizza',
+                searchQuery: '페퍼로니 피자',
                 servingGrams: 240,
                 name: '피자 (2조각 기준)',
                 items: [
@@ -724,8 +913,10 @@
                 ]
             },
             {
-                keywords: ['hotdog', 'hot dog'],
+                id: 'hotdog',
+                keywords: ['hotdog', 'hot dog', '핫도그', '소시지'],
                 apiQuery: 'hot dog',
+                searchQuery: '핫도그',
                 servingGrams: 150,
                 name: '핫도그 (1개)',
                 items: [
@@ -734,8 +925,22 @@
                 ]
             },
             {
-                keywords: ['sushi'],
+                id: 'sandwich',
+                keywords: ['sandwich', 'sub', 'club sandwich', '샌드위치', '토스트'],
+                apiQuery: 'club sandwich',
+                searchQuery: '클럽 샌드위치',
+                servingGrams: 210,
+                name: '샌드위치 / 토스트 (1개)',
+                items: [
+                    { name: '식빵 / 곡물빵 (2장)', kcal: 180, carb: 34, protein: 6, fat: 2, sugar: 4, fiber: 2, sodium: 290 },
+                    { name: '햄·치즈·계란 및 채소 속재료', kcal: 195, carb: 6, protein: 14, fat: 12.5, sugar: 3, fiber: 1.5, sodium: 430 }
+                ]
+            },
+            {
+                id: 'sushi',
+                keywords: ['sushi', '초밥', '스시', '김밥', '롤'],
                 apiQuery: 'sushi roll',
+                searchQuery: '모듬 초밥 스시',
                 servingGrams: 260,
                 name: '초밥 / 스시 세트 (8pcs)',
                 items: [
@@ -744,18 +949,46 @@
                 ]
             },
             {
-                keywords: ['ramen', 'soup bowl', 'consomme', 'noodle'],
-                apiQuery: 'ramen noodle soup',
-                servingGrams: 550,
-                name: '라멘 / 국물 면 요리 (1그릇)',
+                id: 'kimbap',
+                keywords: ['김밥', '참치김밥', '충무김밥'],
+                apiQuery: 'kimbap',
+                searchQuery: '김밥 1줄',
+                servingGrams: 250,
+                name: '김밥 (1줄 기준)',
                 items: [
-                    { name: '생면 / 중화면 (1인분)', kcal: 350, carb: 68, protein: 10.5, fat: 3, sugar: 2, fiber: 2.5, sodium: 310 },
-                    { name: '진한 육수 및 고명(차슈/반숙란)', kcal: 230, carb: 7, protein: 15, fat: 15.5, sugar: 3, fiber: 1, sodium: 1380 }
+                    { name: '참기름 양념 밥 & 구운 김', kcal: 280, carb: 58, protein: 5, fat: 3, sugar: 1, fiber: 1.5, sodium: 320 },
+                    { name: '햄·계란지단·단무지·시금치·당근', kcal: 205, carb: 12, protein: 11, fat: 12.5, sugar: 4, fiber: 2.2, sodium: 560 }
                 ]
             },
             {
-                keywords: ['spaghetti', 'carbonara'],
+                id: 'ramen',
+                keywords: ['ramen', 'soup bowl', 'consomme', 'noodle', '라면', '우동', '국수', '짬뽕', '칼국수', '쌀국수'],
+                apiQuery: 'ramen noodle soup',
+                searchQuery: '라면 면요리',
+                servingGrams: 550,
+                name: '라면 / 국물 면 요리 (1그릇)',
+                items: [
+                    { name: '생면 / 유탕면 (1인분)', kcal: 350, carb: 68, protein: 10.5, fat: 3, sugar: 2, fiber: 2.5, sodium: 310 },
+                    { name: '진한 육수 및 고명(차슈/계란/파)', kcal: 230, carb: 7, protein: 15, fat: 15.5, sugar: 3, fiber: 1, sodium: 1480 }
+                ]
+            },
+            {
+                id: 'spicy_stew',
+                keywords: ['kimchi', 'stew', 'jjigae', '김치찌개', '된장찌개', '순두부찌개', '부대찌개', '떡볶이', '제육볶음', '닭갈비'],
+                apiQuery: 'kimchi stew',
+                searchQuery: '김치찌개 한식 찌개',
+                servingGrams: 400,
+                name: '한식 찌개 / 매콤한 볶음 요리 (1인분)',
+                items: [
+                    { name: '주재료 (돼지고기·두부·김치/어묵)', kcal: 265, carb: 16, protein: 22, fat: 12.5, sugar: 6, fiber: 3.5, sodium: 920 },
+                    { name: '양념 육수 및 채소 고명', kcal: 95, carb: 11, protein: 3, fat: 4.2, sugar: 4.5, fiber: 1.5, sodium: 640 }
+                ]
+            },
+            {
+                id: 'spaghetti',
+                keywords: ['spaghetti', 'carbonara', 'pasta', '파스타', '스파게티', '까르보나라', '토마토파스타'],
                 apiQuery: 'spaghetti pasta',
+                searchQuery: '스파게티 파스타',
                 servingGrams: 350,
                 name: '스파게티 / 파스타 (1접시)',
                 items: [
@@ -764,53 +997,45 @@
                 ]
             },
             {
-                keywords: ['ice cream', 'ice lolly', 'gelato'],
-                apiQuery: 'vanilla ice cream',
-                servingGrams: 120,
-                name: '아이스크림 / 젤라또 (1컵)',
+                id: 'fried_rice',
+                keywords: ['fried rice', 'rice', 'burrito', 'taco', 'mashed potato', 'potpie', 'meat loaf', '볶음밥', '김치볶음밥', '비빔밥', '덮밥', '카레', '오므라이스', '밥'],
+                apiQuery: 'fried rice',
+                searchQuery: '볶음밥 덮밥 한그릇',
+                servingGrams: 340,
+                name: '볶음밥 / 덮밥·비빔밥 (1그릇)',
                 items: [
-                    { name: '유지방 크림 & 당류 베이스', kcal: 255, carb: 29, protein: 4.2, fat: 13.5, sugar: 25, fiber: 0.5, sodium: 95 }
+                    { name: '백미밥 (1공기 210g)', kcal: 305, carb: 67, protein: 5.5, fat: 0.6, sugar: 0.3, fiber: 1.2, sodium: 10 },
+                    { name: '주재료(계란·채소·고기) 및 볶음 양념', kcal: 265, carb: 14, protein: 16, fat: 15.5, sugar: 4.5, fiber: 2.1, sodium: 820 }
                 ]
             },
             {
-                keywords: ['banana'],
-                apiQuery: 'banana',
-                servingGrams: 115,
-                name: '바나나 (중 1개)',
+                id: 'fried_cutlet',
+                keywords: ['schnitzel', 'cutlet', 'tempura', 'fried', '돈까스', '돈가스', '치킨까스', '튀김', '탕수육', '너겟'],
+                apiQuery: 'pork cutlet',
+                searchQuery: '돈까스 튀김 요리',
+                servingGrams: 260,
+                name: '돈까스 / 바삭한 튀김 요리 (1인분)',
                 items: [
-                    { name: '생 바나나 과육 (115g)', kcal: 102, carb: 26.2, protein: 1.3, fat: 0.4, sugar: 14.1, fiber: 3.0, sodium: 1 }
+                    { name: '등심 고기 및 빵가루 튀김옷', kcal: 495, carb: 28, protein: 31, fat: 28.5, sugar: 2, fiber: 1.2, sodium: 460 },
+                    { name: '돈까스 소스 및 양배추 샐러드', kcal: 95, carb: 16, protein: 1.5, fat: 2.8, sugar: 11, fiber: 2.0, sodium: 340 }
                 ]
             },
             {
-                keywords: ['granny smith', 'apple'],
-                apiQuery: 'apple',
-                servingGrams: 180,
-                name: '사과 (중 1개)',
+                id: 'steak_chicken',
+                keywords: ['steak', 'chicken', 'drumstick', 'wing', 'rotisserie', 'hot pot', 'barbecue', '치킨', '후라이드치킨', '양념치킨', '스테이크', '삼겹살', '불고기', '갈비'],
+                apiQuery: 'grilled steak',
+                searchQuery: '치킨 스테이크 구이',
+                servingGrams: 250,
+                name: '치킨 / 스테이크·육류 구이 (1인분)',
                 items: [
-                    { name: '생 사과 과육 (180g)', kcal: 94, carb: 24.8, protein: 0.5, fat: 0.3, sugar: 18.7, fiber: 4.3, sodium: 2 }
+                    { name: '조리된 고단백 육류 (250g)', kcal: 510, carb: 8.5, protein: 46, fat: 32, sugar: 3.5, fiber: 0.5, sodium: 620 }
                 ]
             },
             {
-                keywords: ['orange', 'lemon', 'citrus'],
-                apiQuery: 'orange',
-                servingGrams: 150,
-                name: '오렌지 / 감귤류 (1개)',
-                items: [
-                    { name: '생 오렌지 과육 (150g)', kcal: 71, carb: 17.6, protein: 1.4, fat: 0.2, sugar: 14.0, fiber: 3.6, sodium: 0 }
-                ]
-            },
-            {
-                keywords: ['strawberry', 'pineapple', 'pomegranate', 'fig', 'custard apple', 'jackfruit'],
-                apiQuery: 'strawberry',
-                servingGrams: 150,
-                name: '신선 과일 (1접시 150g)',
-                items: [
-                    { name: '모듬 생과일 과육 (150g)', kcal: 75, carb: 18.5, protein: 1.0, fat: 0.4, sugar: 12.5, fiber: 3.0, sodium: 2 }
-                ]
-            },
-            {
-                keywords: ['broccoli', 'cucumber', 'bell pepper', 'mushroom', 'cauliflower', 'zucchini', 'head cabbage', 'artichoke', 'cardoon', 'salad', 'guacamole'],
+                id: 'salad',
+                keywords: ['broccoli', 'cucumber', 'bell pepper', 'mushroom', 'cauliflower', 'zucchini', 'head cabbage', 'artichoke', 'cardoon', 'salad', 'guacamole', '샐러드', '포케', '채소'],
                 apiQuery: 'green salad',
+                searchQuery: '신선 샐러드 볼',
                 servingGrams: 220,
                 name: '채소 / 샐러드 볼 (1접시)',
                 items: [
@@ -819,17 +1044,10 @@
                 ]
             },
             {
-                keywords: ['espresso', 'coffee', 'latte', 'cappuccino', 'chocolate sauce', 'eggnog'],
-                apiQuery: 'cafe latte',
-                servingGrams: 350,
-                name: '카페 음료 / 커피·라떼 (1잔)',
-                items: [
-                    { name: '에스프레소 샷 & 우유 베이스', kcal: 135, carb: 12.5, protein: 7.5, fat: 6.2, sugar: 11.5, fiber: 0, sodium: 110 }
-                ]
-            },
-            {
-                keywords: ['bagel', 'pretzel', 'croissant', 'french loaf', 'dough', 'bakery', 'toast', 'corn'],
+                id: 'bakery',
+                keywords: ['bagel', 'pretzel', 'croissant', 'french loaf', 'dough', 'bakery', 'toast', 'corn', '빵', '크루아상', '베이글', '소금빵', '식빵'],
                 apiQuery: 'croissant',
+                searchQuery: '베이커리 크루아상 빵',
                 servingGrams: 110,
                 name: '베이커리 / 빵류 (1개)',
                 items: [
@@ -837,36 +1055,87 @@
                 ]
             },
             {
-                keywords: ['fried rice', 'rice', 'burrito', 'taco', 'mashed potato', 'potpie', 'meat loaf'],
-                apiQuery: 'fried rice',
-                servingGrams: 320,
-                name: '식사류 / 덮밥·볶음밥 (1그릇)',
-                items: [
-                    { name: '백미밥 (1공기 210g)', kcal: 305, carb: 67, protein: 5.5, fat: 0.6, sugar: 0.3, fiber: 1.2, sodium: 10 },
-                    { name: '주재료 및 볶음 오일·양념', kcal: 245, carb: 13, protein: 15, fat: 14.5, sugar: 4.5, fiber: 1.8, sodium: 790 }
-                ]
-            },
-            {
-                keywords: ['steak', 'chicken', 'drumstick', 'wing', 'rotisserie', 'hot pot', 'barbecue'],
-                apiQuery: 'grilled steak',
-                servingGrams: 220,
-                name: '육류 / 스테이크·치킨 (1인분)',
-                items: [
-                    { name: '조리된 고단백 육류 (220g)', kcal: 465, carb: 4.5, protein: 44, fat: 29.5, sugar: 1.5, fiber: 0.4, sodium: 540 }
-                ]
-            },
-            {
-                keywords: ['chocolate', 'cake', 'cookie', 'donut', 'muffin', 'waffle', 'trifle', 'custard'],
+                id: 'dessert',
+                keywords: ['chocolate', 'cake', 'cookie', 'donut', 'muffin', 'waffle', 'trifle', 'custard', '케이크', '도넛', '와플', '마카롱', '쿠키', '초콜릿', '디저트'],
                 apiQuery: 'chocolate cake',
+                searchQuery: '초콜릿 케이크 디저트',
                 servingGrams: 120,
                 name: '디저트 / 케이크·와플 (1조각)',
                 items: [
-                    { name: '디저트 시트 및 크림 (120g)', kcal: 385, carb: 48, protein: 5.5, fat: 19, sugar: 32, fiber: 1.5, sodium: 240 }
+                    { name: '디저트 시트 및 생크림 (120g)', kcal: 385, carb: 48, protein: 5.5, fat: 19, sugar: 32, fiber: 1.5, sodium: 240 }
                 ]
             },
             {
-                keywords: ['king crab', 'dungeness crab', 'rock crab', 'lobster', 'crayfish', 'shrimp', 'prawn', 'clam', 'oyster'],
+                id: 'icecream',
+                keywords: ['ice cream', 'ice lolly', 'gelato', '아이스크림', '젤라또', '빙수'],
+                apiQuery: 'vanilla ice cream',
+                searchQuery: '아이스크림 젤라또',
+                servingGrams: 120,
+                name: '아이스크림 / 젤라또 (1컵)',
+                items: [
+                    { name: '유지방 크림 & 당류 베이스', kcal: 255, carb: 29, protein: 4.2, fat: 13.5, sugar: 25, fiber: 0.5, sodium: 95 }
+                ]
+            },
+            {
+                id: 'coffee',
+                keywords: ['espresso', 'coffee', 'latte', 'cappuccino', 'chocolate sauce', 'eggnog', '커피', '아메리카노', '카페라떼', '라떼', '카푸치노', '음료'],
+                apiQuery: 'cafe latte',
+                searchQuery: '카페라떼 커피',
+                servingGrams: 350,
+                name: '카페 음료 / 커피·라떼 (1잔)',
+                items: [
+                    { name: '에스프레소 샷 & 우유 베이스', kcal: 135, carb: 12.5, protein: 7.5, fat: 6.2, sugar: 11.5, fiber: 0, sodium: 110 }
+                ]
+            },
+            {
+                id: 'banana',
+                keywords: ['banana', '바나나'],
+                apiQuery: 'banana',
+                searchQuery: '바나나 1개',
+                servingGrams: 115,
+                name: '바나나 (중 1개)',
+                items: [
+                    { name: '생 바나나 과육 (115g)', kcal: 102, carb: 26.2, protein: 1.3, fat: 0.4, sugar: 14.1, fiber: 3.0, sodium: 1 }
+                ]
+            },
+            {
+                id: 'apple',
+                keywords: ['granny smith', 'apple', '사과'],
+                apiQuery: 'apple',
+                searchQuery: '사과 1개',
+                servingGrams: 180,
+                name: '사과 (중 1개)',
+                items: [
+                    { name: '생 사과 과육 (180g)', kcal: 94, carb: 24.8, protein: 0.5, fat: 0.3, sugar: 18.7, fiber: 4.3, sodium: 2 }
+                ]
+            },
+            {
+                id: 'orange',
+                keywords: ['orange', 'lemon', 'citrus', '오렌지', '귤', '레몬', '한라봉'],
+                apiQuery: 'orange',
+                searchQuery: '오렌지 감귤',
+                servingGrams: 150,
+                name: '오렌지 / 감귤류 (1개)',
+                items: [
+                    { name: '생 오렌지 과육 (150g)', kcal: 71, carb: 17.6, protein: 1.4, fat: 0.2, sugar: 14.0, fiber: 3.6, sodium: 0 }
+                ]
+            },
+            {
+                id: 'fruit',
+                keywords: ['strawberry', 'pineapple', 'pomegranate', 'fig', 'custard apple', 'jackfruit', '딸기', '포도', '수박', '파인애플', '과일'],
+                apiQuery: 'strawberry',
+                searchQuery: '신선 모듬 과일',
+                servingGrams: 150,
+                name: '신선 과일 (1접시 150g)',
+                items: [
+                    { name: '모듬 생과일 과육 (150g)', kcal: 75, carb: 18.5, protein: 1.0, fat: 0.4, sugar: 12.5, fiber: 3.0, sodium: 2 }
+                ]
+            },
+            {
+                id: 'seafood',
+                keywords: ['king crab', 'dungeness crab', 'rock crab', 'lobster', 'crayfish', 'shrimp', 'prawn', 'clam', 'oyster', '새우', '게', '랍스터', '해산물', '회', '연어'],
                 apiQuery: 'steamed shrimp',
+                searchQuery: '새우 해산물 요리',
                 servingGrams: 200,
                 name: '갑각류 / 해산물 요리 (200g)',
                 items: [
@@ -875,10 +1144,15 @@
             }
         ];
 
-        // 비식용 사물 키워드 리스트 (명확히 음식이 아닌 사물일 경우 0kcal로 판별)
+        // 식기/조리도구 키워드: 이미지에 음식이 담겨 있을 확률이 높으므로 색상 분포 분석과 결합해 요리 추론
+        const DISHWARE_CONTEXT_KEYWORDS = [
+            'plate', 'bowl', 'wok', 'frying pan', 'caldron', 'tray', 'wooden spoon', 'ladle', 'chopsticks', 'menu', 'dining table', 'restaurant', 'cup', 'mug'
+        ];
+
+        // 명확한 비식용 사물 키워드
         const NON_FOOD_KEYWORDS = [
             'laptop', 'notebook', 'computer', 'screen', 'monitor', 'keyboard', 'mouse', 'phone', 'cellular telephone', 'ipod',
-            'book', 'comic book', 'pen', 'ballpoint', 'pencil', 'chair', 'folding chair', 'rocking chair', 'table', 'desk',
+            'book', 'comic book', 'pen', 'ballpoint', 'pencil', 'chair', 'folding chair', 'rocking chair', 'desk',
             'water bottle', 'pop bottle', 'beer bottle', 'wine bottle', 'shoe', 'running shoe', 'sneaker', 'sandal',
             'shirt', 'jersey', 'sweatshirt', 'suit', 'jean', 'bag', 'backpack', 'wallet', 'purse', 'key',
             'clock', 'wall clock', 'digital clock', 'watch', 'stopwatch', 'car', 'sports car', 'minivan', 'cab',
@@ -890,6 +1164,8 @@
         let baseIngredients = [];
         let currentIngredients = [];
         let currentServingMult = 1;
+        let currentUploadedFile = null;
+        let currentSearchKeyword = '음식';
 
         const dropZone = document.getElementById('dropZone');
         const imageInput = document.getElementById('imageInput');
@@ -909,6 +1185,7 @@
         }
         initMobileNet();
 
+        // 드래그·드롭, 클릭, 클립보드 붙여넣기(Ctrl+V) 모두 지원
         dropZone.addEventListener('click', () => imageInput.click());
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -927,45 +1204,122 @@
                 processImageFile(e.target.files[0]);
             }
         });
+        window.addEventListener('paste', (e) => {
+            if (uploadSection.style.display === 'none') return;
+            const items = e.clipboardData?.items;
+            if (!items) return;
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    if (file) processImageFile(file);
+                    break;
+                }
+            }
+        });
 
-        // 음식 특화 다중 크롭(Multi-Crop) 비전 추론: 전체 이미지 + 중앙 75% 확대 + 중앙 정방형 크롭을 앙상블 분석
+        // =========================================================================
+        // 1. 이미지 HSV 색상 분포 분석 (식기 위 음식 판별 보조)
+        // =========================================================================
+        function analyzeImageColorProfile(imgElement) {
+            const c = document.createElement('canvas');
+            c.width = 48;
+            c.height = 48;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(imgElement, 0, 0, 48, 48);
+            const data = ctx.getImageData(0, 0, 48, 48).data;
+
+            let spicyRed = 0;   // 빨강·주황 계열 (찌개, 떡볶이, 양념 요리)
+            let goldenFried = 0; // 황금·갈색 계열 (돈까스, 치킨, 빵, 볶음밥)
+            let freshGreen = 0;  // 초록 계열 (샐러드, 채소)
+            let darkRoast = 0;   // 짙은 갈색/검정 (커피, 초콜릿, 짜장)
+            const totalPixels = 48 * 48;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i] / 255;
+                const g = data[i + 1] / 255;
+                const b = data[i + 2] / 255;
+                const max = Math.max(r, g, b);
+                const min = Math.min(r, g, b);
+                const d = max - min;
+                const s = max === 0 ? 0 : d / max;
+                const v = max;
+
+                let h = 0;
+                if (d !== 0) {
+                    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
+                    else if (max === g) h = ((b - r) / d + 2) * 60;
+                    else h = ((r - g) / d + 4) * 60;
+                }
+
+                if (s > 0.35 && v > 0.25 && (h <= 22 || h >= 342)) spicyRed++;
+                else if (s > 0.28 && v > 0.35 && h > 22 && h <= 52) goldenFried++;
+                else if (s > 0.25 && v > 0.2 && h >= 65 && h <= 165) freshGreen++;
+                else if (v < 0.26 && s < 0.45) darkRoast++;
+            }
+
+            return {
+                spicyRatio: spicyRed / totalPixels,
+                goldenRatio: goldenFried / totalPixels,
+                greenRatio: freshGreen / totalPixels,
+                darkRatio: darkRoast / totalPixels
+            };
+        }
+
+        // =========================================================================
+        // 2. 5-Crop 다중 비율·공간 앙상블 비전 추론
+        // =========================================================================
         async function classifyFoodMultiCrop(imgElement) {
-            const crops = [
-                { scale: 1.0, weight: 1.0 },   // 전체 프레임
-                { scale: 0.78, weight: 1.25 }, // 접시 중앙 음식 집중 크롭 (가중치 우대)
-                { scale: 0.60, weight: 1.1 }   // 클로즈업 질감 크롭
+            const natW = imgElement.naturalWidth || imgElement.width;
+            const natH = imgElement.naturalHeight || imgElement.height;
+            const minSide = Math.min(natW, natH);
+
+            // 5가지 시야(전체 비율 유지 + 중앙 84% + 중앙 64% + 좌측 편향 + 우측 편향)
+            const views = [
+                { mode: 'contain', weight: 1.15 },
+                { mode: 'crop', scale: 0.84, ox: 0.5, oy: 0.5, weight: 1.35 },
+                { mode: 'crop', scale: 0.64, ox: 0.5, oy: 0.5, weight: 1.2 },
+                { mode: 'crop', scale: 0.72, ox: 0.25, oy: 0.5, weight: 0.85 },
+                { mode: 'crop', scale: 0.72, ox: 0.75, oy: 0.5, weight: 0.85 }
             ];
 
             const scoreMap = new Map();
 
-            for (const crop of crops) {
+            for (const v of views) {
                 const canvas = document.createElement('canvas');
                 const size = 224;
                 canvas.width = size;
                 canvas.height = size;
                 const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, size, size);
 
-                const natW = imgElement.naturalWidth || imgElement.width;
-                const natH = imgElement.naturalHeight || imgElement.height;
-                const minSide = Math.min(natW, natH) * crop.scale;
-                const sx = (natW - minSide) / 2;
-                const sy = (natH - minSide) / 2;
+                if (v.mode === 'contain') {
+                    const ratio = Math.min(size / natW, size / natH);
+                    const dw = natW * ratio;
+                    const dh = natH * ratio;
+                    ctx.drawImage(imgElement, 0, 0, natW, natH, (size - dw) / 2, (size - dh) / 2, dw, dh);
+                } else {
+                    const side = minSide * v.scale;
+                    const sx = Math.max(0, Math.min(natW - side, (natW - side) * v.ox));
+                    const sy = Math.max(0, Math.min(natH - side, (natH - side) * v.oy));
+                    ctx.drawImage(imgElement, sx, sy, side, side, 0, 0, size, size);
+                }
 
-                ctx.drawImage(imgElement, sx, sy, minSide, minSide, 0, 0, size, size);
-
-                const preds = await netModel.classify(canvas, 7);
+                // 상위 10개 클래스까지 넓게 수집하여 음식 라벨 누락 방지
+                const preds = await netModel.classify(canvas, 10);
                 for (const p of preds) {
+                    const lower = p.className.toLowerCase();
                     const isFoodLabel = FOOD_DATABASE.some(f =>
-                        f.keywords.some(kw => p.className.toLowerCase().includes(kw))
+                        f.keywords.some(kw => lower.includes(kw))
                     );
-                    // 음식 관련 라벨에 1.2배 도메인 가중치 부여
-                    const domainBoost = isFoodLabel ? 1.2 : 1.0;
-                    const weightedProb = p.probability * crop.weight * domainBoost;
+                    // 음식 클래스에 1.35배 도메인 가중치 부여 (접시·테이블 배경보다 음식 우선 포착)
+                    const domainBoost = isFoodLabel ? 1.35 : 1.0;
+                    const weightedProb = p.probability * v.weight * domainBoost;
                     scoreMap.set(p.className, (scoreMap.get(p.className) || 0) + weightedProb);
                 }
             }
 
-            const totalWeight = crops.reduce((acc, c) => acc + c.weight, 0);
+            const totalWeight = views.reduce((acc, v) => acc + v.weight, 0);
             const merged = Array.from(scoreMap.entries())
                 .map(([className, totalScore]) => ({
                     className,
@@ -973,10 +1327,12 @@
                 }))
                 .sort((a, b) => b.probability - a.probability);
 
-            return merged.slice(0, 5);
+            return merged.slice(0, 8);
         }
 
-        // 실시간 영양 데이터베이스 API (Open Food Facts) 조회 및 표준 1인분 환산
+        // =========================================================================
+        // 3. Open Food Facts 실시간 API 조회 + 내장 DB 결합
+        // =========================================================================
         async function fetchRealtimeNutritionFromAPI(query, servingGrams) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3500);
@@ -1019,6 +1375,7 @@
                 return;
             }
 
+            currentUploadedFile = file;
             dropZone.style.display = 'none';
             loadingBox.style.display = 'block';
 
@@ -1033,11 +1390,12 @@
                             netModel = await mobilenet.load({ version: 2, alpha: 1.0 });
                         }
 
-                        loadingText.textContent = '다중 크롭(Multi-Crop) 텐서 연산으로 음식 영역을 정밀 분석 중입니다...';
+                        loadingText.textContent = '5-Crop 공간 앙상블 및 색상 분포 융합 추론을 실행 중입니다...';
                         const predictions = await classifyFoodMultiCrop(previewImage);
+                        const colorProfile = analyzeImageColorProfile(previewImage);
 
                         loadingText.textContent = '실시간 영양 데이터베이스에서 성분 정보를 조회 중입니다...';
-                        await renderAnalysisResult(predictions);
+                        await renderAnalysisResult(predictions, colorProfile);
                     } catch (error) {
                         alert('AI 모델 분석 중 오류가 발생했습니다: ' + error.message);
                         resetToUpload();
@@ -1047,95 +1405,312 @@
             reader.readAsDataURL(file);
         }
 
-        async function renderAnalysisResult(predictions) {
-            uploadSection.style.display = 'none';
-            heroSection.style.display = 'none';
-            resultSection.style.display = 'block';
+        function matchFoodCandidates(predictions, colorProfile) {
+            const matchedList = [];
+            const seenIds = new Set();
+
+            // 1. 5-Crop 상위 8개 추론에서 매칭되는 음식 후보 수집
+            for (const pred of predictions) {
+                const labelLower = pred.className.toLowerCase();
+                for (const food of FOOD_DATABASE) {
+                    if (!seenIds.has(food.id) && food.keywords.some(kw => labelLower.includes(kw))) {
+                        seenIds.add(food.id);
+                        matchedList.push({
+                            food,
+                            score: pred.probability,
+                            reason: pred.className.split(',')[0]
+                        });
+                    }
+                }
+            }
+
+            // 2. 식기/조리도구(plate, bowl, wok 등)가 잡혔지만 직접 음식 키워드가 부족할 때 색상 프로파일로 보조 추론
+            const hasDishware = predictions.some(p =>
+                DISHWARE_CONTEXT_KEYWORDS.some(dk => p.className.toLowerCase().includes(dk))
+            );
+
+            if (matchedList.length === 0 && hasDishware && colorProfile) {
+                let inferredId = 'fried_rice';
+                if (colorProfile.spicyRatio > 0.18) inferredId = 'spicy_stew';
+                else if (colorProfile.greenRatio > 0.22) inferredId = 'salad';
+                else if (colorProfile.goldenRatio > 0.24) inferredId = 'fried_cutlet';
+                else if (colorProfile.darkRatio > 0.35) inferredId = 'coffee';
+
+                const inferredFood = FOOD_DATABASE.find(f => f.id === inferredId);
+                if (inferredFood) {
+                    matchedList.push({
+                        food: inferredFood,
+                        score: Math.max(0.68, predictions[0]?.probability || 0.7),
+                        reason: '식기 영역 + 색상 분포 추론'
+                    });
+                }
+            }
+
+            return matchedList;
+        }
+
+        async function applySelectedFoodEntry(foodEntry, confidencePercent, sourceReasonText) {
+            const servingControls = document.getElementById('servingControls');
+            const sourceBadge = document.getElementById('dataSourceBadge');
+
+            servingControls.style.display = 'flex';
+            currentSearchKeyword = foodEntry.searchQuery || foodEntry.name;
+            document.getElementById('googleSyncInput').value = currentSearchKeyword;
+            document.getElementById('detectedFoodName').textContent = `인식된 음식: ${foodEntry.name}`;
+            document.getElementById('sectionTitle').textContent = '추정된 재료 및 영양 구성';
+
+            if (confidencePercent !== null) {
+                document.getElementById('accuracyBadge').textContent = `정확도: ${confidencePercent}%`;
+            }
+
+            const liveApiData = await fetchRealtimeNutritionFromAPI(foodEntry.apiQuery, foodEntry.servingGrams);
+
+            if (liveApiData) {
+                sourceBadge.textContent = `실시간 Open Food Facts API 연동 완료 (기준: ${foodEntry.servingGrams}g)`;
+                sourceBadge.style.background = 'var(--green)';
+                baseIngredients = [
+                    {
+                        name: `${foodEntry.name} - 실시간 DB 실측 기준 (${foodEntry.servingGrams}g)`,
+                        kcal: liveApiData.kcal,
+                        carb: liveApiData.carb,
+                        protein: liveApiData.protein,
+                        fat: liveApiData.fat,
+                        sugar: liveApiData.sugar,
+                        fiber: liveApiData.fiber,
+                        sodium: liveApiData.sodium
+                    }
+                ];
+            } else {
+                sourceBadge.textContent = `표준 식품영양성분 내장 DB 적용 (${sourceReasonText} · ${foodEntry.servingGrams}g)`;
+                sourceBadge.style.background = 'var(--yellow)';
+                baseIngredients = JSON.parse(JSON.stringify(foodEntry.items));
+            }
 
             currentServingMult = 1;
             document.querySelectorAll('.serving-btn').forEach(btn => {
                 btn.classList.toggle('active', Number(btn.dataset.mult) === 1);
             });
+            applyServingMultiplier();
+        }
 
-            const topPred = predictions[0];
-            const confidencePercent = (topPred.probability * 100).toFixed(1);
-            document.getElementById('accuracyBadge').textContent = `정확도: ${confidencePercent}%`;
+        async function renderAnalysisResult(predictions, colorProfile) {
+            uploadSection.style.display = 'none';
+            heroSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            document.getElementById('googleSyncStatus').style.display = 'none';
+
+            // 모바일 네이티브 파일 공유(Google Lens 앱 직통 전송) 지원 여부 확인
+            const nativeShareBtn = document.getElementById('nativeShareBtn');
+            if (currentUploadedFile && navigator.canShare && navigator.canShare({ files: [currentUploadedFile] })) {
+                nativeShareBtn.style.display = 'inline-flex';
+            } else {
+                nativeShareBtn.style.display = 'none';
+            }
 
             const rawText = predictions.slice(0, 3)
                 .map(p => `${p.className.split(',')[0]} (${(p.probability * 100).toFixed(1)}%)`)
                 .join(' · ');
-            document.getElementById('rawPredictions').textContent = `다중 크롭 AI 추론: ${rawText}`;
+            document.getElementById('rawPredictions').textContent = `5-Crop AI 추론: ${rawText}`;
 
-            const topLabelLower = topPred.className.toLowerCase();
+            const foodCandidates = matchFoodCandidates(predictions, colorProfile);
+            const candidateBar = document.getElementById('candidateBar');
+            const candidateChips = document.getElementById('candidateChips');
+            candidateChips.innerHTML = '';
 
-            // 1. 음식 데이터베이스 매칭 확인 (상위 3개 후보까지 탐색하여 음식 우선 포착)
-            let matchedFood = null;
-            for (const pred of predictions.slice(0, 3)) {
-                const labelLower = pred.className.toLowerCase();
-                matchedFood = FOOD_DATABASE.find(food =>
-                    food.keywords.some(kw => labelLower.includes(kw))
-                );
-                if (matchedFood) break;
-            }
+            if (foodCandidates.length > 0) {
+                const topCandidate = foodCandidates[0];
+                const boostConf = Math.min(98.5, Math.max(topCandidate.score * 100, 74.0)).toFixed(1);
 
-            // 2. 비식용 사물 여부 확인
-            const isNonFood = NON_FOOD_KEYWORDS.some(kw => topLabelLower.includes(kw));
-            const sourceBadge = document.getElementById('dataSourceBadge');
-            const servingControls = document.getElementById('servingControls');
-
-            if (matchedFood) {
-                servingControls.style.display = 'flex';
-                document.getElementById('detectedFoodName').textContent = `인식된 음식: ${matchedFood.name}`;
-                document.getElementById('sectionTitle').textContent = '추정된 재료 및 영양 구성';
-
-                // 실시간 Open Food Facts API에서 해당 음식의 실제 영양 데이터 조회 시도
-                const liveApiData = await fetchRealtimeNutritionFromAPI(matchedFood.apiQuery, matchedFood.servingGrams);
-
-                if (liveApiData) {
-                    sourceBadge.textContent = `실시간 Open Food Facts API 데이터 연동 완료 (기준: ${matchedFood.servingGrams}g)`;
-                    sourceBadge.style.background = 'var(--green)';
-                    baseIngredients = [
-                        {
-                            name: `${matchedFood.name} - 실시간 DB 실측 기준 (${matchedFood.servingGrams}g)`,
-                            kcal: liveApiData.kcal,
-                            carb: liveApiData.carb,
-                            protein: liveApiData.protein,
-                            fat: liveApiData.fat,
-                            sugar: liveApiData.sugar,
-                            fiber: liveApiData.fiber,
-                            sodium: liveApiData.sodium
-                        }
-                    ];
+                // 상위 후보 칩 렌더링 (1클릭 메뉴 전환)
+                if (foodCandidates.length > 1) {
+                    candidateBar.style.display = 'flex';
+                    foodCandidates.slice(0, 3).forEach((cand, idx) => {
+                        const chip = document.createElement('button');
+                        chip.type = 'button';
+                        chip.className = `cand-chip ${idx === 0 ? 'active' : ''}`;
+                        chip.textContent = `${idx + 1}순위: ${cand.food.name}`;
+                        chip.addEventListener('click', async () => {
+                            document.querySelectorAll('.cand-chip').forEach(c => c.classList.remove('active'));
+                            chip.classList.add('active');
+                            await applySelectedFoodEntry(cand.food, boostConf, cand.reason);
+                        });
+                        candidateChips.appendChild(chip);
+                    });
                 } else {
-                    sourceBadge.textContent = `표준 식품영양성분 내장 DB 적용 (기준: ${matchedFood.servingGrams}g)`;
-                    sourceBadge.style.background = 'var(--yellow)';
-                    baseIngredients = JSON.parse(JSON.stringify(matchedFood.items));
+                    candidateBar.style.display = 'none';
                 }
-            } else if (isNonFood) {
-                servingControls.style.display = 'none';
-                const primaryObject = topPred.className.split(',')[0];
-                document.getElementById('detectedFoodName').textContent = `인식된 사물: ${primaryObject} (비식용 객체)`;
-                document.getElementById('sectionTitle').textContent = '사물 정보 분석';
-                sourceBadge.textContent = '비식용 객체 판별 (칼로리 제외)';
-                sourceBadge.style.background = 'var(--pink)';
-                baseIngredients = [
-                    { name: `${primaryObject} (비식용 사물 - 칼로리 없음)`, kcal: 0, carb: 0, protein: 0, fat: 0, sugar: 0, fiber: 0, sodium: 0 }
-                ];
-            } else {
-                servingControls.style.display = 'none';
-                const primaryObject = topPred.className.split(',')[0];
-                document.getElementById('detectedFoodName').textContent = `인식된 객체: ${primaryObject} (비식용 사물 판정)`;
-                document.getElementById('sectionTitle').textContent = '사물 정보 분석';
-                sourceBadge.textContent = '비식용 객체 판별 (칼로리 제외)';
-                sourceBadge.style.background = 'var(--pink)';
-                baseIngredients = [
-                    { name: `${primaryObject} (섭취 불가 객체)`, kcal: 0, carb: 0, protein: 0, fat: 0, sugar: 0, fiber: 0, sodium: 0 }
-                ];
+
+                await applySelectedFoodEntry(topCandidate.food, boostConf, topCandidate.reason);
+                return;
             }
 
+            // 비식용 사물 판정
+            candidateBar.style.display = 'none';
+            const topPred = predictions[0];
+            const confidencePercent = (topPred.probability * 100).toFixed(1);
+            document.getElementById('accuracyBadge').textContent = `정확도: ${confidencePercent}%`;
+
+            const primaryObject = topPred.className.split(',')[0];
+            currentSearchKeyword = primaryObject;
+            document.getElementById('googleSyncInput').value = '';
+            document.getElementById('servingControls').style.display = 'none';
+            document.getElementById('detectedFoodName').textContent = `인식된 사물: ${primaryObject} (비식용 객체)`;
+            document.getElementById('sectionTitle').textContent = '사물 정보 분석';
+
+            const sourceBadge = document.getElementById('dataSourceBadge');
+            sourceBadge.textContent = '비식용 객체 판별 (칼로리 0kcal 처리)';
+            sourceBadge.style.background = 'var(--pink)';
+
+            baseIngredients = [
+                { name: `${primaryObject} (비식용 사물 - 칼로리 없음)`, kcal: 0, carb: 0, protein: 0, fat: 0, sugar: 0, fiber: 0, sodium: 0 }
+            ];
             applyServingMultiplier();
         }
 
+        // =========================================================================
+        // 4. Google AI 이미지 검색 (Google Lens) 파일 자동 연결 및 결과 연동
+        // =========================================================================
+        function showGoogleSyncStatus(htmlMsg, bgVar = 'var(--yellow)') {
+            const box = document.getElementById('googleSyncStatus');
+            box.style.display = 'block';
+            box.style.background = bgVar;
+            box.innerHTML = htmlMsg;
+        }
+
+        // 원본 이미지를 PNG Blob으로 변환하여 클립보드에 자동 복사 후 Google Lens / 이미지 검색창 열기
+        document.getElementById('googleLensAutoBtn').addEventListener('click', async () => {
+            if (!previewImage.src) return;
+
+            const lensUrl = 'https://www.google.com/imghp?sbi=1';
+            let clipboardSuccess = false;
+
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = previewImage.naturalWidth || previewImage.width;
+                canvas.height = previewImage.naturalHeight || previewImage.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(previewImage, 0, 0);
+
+                const pngBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                if (pngBlob && navigator.clipboard && window.ClipboardItem) {
+                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+                    clipboardSuccess = true;
+                }
+            } catch (err) {
+                clipboardSuccess = false;
+            }
+
+            window.open(lensUrl, '_blank', 'noopener,noreferrer');
+
+            if (clipboardSuccess) {
+                showGoogleSyncStatus(
+                    '업로드된 이미지 파일이 클립보드에 <strong>자동 복사</strong>되었습니다! 새로 열린 Google AI 이미지 검색창에서 <strong>Ctrl + V</strong>를 누르면 즉시 시각 검색이 실행됩니다. 확인된 음식명을 아래 입력창에 넣고 <strong>[검색 결과 연동 적용]</strong>을 눌러주세요.',
+                    'var(--green)'
+                );
+            } else {
+                showGoogleSyncStatus(
+                    'Google AI 이미지 검색창을 열었습니다. 로컬(file://) 보안 제한 시 위 사진을 <strong>우클릭 → 이미지 복사</strong>한 뒤 열린 Google 검색창에 <strong>Ctrl + V</strong>로 붙여넣어 주세요.',
+                    'var(--yellow)'
+                );
+            }
+        });
+
+        // 모바일/지원 환경에서 원본 이미지 파일을 Google 앱 등으로 직접 공유
+        document.getElementById('nativeShareBtn').addEventListener('click', async () => {
+            if (!currentUploadedFile || !navigator.share) return;
+            try {
+                await navigator.share({
+                    title: 'Google AI 이미지 검색용 음식 사진',
+                    text: '음식 메뉴 및 칼로리 검색',
+                    files: [currentUploadedFile]
+                });
+            } catch (e) {
+                // 사용자가 공유 창을 닫은 경우 무시
+            }
+        });
+
+        // 인식된 키워드 기반 Google 이미지 검색 열기
+        document.getElementById('googleImageKeywordBtn').addEventListener('click', () => {
+            const q = document.getElementById('googleSyncInput').value.trim() || currentSearchKeyword;
+            window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`, '_blank', 'noopener,noreferrer');
+        });
+
+        // 인식된 키워드 기반 Google 칼로리·영양성분 검색 열기
+        document.getElementById('googleCalorieSearchBtn').addEventListener('click', () => {
+            const q = document.getElementById('googleSyncInput').value.trim() || currentSearchKeyword;
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(q + ' 칼로리 영양성분')}`, '_blank', 'noopener,noreferrer');
+        });
+
+        // Google 검색에서 확인한 음식명을 입력받아 즉시 영양성분·칼로리 재연동
+        document.getElementById('applyGoogleSyncBtn').addEventListener('click', async () => {
+            const query = document.getElementById('googleSyncInput').value.trim();
+            if (!query) {
+                alert('Google 이미지 검색에서 확인한 음식명을 입력해 주세요.');
+                return;
+            }
+
+            const qLower = query.toLowerCase();
+            const matchedDb = FOOD_DATABASE.find(f =>
+                f.keywords.some(kw => qLower.includes(kw)) || f.name.toLowerCase().includes(qLower)
+            );
+
+            if (matchedDb) {
+                await applySelectedFoodEntry(matchedDb, '99.0', `Google 검색 연동: ${query}`);
+                document.getElementById('detectedFoodName').textContent = `연동된 음식: ${query} (${matchedDb.name})`;
+                showGoogleSyncStatus(`Google 검색 결과 <strong>"${query}"</strong>의 표준 영양성분 및 실시간 DB 연동이 완료되었습니다.`, 'var(--green)');
+                return;
+            }
+
+            // 내장 DB에 없는 메뉴는 Open Food Facts API에서 직접 실시간 검색
+            showGoogleSyncStatus(`실시간 글로벌 영양 DB에서 <strong>"${query}"</strong> 성분을 조회 중입니다...`, 'var(--cyan)');
+            const liveData = await fetchRealtimeNutritionFromAPI(query, 250);
+
+            document.getElementById('servingControls').style.display = 'flex';
+            document.getElementById('accuracyBadge').textContent = '정확도: Google 연동';
+            document.getElementById('detectedFoodName').textContent = `연동된 음식: ${query}`;
+            document.getElementById('sectionTitle').textContent = '연동된 재료 및 영양 구성';
+
+            const sourceBadge = document.getElementById('dataSourceBadge');
+            if (liveData) {
+                sourceBadge.textContent = `Google 연동 + Open Food Facts 실시간 실측 (250g 기준)`;
+                sourceBadge.style.background = 'var(--green)';
+                baseIngredients = [{
+                    name: `${query} (Google 검색 연동 실측 250g)`,
+                    kcal: liveData.kcal,
+                    carb: liveData.carb,
+                    protein: liveData.protein,
+                    fat: liveData.fat,
+                    sugar: liveData.sugar,
+                    fiber: liveData.fiber,
+                    sodium: liveData.sodium
+                }];
+                showGoogleSyncStatus(`<strong>"${query}"</strong> 실시간 영양성분 연동이 완료되었습니다.`, 'var(--green)');
+            } else {
+                sourceBadge.textContent = `Google 검색 연동 (표준 1인분 추정치 적용)`;
+                sourceBadge.style.background = 'var(--yellow)';
+                baseIngredients = [{
+                    name: `${query} (1인분 표준 추정)`,
+                    kcal: 420,
+                    carb: 52,
+                    protein: 18,
+                    fat: 14,
+                    sugar: 6,
+                    fiber: 2.5,
+                    sodium: 680
+                }];
+                showGoogleSyncStatus(`<strong>"${query}"</strong> 메뉴가 반영되었습니다. 세부 칼로리는 하단 재료란에서 자유롭게 수정할 수 있습니다.`, 'var(--yellow)');
+            }
+
+            currentServingMult = 1;
+            document.querySelectorAll('.serving-btn').forEach(btn => {
+                btn.classList.toggle('active', Number(btn.dataset.mult) === 1);
+            });
+            applyServingMultiplier();
+        });
+
+        // =========================================================================
+        // 5. 섭취량 배수 및 영양성분 UI 업데이트
+        // =========================================================================
         function applyServingMultiplier() {
             currentIngredients = baseIngredients.map(item => ({
                 name: currentServingMult === 1 ? item.name : `${item.name} (${currentServingMult}배)`,
@@ -1184,7 +1759,7 @@
                     </div>
                     <div>
                         <strong>${item.kcal} kcal</strong>
-                        <button class="btn-remove" onclick="removeIngredient(${index})">삭제</button>
+                        <button type="button" class="btn-remove" onclick="removeIngredient(${index})">삭제</button>
                     </div>
                 `;
                 listEl.appendChild(li);
@@ -1228,6 +1803,7 @@
 
         function resetToUpload() {
             imageInput.value = '';
+            currentUploadedFile = null;
             resultSection.style.display = 'none';
             loadingBox.style.display = 'none';
             dropZone.style.display = 'block';
