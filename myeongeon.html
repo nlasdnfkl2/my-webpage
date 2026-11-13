@@ -22,6 +22,7 @@
       --green: #2ed573;
       --pink: #ff9ff3;
       --cyan: #48dbfb;
+      --purple: #a29bfe;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,7 +68,7 @@
 
     .fixed-top-bar .icon-group {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
     }
 
@@ -92,7 +93,7 @@
     }
 
     .wrap {
-      max-width: 860px;
+      max-width: 880px;
       width: 100%;
       margin: 0 auto;
       padding: 0 24px;
@@ -127,7 +128,7 @@
 
     .top nav {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
     }
@@ -137,7 +138,7 @@
       font-size: 0.92rem;
       font-weight: 800;
       background: transparent;
-      border: none;
+      border: 2px solid transparent;
       cursor: pointer;
       padding: 6px 12px;
       color: var(--black);
@@ -163,7 +164,7 @@
 
     /* 히어로 타이틀 영역 */
     .hero {
-      padding: 52px 0 44px;
+      padding: 48px 0 40px;
       border-bottom: var(--border-thick);
     }
 
@@ -195,7 +196,7 @@
     }
 
     .hero p {
-      max-width: 42em;
+      max-width: 44em;
       margin-top: 24px;
       font-size: 1.05rem;
       font-weight: 600;
@@ -205,14 +206,14 @@
 
     /* 감정 선택 섹션 */
     .mood-section {
-      padding: 40px 0 80px;
+      padding: 36px 0 80px;
     }
 
     .section-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       gap: 12px;
       flex-wrap: wrap;
     }
@@ -244,10 +245,17 @@
       box-shadow: 2px 2px 0 var(--black);
     }
 
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .random-quick-btn {
       background: var(--pink);
       border: var(--border);
       padding: 6px 14px;
+      font-family: inherit;
       font-weight: 900;
       font-size: 0.9rem;
       cursor: pointer;
@@ -258,17 +266,99 @@
       transition: all 0.12s ease;
     }
 
+    .random-quick-btn.breath-trigger {
+      background: var(--cyan);
+    }
+
     .random-quick-btn:hover {
       background: var(--yellow);
       transform: translate(-2px, -2px);
       box-shadow: 5px 5px 0 var(--black);
     }
 
+    /* 통합 검색 바 */
+    .search-bar-wrap {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .search-input-box {
+      flex: 1;
+      min-width: 240px;
+      display: flex;
+      align-items: center;
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: 4px 4px 0 var(--black);
+      padding: 0 12px;
+    }
+
+    .search-input-box:focus-within {
+      background: #fffdf0;
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .search-input-box i {
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .search-input-box input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 700;
+      padding: 10px 4px;
+      color: var(--black);
+      outline: none;
+    }
+
+    .search-clear-btn {
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      padding: 2px 8px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: none;
+    }
+
+    .search-clear-btn.visible {
+      display: inline-block;
+    }
+
+    .shortcut-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .kbd {
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      padding: 0 5px;
+      font-size: 0.75rem;
+      font-weight: 900;
+    }
+
     .emotion-list {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
-      margin-bottom: 36px;
+      margin-bottom: 24px;
     }
 
     .emotion-btn {
@@ -314,8 +404,46 @@
     .emotion-btn[data-emotion="peaceful"].active { background: var(--green); }
     .emotion-btn[data-emotion="sad"].active { background: var(--cyan); }
     .emotion-btn[data-emotion="burnout"].active { background: var(--pink); }
-    .emotion-btn[data-emotion="anxious"].active { background: #a29bfe; }
+    .emotion-btn[data-emotion="anxious"].active { background: var(--purple); }
     .emotion-btn[data-emotion="angry"].active { background: var(--red); color: var(--white); }
+
+    /* 오늘의 감정 탐색 스펙트럼 바 */
+    .mood-tracker-bar {
+      background: var(--white);
+      border: var(--border);
+      box-shadow: 4px 4px 0 var(--black);
+      padding: 10px 14px;
+      margin-bottom: 28px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mood-tracker-bar.visible {
+      display: flex;
+    }
+
+    .tracker-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .tracker-segments {
+      height: 14px;
+      width: 100%;
+      border: 2px solid var(--black);
+      display: flex;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .tracker-seg {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
 
     /* 초기 안내 박스 */
     .initial-msg {
@@ -353,7 +481,7 @@
     }
 
     .card-browser-bar {
-      min-height: 44px;
+      min-height: 46px;
       background: var(--cyan);
       border-bottom: var(--border-thick);
       display: flex;
@@ -361,6 +489,7 @@
       justify-content: space-between;
       padding: 6px 16px;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .browser-left {
@@ -368,6 +497,12 @@
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+    }
+
+    .browser-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .browser-dot {
@@ -396,6 +531,28 @@
       background: var(--black);
       color: var(--yellow);
       padding: 2px 8px;
+    }
+
+    .mini-tool-btn {
+      background: var(--white);
+      color: var(--black);
+      border: 2px solid var(--black);
+      height: 28px;
+      padding: 0 8px;
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.78rem;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      transition: all 0.1s;
+    }
+
+    .mini-tool-btn:hover {
+      background: var(--yellow);
+      transform: translate(-1px, -1px);
     }
 
     .close-btn {
@@ -435,12 +592,22 @@
 
     .quote-text {
       font-family: 'Nanum Myeongjo', serif;
-      font-size: clamp(1.25rem, 3vw, 1.6rem);
+      font-size: clamp(1.25rem, 3vw, 1.62rem);
       font-weight: 800;
-      line-height: 1.68;
+      line-height: 1.7;
       margin-bottom: 24px;
       position: relative;
       z-index: 1;
+      cursor: pointer;
+    }
+
+    .quote-text.sans-mode {
+      font-family: "Pretendard Variable", Pretendard, sans-serif;
+      font-weight: 900;
+    }
+
+    .quote-text.large-mode {
+      font-size: clamp(1.45rem, 3.6vw, 1.92rem);
     }
 
     .quote-text span.highlight {
@@ -455,7 +622,50 @@
       text-align: right;
       border-top: 2px dashed var(--black);
       padding-top: 14px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
+    }
+
+    /* 한 줄 사유 메모 입력창 */
+    .reflection-box {
+      background: var(--bg);
+      border: 2px solid var(--black);
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      display: none;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .reflection-box.visible {
+      display: flex;
+    }
+
+    .reflection-box input {
+      flex: 1;
+      min-width: 200px;
+      border: 2px solid var(--black);
+      background: var(--white);
+      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .reflection-save-btn {
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      padding: 6px 12px;
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.84rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .reflection-save-btn:hover {
+      background: var(--green);
     }
 
     .keyword-row {
@@ -478,6 +688,7 @@
       background: var(--bg);
       color: var(--black);
       border: 2px solid var(--black);
+      font-family: inherit;
       font-weight: 900;
       padding: 4px 12px;
       font-size: 0.85rem;
@@ -515,10 +726,10 @@
       background: var(--white);
       border: var(--border);
       color: var(--black);
-      padding: 10px 16px;
+      padding: 10px 14px;
       font-family: inherit;
       font-weight: 900;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -543,10 +754,11 @@
     .action-btn.primary { background: var(--yellow); }
     .action-btn.primary:hover { background: var(--cyan); }
     .action-btn.saved { background: var(--green); }
+    .action-btn.poster:hover { background: var(--pink); }
     .action-btn.google:hover { background: var(--cyan); }
     .action-btn.youtube:hover { background: var(--red); color: var(--white); }
 
-    /* 마음 보관함 모달 */
+    /* 공통 모달 */
     .modal {
       display: none;
       position: fixed;
@@ -562,11 +774,11 @@
     .modal-content {
       background: var(--white);
       border: var(--border-thick);
-      padding: 32px;
-      max-width: 640px;
+      padding: 28px;
+      max-width: 660px;
       width: 100%;
       position: relative;
-      max-height: 85vh;
+      max-height: 88vh;
       overflow-y: auto;
       box-shadow: 10px 10px 0 var(--black);
     }
@@ -577,12 +789,20 @@
       align-items: center;
       border-bottom: var(--border-thick);
       padding-bottom: 14px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
+      gap: 12px;
     }
 
     .modal-header h2 {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 900;
+    }
+
+    .modal-toolbar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     .saved-list {
@@ -615,6 +835,16 @@
       color: #444;
     }
 
+    .saved-item-note {
+      margin-top: 8px;
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      padding: 4px 10px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      display: inline-block;
+    }
+
     .remove-saved-btn {
       background: var(--white);
       border: 2px solid var(--black);
@@ -629,6 +859,75 @@
     .remove-saved-btn:hover {
       background: var(--red);
       color: var(--white);
+    }
+
+    /* 포스터 미리보기 모달 */
+    .poster-preview-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .poster-preview-wrap img {
+      max-width: 100%;
+      max-height: 55vh;
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+
+    /* 사색 호흡 타이머 모달 */
+    .breath-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 12px;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .breath-box-visual {
+      width: 160px;
+      height: 160px;
+      background: var(--cyan);
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 3.8s ease-in-out, background-color 0.5s ease;
+    }
+
+    .breath-box-visual.inhale {
+      transform: scale(1.22);
+      background: var(--yellow);
+    }
+
+    .breath-box-visual.hold1 {
+      transform: scale(1.22);
+      background: var(--green);
+    }
+
+    .breath-box-visual.exhale {
+      transform: scale(0.92);
+      background: var(--cyan);
+    }
+
+    .breath-box-visual.hold2 {
+      transform: scale(0.92);
+      background: var(--purple);
+    }
+
+    .breath-phase-label {
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+
+    .breath-count-num {
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1.1;
     }
 
     footer {
@@ -647,6 +946,7 @@
       .emotion-list { grid-template-columns: repeat(2, 1fr); }
       .quote-body { padding: 24px 20px; }
       .action-bar .action-btn { flex: 1 1 calc(50% - 10px); justify-content: center; }
+      .shortcut-hint { display: none; }
     }
   </style>
 </head>
@@ -683,7 +983,7 @@
       <p class="small">감정 큐레이션 웹 앱 · 실습 4</p>
       <h1>오늘의 기분에 건네는<br><span>마음의 문장들</span></h1>
       <p>
-        지금 느끼는 감정을 선택하면 역사 속 위인과 사상가들이 남긴 검증된 문장 한 구절을 건네드립니다. 감정별로 엄선된 문장들을 자유롭게 탐색하고 보관함에 담아보세요.
+        지금 느끼는 감정을 선택하거나 인물·주제를 검색해 문장을 만나보세요. 마음에 닿는 구절은 사유 메모와 함께 보관하거나 그래픽 포스터로 소장할 수 있습니다.
       </p>
     </header>
 
@@ -693,22 +993,50 @@
           <span class="label">Select Mood</span>
           <span class="total-count-pill" id="totalCountPill">총 209편 수록</span>
         </div>
-        <button type="button" class="random-quick-btn" id="randomAnyBtn">
-          <i class="ph ph-shuffle"></i> 오늘의 랜덤 문장
-        </button>
+        <div class="header-actions">
+          <button type="button" class="random-quick-btn breath-trigger" id="openBreathBtn">
+            <i class="ph ph-wind"></i> 4·4·4·4 호흡 정지
+          </button>
+          <button type="button" class="random-quick-btn" id="randomAnyBtn">
+            <i class="ph ph-shuffle"></i> 오늘의 랜덤 문장
+          </button>
+        </div>
+      </div>
+
+      <!-- 통합 검색 바 -->
+      <div class="search-bar-wrap">
+        <div class="search-input-box">
+          <i class="ph ph-magnifying-glass"></i>
+          <input type="text" id="quoteSearchInput" placeholder="인물(예: 처칠, 패튼, 세네카), 저서, 단어 검색..." aria-label="문장 및 인물 검색">
+          <button type="button" class="search-clear-btn" id="searchClearBtn">초기화</button>
+        </div>
+        <div class="shortcut-hint" title="키보드 단축키">
+          <span><span class="kbd">Space</span> 다음</span>
+          <span><span class="kbd">B</span> 보관</span>
+          <span><span class="kbd">/</span> 검색</span>
+        </div>
       </div>
 
       <div class="emotion-list" id="emotionList">
-        <button type="button" class="emotion-btn" data-emotion="happy">행복 / 기쁨 <span class="mood-count" data-count-for="happy">33</span></button>
-        <button type="button" class="emotion-btn" data-emotion="peaceful">평온 / 여유 <span class="mood-count" data-count-for="peaceful">33</span></button>
-        <button type="button" class="emotion-btn" data-emotion="sad">우울 / 슬픔 <span class="mood-count" data-count-for="sad">34</span></button>
-        <button type="button" class="emotion-btn" data-emotion="burnout">지침 / 번아웃 <span class="mood-count" data-count-for="burnout">35</span></button>
-        <button type="button" class="emotion-btn" data-emotion="anxious">불안 / 걱정 <span class="mood-count" data-count-for="anxious">37</span></button>
-        <button type="button" class="emotion-btn" data-emotion="angry">분노 / 답답함 <span class="mood-count" data-count-for="angry">37</span></button>
+        <button type="button" class="emotion-btn" data-emotion="happy">행복 / 기쁨 <span class="mood-count" data-count-for="happy">0</span></button>
+        <button type="button" class="emotion-btn" data-emotion="peaceful">평온 / 여유 <span class="mood-count" data-count-for="peaceful">0</span></button>
+        <button type="button" class="emotion-btn" data-emotion="sad">우울 / 슬픔 <span class="mood-count" data-count-for="sad">0</span></button>
+        <button type="button" class="emotion-btn" data-emotion="burnout">지침 / 번아웃 <span class="mood-count" data-count-for="burnout">0</span></button>
+        <button type="button" class="emotion-btn" data-emotion="anxious">불안 / 걱정 <span class="mood-count" data-count-for="anxious">0</span></button>
+        <button type="button" class="emotion-btn" data-emotion="angry">분노 / 답답함 <span class="mood-count" data-count-for="angry">0</span></button>
+      </div>
+
+      <!-- 감정 탐색 분포 바 -->
+      <div class="mood-tracker-bar" id="moodTrackerBar">
+        <div class="tracker-top">
+          <span>오늘의 감정 탐색 스펙트럼</span>
+          <span id="trackerSummaryText">0회 탐색</span>
+        </div>
+        <div class="tracker-segments" id="trackerSegments"></div>
       </div>
 
       <div class="initial-msg" id="initialMsg">
-        오늘 당신의 감정은 어떤가요? 위에서 기분을 선택하거나 랜덤 문장을 뽑아보세요.
+        오늘 당신의 감정은 어떤가요? 위에서 기분을 선택하거나 검색어·랜덤 문장을 뽑아보세요.
       </div>
 
       <article class="quote-card" id="quoteCard">
@@ -720,15 +1048,25 @@
             <span class="card-mood-badge" id="cardMoodBadge">행복 / 기쁨</span>
             <span class="card-pool-info" id="cardPoolInfo">33편 중 추천</span>
           </div>
-          <button type="button" class="close-btn" id="closeBtn" title="닫기" aria-label="명언 카드 닫기">✕</button>
+          <div class="browser-right">
+            <button type="button" class="mini-tool-btn" id="toggleFontBtn" title="서체 전환">명조/고딕</button>
+            <button type="button" class="mini-tool-btn" id="toggleSizeBtn" title="글자 크기 전환">가+</button>
+            <button type="button" class="close-btn" id="closeBtn" title="닫기" aria-label="명언 카드 닫기">✕</button>
+          </div>
         </div>
 
         <div class="quote-body">
           <div class="quote-mark">“</div>
-          <div class="quote-text" id="quoteText">
+          <div class="quote-text" id="quoteText" title="클릭하면 타이핑 효과를 즉시 완료합니다">
             <span class="highlight">명언이 이곳에 표시됩니다.</span>
           </div>
           <div class="quote-source" id="quoteSource">- 발언자 -</div>
+
+          <!-- 보관된 문장 한 줄 사유 메모 -->
+          <div class="reflection-box" id="reflectionBox">
+            <input type="text" id="reflectionInput" maxlength="120" placeholder="이 문장을 읽고 떠오른 나만의 한 줄 사유를 남겨보세요...">
+            <button type="button" class="reflection-save-btn" id="saveReflectionBtn">메모 저장</button>
+          </div>
 
           <div class="keyword-row">
             <div class="keyword-list" id="keywordList"></div>
@@ -744,6 +1082,9 @@
             </button>
             <button type="button" class="action-btn" id="bookmarkBtn">
               <i class="ph ph-bookmark-simple"></i> <span id="bookmarkBtnText">보관</span>
+            </button>
+            <button type="button" class="action-btn poster" id="posterBtn">
+              <i class="ph ph-image"></i> 포스터 카드
             </button>
             <button type="button" class="action-btn google" id="searchBtn">
               <i class="ph ph-google-logo"></i> 검색
@@ -764,7 +1105,55 @@
         <h2>마음 보관함</h2>
         <button type="button" class="close-btn" id="closeModalBtn" aria-label="보관함 닫기">✕</button>
       </div>
+      <div class="modal-toolbar">
+        <button type="button" class="action-btn" id="exportTxtBtn">
+          <i class="ph ph-download-simple"></i> 텍스트 내보내기 (.txt)
+        </button>
+        <button type="button" class="action-btn" id="clearAllSavedBtn">
+          <i class="ph ph-trash"></i> 전체 비우기
+        </button>
+      </div>
       <div class="saved-list" id="savedList"></div>
+    </div>
+  </div>
+
+  <!-- 포스터 미리보기 및 다운로드 모달 -->
+  <div class="modal" id="posterModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>명언 그래픽 포스터</h2>
+        <button type="button" class="close-btn" id="closePosterModalBtn" aria-label="포스터 창 닫기">✕</button>
+      </div>
+      <div class="poster-preview-wrap">
+        <img id="posterPreviewImg" alt="생성된 명언 그래픽 포스터">
+        <div class="action-bar">
+          <button type="button" class="action-btn primary" id="downloadPosterBtn">
+            <i class="ph ph-download-simple"></i> PNG 이미지 저장
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4-4-4-4 사색 호흡 타이머 모달 -->
+  <div class="modal" id="breathModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>4·4·4·4 박스 호흡 정지</h2>
+        <button type="button" class="close-btn" id="closeBreathModalBtn" aria-label="호흡 창 닫기">✕</button>
+      </div>
+      <div class="breath-stage">
+        <p style="font-weight: 800; font-size: 0.95rem;">
+          마음이 흔들리거나 답답할 때 4초 간격의 리듬에 맞춰 호흡을 고르세요.
+        </p>
+        <div class="breath-box-visual" id="breathBoxVisual">
+          <div class="breath-phase-label" id="breathPhaseLabel">준비</div>
+          <div class="breath-count-num" id="breathCountNum">4</div>
+        </div>
+        <button type="button" class="action-btn primary" id="toggleBreathRunBtn">
+          <i class="ph ph-play"></i> <span id="breathRunText">호흡 시작</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -787,12 +1176,12 @@
     setInterval(updateClock, 1000);
 
     const EMOTION_META = {
-      happy: { label: '행복 / 기쁨', color: 'var(--yellow)' },
-      peaceful: { label: '평온 / 여유', color: 'var(--green)' },
-      sad: { label: '우울 / 슬픔', color: 'var(--cyan)' },
-      burnout: { label: '지침 / 번아웃', color: 'var(--pink)' },
+      happy: { label: '행복 / 기쁨', color: '#ffd83b' },
+      peaceful: { label: '평온 / 여유', color: '#2ed573' },
+      sad: { label: '우울 / 슬픔', color: '#48dbfb' },
+      burnout: { label: '지침 / 번아웃', color: '#ff9ff3' },
       anxious: { label: '불안 / 걱정', color: '#a29bfe' },
-      angry: { label: '분노 / 답답함', color: 'var(--red)' }
+      angry: { label: '분노 / 답답함', color: '#ff4757' }
     };
 
     const quotesData = [
@@ -800,141 +1189,141 @@
       { id: 1, emotion: 'happy', text: "가장 어두운 밤도 언젠가는 끝나고 해는 떠오른다.", source: "빅토르 위고, 《레 미제라블》", keywords: ["희망", "기쁨", "문학"] },
       { id: 2, emotion: 'happy', text: "행복은 향수와 같아서 다른 사람에게 뿌려주지 않고는 자신에게도 몇 방울 묻힐 수 없다.", source: "랄프 왈도 에머슨", keywords: ["행복", "나눔", "철학"] },
       { id: 3, emotion: 'happy', text: "행복은 이미 만들어진 것이 아니라, 당신 자신의 행동에서 비롯된다.", source: "달라이 라마 14세", keywords: ["행복", "실천", "마음챙김"] },
-      { id: 4, emotion: 'happy', text: "가지지 못한 것을 탐내느라 이미 가진 것을 망치지 마라. 지금 가진 것 역시 한때는 간절히 바라던 것이었음을 기억하라.", source: "에피쿠로스", keywords: ["행복", "감사", "철학"] },
+      { id: 4, emotion: 'happy', text: "가지지 못한 것을 탐내느라 이미 가진 것을 망치지 마라. 지금 가진 것 역시 한때는 간절히 바라던 것이었음을 기억하라.", source: "에피쿠로스, 《바티칸 어록》", keywords: ["행복", "감사", "철학"] },
       { id: 5, emotion: 'happy', text: "웃음 없는 하루는 낭비한 하루이다.", source: "찰리 채플린", keywords: ["기쁨", "웃음", "여유"] },
       { id: 6, emotion: 'happy', text: "행복은 그 자체로 인간 존재의 궁극적인 목적이자 이유이다.", source: "아리스토텔레스, 《니코마코스 윤리학》", keywords: ["행복", "철학", "성찰"] },
       { id: 7, emotion: 'happy', text: "태양을 향해 얼굴을 돌려라. 그러면 그림자를 볼 수 없을 것이다.", source: "헬렌 켈러", keywords: ["희망", "긍정", "용기"] },
       { id: 8, emotion: 'happy', text: "인생에서 가장 큰 행복은 우리가 사랑받고 있다는 확신, 우리 자신 그대로 사랑받고 있다는 믿음이다.", source: "빅토르 위고, 《레 미제라블》", keywords: ["행복", "사랑", "문학"] },
-      { id: 9, emotion: 'happy', text: "좋은 친구, 좋은 책, 그리고 졸린 양심. 이것이 이상적인 삶이다.", source: "마크 트웨인", keywords: ["행복", "여유", "문학"] },
-      { id: 10, emotion: 'happy', text: "슬픔은 혼자서도 감당할 수 있지만, 기쁨의 온전한 가치를 누리려면 함께 나눌 사람이 필요하다.", source: "마크 트웨인", keywords: ["기쁨", "나눔", "관계"] },
+      { id: 9, emotion: 'happy', text: "좋은 친구, 좋은 책, 그리고 졸린 양심. 이것이 이상적인 삶이다.", source: "마크 트웨인, 《노트북》", keywords: ["행복", "여유", "문학"] },
+      { id: 10, emotion: 'happy', text: "슬픔은 혼자서도 감당할 수 있지만, 기쁨의 온전한 가치를 누리려면 함께 나눌 사람이 필요하다.", source: "마크 트웨인, 《적도를 따라》", keywords: ["기쁨", "나눔", "관계"] },
       { id: 11, emotion: 'happy', text: "행복의 비결은 자신이 좋아하는 일을 하는 것이 아니라, 자신이 하는 일을 좋아하는 것이다.", source: "제임스 매슈 배리", keywords: ["행복", "열정", "성장"] },
-      { id: 12, emotion: 'happy', text: "감사하는 마음은 가장 위대한 미덕일 뿐만 아니라, 다른 모든 미덕의 어버이다.", source: "마르쿠스 툴리우스 키케로", keywords: ["감사", "행복", "철학"] },
-      { id: 13, emotion: 'happy', text: "자연의 아름다움과 신비에 경이로움을 느끼는 사람은 결코 삶에 지루해하거나 고독해하지 않는다.", source: "레이철 카슨, 《경이로움의 감각》", keywords: ["기쁨", "자연", "여유"] },
-      { id: 14, emotion: 'happy', text: "당신이 다른 사람의 삶에 비춘 햇빛은 결국 당신 자신에게도 되돌아온다.", source: "제임스 매슈 배리", keywords: ["기쁨", "나눔", "감사"] },
+      { id: 12, emotion: 'happy', text: "감사하는 마음은 가장 위대한 미덕일 뿐만 아니라, 다른 모든 미덕의 어버이다.", source: "마르쿠스 툴리우스 키케로, 《플란키우스 변호 연설》", keywords: ["감사", "행복", "철학"] },
+      { id: 13, emotion: 'happy', text: "대지의 아름다움을 깊이 바라보는 사람은 삶이 계속되는 한 마르지 않는 힘의 원천을 발견한다.", source: "레이철 카슨, 《경이로움의 감각》", keywords: ["기쁨", "자연", "여유"] },
+      { id: 14, emotion: 'happy', text: "다른 사람의 삶에 햇빛을 비추는 사람은 그 빛이 자신에게도 스며드는 것을 막을 수 없다.", source: "제임스 매슈 배리, 《스럼스의 창》", keywords: ["기쁨", "나눔", "감사"] },
       { id: 15, emotion: 'happy', text: "성공이 행복의 열쇠가 아니다. 행복이 성공의 열쇠다. 자신이 하는 일을 사랑한다면 반드시 성공할 것이다.", source: "알베르트 슈바이처", keywords: ["행복", "열정", "성찰"] },
       { id: 16, emotion: 'happy', text: "지금 이 순간 행복하라. 지금 이 순간이 곧 당신의 삶이다.", source: "오마르 하이얌, 《루바이야트》", keywords: ["행복", "마음챙김", "여유"] },
       { id: 17, emotion: 'happy', text: "행복이란 생각과 말과 행동이 조화를 이루는 상태이다.", source: "마하트마 간디", keywords: ["행복", "조화", "실천"] },
       { id: 18, emotion: 'happy', text: "가장 훌륭한 날은 아직 살지 않은 날들이다.", source: "나짐 히크메트", keywords: ["희망", "기쁨", "문학"] },
-      { id: 19, emotion: 'happy', text: "가장 적은 것으로 만족하는 사람이 가장 부유한 사람이다. 만족은 자연이 준 진정한 부이기 때문이다.", source: "소크라테스", keywords: ["행복", "감사", "철학"] },
+      { id: 19, emotion: 'happy', text: "만족은 자연이 준 부이고, 사치는 인위적인 가난이다.", source: "소크라테스", keywords: ["행복", "감사", "철학"] },
       { id: 20, emotion: 'happy', text: "기쁨은 사물 안에 있는 것이 아니라 우리 안에 있다.", source: "리하르트 바그너", keywords: ["기쁨", "마음챙김", "성찰"] },
-      { id: 21, emotion: 'happy', text: "우리는 생계를 유지하기 위해 일하지만, 인생을 만드는 것은 우리가 나누는 기쁨과 헌신이다.", source: "윈스턴 처칠", keywords: ["기쁨", "나눔", "성찰"] },
-      { id: 22, emotion: 'happy', text: "행복은 나비와 같아서 쫓아가면 잡히지 않지만, 조용히 앉아 있으면 어느새 어깨 위에 내려앉는다.", source: "너새니얼 호손", keywords: ["행복", "여유", "문학"] },
-      { id: 23, emotion: 'happy', text: "아침에 눈을 떴을 때 살아 숨 쉬고 생각하고 기뻐하고 사랑할 수 있다는 사실이 얼마나 큰 특권인지 떠올려라.", source: "마르쿠스 아우렐리우스, 《명상록》", keywords: ["감사", "행복", "철학"] },
-      { id: 24, emotion: 'happy', text: "세상에는 오직 두 가지 삶의 방식이 있다. 하나는 기적이 전혀 없다고 여기는 것이고, 다른 하나는 모든 것이 기적이라고 여기는 것이다.", source: "알베르트 아인슈타인", keywords: ["감사", "긍정", "성찰"] },
-      { id: 25, emotion: 'happy', text: "행복한 사람은 상황을 탓하지 않고, 주어진 상황을 가장 좋은 것으로 만들어낸다.", source: "존 우든", keywords: ["행복", "긍정", "성장"] },
+      { id: 21, emotion: 'happy', text: "우리는 우리가 얻는 것으로 생계를 꾸리지만, 우리가 베푸는 것으로 삶을 만들어간다.", source: "윈스턴 처칠 (전승 어록)", keywords: ["기쁨", "나눔", "성찰"] },
+      { id: 22, emotion: 'happy', text: "사람의 마음은 동굴과 같아서 입구에는 어둠이 드리워져 있어도, 깊숙이 걸어 들어가면 빛과 보물이 기다리고 있다.", source: "너새니얼 호손, 《미국 수첩》", keywords: ["행복", "성찰", "문학"] },
+      { id: 23, emotion: 'happy', text: "내면으로 파고들어라. 선의 샘은 네 안에 있으며, 네가 계속 파내기만 한다면 언제든 다시 솟아오를 것이다.", source: "마르쿠스 아우렐리우스, 《명상록》 7권 59절", keywords: ["기쁨", "성찰", "철학"] },
+      { id: 24, emotion: 'happy', text: "우리가 경험할 수 있는 가장 아름다운 감정은 신비로움이다. 그것은 모든 참된 예술과 과학의 근원이다.", source: "알베르트 아인슈타인, 《내가 보는 세상》", keywords: ["감사", "긍정", "성찰"] },
+      { id: 25, emotion: 'happy', text: "일들은 주어진 상황을 가장 좋은 방향으로 이끌어내는 사람들에게 가장 잘 풀린다.", source: "존 우든", keywords: ["행복", "긍정", "성장"] },
       { id: 26, emotion: 'happy', text: "진정한 기쁨은 타인의 행복을 진심으로 축복할 때 찾아온다.", source: "레프 톨스토이", keywords: ["기쁨", "나눔", "문학"] },
       { id: 27, emotion: 'happy', text: "웃음은 두 사람 사이의 가장 짧은 거리이다.", source: "빅토르 보르게", keywords: ["웃음", "기쁨", "관계"] },
-      { id: 28, emotion: 'happy', text: "운명이 당신에게 레몬을 건넨다면, 그것으로 달콤한 레모네이드를 만들어라.", source: "데일 카네기", keywords: ["긍정", "기쁨", "지혜"] },
-      { id: 29, emotion: 'happy', text: "살아가는 동안 기뻐하고 선을 행하는 것보다 더 나은 것이 없음을 나는 안다.", source: "《구약성서》 전도서", keywords: ["기쁨", "행복", "성찰"] },
-      { id: 30, emotion: 'happy', text: "명랑한 마음은 가장 좋은 보약이다.", source: "《구약성서》 잠언", keywords: ["웃음", "기쁨", "긍정"] },
-      { id: 31, emotion: 'happy', text: "우리의 가장 큰 기쁨은 우리가 사랑하는 것들을 온전히 바라보고 이해하는 데 있다.", source: "레오나르도 다 빈치", keywords: ["기쁨", "성찰", "열정"] },
+      { id: 28, emotion: 'happy', text: "운명이 당신에게 레몬을 건넨다면, 그것으로 달콤한 레모네이드를 만들어라.", source: "데일 카네기, 《자기관리론》", keywords: ["긍정", "기쁨", "지혜"] },
+      { id: 29, emotion: 'happy', text: "살아가는 동안 기뻐하고 선을 행하는 것보다 더 나은 것이 없음을 나는 안다.", source: "《구약성서》 전도서 3장 12절", keywords: ["기쁨", "행복", "성찰"] },
+      { id: 30, emotion: 'happy', text: "명랑한 마음은 가장 좋은 보약이다.", source: "《구약성서》 잠언 17장 22절", keywords: ["웃음", "기쁨", "긍정"] },
+      { id: 31, emotion: 'happy', text: "가장 고귀한 즐거움은 사물을 깊이 이해하는 기쁨이다.", source: "레오나르도 다 빈치, 《수기》", keywords: ["기쁨", "성찰", "열정"] },
       { id: 187, emotion: 'happy', text: "진흙과 피를 헤쳐 저 너머 푸른 들로 가자.", source: "왕립 캐나다 기갑 군단 표어", keywords: ["희망", "긍정", "용기"] },
       { id: 188, emotion: 'happy', text: "지도력이란 선택된 인격자와 최선을 다해 그를 돕는 이들이 만든다.", source: "체스터 W. 니미츠", keywords: ["관계", "나눔", "지혜"] },
 
       // 2. 평온 / 여유 (peaceful)
-      { id: 32, emotion: 'peaceful', text: "간소하게, 간소하게, 또 간소하게 살아라.", source: "헨리 데이비드 소로, 《월든》", keywords: ["여유", "평온", "철학"] },
+      { id: 32, emotion: 'peaceful', text: "간소하게, 간소하게 살아라.", source: "헨리 데이비드 소로, 《월든》", keywords: ["여유", "평온", "철학"] },
       { id: 33, emotion: 'peaceful', text: "자연은 결코 서두르지 않는다. 그러나 모든 것을 이루어낸다.", source: "노자, 《도덕경》", keywords: ["여유", "평온", "자연"] },
-      { id: 34, emotion: 'peaceful', text: "사람들은 시골이나 해변이나 산속으로 피할 곳을 찾지만, 자신의 영혼보다 더 고요하고 한적한 피난처는 어디에도 없다.", source: "마르쿠스 아우렐리우스, 《명상록》", keywords: ["평온", "명상", "철학"] },
-      { id: 35, emotion: 'peaceful', text: "진정한 평화는 외부의 소음이 사라질 때가 아니라, 내면의 중심이 흔들리지 않을 때 찾아온다.", source: "에픽테토스", keywords: ["평온", "마음챙김", "철학"] },
-      { id: 36, emotion: 'peaceful', text: "우리가 소유한 것이 적을수록, 소유물에 얽매이는 번뇌도 줄어든다.", source: "법정 스님, 《무소유》", keywords: ["평온", "여유", "성찰"] },
-      { id: 37, emotion: 'peaceful', text: "지금 이 순간에 온전히 머무는 것, 그것이 평온으로 들어가는 유일한 문이다.", source: "틱낫한", keywords: ["명상", "마음챙김", "평온"] },
-      { id: 38, emotion: 'peaceful', text: "고요한 물만이 사물을 있는 그대로 비춘다. 마음도 고요할 때 비로소 진실을 본다.", source: "장자", keywords: ["평온", "명상", "철학"] },
-      { id: 39, emotion: 'peaceful', text: "행복의 대부분은 외부 환경이 아니라 우리의 마음가짐에서 결정된다.", source: "마사 워싱턴", keywords: ["평온", "마음챙김", "지혜"] },
+      { id: 34, emotion: 'peaceful', text: "사람들은 시골이나 해변이나 산속으로 피할 곳을 찾지만, 자신의 영혼보다 더 고요하고 한적한 피난처는 어디에도 없다.", source: "마르쿠스 아우렐리우스, 《명상록》 4권 3절", keywords: ["평온", "명상", "철학"] },
+      { id: 35, emotion: 'peaceful', text: "사람들을 어지럽히는 것은 사물 자체가 아니라, 사물에 대해 그들이 품는 판단이다.", source: "에픽테토스, 《엥케이리디온》 5장", keywords: ["평온", "마음챙김", "철학"] },
+      { id: 36, emotion: 'peaceful', text: "크게 버리는 사람만이 크게 얻을 수 있다. 물건으로 인해 마음을 쓰게 된다면 그만큼 우리의 정신은 맑아지지 못한다.", source: "법정 스님, 《무소유》", keywords: ["평온", "여유", "성찰"] },
+      { id: 37, emotion: 'peaceful', text: "지금 이 순간은 우리가 온전히 주인이 될 수 있는 유일한 시간이다.", source: "틱낫한, 《기적의 마음챙김》", keywords: ["명상", "마음챙김", "평온"] },
+      { id: 38, emotion: 'peaceful', text: "사람은 흐르는 물에 얼굴을 비추지 않고 멈춘 물에 비춘다. 오직 고요한 것만이 뭇 고요함을 붙잡을 수 있다.", source: "장자, 《장자》 덕충부", keywords: ["평온", "명상", "철학"] },
+      { id: 39, emotion: 'peaceful', text: "행복과 불행의 대부분은 외부 환경이 아니라 우리의 마음가짐에서 결정된다.", source: "마사 워싱턴, 머시 오티스 워런에게 보낸 편지 (1789)", keywords: ["평온", "마음챙김", "지혜"] },
       { id: 40, emotion: 'peaceful', text: "인생에는 속도를 높이는 것보다 더 중요한 일들이 많다.", source: "마하트마 간디", keywords: ["여유", "성찰", "지혜"] },
-      { id: 41, emotion: 'peaceful', text: "만족할 줄 아는 사람은 가난해도 부유하고, 만족할 줄 모르는 사람은 부유해도 가난하다.", source: "노자, 《도덕경》", keywords: ["평온", "감사", "철학"] },
+      { id: 41, emotion: 'peaceful', text: "만족할 줄 아는 사람은 가난하고 천해도 즐겁고, 만족할 줄 모르는 사람은 부유하고 귀해도 근심한다.", source: "《명심보감》 안분편", keywords: ["평온", "감사", "철학"] },
       { id: 42, emotion: 'peaceful', text: "천천히 걷는 것을 두려워하지 마라. 제자리에 멈춰 서 있는 것만을 두려워하라.", source: "중국 고전 격언", keywords: ["여유", "성장", "지혜"] },
       { id: 43, emotion: 'peaceful', text: "모든 인간의 불행은 단 한 가지, 고요한 방 안에 혼자 머물 줄 모른다는 데서 비롯된다.", source: "블레즈 파스칼, 《팡세》", keywords: ["평온", "명상", "철학"] },
-      { id: 44, emotion: 'peaceful', text: "깊은 강은 소리 없이 흐른다.", source: "쿠르티우스 루푸스", keywords: ["평온", "성찰", "지혜"] },
+      { id: 44, emotion: 'peaceful', text: "깊은 강은 소리 없이 흐른다.", source: "쿠르티우스 루푸스, 《알렉산드로스 대왕사》", keywords: ["평온", "성찰", "지혜"] },
       { id: 45, emotion: 'peaceful', text: "마음의 평온은 지혜의 가장 아름다운 보석이다.", source: "제임스 앨런, 《생각하는 대로》", keywords: ["평온", "마음챙김", "지혜"] },
-      { id: 46, emotion: 'peaceful', text: "자연의 발걸음을 따르라. 자연의 비밀은 인내와 여유이다.", source: "랄프 왈도 에머슨", keywords: ["여유", "자연", "철학"] },
+      { id: 46, emotion: 'peaceful', text: "자연의 발걸음을 따르라. 자연의 비밀은 인내이다.", source: "랄프 왈도 에머슨", keywords: ["여유", "자연", "철학"] },
       { id: 47, emotion: 'peaceful', text: "시간이 부족한 것이 아니라, 우리가 많은 시간을 낭비하고 있을 뿐이다. 지혜롭게 쓰면 삶은 충분히 길다.", source: "세네카, 《인생의 짧음에 대하여》", keywords: ["여유", "철학", "성찰"] },
-      { id: 48, emotion: 'peaceful', text: "들의 백합화가 어떻게 자라는가 생각하여 보라. 수고도 아니하고 길쌈도 아니하느니라.", source: "《신약성서》 마태복음", keywords: ["평온", "자연", "여유"] },
-      { id: 49, emotion: 'peaceful', text: "고요함은 힘의 원천이다.", source: "노자, 《도덕경》", keywords: ["평온", "명상", "철학"] },
-      { id: 50, emotion: 'peaceful', text: "자연에는 한순간도 같은 풍경이 없다. 멈춰 서서 바라보는 눈에만 그 선물이 보인다.", source: "존 러스킨", keywords: ["자연", "여유", "성찰"] },
+      { id: 48, emotion: 'peaceful', text: "들의 백합화가 어떻게 자라는가 생각하여 보라. 수고도 아니하고 길쌈도 아니하느니라.", source: "《신약성서》 마태복음 6장 28절", keywords: ["평온", "자연", "여유"] },
+      { id: 49, emotion: 'peaceful', text: "무거움은 가벼움의 뿌리이고, 고요함은 조급함의 주인이다.", source: "노자, 《도덕경》 26장", keywords: ["평온", "명상", "철학"] },
+      { id: 50, emotion: 'peaceful', text: "햇빛은 달콤하고, 비는 상쾌하며, 바람은 힘을 불어넣고, 눈은 마음을 기쁘게 한다. 세상에 나쁜 날씨란 없다. 다만 서로 다른 종류의 좋은 날씨가 있을 뿐이다.", source: "존 러스킨", keywords: ["자연", "여유", "성찰"] },
       { id: 51, emotion: 'peaceful', text: "바다의 표면에는 파도가 일지만, 깊은 바닷속은 언제나 변함없이 고요하다.", source: "스와미 비베카난다", keywords: ["평온", "명상", "마음챙김"] },
-      { id: 52, emotion: 'peaceful', text: "단순함은 궁극의 정교함이다.", source: "레오나르도 다 빈치", keywords: ["여유", "지혜", "성찰"] },
-      { id: 53, emotion: 'peaceful', text: "오늘 할 수 있는 일에 최선을 다했다면, 나머지는 맡기고 편히 잠들어라.", source: "달라이 라마 14세", keywords: ["평온", "휴식", "마음챙김"] },
-      { id: 54, emotion: 'peaceful', text: "모든 것에는 때가 있다. 계절의 순서를 재촉하지 말고 인내하며 기다려라.", source: "라이너 마리아 릴케, 《젊은 시인에게 보내는 편지》", keywords: ["여유", "인내", "문학"] },
-      { id: 55, emotion: 'peaceful', text: "고요히 앉아 호흡을 가다듬는 것만으로도 마음의 소란은 절반쯤 잦아든다.", source: "틱낫한", keywords: ["명상", "평온", "마음챙김"] },
-      { id: 56, emotion: 'peaceful', text: "적게 가지고도 많이 누리는 것이 진정한 자유다.", source: "에피쿠로스", keywords: ["여유", "평온", "철학"] },
-      { id: 57, emotion: 'peaceful', text: "거북이는 껍질 밖으로 목을 내밀어야만 앞으로 나아갈 수 있고, 때로는 껍질 안으로 들어가 쉬어야만 살아남는다.", source: "제임스 브라이언트 코넌트", keywords: ["여유", "지혜", "휴식"] },
-      { id: 58, emotion: 'peaceful', text: "평온함은 연습으로 길러지는 기술이다. 매일 조금씩 내려놓는 연습을 하라.", source: "윌리엄 제임스", keywords: ["평온", "실천", "마음챙김"] },
+      { id: 52, emotion: 'peaceful', text: "물 한 방울을 만질 때, 당신이 만지는 것은 흐르는 모든 강의 시작이자 끝이다.", source: "레오나르도 다 빈치, 《수기》", keywords: ["여유", "자연", "성찰"] },
+      { id: 53, emotion: 'peaceful', text: "문제가 해결될 수 있다면 걱정할 필요가 없고, 해결될 수 없다면 걱정해도 소용이 없다.", source: "달라이 라마 14세", keywords: ["평온", "지혜", "마음챙김"] },
+      { id: 54, emotion: 'peaceful', text: "모든 것은 잉태되고 때가 차면 태어나는 법이다. 한 그루 나무처럼 수액을 재촉하지 말고 봄이 오기를 고요히 기다려라.", source: "라이너 마리아 릴케, 《젊은 시인에게 보내는 편지》", keywords: ["여유", "인내", "문학"] },
+      { id: 55, emotion: 'peaceful', text: "숨을 들이마시며 나는 몸과 마음을 고요히 한다. 숨을 내쉬며 나는 미소 짓는다.", source: "틱낫한, 《평화는 발걸음마다》", keywords: ["명상", "평온", "마음챙김"] },
+      { id: 56, emotion: 'peaceful', text: "적은 것으로 만족하지 못하는 사람에게는 세상의 무엇을 주어도 충분하지 않다.", source: "에피쿠로스, 《메노이케우스에게 보내는 편지》", keywords: ["여유", "평온", "철학"] },
+      { id: 57, emotion: 'peaceful', text: "거북이를 보라. 껍질 밖으로 목을 내밀어야만 비로소 앞으로 나아간다.", source: "제임스 브라이언트 코넌트", keywords: ["여유", "지혜", "용기"] },
+      { id: 58, emotion: 'peaceful', text: "현명해지는 기술은 무엇을 눈감아 넘길지 아는 기술이다.", source: "윌리엄 제임스, 《심리학의 원리》", keywords: ["평온", "지혜", "마음챙김"] },
       { id: 59, emotion: 'peaceful', text: "숲속에 두 갈래 길이 있었고, 나는 사람들이 적게 간 길을 택했다. 그리고 그것이 모든 것을 바꾸어 놓았다.", source: "로버트 프로스트, 《가지 않은 길》", keywords: ["여유", "성찰", "문학"] },
-      { id: 60, emotion: 'peaceful', text: "마음이 맑으면 좁은 오두막도 궁전처럼 넓고 편안하다.", source: "홍자성, 《채근담》", keywords: ["평온", "여유", "철학"] },
-      { id: 61, emotion: 'peaceful', text: "세상을 바꿀 수 없다면, 세상을 바라보는 내 시선의 속도를 늦추어라.", source: "헨리 데이비드 소로", keywords: ["여유", "평온", "성찰"] },
-      { id: 62, emotion: 'peaceful', text: "오늘 내 곁에 있는 차 한 잔과 맑은 공기만으로도 삶은 이미 충만하다.", source: "법정 스님", keywords: ["감사", "평온", "여유"] },
+      { id: 60, emotion: 'peaceful', text: "마음이 편안하면 좁은 띠집도 온전하고, 본성이 안정되면 나물국도 향기롭다.", source: "홍자성, 《채근담》", keywords: ["평온", "여유", "철학"] },
+      { id: 61, emotion: 'peaceful', text: "중요한 것은 당신이 무엇을 바라보느냐가 아니라, 무엇을 보아내느냐이다.", source: "헨리 데이비드 소로, 《저널》", keywords: ["여유", "평온", "성찰"] },
+      { id: 62, emotion: 'peaceful', text: "산에는 꽃이 피고, 갈잎이 지고, 계곡에는 맑은 물이 흐른다. 자연은 언제나 제자리에서 침묵으로 우리를 가르친다.", source: "법정 스님, 《산방한담》", keywords: ["감사", "평온", "여유"] },
       { id: 189, emotion: 'peaceful', text: "싸움을 대비하면서 언제나 계획이 쓸모없어지는 것을 봤지만, 계획은 필수적이다.", source: "드와이트 D. 아이젠하워", keywords: ["지혜", "여유", "성찰"] },
       { id: 190, emotion: 'peaceful', text: "땀을 흘려 피를 구하고, 피를 흘려 생명을 구하지만, 뛰어난 두뇌는 둘 다 구한다.", source: "에르빈 롬멜", keywords: ["지혜", "평온", "성찰"] },
 
       // 3. 우울 / 슬픔 (sad)
-      { id: 63, emotion: 'sad', text: "지옥을 지나고 있다면, 멈추지 말고 계속 걸어가라.", source: "윈스턴 처칠", keywords: ["회복", "용기", "인내"] },
-      { id: 64, emotion: 'sad', text: "성공이 최종적인 것이 아니듯, 실패 역시 치명적인 것이 아니다. 중요한 것은 계속 나아가려는 용기다.", source: "윈스턴 처칠", keywords: ["회복", "용기", "성장"] },
-      { id: 65, emotion: 'sad', text: "사람이 얼마나 높이 올라갔느냐가 아니라, 바닥까지 떨어졌을 때 얼마나 높이 튀어 오르느냐로 그 사람을 판단하라.", source: "조지 S. 패튼", keywords: ["회복", "용기", "성장"] },
+      { id: 63, emotion: 'sad', text: "이것은 끝이 아닙니다. 끝의 시작조차 아닙니다. 그러나 아마도 시작의 끝일 수는 있습니다.", source: "윈스턴 처칠, 맨션 하우스 연설 (1942)", keywords: ["회복", "용기", "처칠"] },
+      { id: 64, emotion: 'sad', text: "과거와 현재가 다투기 시작하면, 우리는 미래를 잃게 될 것입니다.", source: "윈스턴 처칠, 영국 하원 연설 (1940)", keywords: ["회복", "지혜", "처칠"] },
+      { id: 65, emotion: 'sad', text: "사람이 얼마나 높이 올라갔느냐가 아니라, 바닥까지 떨어졌을 때 얼마나 높이 튀어 오르느냐로 그 사람을 판단하라.", source: "조지 S. 패튼", keywords: ["회복", "용기", "패튼"] },
       { id: 66, emotion: 'sad', text: "상처는 빛이 당신 안으로 들어오는 틈이다.", source: "잘랄루딘 루미", keywords: ["위로", "회복", "문학"] },
       { id: 67, emotion: 'sad', text: "세상은 모든 사람을 부러뜨리지만, 많은 이들은 바로 그 부러진 자리에서 더욱 강해진다.", source: "어니스트 헤밍웨이, 《무기여 잘 있거라》", keywords: ["회복", "성장", "문학"] },
       { id: 68, emotion: 'sad', text: "한겨울의 한가운데서 나는 마침내 내 안에 결코 정복당하지 않는 여름이 있다는 것을 깨달았다.", source: "알베르 카뮈, 《여름》", keywords: ["희망", "회복", "문학"] },
-      { id: 69, emotion: 'sad', text: "눈물을 흘리는 것을 부끄러워하지 마라. 눈물은 영혼을 씻어내는 비누다.", source: "조세프 루", keywords: ["위로", "회복", "성찰"] },
-      { id: 70, emotion: 'sad', text: "밤이 깊을수록 새벽은 더욱 가까워진다.", source: "토머스 풀러", keywords: ["희망", "위로", "인내"] },
-      { id: 71, emotion: 'sad', text: "슬픔은 그 자체로 하나의 구름과 같아서, 시간이 지나면 반드시 흘러간다. 이 또한 지나가리라.", source: "에이브러햄 링컨 (위스콘신 연설 인용)", keywords: ["위로", "희망", "회복"] },
+      { id: 69, emotion: 'sad', text: "눈물은 너무 큰 압력이 가해질 때 마음이 여는 안전밸브이다.", source: "조세프 루, 《어느 본당 신부의 명상》", keywords: ["위로", "회복", "성찰"] },
+      { id: 70, emotion: 'sad', text: "새벽이 밝아오기 직전이 언제나 가장 어둡다.", source: "토머스 풀러, 《팔레스타인의 비스가 전망》", keywords: ["희망", "위로", "인내"] },
+      { id: 71, emotion: 'sad', text: "‘이 또한 지나가리라.’ 슬픔의 순간에는 얼마나 큰 위로가 되고, 교만의 순간에는 얼마나 깊은 경계가 되는 말인가.", source: "에이브러햄 링컨, 위스콘신 농업박람회 연설 (1859)", keywords: ["위로", "희망", "회복"] },
       { id: 72, emotion: 'sad', text: "인간에게 모든 것을 빼앗아 갈 수 있어도 단 한 가지, 주어진 환경에서 자신의 태도를 결정할 자유만은 빼앗을 수 없다.", source: "빅토르 프랭클, 《죽음의 수용소에서》", keywords: ["회복", "용기", "철학"] },
-      { id: 73, emotion: 'sad', text: "폭풍우 속에서도 나는 여전히 그림을 그리며 내 안의 희망을 붙든다.", source: "빈센트 반 고흐, 《반 고흐, 영혼의 편지》", keywords: ["희망", "인내", "예술"] },
-      { id: 74, emotion: 'sad', text: "가장 깊은 슬픔을 겪어본 사람만이 가장 깊은 위로를 건넬 수 있다.", source: "표도르 도스토옙스키", keywords: ["위로", "성찰", "문학"] },
-      { id: 75, emotion: 'sad', text: "모든 겨울의 심장 속에는 봄이 뛰고 있고, 모든 밤의 베일 뒤에는 미소 짓는 새벽이 기다리고 있다.", source: "칼릴 지브란", keywords: ["희망", "위로", "문학"] },
-      { id: 76, emotion: 'sad', text: "고통이 휩쓸고 지나간 자리에는 비로소 삶의 진정한 깊이가 남는다.", source: "칼릴 지브란, 《예언자》", keywords: ["위로", "성장", "문학"] },
+      { id: 73, emotion: 'sad', text: "나는 밤이 낮보다 훨씬 더 생생하고 다채로운 색을 지니고 있다고 종종 생각한다.", source: "빈센트 반 고흐, 《테오에게 보낸 편지》", keywords: ["희망", "인내", "예술"] },
+      { id: 74, emotion: 'sad', text: "고통과 괴로움은 넓은 지성과 깊은 가슴을 지닌 이들에게 언제나 필연적으로 따르는 법이다.", source: "표도르 도스토옙스키, 《죄와 벌》", keywords: ["위로", "성찰", "문학"] },
+      { id: 75, emotion: 'sad', text: "모든 겨울의 심장 속에는 떨리는 봄이 놓여 있고, 모든 밤의 베일 뒤에는 미소 짓는 새벽이 기다리고 있다.", source: "칼릴 지브란, 《모래와 거품》", keywords: ["희망", "위로", "문학"] },
+      { id: 76, emotion: 'sad', text: "슬픔이 당신의 존재를 깊이 파낼수록, 그만큼 더 많은 기쁨을 담아낼 수 있다.", source: "칼릴 지브란, 《예언자》", keywords: ["위로", "성장", "문학"] },
       { id: 77, emotion: 'sad', text: "실패란 넘어지는 것이 아니라, 넘어진 자리에 그대로 머물러 있는 것이다.", source: "메리 픽퍼드", keywords: ["회복", "용기", "실천"] },
-      { id: 78, emotion: 'sad', text: "눈물로 씨를 뿌리는 자는 기쁨으로 단을 거두리로다.", source: "《구약성서》 시편", keywords: ["희망", "위로", "인내"] },
-      { id: 79, emotion: 'sad', text: "수치심과 슬픔을 숨기지 않고 이야기할 때, 그것은 더 이상 우리를 지배하지 못한다.", source: "브레네 브라운", keywords: ["위로", "회복", "용기"] },
-      { id: 80, emotion: 'sad', text: "슬픔을 말로 표현하라. 말로 표현되지 않는 슬픔은 조용히 마음을 무너뜨린다.", source: "윌리엄 셰익스피어, 《맥베스》", keywords: ["위로", "문학", "성찰"] },
+      { id: 78, emotion: 'sad', text: "눈물로 씨를 뿌리는 자는 기쁨으로 단을 거두리로다.", source: "《구약성서》 시편 126편 5절", keywords: ["희망", "위로", "인내"] },
+      { id: 79, emotion: 'sad', text: "수치심은 입 밖으로 꺼내어 이야기되는 순간 살아남지 못한다.", source: "브레네 브라운, 《대담하게 맞서기》", keywords: ["위로", "회복", "용기"] },
+      { id: 80, emotion: 'sad', text: "슬픔을 말로 표현하라. 말로 표현되지 않는 슬픔은 벅찬 가슴에 속삭여 끝내 마음을 무너뜨린다.", source: "윌리엄 셰익스피어, 《맥베스》 4막 3장", keywords: ["위로", "문학", "성찰"] },
       { id: 81, emotion: 'sad', text: "우리는 모두 시궁창에 빠져 있지만, 그중 어떤 이들은 별을 바라본다.", source: "오스카 와일드, 《윈더미어 부인의 부채》", keywords: ["희망", "문학", "긍정"] },
-      { id: 82, emotion: 'sad', text: "상실의 아픔은 우리가 그만큼 진심으로 사랑했다는 증거다.", source: "C.S. 루이스, 《헤아려 본 슬픔》", keywords: ["위로", "사랑", "문학"] },
-      { id: 83, emotion: 'sad', text: "폭풍을 피할 수는 없지만, 폭풍 속에서도 꺾이지 않고 다시 일어설 수는 있다.", source: "마야 앤젤루", keywords: ["회복", "용기", "인내"] },
+      { id: 82, emotion: 'sad', text: "지금 내가 느끼는 이 고통은 이전에 내가 누렸던 행복의 값이다. 그것이 사랑의 거래다.", source: "C.S. 루이스, 《헤아려 본 슬픔》", keywords: ["위로", "사랑", "문학"] },
+      { id: 83, emotion: 'sad', text: "우리는 살면서 수많은 패배를 마주할 수 있지만, 결코 패배한 존재가 되어서는 안 된다.", source: "마야 앤젤루", keywords: ["회복", "용기", "인내"] },
       { id: 84, emotion: 'sad', text: "인생에서 가장 위대한 영광은 한 번도 넘어지지 않는 것이 아니라, 넘어질 때마다 다시 일어서는 데 있다.", source: "넬슨 만델라, 《자유를 향한 머나먼 길》", keywords: ["회복", "용기", "성장"] },
       { id: 85, emotion: 'sad', text: "무지개를 보려면 먼저 비를 견뎌내야 한다.", source: "돌리 파튼", keywords: ["희망", "인내", "긍정"] },
-      { id: 86, emotion: 'sad', text: "어둠을 저주하기보다 작은 촛불 하나를 켜는 편이 낫다.", source: "애들라이 스티븐슨 (엘리어노어 루스벨트 추모사)", keywords: ["희망", "실천", "용기"] },
-      { id: 87, emotion: 'sad', text: "당신은 당신이 생각하는 것보다 더 용감하고, 보이는 것보다 더 강하며, 스스로 믿는 것보다 더 똑똑하다.", source: "A.A. 밀른, 《곰돌이 푸》", keywords: ["위로", "자존감", "문학"] },
-      { id: 88, emotion: 'sad', text: "고독과 슬픔은 영혼이 스스로를 단단하게 빚어내는 작업실이다.", source: "라이너 마리아 릴케", keywords: ["위로", "성장", "문학"] },
-      { id: 89, emotion: 'sad', text: "아무리 긴 겨울이라도 봄을 이길 수는 없다.", source: "할 볼랜드", keywords: ["희망", "자연", "위로"] },
+      { id: 86, emotion: 'sad', text: "그녀는 어둠을 저주하기보다 촛불 하나를 켜는 편을 택했다.", source: "애들라이 스티븐슨, 엘리어노어 루스벨트 추모 연설 (1962)", keywords: ["희망", "실천", "용기"] },
+      { id: 87, emotion: 'sad', text: "나를 너와 함께 데려가 줄 수 있는 누군가를 곁에 둔 나는 참 행복한 곰이야.", source: "A.A. 밀른, 《푸 모퉁이에 있는 집》", keywords: ["위로", "관계", "문학"] },
+      { id: 88, emotion: 'sad', text: "우리에게 닥치는 모든 시련은 우리가 아직 알지 못하는 우리 자신의 깊은 힘을 일깨우기 위해 찾아오는 손님이다.", source: "라이너 마리아 릴케, 《젊은 시인에게 보내는 편지》", keywords: ["위로", "성장", "문학"] },
+      { id: 89, emotion: 'sad', text: "영원히 계속되는 겨울은 없으며, 제 순서를 거르는 봄도 없다.", source: "할 볼랜드, 《계절의 해시계》", keywords: ["희망", "자연", "위로"] },
       { id: 90, emotion: 'sad', text: "나를 죽이지 못하는 고통은 나를 더욱 강하게 만든다.", source: "프리드리히 니체, 《우상의 황혼》", keywords: ["회복", "성장", "철학"] },
-      { id: 91, emotion: 'sad', text: "새도 날개가 젖은 채로는 높이 날지 못한다. 비가 그칠 때까지 나뭇가지 위에서 쉬어도 괜찮다.", source: "헤르만 헤세", keywords: ["위로", "휴식", "문학"] },
-      { id: 92, emotion: 'sad', text: "희망은 날개 달린 것, 영혼에 내려앉아 가사 없는 곡조를 부르며 결코 멈추지 않는다.", source: "에밀리 디킨슨", keywords: ["희망", "위로", "문학"] },
-      { id: 93, emotion: 'sad', text: "가장 어두운 순간에도 당신 곁에는 보이지 않는 빛이 함께 걷고 있다.", source: "라빈드라나트 타고르", keywords: ["희망", "위로", "문학"] },
+      { id: 91, emotion: 'sad', text: "새는 알에서 나오려고 투쟁한다. 알은 세계이다. 태어나려는 자는 한 세계를 깨뜨려야 한다.", source: "헤르만 헤세, 《데미안》", keywords: ["성장", "용기", "문학"] },
+      { id: 92, emotion: 'sad', text: "희망은 날개 달린 것, 영혼에 내려앉아 가사 없는 곡조를 부르며 결코 멈추지 않는다.", source: "에밀리 디킨슨, 시 254번", keywords: ["희망", "위로", "문학"] },
+      { id: 93, emotion: 'sad', text: "마음에 두려움이 없고 고개를 높이 들 수 있는 곳, 그 자유의 천국으로 깨어나게 하소서.", source: "라빈드라나트 타고르, 《기탄잘리》 35절", keywords: ["희망", "위로", "문학"] },
       { id: 191, emotion: 'sad', text: "성공은 열정을 잃지 않고 실패에서 실패로 전진하면서 이뤄진다.", source: "윈스턴 처칠", keywords: ["회복", "용기", "성장"] },
       { id: 192, emotion: 'sad', text: "너의 이름은 무명이다. 너의 행동은 불멸이다.", source: "모스크바 무명 용사의 묘", keywords: ["위로", "성찰", "인내"] },
       { id: 193, emotion: 'sad', text: "사람을 지키고 땅을 잃으면 땅을 다시 되찾을 수 있지만, 땅을 지키고 사람을 잃으면 땅과 사람 모두 잃는 것이다.", source: "마오쩌둥", keywords: ["위로", "성찰", "지혜"] },
 
       // 4. 지침 / 번아웃 (burnout)
       { id: 94, emotion: 'burnout', text: "휴식은 게으름이 아니다. 여름날 잔디 위에 누워 물소리와 구름을 바라보는 것은 결코 시간 낭비가 아니다.", source: "존 러복, 《삶의 즐거움》", keywords: ["휴식", "회복", "여유"] },
-      { id: 95, emotion: 'burnout', text: "가끔은 한 걸음 물러서서 쉬어라. 일로 돌아왔을 때 판단력이 훨씬 더 선명해질 것이다.", source: "레오나르도 다 빈치", keywords: ["휴식", "지혜", "회복"] },
+      { id: 95, emotion: 'burnout', text: "가끔은 한 걸음 물러서서 쉬어라. 일로 돌아왔을 때 판단력이 훨씬 더 선명해질 것이다.", source: "레오나르도 다 빈치, 《수기》", keywords: ["휴식", "지혜", "회복"] },
       { id: 96, emotion: 'burnout', text: "항상 긴장된 상태로 당겨진 활은 결국 부러지고 만다. 마음에도 휴식과 기분 전환이 필요하다.", source: "세네카, 《마음의 평정에 대하여》", keywords: ["휴식", "회복", "철학"] },
-      { id: 97, emotion: 'burnout', text: "타인의 시선에 맞추려 애쓰지 마라. 당신은 있는 그대로 이미 충분하다.", source: "브레네 브라운", keywords: ["자존감", "위로", "회복"] },
+      { id: 97, emotion: 'burnout', text: "당신은 불완전하고 시련을 겪도록 빚어졌지만, 그럼에도 사랑과 소속감을 누릴 자격이 충분하다.", source: "브레네 브라운, 《불완전함의 선물》", keywords: ["자존감", "위로", "회복"] },
       { id: 98, emotion: 'burnout', text: "지쳤을 때는 포기하는 법이 아니라 쉬어가는 법을 배워야 한다.", source: "뱅크시", keywords: ["휴식", "회복", "실천"] },
-      { id: 99, emotion: 'burnout', text: "자신을 돌보는 일은 자기방어가 아니라, 계속 살아가기 위한 필수적인 생존의 기술이다.", source: "오드리 로드", keywords: ["자존감", "휴식", "회복"] },
+      { id: 99, emotion: 'burnout', text: "자신을 돌보는 일은 자기방어가 아니라, 계속 살아가기 위한 필수적인 생존의 기술이다.", source: "오드리 로드, 《빛의 폭발》", keywords: ["자존감", "휴식", "회복"] },
       { id: 100, emotion: 'burnout', text: "완벽주의는 성장의 원동력이 아니라, 우리를 지치게 만들고 제자리에 묶어두는 무거운 방패이다.", source: "브레네 브라운, 《불완전함의 선물》", keywords: ["자존감", "위로", "성장"] },
-      { id: 101, emotion: 'burnout', text: "모든 일을 다 해내려 애쓰지 마라. 덜어냄으로써 더 중요한 것에 집중하라.", source: "그레그 맥커운, 《에센셜리즘》", keywords: ["여유", "휴식", "지혜"] },
-      { id: 102, emotion: 'burnout', text: "잠시 멈춤은 후퇴가 아니라, 온전히 나를 다시 만나기 위한 시간이다.", source: "미셸 드 몽테뉴, 《수상록》", keywords: ["휴식", "성찰", "철학"] },
+      { id: 101, emotion: 'burnout', text: "더 적게, 그러나 더 본질적으로 집중하라.", source: "그레그 맥커운, 《에센셜리즘》", keywords: ["여유", "휴식", "지혜"] },
+      { id: 102, emotion: 'burnout', text: "세상에서 가장 위대한 일은 자기 자신에게 온전히 속하는 법을 아는 것이다.", source: "미셸 드 몽테뉴, 《수상록》 1권 39장", keywords: ["휴식", "성찰", "철학"] },
       { id: 103, emotion: 'burnout', text: "지속적인 노력은 근력이나 지능이 아니라, 우리의 잠재력을 여는 열쇠다.", source: "윈스턴 처칠", keywords: ["인내", "성장", "지혜"] },
       { id: 104, emotion: 'burnout', text: "아무것도 하지 않을 자유를 스스로에게 허락할 때 비로소 삶의 균형과 평화가 돌아온다.", source: "버트런드 러셀, 《게으름에 대한 찬양》", keywords: ["휴식", "여유", "철학"] },
       { id: 105, emotion: 'burnout', text: "지금 당장 모든 해답을 얻으려 조급해하지 마라. 질문 자체를 살아내다 보면 어느새 해답 속에 들어가 있을 것이다.", source: "라이너 마리아 릴케, 《젊은 시인에게 보내는 편지》", keywords: ["여유", "인내", "문학"] },
-      { id: 106, emotion: 'burnout', text: "타인의 기대에 맞추어 달리다 내 숨이 멎게 하지 마라. 나만의 보폭으로 걸어가라.", source: "랄프 왈도 에머슨, 《자기신뢰》", keywords: ["자존감", "여유", "철학"] },
-      { id: 107, emotion: 'burnout', text: "성공한 사람과 그렇지 못한 사람의 차이는, 정말 중요한 일이 아닌 것들에 얼마나 단호히 '아니오'라고 말할 수 있는가에 있다.", source: "워런 버핏", keywords: ["여유", "지혜", "실천"] },
-      { id: 108, emotion: 'burnout', text: "잠은 지친 영혼을 감싸 안아주는 가장 포근한 외투이다.", source: "미겔 데 세르반테스, 《돈키호테》", keywords: ["휴식", "회복", "문학"] },
-      { id: 109, emotion: 'burnout', text: "당신이 할 수 있는 최선을 다했다면, 그 결과를 두고 밤잠을 설치지 마라.", source: "존 우든", keywords: ["휴식", "평온", "자존감"] },
-      { id: 110, emotion: 'burnout', text: "스스로에게 건네는 친절이 타인에게 건네는 친절만큼이나 중요하다. 실패하고 지칠 때 자신을 다정히 안아주어라.", source: "크리스틴 네프", keywords: ["자존감", "위로", "회복"] },
+      { id: 106, emotion: 'burnout', text: "끊임없이 당신을 다른 무언가로 만들려고 애쓰는 세상에서, 온전히 당신 자신으로 남는 것이야말로 가장 위대한 성취다.", source: "랄프 왈도 에머슨, 《자기신뢰》", keywords: ["자존감", "여유", "철학"] },
+      { id: 107, emotion: 'burnout', text: "성공한 사람과 정말 성공한 사람의 차이는, 정말 중요한 일이 아닌 거의 모든 것들에 단호히 '아니오'라고 말하는 데 있다.", source: "워런 버핏", keywords: ["여유", "지혜", "실천"] },
+      { id: 108, emotion: 'burnout', text: "잠은 지친 인간의 모든 상념을 덮어주는 포근한 외투이다.", source: "미겔 데 세르반테스, 《돈키호테》 2부 68장", keywords: ["휴식", "회복", "문학"] },
+      { id: 109, emotion: 'burnout', text: "성공이란 당신이 할 수 있는 최선이 되기 위해 최선을 다했다는 자기만족에서 비롯되는 마음의 평화이다.", source: "존 우든", keywords: ["휴식", "평온", "자존감"] },
+      { id: 110, emotion: 'burnout', text: "스스로에게 건네는 친절이 타인에게 건네는 친절만큼이나 중요하다. 실패하고 지칠 때 자신을 다정히 안아주어라.", source: "크리스틴 네프, 《자기연민》", keywords: ["자존감", "위로", "회복"] },
       { id: 111, emotion: 'burnout', text: "멈추지 않는 한 얼마나 천천히 가는지는 중요하지 않다.", source: "공자", keywords: ["여유", "인내", "철학"] },
-      { id: 112, emotion: 'burnout', text: "파도를 멈출 수는 없지만, 물 위에 몸을 맡기고 떠 있는 법은 배울 수 있다.", source: "존 카밧진", keywords: ["휴식", "마음챙김", "평온"] },
-      { id: 113, emotion: 'burnout', text: "오늘의 피로는 오늘로 족하다. 내일의 짐까지 오늘의 어깨에 짊어지지 마라.", source: "윌리엄 오슬러", keywords: ["휴식", "마음챙김", "지혜"] },
-      { id: 114, emotion: 'burnout', text: "나무가 겨울에 잎을 떨어뜨리는 것은 죽기 위함이 아니라, 다음 봄을 준비하기 위해 에너지를 모으는 것이다.", source: "헨리 데이비드 소로", keywords: ["휴식", "회복", "자연"] },
-      { id: 115, emotion: 'burnout', text: "빈 잔에서는 아무것도 따라줄 수 없다. 먼저 당신의 잔부터 채워라.", source: "엘리너 브라운", keywords: ["회복", "휴식", "자존감"] },
-      { id: 116, emotion: 'burnout', text: "수확을 거두려면 밭에도 묵혀두는 휴경기가 필요하다. 지친 마음에도 휴경기를 허락하라.", source: "오비디우스", keywords: ["휴식", "회복", "자연"] },
-      { id: 117, emotion: 'burnout', text: "성실함이란 자신을 소진시키는 것이 아니라, 오래도록 불꽃을 유지하는 지혜이다.", source: "법정 스님", keywords: ["여유", "성찰", "휴식"] },
+      { id: 112, emotion: 'burnout', text: "파도를 멈출 수는 없지만, 물 위에 몸을 맡기고 파도를 타는 법은 배울 수 있다.", source: "존 카밧진, 《그대 어디로 가든 그곳에 있네》", keywords: ["휴식", "마음챙김", "평온"] },
+      { id: 113, emotion: 'burnout', text: "오늘의 피로는 오늘로 족하다. 내일의 짐까지 오늘의 어깨에 짊어지지 마라.", source: "윌리엄 오슬러, 《삶의 방식》", keywords: ["휴식", "마음챙김", "지혜"] },
+      { id: 114, emotion: 'burnout', text: "만약 어떤 사람이 자신의 꿈을 향해 자신 있게 나아가고 자신이 상상한 삶을 살려고 노력한다면, 그는 평범한 시간 속에서는 뜻밖의 성공과 마주하게 될 것이다.", source: "헨리 데이비드 소로, 《월든》", keywords: ["성장", "회복", "철학"] },
+      { id: 115, emotion: 'burnout', text: "빈 그릇에서는 아무것도 나누어 줄 수 없다. 먼저 당신의 그릇부터 채워라.", source: "엘리너 브라운", keywords: ["회복", "휴식", "자존감"] },
+      { id: 116, emotion: 'burnout', text: "휴식을 취하라. 충분히 묵히며 쉰 밭이 결국 가장 풍성한 수확을 내어준다.", source: "오비디우스, 《사랑의 기술》", keywords: ["휴식", "회복", "자연"] },
+      { id: 117, emotion: 'burnout', text: "우리가 살아가면서 때때로 걸음을 멈추고 숨을 고르는 것은, 내가 지금 어디를 향해 가고 있는지 방향을 가늠하기 위해서다.", source: "법정 스님, 《오두막 편지》", keywords: ["여유", "성찰", "휴식"] },
       { id: 118, emotion: 'burnout', text: "우리는 인간 존재(Human Being)이지, 끊임없이 일만 하는 기계(Human Doing)가 아니다.", source: "웨인 다이어", keywords: ["휴식", "자존감", "성찰"] },
-      { id: 119, emotion: 'burnout', text: "잠시 걸음을 멈추고 하늘을 올려다보아라. 당신이 놓치고 있던 숨 쉴 틈이 거기 있다.", source: "틱낫한", keywords: ["휴식", "마음챙김", "여유"] },
-      { id: 120, emotion: 'burnout', text: "지친 날개로는 멀리 날 수 없다. 둥지에서 충분히 쉰 새가 가장 높이 난다.", source: "라빈드라나트 타고르", keywords: ["휴식", "회복", "문학"] },
-      { id: 121, emotion: 'burnout', text: "모든 전투를 다 치를 필요는 없다. 에너지를 아껴 정말 지켜야 할 것에 집중하라.", source: "손자, 《손자병법》", keywords: ["지혜", "여유", "실천"] },
-      { id: 122, emotion: 'burnout', text: "오늘 한 걸음만 내디뎠다면, 그것으로도 충분히 잘 살아낸 하루이다.", source: "달라이 라마 14세", keywords: ["위로", "자존감", "여유"] },
-      { id: 123, emotion: 'burnout', text: "휴식은 일의 반대말이 아니라, 일을 완성하는 가장 중요한 절반이다.", source: "알렉산더 수중-김 팡, 《레스트》", keywords: ["휴식", "회복", "지혜"] },
-      { id: 124, emotion: 'burnout', text: "어깨 위의 짐을 잠시 내려놓고 깊게 숨을 내쉬어라. 당신은 이미 충분히 애썼다.", source: "세네카", keywords: ["위로", "휴식", "철학"] },
-      { id: 194, emotion: 'burnout', text: "지금 적극적으로 추진되는 좋은 계획이 다음 주의 완벽한 계획보다 낫다.", source: "조지 S. 패튼", keywords: ["실천", "여유", "지혜"] },
+      { id: 119, emotion: 'burnout', text: "걸음을 옮길 때마다 땅에 입맞춤하듯 천천히 걸어라. 그 한 걸음이 당신을 지금 이 순간의 평화로 데려다줄 것이다.", source: "틱낫한, 《평화는 발걸음마다》", keywords: ["휴식", "마음챙김", "여유"] },
+      { id: 120, emotion: 'burnout', text: "나비에게 세월은 길지 않지만, 그에게 주어진 순간은 언제나 충분하다.", source: "라빈드라나트 타고르, 《길잃은 새들》 12절", keywords: ["휴식", "여유", "문학"] },
+      { id: 121, emotion: 'burnout', text: "백 번 싸워 백 번 이기는 것이 최선이 아니라, 싸우지 않고 이기는 것이 최선이다.", source: "손자, 《손자병법》 모공편", keywords: ["지혜", "여유", "실천"] },
+      { id: 122, emotion: 'burnout', text: "잠은 가장 훌륭한 명상이다.", source: "달라이 라마 14세", keywords: ["휴식", "명상", "여유"] },
+      { id: 123, emotion: 'burnout', text: "휴식은 일의 적이 아니라, 일을 완성하는 가장 든든한 동반자이다.", source: "알렉산더 수중-김 팡, 《레스트》", keywords: ["휴식", "회복", "지혜"] },
+      { id: 124, emotion: 'burnout', text: "마음에도 때때로 고삐를 풀어주어야 한다. 잠시 쉬고 난 뒤에야 정신은 비로소 더 맑고 날카롭게 깨어난다.", source: "세네카, 《도덕 서한집》 15편", keywords: ["위로", "휴식", "철학"] },
+      { id: 194, emotion: 'burnout', text: "지금 적극적으로 추진되는 좋은 계획이 다음 주의 완벽한 계획보다 낫다.", source: "조지 S. 패튼", keywords: ["실천", "여유", "패튼"] },
       { id: 195, emotion: 'burnout', text: "제안된 작전이 성공할 수 있는 것인가? 물자 보급의 측면에서 실현 가능한 것인가?", source: "체스터 W. 니미츠", keywords: ["지혜", "여유", "실천"] },
       { id: 196, emotion: 'burnout', text: "규칙이 반드시 신성한 것은 아니다.", source: "프랭클린 D. 루스벨트", keywords: ["여유", "지혜", "성찰"] },
       { id: 197, emotion: 'burnout', text: "아무리 작은 싸움도 큰 그림을 이루는 일부임을, 전투로 나서려는 모든 군인은 알아야만 한다.", source: "버나드 L. 몽고메리", keywords: ["성장", "인내", "성찰"] },
@@ -942,74 +1331,74 @@
       // 5. 불안 / 걱정 (anxious)
       { id: 125, emotion: 'anxious', text: "사람은 누구나 두려움을 느낀다. 머리가 좋을수록 더 큰 두려움을 느낀다. 두려움을 느끼지 않는 사람은 거짓말쟁이이거나 바보일 뿐이다. 진정한 용기란 두려움을 느끼면서도 앞으로 나아가도록 스스로를 이끄는 힘이다.", source: "조지 S. 패튼, 미 제3군 연설 (1944)", keywords: ["용기", "두려움극복", "패튼"] },
       { id: 126, emotion: 'anxious', text: "용기란 두려움을 1분 더 견뎌내는 것이다.", source: "조지 S. 패튼", keywords: ["용기", "인내", "패튼"] },
-      { id: 127, emotion: 'anxious', text: "두려움을 깨뜨리는 가장 확실한 방법은 가만히 앉아 걱정하는 것이 아니라 행동으로 부딪히는 것이다.", source: "조지 S. 패튼", keywords: ["용기", "실천", "패튼"] },
+      { id: 127, emotion: 'anxious', text: "계산된 위험을 감수하라. 그것은 무모함과는 전혀 다른 용기다.", source: "조지 S. 패튼, 1944년 6월 서한", keywords: ["용기", "실천", "패튼"] },
       { id: 128, emotion: 'anxious', text: "결코, 결코, 결코 포기하지 마라. 크든 작든, 중대하든 사소하든, 명예와 상식에 어긋나지 않는 한 절대 굴복하지 마라.", source: "윈스턴 처칠, 해로 스쿨 연설 (1941)", keywords: ["용기", "인내", "처칠"] },
-      { id: 129, emotion: 'anxious', text: "용기는 모든 인간 미덕 가운데 첫 번째다. 용기가 있어야 다른 모든 미덕을 지켜낼 수 있기 때문이다.", source: "윈스턴 처칠", keywords: ["용기", "지혜", "처칠"] },
+      { id: 129, emotion: 'anxious', text: "용기는 여러 미덕 중 하나가 아니라, 시험의 순간에 모든 미덕이 취하는 형태다.", source: "C.S. 루이스, 《스크루테이프의 편지》", keywords: ["용기", "지혜", "문학"] },
       { id: 130, emotion: 'anxious', text: "우리가 두려워해야 할 유일한 것은 바로 두려움 그 자체이다.", source: "프랭클린 D. 루스벨트, 대통령 취임 연설 (1933)", keywords: ["용기", "두려움극복", "연설"] },
-      { id: 131, emotion: 'anxious', text: "나는 내 인생에서 수많은 걱정거리를 안고 살았지만, 그중 대부분은 실제로 일어나지 않았다.", source: "마크 트웨인", keywords: ["불안해소", "여유", "문학"] },
-      { id: 132, emotion: 'anxious', text: "우리는 현실에서보다 상상 속에서 훨씬 더 자주 고통받는다.", source: "세네카, 《도덕 서한집》", keywords: ["불안해소", "철학", "마음챙김"] },
-      { id: 133, emotion: 'anxious', text: "오늘이라는 단단한 칸막이 안에서 살아라. 어제의 후회와 내일의 불안을 오늘의 방 안으로 들이지 마라.", source: "윌리엄 오슬러", keywords: ["마음챙김", "불안해소", "지혜"] },
+      { id: 131, emotion: 'anxious', text: "미래의 불행을 미리 당겨 걱정하는 사람은 불행이 닥치기도 전에 이미 고통을 겪는 셈이다.", source: "미셸 드 몽테뉴, 《수상록》", keywords: ["불안해소", "여유", "철학"] },
+      { id: 132, emotion: 'anxious', text: "우리는 현실에서보다 상상 속에서 훨씬 더 자주 고통받는다.", source: "세네카, 《도덕 서한집》 13편", keywords: ["불안해소", "철학", "마음챙김"] },
+      { id: 133, emotion: 'anxious', text: "오늘이라는 단단한 칸막이 안에서 살아라. 어제의 후회와 내일의 불안을 오늘의 방 안으로 들이지 마라.", source: "윌리엄 오슬러, 《삶의 방식》", keywords: ["마음챙김", "불안해소", "지혜"] },
       { id: 134, emotion: 'anxious', text: "걱정의 40%는 절대 일어나지 않을 일이고, 30%는 이미 일어난 일이며, 22%는 사소한 고민이다.", source: "어니 젤린스키, 《느리게 사는 즐거움》", keywords: ["불안해소", "마음챙김", "지혜"] },
       { id: 135, emotion: 'anxious', text: "미래의 불안을 막는 가장 좋은 방법은 오늘 주어진 일에 온 정신과 열정을 쏟아붓는 것이다.", source: "데일 카네기, 《자기관리론》", keywords: ["실천", "불안해소", "성장"] },
-      { id: 136, emotion: 'anxious', text: "용기란 두려움이 없는 상태가 아니라, 두려움보다 더 중요한 무언가가 있다고 판단하는 것이다.", source: "앰브로스 레드문", keywords: ["용기", "두려움극복", "성찰"] },
+      { id: 136, emotion: 'anxious', text: "용기란 두려움이 없는 상태가 아니라, 두려움보다 더 중요한 무언가가 있다고 판단하는 것이다.", source: "앰브로스 레드문, 《평화로운 전사는 없다》", keywords: ["용기", "두려움극복", "성찰"] },
       { id: 137, emotion: 'anxious', text: "비관론자는 모든 기회에서 어려움을 보고, 낙관론자는 모든 어려움에서 기회를 본다.", source: "윈스턴 처칠", keywords: ["긍정", "용기", "처칠"] },
       { id: 138, emotion: 'anxious', text: "걱정은 내일의 슬픔을 없애주지 못할 뿐 아니라, 오늘의 힘마저 앗아간다.", source: "코리 텐 붐", keywords: ["불안해소", "마음챙김", "지혜"] },
-      { id: 139, emotion: 'anxious', text: "배는 항구에 있을 때 가장 안전하지만, 그것이 배가 만들어진 목적은 아니다.", source: "존 A. 셰드", keywords: ["용기", "도전", "성장"] },
-      { id: 140, emotion: 'anxious', text: "항상 두려워하는 일을 행동으로 옮겨라. 두려움의 죽음은 거기서 확실해진다.", source: "랄프 왈도 에머슨", keywords: ["용기", "실천", "두려움극복"] },
-      { id: 141, emotion: 'anxious', text: "행복과 자유로 가는 길은 단 하나, 우리가 통제할 수 없는 일들에 대한 집착을 내려놓는 것이다.", source: "에픽테토스, 《엥케이리디온》", keywords: ["평온", "불안해소", "철학"] },
+      { id: 139, emotion: 'anxious', text: "배는 항구에 있을 때 가장 안전하지만, 그것이 배가 만들어진 목적은 아니다.", source: "존 A. 셰드, 《다락방의 소금》", keywords: ["용기", "도전", "성장"] },
+      { id: 140, emotion: 'anxious', text: "항상 두려워하는 일을 행동으로 옮겨라. 두려움의 죽음은 거기서 확실해진다.", source: "랄프 왈도 에머슨, 《영웅주의》", keywords: ["용기", "실천", "두려움극복"] },
+      { id: 141, emotion: 'anxious', text: "행복과 자유로 가는 길은 단 하나, 우리가 통제할 수 없는 일들에 대한 집착을 내려놓는 것이다.", source: "에픽테토스, 《엥케이리디온》 1장", keywords: ["평온", "불안해소", "철학"] },
       { id: 142, emotion: 'anxious', text: "인생은 폭풍우가 지나가길 기다리는 것이 아니라, 빗속에서 춤추는 법을 배우는 것이다.", source: "비비안 그린", keywords: ["용기", "긍정", "성장"] },
       { id: 143, emotion: 'anxious', text: "계단 전체를 다 볼 필요는 없다. 믿음을 가지고 첫 번째 계단을 내딛기만 하면 된다.", source: "마틴 루터 킹 주니어", keywords: ["용기", "실천", "희망"] },
       { id: 144, emotion: 'anxious', text: "바람의 방향을 바꿀 수는 없지만, 목적지에 닿기 위해 언제든 돛의 방향은 조정할 수 있다.", source: "지미 딘", keywords: ["지혜", "용기", "긍정"] },
-      { id: 145, emotion: 'anxious', text: "불확실함은 두려워할 대상이 아니라, 우리가 새로운 것을 배우고 발견할 여지가 남아 있다는 증거다.", source: "리처드 파인만", keywords: ["도전", "성장", "지혜"] },
-      { id: 146, emotion: 'anxious', text: "두려움에 맞서 얼굴을 마주할 때마다 당신은 힘과 용기와 자신감을 얻는다. 할 수 없다고 생각한 일을 반드시 해보라.", source: "엘리너 루스벨트", keywords: ["용기", "두려움극복", "성장"] },
-      { id: 147, emotion: 'anxious', text: "미래가 당신을 흔들게 두지 마라. 필요하다면 지금 당신을 이끌어준 그 이성과 힘으로 미래 역시 맞설 수 있을 것이다.", source: "마르쿠스 아우렐리우스, 《명상록》", keywords: ["불안해소", "철학", "용기"] },
-      { id: 148, emotion: 'anxious', text: "철저히 준비하고 단호히 행동하는 사람에게 위기는 두려움이 아니라 실력을 증명할 무대가 된다.", source: "조지 S. 패튼", keywords: ["용기", "실천", "패튼"] },
-      { id: 149, emotion: 'anxious', text: "아무것도 시도하지 않는 사람만이 실수를 피할 수 있지만, 그 삶 자체가 가장 큰 실수이다.", source: "시어도어 루스벨트", keywords: ["도전", "용기", "실천"] },
-      { id: 150, emotion: 'anxious', text: "지금 이 순간 숨을 들이마시고 내쉬어라. 지금 여기에는 어떠한 위험도 없으며, 당신은 안전하다.", source: "틱낫한", keywords: ["마음챙김", "평온", "불안해소"] },
-      { id: 151, emotion: 'anxious', text: "우리가 가장 두려워하는 일은 대개 우리가 가장 먼저 해야 할 일이다.", source: "팀 페리스", keywords: ["용기", "실천", "도전"] },
-      { id: 152, emotion: 'anxious', text: "바람을 살피는 자는 씨를 뿌리지 못하고, 구름만 바라보는 자는 거두지 못한다.", source: "《구약성서》 전도서", keywords: ["실천", "용기", "지혜"] },
-      { id: 153, emotion: 'anxious', text: "오늘 당신이 두려워하는 그 일이 1년 뒤에는 당신을 가장 크게 성장시킨 발판이 되어 있을 것이다.", source: "마야 앤젤루", keywords: ["성장", "희망", "용기"] },
-      { id: 154, emotion: 'anxious', text: "생각이 너무 많아질 때는 몸을 움직여라. 발걸음이 시작되면 막연한 걱정은 뒤로 물러난다.", source: "헨리 데이비드 소로", keywords: ["실천", "불안해소", "여유"] },
-      { id: 155, emotion: 'anxious', text: "두려움은 한순간의 그림자일 뿐, 당신의 용기가 빛을 비추면 흔적도 없이 사라진다.", source: "넬슨 만델라", keywords: ["용기", "두려움극복", "희망"] },
+      { id: 145, emotion: 'anxious', text: "나는 의심과 불확실함, 그리고 알지 못함을 안고 살아갈 수 있다. 틀릴지도 모르는 답을 쥐고 있는 것보다, 알지 못한 채 탐구하며 살아가는 것이 훨씬 더 흥미롭다.", source: "리처드 파인만", keywords: ["도전", "성장", "지혜"] },
+      { id: 146, emotion: 'anxious', text: "두려움에 맞서 얼굴을 마주할 때마다 당신은 힘과 용기와 자신감을 얻는다. 할 수 없다고 생각한 일을 반드시 해보라.", source: "엘리너 루스벨트, 《살아가며 배우다》", keywords: ["용기", "두려움극복", "성장"] },
+      { id: 147, emotion: 'anxious', text: "미래가 당신을 흔들게 두지 마라. 필요하다면 지금 당신을 이끌어준 그 이성과 힘으로 미래 역시 맞설 수 있을 것이다.", source: "마르쿠스 아우렐리우스, 《명상록》 7권 8절", keywords: ["불안해소", "철학", "용기"] },
+      { id: 148, emotion: 'anxious', text: "고정된 요새는 인간의 어리석음을 기념하는 비석일 뿐이다. 두려움 뒤에 숨지 말고 움직여라.", source: "조지 S. 패튼", keywords: ["용기", "실천", "패튼"] },
+      { id: 149, emotion: 'anxious', text: "단 한 번도 실수하지 않는 유일한 사람은 아무 일도 하지 않는 사람뿐이다.", source: "시어도어 루스벨트", keywords: ["도전", "용기", "실천"] },
+      { id: 150, emotion: 'anxious', text: "미소는 긴장을 풀고 평화를 가져다주는 작은 수행이다. 지금 이 순간 호흡과 함께 미소 지어라.", source: "틱낫한, 《평화는 발걸음마다》", keywords: ["마음챙김", "평온", "불안해소"] },
+      { id: 151, emotion: 'anxious', text: "한 사람의 인생의 성패는 그가 기꺼이 감수하려는 불편한 대화와 도전의 수로 가늠할 수 있다.", source: "팀 페리스, 《나는 4시간만 일한다》", keywords: ["용기", "실천", "도전"] },
+      { id: 152, emotion: 'anxious', text: "바람을 살피는 자는 씨를 뿌리지 못하고, 구름만 바라보는 자는 거두지 못한다.", source: "《구약성서》 전도서 11장 4절", keywords: ["실천", "용기", "지혜"] },
+      { id: 153, emotion: 'anxious', text: "용기가 없다면 다른 어떤 미덕도 일관되게 실천할 수 없다.", source: "마야 앤젤루", keywords: ["용기", "실천", "성찰"] },
+      { id: 154, emotion: 'anxious', text: "하루에 적어도 네 시간 이상 숲과 언덕과 들판을 걷지 않고서는 내 영혼과 육체의 건강을 유지할 수 없다.", source: "헨리 데이비드 소로, 《산책》", keywords: ["실천", "불안해소", "여유"] },
+      { id: 155, emotion: 'anxious', text: "나는 용기란 두려움이 없는 상태가 아니라, 두려움을 이겨내는 승리라는 것을 배웠다. 용감한 사람은 두려움을 느끼지 않는 사람이 아니라 그 두려움을 정복하는 사람이다.", source: "넬슨 만델라, 《자유를 향한 머나먼 길》", keywords: ["용기", "두려움극복", "희망"] },
       { id: 198, emotion: 'anxious', text: "개들의 싸움에서 중요한 것은 개의 몸집이 아니라, 투쟁심의 크기이다.", source: "드와이트 D. 아이젠하워", keywords: ["용기", "도전", "성장"] },
-      { id: 199, emotion: 'anxious', text: "나를 이끌든지, 따르든지, 그도 저도 아니면 내 길에서 비켜라.", source: "조지 S. 패튼", keywords: ["용기", "실천", "도전"] },
-      { id: 200, emotion: 'anxious', text: "모든 것을 영원히 지켜내는 것에 성공한 사람은 아무도 없다. 공격, 공격하는 것만이 성공하는 길이다.", source: "조지 S. 패튼", keywords: ["용기", "도전", "실천"] },
+      { id: 199, emotion: 'anxious', text: "나를 이끌든지, 따르든지, 그도 저도 아니면 내 길에서 비켜라.", source: "조지 S. 패튼", keywords: ["용기", "실천", "패튼"] },
+      { id: 200, emotion: 'anxious', text: "모든 것을 영원히 지켜내는 것에 성공한 사람은 아무도 없다. 공격, 공격하는 것만이 성공하는 길이다.", source: "조지 S. 패튼", keywords: ["용기", "도전", "패튼"] },
       { id: 201, emotion: 'anxious', text: "전쟁은 무기로써 싸우지만 승리는 인간이 쟁취한다. 승리는 따르고 이끌 수 있는 자들의 정신에 달려있다.", source: "조지 S. 패튼", keywords: ["용기", "성장", "패튼"] },
       { id: 202, emotion: 'anxious', text: "공격을 하려는 방울뱀을 보았다면, 뱀이 덮쳐올 때까지 기다리지는 않을 것이다.", source: "프랭클린 D. 루스벨트", keywords: ["용기", "실천", "지혜"] },
       { id: 203, emotion: 'anxious', text: "군인들에게 조국을 지키고 있다는 의식이 없다면, 요새, 대포, 대외원조 같은 것은 아무런 의미가 없다.", source: "카를 구스타프 에밀 만네르하임", keywords: ["용기", "성찰", "지혜"] },
 
       // 6. 분노 / 답답함 (angry)
-      { id: 156, emotion: 'angry', text: "화를 내는 것은 누구에게나 쉬운 일이다. 그러나 올바른 대상에게, 올바른 정도로, 올바른 때에, 올바른 목적으로 화를 내는 것은 결코 쉽지 않다.", source: "아리스토텔레스, 《니코마코스 윤리학》", keywords: ["절제", "철학", "지혜"] },
+      { id: 156, emotion: 'angry', text: "화를 내는 것은 누구에게나 쉬운 일이다. 그러나 올바른 대상에게, 올바른 정도로, 올바른 때에, 올바른 목적으로 화를 내는 것은 결코 쉽지 않다.", source: "아리스토텔레스, 《니코마코스 윤리학》 2권 9장", keywords: ["절제", "철학", "지혜"] },
       { id: 157, emotion: 'angry', text: "분노를 품고 있는 것은 다른 사람에게 던지려고 뜨거운 석탄을 손에 쥐고 있는 것과 같다. 화상을 입는 것은 결국 당신 자신이다.", source: "붓다의 가르침 (《청정도론》)", keywords: ["평온", "절제", "마음챙김"] },
-      { id: 158, emotion: 'angry', text: "분노의 가장 강력한 치유제는 지연과 시간이다. 첫 격정이 가라앉을 때까지 기다려라.", source: "세네카, 《분노에 대하여》", keywords: ["절제", "평온", "철학"] },
-      { id: 159, emotion: 'angry', text: "누군가 당신을 화나게 만드는 데 성공했다면, 당신이 그에게 마음의 통제권을 내어준 것이다.", source: "에픽테토스", keywords: ["절제", "철학", "성찰"] },
-      { id: 160, emotion: 'angry', text: "타인의 행동이 당신의 내면의 평화를 깨뜨리게 허락하지 마라. 그들을 닮아가지 않는 것이 가장 훌륭한 대응이다.", source: "마르쿠스 아우렐리우스, 《명상록》", keywords: ["평온", "절제", "철학"] },
-      { id: 161, emotion: 'angry', text: "화났을 때는 말하기 전에 열까지 세어라. 매우 화가 났을 때는 백까지 세어라.", source: "토머스 제퍼슨", keywords: ["절제", "실천", "지혜"] },
+      { id: 158, emotion: 'angry', text: "분노의 가장 강력한 치유제는 지연과 시간이다. 첫 격정이 가라앉을 때까지 기다려라.", source: "세네카, 《분노에 대하여》 2권 29장", keywords: ["절제", "평온", "철학"] },
+      { id: 159, emotion: 'angry', text: "누군가 당신을 화나게 만드는 데 성공했다면, 당신이 그에게 마음의 통제권을 내어준 것이다.", source: "에픽테토스, 《엥케이리디온》 28장", keywords: ["절제", "철학", "성찰"] },
+      { id: 160, emotion: 'angry', text: "가장 훌륭한 복수는 너를 해친 자를 닮아가지 않는 것이다.", source: "마르쿠스 아우렐리우스, 《명상록》 6권 6절", keywords: ["평온", "절제", "철학"] },
+      { id: 161, emotion: 'angry', text: "화났을 때는 말하기 전에 열까지 세어라. 매우 화가 났을 때는 백까지 세어라.", source: "토머스 제퍼슨, 토머스 제퍼슨 스미스에게 보낸 편지 (1825)", keywords: ["절제", "실천", "지혜"] },
       { id: 162, emotion: 'angry', text: "분노는 어리석음으로 시작해서 후회로 끝난다.", source: "피타고라스", keywords: ["절제", "철학", "성찰"] },
       { id: 163, emotion: 'angry', text: "1분 동안 화를 내면 60초의 행복과 평온을 잃게 된다.", source: "랄프 왈도 에머슨", keywords: ["평온", "절제", "지혜"] },
-      { id: 164, emotion: 'angry', text: "감정이 격해졌을 때는 결코 중요한 결정을 내리지 마라. 폭풍이 지나간 뒤에 닻을 올려라.", source: "벤저민 프랭클린", keywords: ["절제", "지혜", "평온"] },
-      { id: 165, emotion: 'angry', text: "어둠은 어둠을 몰아낼 수 없고 오직 빛만이 할 수 있다. 증오는 증오를 몰아낼 수 없고 오직 사랑과 절제만이 할 수 있다.", source: "마틴 루터 킹 주니어", keywords: ["용서", "평온", "지혜"] },
+      { id: 164, emotion: 'angry', text: "분노는 결코 이유 없이 일어나지 않지만, 좋은 이유를 가진 경우는 드물다.", source: "벤저민 프랭클린, 《가난한 리처드의 연감》", keywords: ["절제", "지혜", "평온"] },
+      { id: 165, emotion: 'angry', text: "어둠은 어둠을 몰아낼 수 없고 오직 빛만이 할 수 있다. 증오는 증오를 몰아낼 수 없고 오직 사랑만이 할 수 있다.", source: "마틴 루터 킹 주니어, 《사랑의 힘》", keywords: ["용서", "평온", "지혜"] },
       { id: 166, emotion: 'angry', text: "침묵은 때로 가장 품위 있고 강력한 대답이다.", source: "달라이 라마 14세", keywords: ["절제", "평온", "지혜"] },
-      { id: 167, emotion: 'angry', text: "노하기를 더디 하는 자는 용사보다 낫고, 자기의 마음을 다스리는 자는 성을 빼앗는 자보다 나으니라.", source: "《구약성서》 잠언", keywords: ["절제", "용기", "성찰"] },
+      { id: 167, emotion: 'angry', text: "노하기를 더디 하는 자는 용사보다 낫고, 자기의 마음을 다스리는 자는 성을 빼앗는 자보다 나으니라.", source: "《구약성서》 잠언 16장 32절", keywords: ["절제", "용기", "성찰"] },
       { id: 168, emotion: 'angry', text: '말을 내뱉기 전에 세 가지 문을 통과시켜라. "진실한가, 필요한가, 친절한가."', source: "수피 고전 격언", keywords: ["절제", "지혜", "관계"] },
-      { id: 169, emotion: 'angry', text: "냉정함과 평정심을 잃지 않는 지휘관만이 혼란스러운 전장을 주도할 수 있다.", source: "조지 S. 패튼", keywords: ["절제", "평온", "패튼"] },
-      { id: 170, emotion: 'angry', text: "벽을 향해 주먹을 휘두른다고 해서 벽이 무너지지는 않는다. 냉정하게 돌아서서 새로운 출구를 찾아라.", source: "윈스턴 처칠", keywords: ["지혜", "실천", "처칠"] },
+      { id: 169, emotion: 'angry', text: "적의 계획에 반응하지 말고, 네가 주도권을 쥐고 적이 네 움직임에 반응하게 만들어라.", source: "조지 S. 패튼", keywords: ["절제", "지혜", "패튼"] },
+      { id: 170, emotion: 'angry', text: "목적지에 도달하기 위해 길 위에서 짖어대는 모든 개에게 일일이 돌을 던진다면, 당신은 결코 목적지에 다다르지 못할 것이다.", source: "윈스턴 처칠 (전승 어록)", keywords: ["지혜", "여유", "처칠"] },
       { id: 171, emotion: 'angry', text: "원한을 품는 것은 내가 독약을 마시고 상대방이 쓰러지기를 기다리는 것과 같다.", source: "넬슨 만델라", keywords: ["용서", "평온", "지혜"] },
-      { id: 172, emotion: 'angry', text: "사소한 일에 목숨을 걸지 마라. 지금 당신을 화나게 하는 일이 1년 뒤에도 중요할지 자문해 보라.", source: "리처드 칼슨", keywords: ["여유", "평온", "지혜"] },
-      { id: 173, emotion: 'angry', text: "남을 잘 이기는 자는 노하지 않고, 잘 싸우는 자는 성내지 않는다.", source: "노자, 《도덕경》", keywords: ["절제", "평온", "철학"] },
-      { id: 174, emotion: 'angry', text: "격한 감정의 순간에 삼킨 한 마디의 말이 훗날 당신의 품격과 평화를 지켜준다.", source: "발타자르 그라시안", keywords: ["절제", "지혜", "성찰"] },
+      { id: 172, emotion: 'angry', text: "사소한 일에 목숨을 걸지 마라. 지금 당신을 화나게 하는 일이 1년 뒤에도 중요할지 자문해 보라.", source: "리처드 칼슨, 《사소한 것에 목숨 걸지 마라》", keywords: ["여유", "평온", "지혜"] },
+      { id: 173, emotion: 'angry', text: "남을 잘 이기는 자는 노하지 않고, 잘 싸우는 자는 성내지 않는다.", source: "노자, 《도덕경》 68장", keywords: ["절제", "평온", "철학"] },
+      { id: 174, emotion: 'angry', text: "격정에 휩싸일 때는 언제나 두 번 생각하라. 성급한 말 한마디는 쏘아 올린 화살과 같아 결코 되돌릴 수 없다.", source: "발타자르 그라시안, 《세상을 보는 지혜》", keywords: ["절제", "지혜", "성찰"] },
       { id: 175, emotion: 'angry', text: "용서는 과거를 바꾸지 못하지만, 미래를 넓혀준다.", source: "폴 보스", keywords: ["용서", "희망", "성찰"] },
       { id: 176, emotion: 'angry', text: "돼지와 씨름하지 마라. 둘 다 진흙투성이가 될 뿐이고, 돼지는 오히려 그 진흙탕을 즐길 뿐이다.", source: "조지 버나드 쇼", keywords: ["여유", "지혜", "절제"] },
-      { id: 177, emotion: 'angry', text: "해를 넘기도록 분노를 품지 마라. 잠들기 전에 마음의 뜨거운 불씨를 꺼뜨려라.", source: "《신약성서》 에베소서", keywords: ["절제", "평온", "휴식"] },
-      { id: 178, emotion: 'angry', text: "분노는 잠깐 머무는 광기이다. 주인이 되어 다스리지 못하면 노예가 된다.", source: "호라티우스, 《서한집》", keywords: ["절제", "철학", "문학"] },
-      { id: 179, emotion: 'angry', text: "분노가 일어날 때 그것을 억누르거나 폭발시키지 말고, 어머니가 우는 아이를 안아주듯 고요히 바라보아라.", source: "틱낫한", keywords: ["마음챙김", "평온", "명상"] },
-      { id: 180, emotion: 'angry', text: "이해하지 못하는 사람과 억지로 다투지 마라. 침묵과 거리 두기가 가장 현명한 해결책이다.", source: "아르투어 쇼펜하우어", keywords: ["여유", "철학", "절제"] },
-      { id: 181, emotion: 'angry', text: "자기 자신을 이기는 것이 모든 승리 가운데 가장 첫 번째이자 가장 위대한 승리이다.", source: "플라톤, 《법률》", keywords: ["절제", "철학", "성장"] },
-      { id: 182, emotion: 'angry', text: "비바람이 몰아칠 때 창문을 닫아라. 바깥의 소란을 내 마음의 방 안까지 들일 필요는 없다.", source: "법정 스님", keywords: ["평온", "마음챙김", "여유"] },
-      { id: 183, emotion: 'angry', text: "행동을 가로막는 장애물이 오히려 행동의 길을 열어준다. 길 위에 놓인 돌이 곧 길이 된다.", source: "마르쿠스 아우렐리우스, 《명상록》", keywords: ["지혜", "성장", "철학"] },
-      { id: 184, emotion: 'angry', text: "부드러운 대답은 분노를 쉬게 하여도 과격한 말은 노를 격동하느니라.", source: "《구약성서》 잠언", keywords: ["절제", "관계", "평온"] },
-      { id: 185, emotion: 'angry', text: "가장 거친 폭풍도 영원히 계속되지는 않는다. 깊게 숨을 내쉬고 구름이 걷히기를 기다려라.", source: "세네카", keywords: ["평온", "인내", "철학"] },
-      { id: 186, emotion: 'angry', text: "타인의 어리석음 때문에 내 하루의 평온이라는 귀중한 보물을 내던지지 마라.", source: "에픽테토스", keywords: ["평온", "절제", "철학"] },
+      { id: 177, emotion: 'angry', text: "분을 내어도 죄를 짓지 말며 해가 지도록 분을 품지 말라.", source: "《신약성서》 에베소서 4장 26절", keywords: ["절제", "평온", "휴식"] },
+      { id: 178, emotion: 'angry', text: "분노는 잠깐 머무는 광기이다. 주인이 되어 다스리지 못하면 노예가 된다.", source: "호라티우스, 《서한집》 1권 2편", keywords: ["절제", "철학", "문학"] },
+      { id: 179, emotion: 'angry', text: "분노가 일어날 때 그것을 억누르거나 폭발시키지 말고, 어머니가 우는 아이를 안아주듯 고요히 바라보아라.", source: "틱낫한, 《화》", keywords: ["마음챙김", "평온", "명상"] },
+      { id: 180, emotion: 'angry', text: "상대방의 어리석음에 화를 내는 것은, 길 위에 놓인 돌부리에 걸려 넘어졌다고 돌을 향해 소리치는 것과 다름없다.", source: "아르투어 쇼펜하우어, 《소품과 부록》", keywords: ["여유", "철학", "절제"] },
+      { id: 181, emotion: 'angry', text: "자기 자신을 이기는 것이 모든 승리 가운데 가장 첫 번째이자 가장 위대한 승리이다.", source: "플라톤, 《법률》 1권", keywords: ["절제", "철학", "성장"] },
+      { id: 182, emotion: 'angry', text: "남의 허물을 탓하기 전에 먼저 내 마음의 거울을 닦아라. 밖에서 들려오는 소란보다 내 안의 번뇌가 나를 더 어지럽힌다.", source: "법정 스님, 《버리고 떠나기》", keywords: ["평온", "마음챙김", "여유"] },
+      { id: 183, emotion: 'angry', text: "행동을 가로막는 장애물이 오히려 행동의 길을 열어준다. 길 위에 놓인 돌이 곧 길이 된다.", source: "마르쿠스 아우렐리우스, 《명상록》 5권 20절", keywords: ["지혜", "성장", "철학"] },
+      { id: 184, emotion: 'angry', text: "부드러운 대답은 분노를 쉬게 하여도 과격한 말은 노를 격동하느니라.", source: "《구약성서》 잠언 15장 1절", keywords: ["절제", "관계", "평온"] },
+      { id: 185, emotion: 'angry', text: "분노가 치밀어 오를 때는 입을 다물고 표정을 가라앉혀라. 분노의 겉모습을 억누르면 그 불길도 곧 사그라든다.", source: "세네카, 《분노에 대하여》 3권 12장", keywords: ["평온", "절제", "철학"] },
+      { id: 186, emotion: 'angry', text: "누군가 너를 모욕하거나 해치려 할 때, 그 사람은 자신의 판단에 따라 행동하는 것일 뿐임을 기억하라. 그러니 그의 착각 때문에 네 마음이 흔들릴 이유는 없다.", source: "에픽테토스, 《엥케이리디온》 42장", keywords: ["평온", "절제", "철학"] },
       { id: 204, emotion: 'angry', text: "강력한 국력을 지닌 주권국이 있는 한, 전쟁은 불가피하다.", source: "알베르트 아인슈타인", keywords: ["철학", "성찰", "지혜"] },
       { id: 205, emotion: 'angry', text: "굶주리고 직업이 없는 국민은 독재가 시행될 구실이 된다.", source: "프랭클린 D. 루스벨트", keywords: ["성찰", "지혜", "철학"] },
       { id: 206, emotion: 'angry', text: "오늘 우리에게 일어난 일이 내일 여러분에게 일어날 수도 있다.", source: "하일레 셀라시에 1세, 국제연맹 연설 (1936)", keywords: ["성찰", "관계", "지혜"] },
@@ -1019,7 +1408,12 @@
     ];
 
     const STORAGE_KEY = 'taeyang_saved_quotes_v2';
+    const NOTES_STORAGE_KEY = 'taeyang_quote_notes_v1';
+    const TRACKER_STORAGE_KEY = 'taeyang_mood_tracker_v1';
+
     let savedIds = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+    let quoteNotes = JSON.parse(localStorage.getItem(NOTES_STORAGE_KEY) || '{}');
+    let moodCountsToday = JSON.parse(localStorage.getItem(TRACKER_STORAGE_KEY) || '{}');
 
     const emotionBtns = document.querySelectorAll('.emotion-btn');
     const quoteCard = document.getElementById('quoteCard');
@@ -1032,11 +1426,19 @@
     const keywordList = document.getElementById('keywordList');
     const filterStatusPill = document.getElementById('filterStatusPill');
 
+    const quoteSearchInput = document.getElementById('quoteSearchInput');
+    const searchClearBtn = document.getElementById('searchClearBtn');
+
+    const reflectionBox = document.getElementById('reflectionBox');
+    const reflectionInput = document.getElementById('reflectionInput');
+    const saveReflectionBtn = document.getElementById('saveReflectionBtn');
+
     const nextBtn = document.getElementById('nextBtn');
     const copyBtn = document.getElementById('copyBtn');
     const copyBtnText = document.getElementById('copyBtnText');
     const bookmarkBtn = document.getElementById('bookmarkBtn');
     const bookmarkBtnText = document.getElementById('bookmarkBtnText');
+    const posterBtn = document.getElementById('posterBtn');
     const searchBtn = document.getElementById('searchBtn');
     const youtubeBtn = document.getElementById('youtubeBtn');
     const closeBtn = document.getElementById('closeBtn');
@@ -1045,6 +1447,8 @@
     let filterState = { type: 'all', value: null };
     let currentQuote = null;
     let recentShownIds = [];
+    let typingTimer = null;
+    let fullTextForTyping = '';
 
     function initCategoryCounts() {
       const counts = {};
@@ -1063,7 +1467,43 @@
 
     function saveStorage() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify([...savedIds]));
+      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(quoteNotes));
       document.getElementById('savedCountBadge').textContent = savedIds.size;
+    }
+
+    function recordMoodVisit(emotion) {
+      if (!EMOTION_META[emotion]) return;
+      moodCountsToday[emotion] = (moodCountsToday[emotion] || 0) + 1;
+      localStorage.setItem(TRACKER_STORAGE_KEY, JSON.stringify(moodCountsToday));
+      renderMoodTracker();
+    }
+
+    function renderMoodTracker() {
+      const total = Object.values(moodCountsToday).reduce((a, b) => a + b, 0);
+      const trackerBar = document.getElementById('moodTrackerBar');
+      const segWrap = document.getElementById('trackerSegments');
+      const summaryText = document.getElementById('trackerSummaryText');
+
+      if (total === 0) {
+        trackerBar.classList.remove('visible');
+        return;
+      }
+
+      trackerBar.classList.add('visible');
+      summaryText.textContent = `누적 ${total}편 탐색`;
+      segWrap.innerHTML = '';
+
+      Object.keys(EMOTION_META).forEach(key => {
+        const count = moodCountsToday[key] || 0;
+        if (count > 0) {
+          const seg = document.createElement('div');
+          seg.className = 'tracker-seg';
+          seg.style.width = `${(count / total) * 100}%`;
+          seg.style.background = EMOTION_META[key].color;
+          seg.title = `${EMOTION_META[key].label}: ${count}편`;
+          segWrap.appendChild(seg);
+        }
+      });
     }
 
     function updateBookmarkButton() {
@@ -1071,6 +1511,13 @@
       const isSaved = savedIds.has(currentQuote.id);
       bookmarkBtn.classList.toggle('saved', isSaved);
       bookmarkBtnText.textContent = isSaved ? '보관됨' : '보관';
+
+      if (isSaved) {
+        reflectionBox.classList.add('visible');
+        reflectionInput.value = quoteNotes[currentQuote.id] || '';
+      } else {
+        reflectionBox.classList.remove('visible');
+      }
     }
 
     function getPoolByFilter() {
@@ -1080,11 +1527,53 @@
       if (filterState.type === 'keyword') {
         return quotesData.filter(q => q.keywords.includes(filterState.value));
       }
+      if (filterState.type === 'search') {
+        const term = filterState.value.toLowerCase();
+        return quotesData.filter(q =>
+          q.text.toLowerCase().includes(term) ||
+          q.source.toLowerCase().includes(term) ||
+          q.keywords.some(k => k.toLowerCase().includes(term))
+        );
+      }
       return quotesData;
     }
 
+    function renderQuoteWithTypewriter(text) {
+      if (typingTimer) clearInterval(typingTimer);
+      fullTextForTyping = text;
+
+      let idx = 0;
+      quoteText.innerHTML = `<span class="highlight"></span>`;
+      const span = quoteText.querySelector('.highlight');
+
+      const step = text.length > 90 ? 3 : 2;
+      typingTimer = setInterval(() => {
+        idx += step;
+        if (idx >= text.length) {
+          span.textContent = text;
+          clearInterval(typingTimer);
+          typingTimer = null;
+        } else {
+          span.textContent = text.slice(0, idx);
+        }
+      }, 16);
+    }
+
+    quoteText.addEventListener('click', () => {
+      if (typingTimer && fullTextForTyping) {
+        clearInterval(typingTimer);
+        typingTimer = null;
+        quoteText.innerHTML = `<span class="highlight">${fullTextForTyping}</span>`;
+      }
+    });
+
     function showQuoteFromPool(pool) {
-      if (!pool || pool.length === 0) return;
+      if (!pool || pool.length === 0) {
+        initialMsg.classList.remove('hidden');
+        initialMsg.textContent = "일치하는 문장이 없습니다. 다른 검색어나 감정을 선택해 보세요.";
+        quoteCard.classList.remove('active');
+        return;
+      }
 
       const historyLimit = Math.min(15, Math.floor(pool.length * 0.6));
       const recentSlice = recentShownIds.slice(-historyLimit);
@@ -1100,12 +1589,14 @@
       recentShownIds.push(picked.id);
       if (recentShownIds.length > 40) recentShownIds.shift();
 
-      const meta = EMOTION_META[picked.emotion] || { label: '마음의 문장', color: 'var(--cyan)' };
+      recordMoodVisit(picked.emotion);
+
+      const meta = EMOTION_META[picked.emotion] || { label: '마음의 문장', color: '#48dbfb' };
       cardBrowserBar.style.background = meta.color;
       cardMoodBadge.textContent = meta.label;
       cardPoolInfo.textContent = `${pool.length}편 중 추천`;
 
-      quoteText.innerHTML = `<span class="highlight">${picked.text}</span>`;
+      renderQuoteWithTypewriter(picked.text);
       quoteSource.textContent = `— ${picked.source}`;
 
       keywordList.innerHTML = '';
@@ -1119,6 +1610,8 @@
         kwBtn.textContent = `#${kw}`;
         kwBtn.addEventListener('click', () => {
           emotionBtns.forEach(b => b.classList.remove('active'));
+          quoteSearchInput.value = '';
+          searchClearBtn.classList.remove('visible');
           filterState = { type: 'keyword', value: kw };
           const kwPool = getPoolByFilter();
           filterStatusPill.textContent = `#${kw} 관련 문장 (${kwPool.length}편)`;
@@ -1128,7 +1621,10 @@
         keywordList.appendChild(kwBtn);
       });
 
-      if (filterState.type !== 'keyword') {
+      if (filterState.type === 'search') {
+        filterStatusPill.textContent = `검색어 "${filterState.value}" (${pool.length}편)`;
+        filterStatusPill.classList.add('visible');
+      } else if (filterState.type !== 'keyword') {
         filterStatusPill.classList.remove('visible');
       }
 
@@ -1145,6 +1641,8 @@
       btn.addEventListener('click', () => {
         emotionBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        quoteSearchInput.value = '';
+        searchClearBtn.classList.remove('visible');
 
         const emotion = btn.dataset.emotion;
         filterState = { type: 'emotion', value: emotion };
@@ -1152,8 +1650,37 @@
       });
     });
 
+    // 실시간 검색 입력 처리
+    let searchDebounce = null;
+    quoteSearchInput.addEventListener('input', () => {
+      const val = quoteSearchInput.value.trim();
+      searchClearBtn.classList.toggle('visible', val.length > 0);
+      clearTimeout(searchDebounce);
+
+      searchDebounce = setTimeout(() => {
+        emotionBtns.forEach(b => b.classList.remove('active'));
+        if (!val) {
+          filterState = { type: 'all', value: null };
+          filterStatusPill.classList.remove('visible');
+          return;
+        }
+        filterState = { type: 'search', value: val };
+        showQuoteFromPool(getPoolByFilter());
+      }, 220);
+    });
+
+    searchClearBtn.addEventListener('click', () => {
+      quoteSearchInput.value = '';
+      searchClearBtn.classList.remove('visible');
+      filterState = { type: 'all', value: null };
+      filterStatusPill.classList.remove('visible');
+      quoteSearchInput.focus();
+    });
+
     randomAnyBtn.addEventListener('click', () => {
       emotionBtns.forEach(b => b.classList.remove('active'));
+      quoteSearchInput.value = '';
+      searchClearBtn.classList.remove('visible');
       filterState = { type: 'all', value: null };
       showQuoteFromPool(quotesData);
     });
@@ -1167,7 +1694,18 @@
       emotionBtns.forEach(b => b.classList.remove('active'));
       filterState = { type: 'all', value: null };
       currentQuote = null;
+      initialMsg.textContent = "오늘 당신의 감정은 어떤가요? 위에서 기분을 선택하거나 검색어·랜덤 문장을 뽑아보세요.";
       initialMsg.classList.remove('hidden');
+    });
+
+    // 서체 및 글자 크기 토글
+    document.getElementById('toggleFontBtn').addEventListener('click', () => {
+      quoteText.classList.toggle('sans-mode');
+    });
+
+    document.getElementById('toggleSizeBtn').addEventListener('click', (e) => {
+      const isLarge = quoteText.classList.toggle('large-mode');
+      e.target.textContent = isLarge ? '가-' : '가+';
     });
 
     copyBtn.addEventListener('click', async () => {
@@ -1191,6 +1729,157 @@
       }
       saveStorage();
       updateBookmarkButton();
+    });
+
+    saveReflectionBtn.addEventListener('click', () => {
+      if (!currentQuote) return;
+      const note = reflectionInput.value.trim();
+      if (note) {
+        quoteNotes[currentQuote.id] = note;
+      } else {
+        delete quoteNotes[currentQuote.id];
+      }
+      saveStorage();
+      saveReflectionBtn.textContent = '저장됨!';
+      setTimeout(() => { saveReflectionBtn.textContent = '메모 저장'; }, 1200);
+    });
+
+    // HTML5 Canvas 그래픽 포스터 생성
+    function generateQuotePosterDataURL(quote) {
+      const canvas = document.createElement('canvas');
+      const W = 1080;
+      const H = 1350;
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext('2d');
+
+      const meta = EMOTION_META[quote.emotion] || { label: '마음의 문장', color: '#ffd83b' };
+
+      // 배경
+      ctx.fillStyle = '#fdfbf7';
+      ctx.fillRect(0, 0, W, H);
+
+      // 하드 드롭 섀도우 카드
+      const pad = 72;
+      const cardX = pad;
+      const cardY = pad;
+      const cardW = W - pad * 2 - 16;
+      const cardH = H - pad * 2 - 16;
+
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(cardX + 18, cardY + 18, cardW, cardH);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(cardX, cardY, cardW, cardH);
+
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = '#111111';
+      ctx.strokeRect(cardX, cardY, cardW, cardH);
+
+      // 상단 컬러 헤더 바
+      const headerH = 96;
+      ctx.fillStyle = meta.color;
+      ctx.fillRect(cardX, cardY, cardW, headerH);
+      ctx.strokeRect(cardX, cardY, cardW, headerH);
+
+      // 헤더 점 3개
+      [0, 1, 2].forEach(i => {
+        ctx.beginPath();
+        ctx.arc(cardX + 44 + i * 32, cardY + headerH / 2, 10, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.stroke();
+      });
+
+      // 감정 배지
+      ctx.font = '900 28px "Pretendard Variable", sans-serif';
+      ctx.fillStyle = '#111111';
+      ctx.textAlign = 'right';
+      ctx.fillText(`[ ${meta.label} ]`, cardX + cardW - 40, cardY + 58);
+
+      // 큰 따옴표
+      ctx.textAlign = 'left';
+      ctx.font = '800 110px "Nanum Myeongjo", serif';
+      ctx.fillStyle = '#111111';
+      ctx.fillText('“', cardX + 64, cardY + headerH + 145);
+
+      // 본문 줄바꿈 렌더링
+      const textX = cardX + 68;
+      const maxTextW = cardW - 136;
+      const fontSize = quote.text.length > 105 ? 40 : (quote.text.length > 65 ? 46 : 54);
+      const lineHeight = Math.round(fontSize * 1.62);
+      ctx.font = `800 ${fontSize}px "Nanum Myeongjo", serif`;
+
+      const lines = [];
+      let currentLine = '';
+      for (const char of quote.text) {
+        const testLine = currentLine + char;
+        if (ctx.measureText(testLine).width > maxTextW && currentLine.length > 0) {
+          lines.push(currentLine);
+          currentLine = char;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+
+      let curY = cardY + headerH + 225;
+      lines.forEach(line => {
+        // 형광펜 하이라이트 효과
+        const lineW = ctx.measureText(line).width;
+        ctx.fillStyle = 'rgba(255, 216, 59, 0.55)';
+        ctx.fillRect(textX - 4, curY - fontSize * 0.35, lineW + 8, fontSize * 0.45);
+
+        ctx.fillStyle = '#111111';
+        ctx.fillText(line, textX, curY);
+        curY += lineHeight;
+      });
+
+      // 하단 출처 및 푸터 영역
+      const footerTopY = cardY + cardH - 180;
+      ctx.beginPath();
+      ctx.setLineDash([12, 10]);
+      ctx.lineWidth = 4;
+      ctx.moveTo(cardX + 64, footerTopY);
+      ctx.lineTo(cardX + cardW - 64, footerTopY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = '900 32px "Pretendard Variable", sans-serif';
+      ctx.fillStyle = '#111111';
+      ctx.textAlign = 'right';
+      ctx.fillText(`— ${quote.source}`, cardX + cardW - 64, footerTopY + 62);
+
+      ctx.textAlign = 'left';
+      ctx.font = '900 24px "Pretendard Variable", sans-serif';
+      ctx.fillStyle = '#555555';
+      ctx.fillText('마음의 문장들 · 문태양', cardX + 64, cardY + cardH - 44);
+
+      return canvas.toDataURL('image/png');
+    }
+
+    const posterModal = document.getElementById('posterModal');
+    const posterPreviewImg = document.getElementById('posterPreviewImg');
+    let latestPosterDataUrl = '';
+
+    posterBtn.addEventListener('click', () => {
+      if (!currentQuote) return;
+      latestPosterDataUrl = generateQuotePosterDataURL(currentQuote);
+      posterPreviewImg.src = latestPosterDataUrl;
+      posterModal.style.display = 'flex';
+    });
+
+    document.getElementById('downloadPosterBtn').addEventListener('click', () => {
+      if (!latestPosterDataUrl || !currentQuote) return;
+      const a = document.createElement('a');
+      a.href = latestPosterDataUrl;
+      a.download = `마음의문장_${currentQuote.id}.png`;
+      a.click();
+    });
+
+    document.getElementById('closePosterModalBtn').addEventListener('click', () => {
+      posterModal.style.display = 'none';
     });
 
     searchBtn.addEventListener('click', () => {
@@ -1238,15 +1927,18 @@
         const row = document.createElement('div');
         row.className = 'saved-item';
         const meta = EMOTION_META[item.emotion]?.label || '';
+        const note = quoteNotes[item.id];
         row.innerHTML = `
           <div>
             <div class="saved-item-text">“${item.text}”</div>
             <div class="saved-item-meta">— ${item.source} · [${meta}]</div>
+            ${note ? `<div class="saved-item-note">메모: ${note.replace(/</g, '&lt;')}</div>` : ''}
           </div>
           <button type="button" class="remove-saved-btn">삭제</button>
         `;
         row.querySelector('.remove-saved-btn').addEventListener('click', () => {
           savedIds.delete(item.id);
+          delete quoteNotes[item.id];
           saveStorage();
           updateBookmarkButton();
           renderSavedList();
@@ -1264,18 +1956,147 @@
       savedModal.style.display = 'none';
     });
 
-    window.addEventListener('click', (e) => {
-      if (e.target === savedModal) savedModal.style.display = 'none';
+    document.getElementById('exportTxtBtn').addEventListener('click', () => {
+      const items = quotesData.filter(q => savedIds.has(q.id));
+      if (items.length === 0) return;
+
+      const lines = items.map((item, idx) => {
+        const meta = EMOTION_META[item.emotion]?.label || '';
+        const note = quoteNotes[item.id] ? `\n   메모: ${quoteNotes[item.id]}` : '';
+        return `${idx + 1}. [${meta}] "${item.text}"\n   — ${item.source}${note}`;
+      });
+
+      const blob = new Blob([`[마음의 문장들 보관함]\n\n${lines.join('\n\n')}`], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '마음의_문장들_보관함.txt';
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
+    document.getElementById('clearAllSavedBtn').addEventListener('click', () => {
+      if (savedIds.size === 0) return;
+      savedIds.clear();
+      quoteNotes = {};
+      saveStorage();
+      updateBookmarkButton();
+      renderSavedList();
+    });
+
+    // 4-4-4-4 박스 호흡 타이머
+    const breathModal = document.getElementById('breathModal');
+    const breathBoxVisual = document.getElementById('breathBoxVisual');
+    const breathPhaseLabel = document.getElementById('breathPhaseLabel');
+    const breathCountNum = document.getElementById('breathCountNum');
+    const toggleBreathRunBtn = document.getElementById('toggleBreathRunBtn');
+    const breathRunText = document.getElementById('breathRunText');
+
+    let breathInterval = null;
+    let breathRunning = false;
+    const BREATH_STEPS = [
+      { cls: 'inhale', label: '들이마시기' },
+      { cls: 'hold1', label: '숨 멈춤' },
+      { cls: 'exhale', label: '천천히 내쉬기' },
+      { cls: 'hold2', label: '고요히 멈춤' }
+    ];
+
+    function stopBreathTimer() {
+      breathRunning = false;
+      if (breathInterval) clearInterval(breathInterval);
+      breathInterval = null;
+      breathBoxVisual.className = 'breath-box-visual';
+      breathPhaseLabel.textContent = '준비';
+      breathCountNum.textContent = '4';
+      breathRunText.textContent = '호흡 시작';
+    }
+
+    function startBreathTimer() {
+      breathRunning = true;
+      breathRunText.textContent = '정지';
+      let stepIdx = 0;
+      let sec = 4;
+
+      const applyStep = () => {
+        const st = BREATH_STEPS[stepIdx];
+        breathBoxVisual.className = `breath-box-visual ${st.cls}`;
+        breathPhaseLabel.textContent = st.label;
+        breathCountNum.textContent = String(sec);
+      };
+
+      applyStep();
+      breathInterval = setInterval(() => {
+        sec -= 1;
+        if (sec <= 0) {
+          stepIdx = (stepIdx + 1) % BREATH_STEPS.length;
+          sec = 4;
+        }
+        applyStep();
+      }, 1000);
+    }
+
+    document.getElementById('openBreathBtn').addEventListener('click', () => {
+      stopBreathTimer();
+      breathModal.style.display = 'flex';
+    });
+
+    document.getElementById('closeBreathModalBtn').addEventListener('click', () => {
+      stopBreathTimer();
+      breathModal.style.display = 'none';
+    });
+
+    toggleBreathRunBtn.addEventListener('click', () => {
+      if (breathRunning) {
+        stopBreathTimer();
+      } else {
+        startBreathTimer();
+      }
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === savedModal) savedModal.style.display = 'none';
+      if (e.target === posterModal) posterModal.style.display = 'none';
+      if (e.target === breathModal) {
+        stopBreathTimer();
+        breathModal.style.display = 'none';
+      }
+    });
+
+    // 키보드 단축키
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && savedModal.style.display === 'flex') {
+      if (e.key === 'Escape') {
         savedModal.style.display = 'none';
+        posterModal.style.display = 'none';
+        stopBreathTimer();
+        breathModal.style.display = 'none';
+        return;
+      }
+
+      const activeTag = document.activeElement?.tagName;
+      if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') return;
+
+      if (e.key === '/') {
+        e.preventDefault();
+        quoteSearchInput.focus();
+      } else if (e.key === ' ' || e.key === 'ArrowRight') {
+        if (quoteCard.classList.contains('active')) {
+          e.preventDefault();
+          showQuoteFromPool(getPoolByFilter());
+        }
+      } else if (e.key.toLowerCase() === 'b') {
+        if (currentQuote) {
+          bookmarkBtn.click();
+        }
+      } else if (e.key.toLowerCase() === 'c') {
+        if (currentQuote) {
+          copyBtn.click();
+        }
       }
     });
 
     initCategoryCounts();
     saveStorage();
+    renderMoodTracker();
   </script>
 </body>
 </html>
