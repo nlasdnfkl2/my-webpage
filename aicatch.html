@@ -3,56 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>문태양 - 실시간 AI 캐치마인드</title>
+  <title>문태양 - AI 캐치마인드 (그림 맞추기 게임)</title>
+  <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-    
+
     :root {
       --bg: #dfdcd3;
-      --black: #0f0f0f;
+      --black: #111111;
       --white: #ffffff;
-      --yellow: #ffd83b;
-      --pink: #ff4757;
-      --cyan: #48dbfb;
-      --green: #2ed573;
-      --blue: #3e51ff;
-      --purple: #a29bfe;
-      --orange: #ff9f43;
-      
-      --border-thick: 4px solid var(--black);
       --border: 3px solid var(--black);
+      --border-thick: 4px solid var(--black);
+
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
       --shadow-sm: 4px 4px 0 var(--black);
       --shadow-lg: 8px 8px 0 var(--black);
     }
 
-    body::after {
-      content: "";
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 9999;
-      background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.3"/%3E%3C/svg%3E');
-      opacity: 0.12;
-      mix-blend-mode: overlay;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard Variable', 'Noto Sans KR', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    
-    body { 
-      background-color: var(--bg); 
-      color: var(--black); 
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      color: var(--black);
       line-height: 1.7;
       -webkit-font-smoothing: antialiased;
       position: relative;
-      background-image: radial-gradient(var(--black) 1.5px, transparent 1.5px); 
-      background-size: 24px 24px; 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 90px 20px 60px;
+      padding-top: 70px;
       word-break: keep-all;
     }
-    
+
+    /* 상단 고정 바 */
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
@@ -77,1898 +64,1202 @@
     }
 
     .fixed-top-bar .icon-group {
-      display: flex; gap: 12px; align-items: center;
-    }
-    .fixed-top-bar .icon-btn {
-      width: 38px; height: 38px; background: var(--white); border: var(--border); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 3px 3px 0 var(--black); cursor: pointer; font-weight: 900;
-      transition: all 0.1s ease; text-decoration: none; color: var(--black);
-    }
-    .fixed-top-bar .icon-btn:hover {
-      transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); background: var(--cyan);
-    }
-
-    .wrap { max-width: 900px; width: 100%; margin: 0 auto; }
-    
-    .top {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 0; border-bottom: var(--border-thick); font-size: 1rem; font-weight: 800;
-      margin-bottom: 30px;
+      display: flex;
       gap: 12px;
-      flex-wrap: wrap;
-    }
-    .top b { 
-      font-size: 1.4rem; letter-spacing: 0.05em; text-transform: uppercase; 
-      background: var(--black); color: var(--yellow); padding: 4px 12px; transform: skew(-5deg);
-      box-shadow: 3px 3px 0 var(--pink);
+      align-items: center;
     }
 
-    .score-board {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .score-pill {
+    .fixed-top-bar .icon-btn {
+      width: 38px; height: 38px;
       background: var(--white);
       border: var(--border);
-      padding: 4px 12px;
-      font-weight: 900;
-      font-size: 0.95rem;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
       box-shadow: 3px 3px 0 var(--black);
-    }
-    .score-pill span {
-      color: var(--blue);
-    }
-
-    .container {
-      width: 100%;
-      max-width: 820px;
-      background: var(--white);
-      border: var(--border-thick);
-      border-radius: 0;
-      padding: 36px;
-      box-shadow: var(--shadow-lg);
-      text-align: center;
-      margin: 0 auto;
+      cursor: pointer;
+      font-weight: 900; font-size: 0.9rem;
+      transition: all 0.1s ease;
+      text-decoration: none;
+      color: var(--black);
     }
 
-    .badge {
+    .fixed-top-bar .icon-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
       background: var(--cyan);
-      color: var(--black);
-      padding: 6px 14px;
-      border: var(--border);
-      box-shadow: var(--shadow-sm);
-      font-weight: 900;
-      font-size: 0.9rem;
-      display: inline-block;
-      margin-bottom: 20px;
     }
 
-    h1 {
-      font-size: clamp(1.8rem, 4vw, 2.4rem);
-      margin-bottom: 14px;
-      color: var(--black);
-      font-weight: 900;
-      text-transform: uppercase;
-      line-height: 1.25;
-    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+    a { color: inherit; text-decoration: none; }
 
-    .subtitle {
-      color: #222;
-      font-size: 1.02rem;
-      font-weight: 700;
-      line-height: 1.6;
-      margin-bottom: 28px;
-      border-left: 6px solid var(--black);
-      padding: 10px 16px;
-      text-align: left;
-      background: var(--bg);
+    .top {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 24px 0;
+      border-bottom: var(--border-thick);
+      font-size: 1rem; font-weight: 800;
     }
-
-    h2 {
+    .top b {
       font-size: 1.4rem;
-      font-weight: 900;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-    }
-
-    /* 모델 선택 패널 */
-    .model-selector-box {
-      background: var(--bg);
-      border: var(--border);
-      box-shadow: var(--shadow-sm);
-      padding: 16px;
-      margin-bottom: 24px;
-      text-align: left;
-    }
-
-    .model-selector-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .model-selector-title {
-      font-size: 0.92rem;
-      font-weight: 900;
       background: var(--black);
       color: var(--yellow);
-      padding: 2px 10px;
+      padding: 4px 12px;
+      transform: skew(-5deg);
+    }
+    .top nav { display: flex; gap: 20px; }
+    .top nav a { position: relative; padding: 4px 8px; }
+    .top nav a:hover { background: var(--black); color: var(--bg); }
+
+    .hero { padding: 48px 0 36px; border-bottom: var(--border-thick); }
+    .hero .small {
+      display: inline-block; font-size: 0.95rem; font-weight: 900;
+      background: var(--cyan); border: var(--border); padding: 4px 12px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      line-height: 1.25; font-weight: 900;
+    }
+    .hero h1 span {
+      display: inline-block;
+      color: var(--black);
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 0 16px;
+      box-shadow: 6px 6px 0 var(--black);
+      transform: rotate(-1.5deg);
+    }
+    .hero p {
+      max-width: 42em; margin-top: 20px; font-size: 1.04rem; font-weight: 600;
+      border-left: 6px solid var(--black); padding-left: 20px;
     }
 
-    .model-selector-desc {
-      font-size: 0.82rem;
-      font-weight: 800;
-      color: #333;
+    /* 메인 게임 카드 */
+    .game-card {
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-lg);
+      padding: 36px;
+      margin-top: 40px;
     }
 
-    .model-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* 시작 화면 */
+    .start-screen h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 12px; }
+    .start-screen p { font-weight: 600; margin-bottom: 20px; }
+
+    .model-status-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--yellow);
+      border: var(--border);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+      font-weight: 900;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .model-status-banner.ready {
+      background: var(--green);
+    }
+
+    .setting-group {
+      margin-bottom: 20px;
+      background: #f9f6ef;
+      border: var(--border);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .setting-group label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .chip-row {
+      display: flex;
       gap: 10px;
+      flex-wrap: wrap;
     }
-
-    .model-opt-btn {
+    .option-chip {
+      padding: 8px 16px;
       background: var(--white);
       border: var(--border);
-      padding: 10px 12px;
-      text-align: left;
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.95rem;
       cursor: pointer;
       box-shadow: 3px 3px 0 var(--black);
-      transition: all 0.1s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      transition: all 0.1s;
+    }
+    .option-chip:hover { background: var(--cyan); }
+    .option-chip.selected {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
     }
 
-    .model-opt-btn:hover:not(:disabled) {
+    .btn {
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 900;
+      padding: 12px 24px;
+      background: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all 0.1s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
+      background: var(--cyan);
+    }
+    .btn:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .btn-green { background: var(--green); }
+    .btn-red { background: var(--red); color: var(--white); }
+    .btn-white { background: var(--white); }
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: 0.9rem;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+    .btn-sm.active-tool {
       background: var(--yellow);
       transform: translate(-1px, -1px);
     }
 
-    .model-opt-btn.active {
-      background: var(--cyan);
-      box-shadow: 1px 1px 0 var(--black);
-      transform: translate(2px, 2px);
-    }
-
-    .model-opt-btn:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .model-opt-name {
-      font-weight: 900;
-      font-size: 0.9rem;
-    }
-
-    .model-opt-tag {
-      font-size: 0.76rem;
-      font-weight: 800;
-      color: #222;
-    }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-top: 18px;
-    }
-
-    .cat-btn {
-      background: var(--white);
-      border: var(--border);
-      border-radius: 0;
-      padding: 22px 16px;
-      font-size: 1.2rem;
-      font-weight: 900;
-      cursor: pointer;
-      transition: all 0.1s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      color: var(--black);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .cat-btn.color-special {
-      grid-column: 1 / -1;
-      background: #fff9db;
-      border-width: 4px;
-    }
-
-    .cat-btn-sub {
-      font-size: 0.82rem;
-      font-weight: 800;
-      color: #444;
-    }
-
-    .cat-btn:hover:not(:disabled) {
-      border-color: var(--black);
-      background: var(--yellow);
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0 var(--black);
-    }
-
-    .cat-btn:active:not(:disabled) {
-      transform: translate(2px, 2px);
-      box-shadow: 0 0 0 var(--black);
-    }
-
-    .cat-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      background: #e0e0e0;
-      box-shadow: 2px 2px 0 var(--black);
-    }
-
-    #loading-status {
-      margin-top: 24px;
-      padding: 16px;
-      background: var(--yellow);
-      color: var(--black);
-      border: var(--border);
-      font-size: 0.95rem;
-      font-weight: 900;
-      box-shadow: var(--shadow-sm);
-    }
-
-    #loading-status.ready {
-      background: var(--green);
-      color: var(--black);
-    }
-
-    .load-bar-wrap {
-      width: 100%;
-      height: 12px;
-      background: var(--white);
-      border: 2px solid var(--black);
-      margin-top: 10px;
-      overflow: hidden;
-    }
-
-    .load-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--blue);
-      transition: width 0.2s ease;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .game-header {
+    /* 플레이 화면 상단 바 */
+    .game-header-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--pink);
-      color: var(--white);
-      padding: 14px 20px;
-      border: var(--border);
-      margin-bottom: 16px;
-      box-shadow: var(--shadow-sm);
-      font-weight: 900;
       flex-wrap: wrap;
       gap: 10px;
-    }
-
-    .info-box {
-      font-size: 1rem;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .target-word {
-      font-size: 1.42rem;
-      font-weight: 900;
-      color: var(--yellow);
-      text-shadow: 2px 2px 0 var(--black);
-    }
-
-    .target-color-hint {
-      font-size: 0.78rem;
-      font-weight: 900;
-      background: var(--white);
-      color: var(--black);
-      border: 2px solid var(--black);
-      padding: 1px 8px;
-      text-shadow: none;
-    }
-
-    .timer-badge {
-      background: var(--black);
-      color: var(--white);
-      padding: 2px 10px;
-      border: 2px solid var(--white);
-    }
-
-    .timer-badge.urgent {
-      background: var(--yellow);
-      color: var(--black);
-      border-color: var(--black);
-      animation: pulse 0.6s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { transform: scale(1); }
-      to { transform: scale(1.08); }
-    }
-
-    .ai-live-box {
-      background: var(--white);
+      background: var(--pink);
       border: var(--border);
-      padding: 14px 18px;
-      margin-bottom: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: var(--shadow-sm);
-      text-align: left;
-    }
-
-    .ai-live-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 12px 18px;
       font-weight: 900;
       font-size: 1.05rem;
-      gap: 8px;
-      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 22px;
     }
-
-    .ai-sub-telemetry {
+    .stat-group {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      font-size: 0.83rem;
-      font-weight: 800;
-      background: var(--bg);
-      border: 2px solid var(--black);
-      padding: 6px 10px;
-    }
-
-    .detected-colors-wrap {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      gap: 10px;
       flex-wrap: wrap;
     }
-
-    .color-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+    .stat-box {
       background: var(--white);
-      border: 2px solid var(--black);
-      padding: 1px 7px;
-      font-size: 0.78rem;
-      font-weight: 900;
-    }
-
-    .color-chip-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 1.5px solid var(--black);
-      display: inline-block;
-    }
-
-    .color-bonus-tag {
-      background: var(--green);
-      color: var(--black);
-      border: 2px solid var(--black);
-      padding: 1px 7px;
-      font-size: 0.76rem;
-      font-weight: 900;
-    }
-
-    .runner-ups-text {
-      color: #333;
-      font-size: 0.8rem;
-      font-weight: 800;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      height: 14px;
-      background: #eee;
       border: var(--border);
-      overflow: hidden;
+      padding: 4px 12px;
       box-shadow: 2px 2px 0 var(--black);
     }
 
-    .progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--green);
-      transition: width 0.22s ease;
-    }
-
-    #canvas-wrapper {
+    /* 제시어 배너 */
+    .prompt-banner {
       display: flex;
-      justify-content: center;
-      margin: 0 auto 18px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--yellow);
       border: var(--border-thick);
-      box-shadow: var(--shadow-lg);
+      padding: 16px 22px;
+      box-shadow: 6px 6px 0 var(--black);
+      margin-bottom: 24px;
+    }
+    .prompt-word-wrap {
+      font-size: clamp(1.3rem, 3vw, 1.85rem);
+      font-weight: 900;
+    }
+    .prompt-word {
       background: var(--white);
-      width: 100%;
-      max-width: 368px;
+      border: var(--border);
+      padding: 2px 14px;
+      margin-left: 6px;
+      box-shadow: 3px 3px 0 var(--black);
     }
 
-    canvas {
-      border: none;
-      border-radius: 0;
-      cursor: crosshair;
-      touch-action: none;
-      background: #ffffff;
-      display: block;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 1 / 1;
+    /* 캔버스 + AI 추론 2단 레이아웃 */
+    .play-workspace {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 24px;
+      align-items: start;
     }
 
-    canvas.fill-cursor {
-      cursor: cell;
-    }
-
-    .toolbar {
+    .canvas-panel {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      background: var(--bg);
-      padding: 14px 18px;
-      border: var(--border);
-      margin-bottom: 18px;
-      box-shadow: var(--shadow-sm);
-      font-weight: 900;
     }
 
-    .toolbar-row {
+    .canvas-frame {
+      position: relative;
+      width: 100%;
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      overflow: hidden;
+    }
+
+    #drawCanvas {
+      display: block;
+      width: 100%;
+      height: 360px;
+      background: var(--white);
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .stroke-state-pill {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 3px 10px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      box-shadow: 2px 2px 0 var(--black);
+      pointer-events: none;
+    }
+    .stroke-state-pill.drawing {
+      background: var(--cyan);
+    }
+    .stroke-state-pill.inferring {
+      background: var(--yellow);
+    }
+
+    .canvas-toolbar {
       display: flex;
+      gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      background: #f9f6ef;
+      border: var(--border);
+      padding: 10px 12px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+    .tool-cluster {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* 오른쪽 AI 추론 결과 패널 */
+    .ai-panel {
+      background: #f9f6ef;
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .ai-panel-header {
+      display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      border-bottom: var(--border);
+      padding-bottom: 10px;
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+    .ai-badge {
+      background: var(--black);
+      color: var(--yellow);
+      font-size: 0.8rem;
+      padding: 2px 8px;
     }
 
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .ai-status-msg {
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 10px 12px;
       font-size: 0.92rem;
-      font-weight: 900;
-      flex-wrap: wrap;
-    }
-
-    .color-palette {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .color-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 2px solid var(--black);
-      box-shadow: 2px 2px 0 var(--black);
-      cursor: pointer;
-      transition: transform 0.1s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 900;
-    }
-
-    .color-btn:hover {
-      transform: scale(1.1);
-    }
-
-    .color-btn.active {
-      transform: scale(1.15);
-      box-shadow: 4px 4px 0 var(--black);
-      outline: 2px solid var(--black);
-      outline-offset: 2px;
-    }
-
-    .mode-pill-btn {
-      background: var(--white);
-      border: 2px solid var(--black);
-      box-shadow: 2px 2px 0 var(--black);
-      padding: 4px 10px;
-      font-size: 0.84rem;
-      font-weight: 900;
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-
-    .mode-pill-btn:hover {
-      background: var(--yellow);
-    }
-
-    .mode-pill-btn.active {
-      background: var(--cyan);
-      transform: translate(1px, 1px);
-      box-shadow: 1px 1px 0 var(--black);
-    }
-
-    .action-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    .btn {
-      padding: 13px 20px;
-      border-radius: 0;
-      border: var(--border);
-      font-size: 0.98rem;
-      font-weight: 900;
-      cursor: pointer;
-      transition: all 0.1s;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .btn:hover:not(:disabled) {
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0 var(--black);
-    }
-
-    .btn:active:not(:disabled) {
-      transform: translate(2px, 2px);
-      box-shadow: 0 0 0 var(--black);
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background: var(--white);
-      color: var(--black);
-    }
-
-    .btn-secondary:hover:not(:disabled) {
-      background: var(--pink);
-      color: var(--white);
-    }
-
-    .btn-undo {
-      background: var(--white);
-      color: var(--black);
-    }
-
-    .btn-undo:hover:not(:disabled) {
-      background: var(--yellow);
-    }
-
-    .btn-primary {
-      background: var(--yellow);
-      color: var(--black);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--cyan);
-    }
-
-    .result-banner {
-      display: inline-block;
-      padding: 10px 22px;
-      border: var(--border);
-      box-shadow: var(--shadow-sm);
-      font-size: 1.35rem;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-
-    .result-banner.success {
-      background: var(--green);
-      color: var(--black);
-    }
-
-    .result-banner.fail {
-      background: var(--pink);
-      color: var(--white);
-    }
-
-    .result-sub-info {
-      font-size: 0.95rem;
       font-weight: 800;
-      color: #444;
-      margin-bottom: 8px;
+      box-shadow: 2px 2px 0 var(--black);
     }
 
-    .result-snapshot {
-      width: 240px;
-      height: 240px;
-      border: var(--border-thick);
-      margin: 14px auto;
-      object-fit: contain;
+    .prediction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pred-item {
       background: var(--white);
-      box-shadow: var(--shadow-sm);
+      border: var(--border);
+      padding: 10px 12px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+    .pred-item.matched {
+      background: var(--green);
+    }
+    .pred-top-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 900;
+      font-size: 0.96rem;
+      margin-bottom: 6px;
+    }
+    .pred-bar-track {
+      width: 100%;
+      height: 10px;
+      background: #e5e5e5;
+      border: 2px solid var(--black);
+      overflow: hidden;
+    }
+    .pred-bar-fill {
+      height: 100%;
+      background: var(--blue);
+      transition: width 0.25s ease;
+    }
+    .pred-item.matched .pred-bar-fill {
+      background: var(--black);
     }
 
-    .top3-list {
-      list-style: none;
-      max-width: 440px;
-      margin: 16px auto 24px;
+    /* 라운드 성공/시간초과 알림 배너 */
+    .round-feedback {
+      display: none;
+      margin-top: 22px;
+      padding: 16px 20px;
+      border: var(--border-thick);
+      box-shadow: 5px 5px 0 var(--black);
+      font-size: 1.15rem;
+      font-weight: 900;
+      text-align: center;
+    }
+    .round-feedback.success {
+      display: block;
+      background: var(--green);
+    }
+    .round-feedback.timeout {
+      display: block;
+      background: var(--red);
+      color: var(--white);
+    }
+
+    /* 최종 결과 화면 */
+    .result-screen { text-align: center; }
+    .result-screen h2 { font-size: 2rem; font-weight: 900; margin-bottom: 14px; }
+    .result-summary {
+      background: #f9f6ef;
+      border: var(--border);
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: var(--shadow-sm);
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
       text-align: left;
     }
-
-    .top3-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 18px;
-      background: var(--bg);
+    .gallery-card {
+      background: var(--white);
       border: var(--border);
-      margin-bottom: 10px;
-      font-weight: 900;
-      box-shadow: var(--shadow-sm);
+      padding: 10px;
+      box-shadow: 3px 3px 0 var(--black);
     }
+    .gallery-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: contain;
+      border: 2px solid var(--black);
+      background: var(--white);
+      margin-bottom: 8px;
+    }
+    .gallery-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      border: 2px solid var(--black);
+      margin-bottom: 4px;
+    }
+    .gallery-tag.ok { background: var(--green); }
+    .gallery-tag.fail { background: var(--red); color: var(--white); }
 
     footer {
-      margin-top: 40px;
-      font-size: 0.95rem;
-      color: var(--white);
-      background: var(--black);
-      width: 100%;
-      max-width: 900px;
-      text-align: center;
-      padding: 18px;
-      border: var(--border-thick);
-      box-shadow: var(--shadow-sm);
-      font-weight: 800;
+      padding: 36px 20px; color: var(--white); background: var(--black);
+      font-size: 0.95rem; font-weight: 800; text-align: center;
+      border-top: var(--border-thick); margin-top: 64px;
     }
 
-    @media (max-width: 640px) {
-      .container { padding: 24px 18px; }
-      .model-grid { grid-template-columns: 1fr; }
-      .category-grid { grid-template-columns: 1fr; }
-      .game-header { justify-content: center; text-align: center; }
-      .toolbar-row { justify-content: center; }
+    @media (max-width: 768px) {
+      .play-workspace {
+        grid-template-columns: 1fr;
+      }
+      #drawCanvas {
+        height: 300px;
+      }
+      .game-card {
+        padding: 22px 16px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="fixed-top-bar">
-    <div class="current-time" id="clock">--:--:--</div>
-    <div class="icon-group">
-      <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
-      </a>
+<div class="fixed-top-bar">
+  <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+  <div class="icon-group">
+    <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+    </a>
+    <a href="mailto:nn80300@naver.com" class="icon-btn" title="Email">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+    </a>
+    <a href="https://blog.naver.com/nn80300" target="_blank" rel="noopener noreferrer" class="icon-btn" title="Blog">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
+    </a>
+    <div class="icon-btn music-wrap" id="muteToggleBtn" title="음소거 토글">
+      <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+      <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
     </div>
   </div>
+</div>
 
-  <div class="wrap">
-    <div class="top">
-      <b>문태양</b>
-      <div class="score-board">
-        <div class="score-pill">연속 정답 <span id="streak-count">0</span>회</div>
-        <div class="score-pill">점수 <span id="total-score">0</span>점</div>
+<div id="youtubePlayerContainer" style="display:none;"></div>
+
+<div class="wrap">
+  <div class="top">
+    <b>문태양</b>
+    <nav>
+      <a href="#catchmindSection">실습 15 · AI 캐치마인드</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <p class="small">실습 15 · 온디바이스 컴퓨터 비전 (DoodleNet)</p>
+    <h1>브라우저 내장 AI로 즐기는<br><span>AI 캐치마인드</span> 그림 맞추기</h1>
+    <p>별도의 서버 통신 없이 브라우저 내부에서 동작하는 DoodleNet 신경망이 그림을 분석합니다. 획을 그리는 동안에는 끊김 없이 부드럽게 그려지고, 마우스를 떼는 순간 AI 추론이 실행됩니다.</p>
+  </header>
+
+  <div class="game-card" id="catchmindSection">
+
+    <!-- 1. 시작 화면 -->
+    <div class="screen start-screen active" id="startScreen">
+      <h2>AI 캐치마인드 설정</h2>
+      <p>제시어를 보고 캔버스에 그림을 그려주세요. 마우스를 뗄 때마다 AI가 그림을 판독하여 제시어를 맞히면 다음 라운드로 넘어갑니다.</p>
+
+      <div class="model-status-banner" id="modelStatusBanner">
+        <span id="modelStatusText">DoodleNet 신경망 모델을 불러오는 중입니다...</span>
+        <span style="font-size:0.85rem; background:var(--white); padding:2px 8px; border:2px solid var(--black);">On-Device AI</span>
       </div>
+
+      <div class="setting-group">
+        <label>주제 카테고리 선택</label>
+        <div class="chip-row" id="categoryChips">
+          <button type="button" class="option-chip selected" data-cat="all">전체 랜덤 (30종)</button>
+          <button type="button" class="option-chip" data-cat="nature">동물 · 자연</button>
+          <button type="button" class="option-chip" data-cat="object">사물 · 탈것</button>
+          <button type="button" class="option-chip" data-cat="food">음식 · 일상</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label>라운드 수 선택</label>
+        <div class="chip-row" id="roundChips">
+          <button type="button" class="option-chip selected" data-rounds="5">5문제</button>
+          <button type="button" class="option-chip" data-rounds="8">8문제</button>
+          <button type="button" class="option-chip" data-rounds="12">12문제</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label>문제당 제한 시간</label>
+        <div class="chip-row" id="timeChips">
+          <button type="button" class="option-chip" data-sec="30">30초</button>
+          <button type="button" class="option-chip selected" data-sec="45">45초</button>
+          <button type="button" class="option-chip" data-sec="60">60초</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-green" id="startBtn">게임 시작하기</button>
     </div>
 
-    <main class="container">
-      <div>
-        <span class="badge">실시간 AI 비전 + 색상 추론 퀴즈</span>
+    <!-- 2. 플레이 화면 -->
+    <div class="screen play-screen" id="playScreen">
+      <div class="game-header-bar">
+        <div class="stat-group">
+          <div class="stat-box">라운드: <span id="roundIndicator">1 / 5</span></div>
+          <div class="stat-box">점수: <span id="scoreIndicator">0</span>점</div>
+        </div>
+        <div class="stat-box">남은 시간: <span id="timerIndicator">45</span>초</div>
       </div>
-      <h1>실시간으로 추론하는<br>AI 캐치마인드</h1>
-      <p class="subtitle">
-        제한 시간 30초 안에 제시어를 그려보세요. 업그레이드된 고해상도 패치 비전 모델(SigLIP / CLIP-16)과 실시간 픽셀 색상 분석 엔진이 형태와 색깔을 함께 판독합니다.
-      </p>
 
-      <section id="category-section">
-        <!-- 인브라우저 AI 모델 선택기 -->
-        <div class="model-selector-box">
-          <div class="model-selector-header">
-            <span class="model-selector-title">인브라우저 비전 모델</span>
-            <span class="model-selector-desc" id="active-model-badge">현재: SigLIP-Base-16 (고정밀·색상 특화)</span>
-          </div>
-          <div class="model-grid" id="model-grid">
-            <button type="button" class="model-opt-btn active" data-model="Xenova/siglip-base-patch16-224" data-label="SigLIP-Base-16 (고정밀·색상 특화)">
-              <span class="model-opt-name">SigLIP-Base-16 (추천)</span>
-              <span class="model-opt-tag">16px 고밀도 패치 · 색상/속성 최강</span>
-            </button>
-            <button type="button" class="model-opt-btn" data-model="Xenova/clip-vit-base-patch16" data-label="CLIP-ViT-Base-16 (고해상도)">
-              <span class="model-opt-name">CLIP-Base-16</span>
-              <span class="model-opt-tag">기존 대비 4배 해상도 스케치 인식</span>
-            </button>
-            <button type="button" class="model-opt-btn" data-model="Xenova/clip-vit-base-patch32" data-label="CLIP-ViT-Base-32 (초경량·고속)">
-              <span class="model-opt-name">CLIP-Base-32</span>
-              <span class="model-opt-tag">초경량 빠른 로딩 · 저사양 기기용</span>
-            </button>
-          </div>
+      <div class="prompt-banner">
+        <div class="prompt-word-wrap">
+          제시어:<span class="prompt-word" id="targetWordDisplay">사과</span>
         </div>
-
-        <h2>카테고리 선택</h2>
-        <p style="color: #444; font-size: 0.95rem; margin-top: 6px; font-weight: 700;">그리기 주제 카테고리를 선택하세요</p>
-        
-        <div class="category-grid">
-          <button type="button" class="cat-btn" data-cat="animals" disabled>
-            <span>동물</span>
-            <span class="cat-btn-sub">17종 · 고유 색상 보너스 지원</span>
-          </button>
-          <button type="button" class="cat-btn" data-cat="food" disabled>
-            <span>과일/채소</span>
-            <span class="cat-btn-sub">14종 · 빨강·노랑·초록 색상 구별</span>
-          </button>
-          <button type="button" class="cat-btn" data-cat="objects" disabled>
-            <span>사물</span>
-            <span class="cat-btn-sub">14종 · 다중 프롬프트 정밀 추론</span>
-          </button>
-          <button type="button" class="cat-btn" data-cat="vehicles" disabled>
-            <span>교통수단</span>
-            <span class="cat-btn-sub">12종 · 윤곽 + 색상 결합 판정</span>
-          </button>
-          <button type="button" class="cat-btn color-special" data-cat="color_challenge" disabled>
-            <span>컬러 챌린지 (색상 + 사물 동시 판정)</span>
-            <span class="cat-btn-sub">제시된 색깔과 사물을 모두 정확히 칠해야 정답 인정!</span>
-          </button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-white btn-sm" id="skipBtn">제시어 건너뛰기</button>
+          <button type="button" class="btn btn-red btn-sm" id="quitBtn">그만하기</button>
         </div>
+      </div>
 
-        <div id="loading-status">
-          <div id="loading-text">AI 비전 모델 불러오는 중... 잠시만 기다려 주세요.</div>
-          <div class="load-bar-wrap" id="load-bar-wrap">
-            <div class="load-bar-fill" id="load-bar-fill"></div>
+      <div class="play-workspace">
+        <!-- 왼쪽 캔버스 영역 -->
+        <div class="canvas-panel">
+          <div class="canvas-frame">
+            <canvas id="drawCanvas" width="520" height="360"></canvas>
+            <div class="stroke-state-pill" id="strokeStatePill">대기 중 (획을 그리세요)</div>
           </div>
-        </div>
-      </section>
 
-      <section id="game-section" class="hidden">
-        <div class="game-header">
-          <div class="info-box">주제: <span id="display-category">동물</span></div>
-          <div class="info-box">
-            제시어: <span id="display-target" class="target-word">사자</span>
-            <span id="display-color-hint" class="target-color-hint">추천색: 노랑/주황</span>
-          </div>
-          <div class="info-box">남은 시간: <span id="display-timer" class="timer-badge">30초</span></div>
-        </div>
-
-        <div class="ai-live-box">
-          <div class="ai-live-top">
-            <span id="ai-guess-text">AI 실시간 추측: 그림을 그리기 시작하세요</span>
-            <span id="ai-confidence-text" style="background:var(--yellow); padding:2px 8px; border:2px solid var(--black);">0%</span>
-          </div>
-          <div class="ai-sub-telemetry">
-            <div class="detected-colors-wrap" id="detected-colors-wrap">
-              <span>감지 색상: 없음</span>
+          <div class="canvas-toolbar">
+            <div class="tool-cluster">
+              <button type="button" class="btn btn-white btn-sm active-tool" id="penToolBtn">검정 펜</button>
+              <button type="button" class="btn btn-white btn-sm" id="eraserToolBtn">지우개</button>
+              <button type="button" class="btn btn-white btn-sm" data-size="5">얇게</button>
+              <button type="button" class="btn btn-white btn-sm active-tool" data-size="9">보통</button>
+              <button type="button" class="btn btn-white btn-sm" data-size="15">굵게</button>
             </div>
-            <div class="runner-ups-text" id="ai-runnerups-text">2위 · 3위 대기 중</div>
-          </div>
-          <div class="progress-bar-bg">
-            <div id="ai-progress-fill" class="progress-bar-fill"></div>
+            <div class="tool-cluster">
+              <button type="button" class="btn btn-white btn-sm" id="undoBtn">되돌리기</button>
+              <button type="button" class="btn btn-red btn-sm" id="clearCanvasBtn">전체 지우기</button>
+            </div>
           </div>
         </div>
 
-        <div id="canvas-wrapper">
-          <canvas id="draw-canvas" width="360" height="360"></canvas>
-        </div>
+        <!-- 오른쪽 AI 추론 결과 패널 -->
+        <div class="ai-panel">
+          <div class="ai-panel-header">
+            <span>AI 실시간 추론 결과</span>
+            <span class="ai-badge">DoodleNet</span>
+          </div>
 
-        <div class="toolbar">
-          <div class="toolbar-row">
-            <div class="tool-group">
-              <span>색상:</span>
-              <div class="color-palette" id="color-palette">
-                <button type="button" class="color-btn active" data-color="#111827" data-cname="검정" style="background-color: #111827;" title="검정"></button>
-                <button type="button" class="color-btn" data-color="#ff4757" data-cname="빨강" style="background-color: #ff4757;" title="빨강"></button>
-                <button type="button" class="color-btn" data-color="#ff9f43" data-cname="주황" style="background-color: #ff9f43;" title="주황"></button>
-                <button type="button" class="color-btn" data-color="#ffd83b" data-cname="노랑" style="background-color: #ffd83b;" title="노랑"></button>
-                <button type="button" class="color-btn" data-color="#2ed573" data-cname="초록" style="background-color: #2ed573;" title="초록"></button>
-                <button type="button" class="color-btn" data-color="#3e51ff" data-cname="파랑" style="background-color: #3e51ff;" title="파랑"></button>
-                <button type="button" class="color-btn" data-color="#a29bfe" data-cname="보라" style="background-color: #a29bfe;" title="보라"></button>
-                <button type="button" class="color-btn" data-color="#8b5a2b" data-cname="갈색" style="background-color: #8b5a2b;" title="갈색"></button>
-                <button type="button" class="color-btn" data-color="#ff85c0" data-cname="분홍" style="background-color: #ff85c0;" title="분홍"></button>
+          <div class="ai-status-msg" id="aiStatusMsg">
+            캔버스에 그림을 그리고 마우스를 떼면 AI가 추론을 시작합니다.
+          </div>
+
+          <div class="prediction-list" id="predictionList">
+            <div class="pred-item">
+              <div class="pred-top-row">
+                <span>1위. 대기 중...</span>
+                <span>0%</span>
               </div>
-            </div>
-          </div>
-
-          <div class="toolbar-row">
-            <div class="tool-group">
-              <span>도구:</span>
-              <button type="button" class="mode-pill-btn active" id="tool-pen-btn" title="단축키 P">펜 (P)</button>
-              <button type="button" class="mode-pill-btn" id="tool-fill-btn" title="영역 내부 색 채우기 (단축키 F)">채우기 (F)</button>
-              <button type="button" class="mode-pill-btn" id="tool-eraser-btn" title="지우개 (단축키 E)">지우개 (E)</button>
-            </div>
-
-            <div class="tool-group">
-              <label for="stroke-slider">굵기:</label>
-              <input type="range" id="stroke-slider" min="4" max="28" value="12">
-              <span id="stroke-val">12px</span>
+              <div class="pred-bar-track"><div class="pred-bar-fill" style="width: 0%;"></div></div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="action-buttons">
-          <button type="button" class="btn btn-undo" id="undo-btn" disabled>실행 취소 (Ctrl+Z)</button>
-          <button type="button" class="btn btn-secondary" id="clear-btn">전체 지우기</button>
-          <button type="button" class="btn btn-primary" id="finish-btn">그림 완성! 판정받기</button>
-        </div>
-      </section>
+      <div class="round-feedback" id="roundFeedback"></div>
+    </div>
 
-      <section id="result-section" class="hidden">
-        <div>
-          <h2 id="result-title" class="result-banner success">정답입니다!</h2>
-        </div>
-        <p id="result-bonus-text" class="result-sub-info"></p>
-        <p id="result-color-summary" class="result-sub-info" style="color: var(--black);"></p>
-        
-        <img id="result-image" class="result-snapshot" alt="내가 그린 그림">
-        
-        <h3 style="font-weight: 900; margin-bottom: 12px;">제시어: <span id="result-answer" style="color: var(--blue);">사자</span></h3>
-        
-        <div id="wrong-detail-box" class="hidden">
-          <p style="margin-top: 16px; font-weight: 900;">AI가 추측한 그림 TOP 3:</p>
-          <ul id="top3-list" class="top3-list"></ul>
-        </div>
+    <!-- 3. 최종 결과 화면 -->
+    <div class="screen result-screen" id="resultScreen">
+      <h2>게임 종료!</h2>
+      <div class="result-summary">
+        <p>최종 점수: <span id="finalScore">0</span>점 · 맞힌 그림: <span id="finalSolved">0</span> / <span id="finalTotal">5</span>개</p>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+      <button type="button" class="btn btn-green" id="restartBtn">다시 도전하기</button>
+    </div>
 
-        <div class="action-buttons" style="margin-top: 20px;">
-          <button type="button" class="btn btn-secondary" id="category-back-btn">카테고리 변경</button>
-          <button type="button" class="btn btn-primary" id="restart-btn">같은 주제 다음 문제</button>
-        </div>
-      </section>
-    </main>
   </div>
 
   <footer>
-    © 문태양. 실시간 AI 캐치마인드.
+    © 문태양. 바이브코딩 실습 15 포트폴리오 · 온디바이스 AI 캐치마인드.
   </footer>
+</div>
 
-  <script type="module">
-    import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+<script>
+  // 배경 음악 유튜브 플레이어
+  let ytPlayer;
+  let isUserPaused = false;
+  function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('youtubePlayerContainer', {
+      height: '0', width: '0',
+      videoId: 'PkVmztKY9PU',
+      playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'PkVmztKY9PU', 'controls': 0 },
+      events: {
+        'onReady': (event) => { event.target.playVideo(); event.target.setVolume(30); }
+      }
+    });
+  }
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, document.getElementsByTagName('script')[0]);
 
-    env.allowLocalModels = false;
-    env.useBrowserCache = true;
-
+  document.addEventListener("DOMContentLoaded", () => {
+    const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
-      document.getElementById('clock').textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
+      timeDisplay.textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
     }
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 색상 메타데이터 (RGB + 표시용 HEX)
-    const COLOR_PALETTE_META = {
-      '검정': '#111827',
-      '빨강': '#ff4757',
-      '주황': '#ff9f43',
-      '노랑': '#ffd83b',
-      '초록': '#2ed573',
-      '파랑': '#3e51ff',
-      '보라': '#a29bfe',
-      '갈색': '#8b5a2b',
-      '분홍': '#ff85c0'
-    };
-
-    // 다중 프롬프트 + 고유 색상 스키마가 포함된 카테고리 사전
-    const CATEGORIES = {
-      animals: {
-        name: '동물',
-        words: [
-          { en: 'lion', ko: '사자', colors: ['노랑', '주황', '갈색'], prompts: ['a simple hand-drawn sketch of a lion with a mane', 'a yellow and orange drawing of a lion face'] },
-          { en: 'cat', ko: '고양이', colors: ['검정', '주황', '노랑'], prompts: ['a simple hand-drawn sketch of a cat with whiskers and pointed ears', 'a cute doodle of a cat face'] },
-          { en: 'dog', ko: '강아지', colors: ['갈색', '검정', '노랑'], prompts: ['a simple hand-drawn sketch of a dog with floppy ears', 'a cute doodle of a puppy'] },
-          { en: 'elephant', ko: '코끼리', colors: ['파랑', '검정'], prompts: ['a simple hand-drawn sketch of an elephant with a long trunk', 'a drawing of an elephant side view'] },
-          { en: 'rabbit', ko: '토끼', colors: ['분홍', '검정'], prompts: ['a simple hand-drawn sketch of a rabbit with two long ears', 'a cute drawing of a bunny'] },
-          { en: 'pig', ko: '돼지', colors: ['분홍'], prompts: ['a simple hand-drawn sketch of a pig with a round snout', 'a pink drawing of a pig'] },
-          { en: 'fish', ko: '물고기', colors: ['파랑', '주황', '노랑'], prompts: ['a simple hand-drawn sketch of a swimming fish with fins and tail', 'a colorful drawing of a fish'] },
-          { en: 'bird', ko: '새', colors: ['파랑', '노랑', '빨강'], prompts: ['a simple hand-drawn sketch of a flying bird with wings and beak', 'a drawing of a small bird'] },
-          { en: 'penguin', ko: '펭귄', colors: ['검정', '주황', '노랑'], prompts: ['a simple hand-drawn sketch of a penguin standing upright', 'a black and white drawing of a penguin'] },
-          { en: 'butterfly', ko: '나비', colors: ['노랑', '분홍', '보라', '주황'], prompts: ['a simple hand-drawn sketch of a butterfly with symmetric wings', 'a colorful drawing of a butterfly'] },
-          { en: 'turtle', ko: '거북이', colors: ['초록', '갈색'], prompts: ['a simple hand-drawn sketch of a turtle with a patterned shell', 'a green drawing of a turtle'] },
-          { en: 'duck', ko: '오리', colors: ['노랑', '주황'], prompts: ['a simple hand-drawn sketch of a yellow duck with a bill', 'a drawing of a swimming duck'] },
-          { en: 'frog', ko: '개구리', colors: ['초록'], prompts: ['a simple hand-drawn sketch of a green frog with big eyes', 'a drawing of a frog'] },
-          { en: 'shark', ko: '상어', colors: ['파랑', '검정'], prompts: ['a simple hand-drawn sketch of a shark with a dorsal fin and sharp teeth', 'a drawing of a shark'] },
-          { en: 'whale', ko: '고래', colors: ['파랑'], prompts: ['a simple hand-drawn sketch of a whale spouting water', 'a blue drawing of a whale'] },
-          { en: 'octopus', ko: '문어', colors: ['빨강', '분홍', '보라'], prompts: ['a simple hand-drawn sketch of an octopus with eight tentacles', 'a red drawing of an octopus'] },
-          { en: 'giraffe', ko: '기린', colors: ['노랑', '주황', '갈색'], prompts: ['a simple hand-drawn sketch of a giraffe with a very long neck and spots', 'a yellow and brown drawing of a giraffe'] }
-        ]
-      },
-      food: {
-        name: '과일/채소',
-        words: [
-          { en: 'apple', ko: '사과', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a red apple with a stem and leaf', 'a red fruit drawing of an apple'] },
-          { en: 'banana', ko: '바나나', colors: ['노랑'], prompts: ['a simple hand-drawn sketch of a curved yellow banana', 'a yellow banana fruit drawing'] },
-          { en: 'grapes', ko: '포도', colors: ['보라', '초록'], prompts: ['a simple hand-drawn sketch of a bunch of purple grapes', 'a cluster of grapes drawing'] },
-          { en: 'strawberry', ko: '딸기', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a red strawberry with seeds and green leaves', 'a red strawberry drawing'] },
-          { en: 'watermelon', ko: '수박', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a red watermelon slice with green rind and black seeds', 'a drawing of a watermelon wedge'] },
-          { en: 'pineapple', ko: '파인애플', colors: ['노랑', '초록'], prompts: ['a simple hand-drawn sketch of a pineapple with spiky crown leaves', 'a yellow pineapple drawing'] },
-          { en: 'carrot', ko: '당근', colors: ['주황', '초록'], prompts: ['a simple hand-drawn sketch of an orange carrot with green leafy top', 'an orange carrot vegetable drawing'] },
-          { en: 'mushroom', ko: '버섯', colors: ['빨강', '갈색'], prompts: ['a simple hand-drawn sketch of a spotted mushroom cap and stem', 'a drawing of a toadstool mushroom'] },
-          { en: 'broccoli', ko: '브로콜리', colors: ['초록'], prompts: ['a simple hand-drawn sketch of green broccoli florets', 'a green broccoli vegetable drawing'] },
-          { en: 'tomato', ko: '토마토', colors: ['빨강', '초록'], prompts: ['a simple hand-drawn sketch of a round red tomato with green calyx', 'a shiny red tomato drawing'] },
-          { en: 'corn', ko: '옥수수', colors: ['노랑', '초록'], prompts: ['a simple hand-drawn sketch of yellow corn on the cob with husks', 'a yellow corn cob drawing'] },
-          { en: 'cherry', ko: '체리', colors: ['빨강'], prompts: ['a simple hand-drawn sketch of two red cherries joined by stems', 'a pair of red cherries drawing'] },
-          { en: 'lemon', ko: '레몬', colors: ['노랑'], prompts: ['a simple hand-drawn sketch of an oval yellow lemon citrus fruit', 'a bright yellow lemon drawing'] },
-          { en: 'peach', ko: '복숭아', colors: ['분홍', '주황'], prompts: ['a simple hand-drawn sketch of a pink peach fruit with a cleft', 'a pink peach drawing'] }
-        ]
-      },
-      objects: {
-        name: '사물',
-        words: [
-          { en: 'clock', ko: '시계', colors: ['검정', '파랑'], prompts: ['a simple hand-drawn sketch of a round analog clock with clock hands', 'a wall clock drawing'] },
-          { en: 'umbrella', ko: '우산', colors: ['파랑', '빨강', '노랑'], prompts: ['a simple hand-drawn sketch of an open umbrella with curved handle', 'a colorful umbrella drawing'] },
-          { en: 'eyeglasses', ko: '안경', colors: ['검정'], prompts: ['a simple hand-drawn sketch of eyeglasses with two round lenses', 'a drawing of spectacles glasses'] },
-          { en: 'cup', ko: '컵', colors: ['파랑', '빨강', '갈색'], prompts: ['a simple hand-drawn sketch of a coffee mug cup with a handle', 'a drawing of a teacup'] },
-          { en: 'book', ko: '책', colors: ['파랑', '빨강', '갈색'], prompts: ['a simple hand-drawn sketch of an open book with pages', 'a drawing of a textbook'] },
-          { en: 'camera', ko: '카메라', colors: ['검정', '파랑'], prompts: ['a simple hand-drawn sketch of a camera with a round lens and shutter button', 'a drawing of a photo camera'] },
-          { en: 'scissors', ko: '가위', colors: ['검정', '빨강', '파랑'], prompts: ['a simple hand-drawn sketch of open scissors with two finger loops', 'a drawing of scissors'] },
-          { en: 'key', ko: '열쇠', colors: ['노랑', '주황', '검정'], prompts: ['a simple hand-drawn sketch of a vintage key with teeth', 'a golden key drawing'] },
-          { en: 'chair', ko: '의자', colors: ['갈색', '검정'], prompts: ['a simple hand-drawn sketch of a wooden chair with backrest and four legs', 'a drawing of a chair'] },
-          { en: 'guitar', ko: '기타', colors: ['갈색', '주황'], prompts: ['a simple hand-drawn sketch of an acoustic guitar with strings', 'a brown guitar instrument drawing'] },
-          { en: 'crown', ko: '왕관', colors: ['노랑', '주황'], prompts: ['a simple hand-drawn sketch of a golden royal crown with jewels', 'a yellow crown drawing'] },
-          { en: 'laptop', ko: '노트북', colors: ['검정', '파랑'], prompts: ['a simple hand-drawn sketch of an open laptop computer with screen and keyboard', 'a drawing of a notebook computer'] },
-          { en: 'pencil', ko: '연필', colors: ['노랑', '분홍'], prompts: ['a simple hand-drawn sketch of a sharpened wooden pencil with eraser', 'a yellow pencil drawing'] },
-          { en: 'light bulb', ko: '전구', colors: ['노랑'], prompts: ['a simple hand-drawn sketch of a glowing yellow light bulb', 'a drawing of an incandescent bulb'] }
-        ]
-      },
-      vehicles: {
-        name: '교통수단',
-        words: [
-          { en: 'car', ko: '자동차', colors: ['빨강', '파랑', '노랑'], prompts: ['a simple hand-drawn sketch of a car with wheels and windows', 'a side view drawing of an automobile car'] },
-          { en: 'bus', ko: '버스', colors: ['노랑', '파랑', '초록'], prompts: ['a simple hand-drawn sketch of a long passenger bus with many windows', 'a yellow school bus drawing'] },
-          { en: 'bicycle', ko: '자전거', colors: ['빨강', '파랑', '검정'], prompts: ['a simple hand-drawn sketch of a bicycle with two wheels and handlebars', 'a drawing of a bike'] },
-          { en: 'airplane', ko: '비행기', colors: ['파랑', '검정'], prompts: ['a simple hand-drawn sketch of an airplane with wings and tail', 'a drawing of a flying plane'] },
-          { en: 'train', ko: '기차', colors: ['검정', '빨강', '파랑'], prompts: ['a simple hand-drawn sketch of a locomotive train on railway tracks', 'a drawing of a train'] },
-          { en: 'helicopter', ko: '헬리콥터', colors: ['초록', '파랑', '빨강'], prompts: ['a simple hand-drawn sketch of a helicopter with top rotor blades', 'a drawing of a chopper helicopter'] },
-          { en: 'sailboat', ko: '돛단배', colors: ['파랑', '빨강', '노랑'], prompts: ['a simple hand-drawn sketch of a sailboat with triangular sails on water', 'a drawing of a sailing boat'] },
-          { en: 'truck', ko: '트럭', colors: ['파랑', '빨강', '초록'], prompts: ['a simple hand-drawn sketch of a cargo pickup truck with wheels', 'a drawing of a delivery truck'] },
-          { en: 'motorcycle', ko: '오토바이', colors: ['빨강', '검정'], prompts: ['a simple hand-drawn sketch of a motorcycle motorbike with two wheels', 'a drawing of a motorbike'] },
-          { en: 'rocket', ko: '로켓', colors: ['빨강', '주황', '파랑'], prompts: ['a simple hand-drawn sketch of a space rocket launching with flames', 'a drawing of a spaceship rocket'] },
-          { en: 'submarine', ko: '잠수함', colors: ['노랑', '파랑'], prompts: ['a simple hand-drawn sketch of an underwater submarine with periscope', 'a yellow submarine drawing'] },
-          { en: 'hot air balloon', ko: '열기구', colors: ['빨강', '노랑', '파랑', '분홍'], prompts: ['a simple hand-drawn sketch of a colorful hot air balloon with basket', 'a drawing of a hot air balloon'] }
-        ]
-      },
-      color_challenge: {
-        name: '컬러 챌린지',
-        isColorChallenge: true,
-        words: [
-          { en: 'red_apple', ko: '빨간 사과', requiredColor: '빨강', colors: ['빨강'], prompts: ['a hand-drawn bright red apple fruit', 'a red colored drawing of an apple'] },
-          { en: 'yellow_banana', ko: '노란 바나나', requiredColor: '노랑', colors: ['노랑'], prompts: ['a hand-drawn bright yellow banana', 'a yellow colored drawing of a banana'] },
-          { en: 'blue_whale', ko: '파란 고래', requiredColor: '파랑', colors: ['파랑'], prompts: ['a hand-drawn blue whale swimming', 'a blue colored drawing of a whale'] },
-          { en: 'green_frog', ko: '초록 개구리', requiredColor: '초록', colors: ['초록'], prompts: ['a hand-drawn green frog', 'a green colored drawing of a frog'] },
-          { en: 'purple_grapes', ko: '보라 포도', requiredColor: '보라', colors: ['보라'], prompts: ['a hand-drawn bunch of purple grapes', 'a purple colored drawing of grapes'] },
-          { en: 'orange_carrot', ko: '주황 당근', requiredColor: '주황', colors: ['주황'], prompts: ['a hand-drawn orange carrot vegetable', 'an orange colored drawing of a carrot'] },
-          { en: 'pink_pig', ko: '분홍 돼지', requiredColor: '분홍', colors: ['분홍'], prompts: ['a hand-drawn pink pig', 'a pink colored drawing of a pig'] },
-          { en: 'red_car', ko: '빨간 자동차', requiredColor: '빨강', colors: ['빨강'], prompts: ['a hand-drawn red car with wheels', 'a red colored drawing of an automobile'] },
-          { en: 'yellow_crown', ko: '노란 왕관', requiredColor: '노랑', colors: ['노랑'], prompts: ['a hand-drawn golden yellow royal crown', 'a yellow colored drawing of a crown'] },
-          { en: 'blue_umbrella', ko: '파란 우산', requiredColor: '파랑', colors: ['파랑'], prompts: ['a hand-drawn open blue umbrella', 'a blue colored drawing of an umbrella'] },
-          { en: 'green_turtle', ko: '초록 거북이', requiredColor: '초록', colors: ['초록'], prompts: ['a hand-drawn green turtle with shell', 'a green colored drawing of a turtle'] },
-          { en: 'brown_dog', ko: '갈색 강아지', requiredColor: '갈색', colors: ['갈색'], prompts: ['a hand-drawn brown puppy dog', 'a brown colored drawing of a dog'] }
-        ]
+    const muteToggleBtn = document.getElementById('muteToggleBtn');
+    const soundOnIcon = document.getElementById('soundOnIcon');
+    const soundOffIcon = document.getElementById('soundOffIcon');
+    let isMuted = false;
+    muteToggleBtn.addEventListener('click', () => {
+      if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
+      if (isMuted) {
+        ytPlayer.unMute();
+        soundOnIcon.style.display = 'block';
+        soundOffIcon.style.display = 'none';
+        isMuted = false;
+      } else {
+        ytPlayer.mute();
+        soundOnIcon.style.display = 'none';
+        soundOffIcon.style.display = 'block';
+        isMuted = true;
       }
-    };
-
-    const MODEL_FALLBACK_CHAIN = [
-      { id: 'Xenova/siglip-base-patch16-224', label: 'SigLIP-Base-16 (고정밀·색상 특화)' },
-      { id: 'Xenova/clip-vit-base-patch16', label: 'CLIP-ViT-Base-16 (고해상도)' },
-      { id: 'Xenova/clip-vit-base-patch32', label: 'CLIP-ViT-Base-32 (초경량·고속)' }
-    ];
-
-    let clipClassifier = null;
-    let activeModelId = MODEL_FALLBACK_CHAIN[0].id;
-    let isModelReady = false;
-    let isPlaying = false;
-    let hasDrawn = false;
-    let inferenceState = 'IDLE';
-
-    let currentCategoryKey = 'animals';
-    let currentTarget = null;
-    const lastTargetByCat = {};
-    let latestRankedResults = [];
-    let latestDetectedColors = [];
-
-    let score = 0;
-    let streak = 0;
-
-    let strokeColor = '#111827';
-    let currentTool = 'pen'; // 'pen' | 'fill' | 'eraser'
-    let strokeWidth = 12;
-    let timeLeft = 30;
-    let timerInterval = null;
-    let midStrokeInterval = null;
-
-    const canvas = document.getElementById('draw-canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    let isDrawing = false;
-    let lastX = 0;
-    let lastY = 0;
-    let midX = 0;
-    let midY = 0;
-    let undoStack = [];
-
-    const cropCanvas = document.createElement('canvas');
-    cropCanvas.width = 224;
-    cropCanvas.height = 224;
-    const cropCtx = cropCanvas.getContext('2d', { willReadFrequently: true });
-
-    function setModelButtonsDisabled(disabled) {
-      document.querySelectorAll('.model-opt-btn').forEach(btn => {
-        btn.disabled = disabled;
-      });
-    }
-
-    function setCategoryButtonsDisabled(disabled) {
-      document.querySelectorAll('.cat-btn').forEach(btn => {
-        btn.disabled = disabled;
-      });
-    }
-
-    async function loadVisionModel(modelId, modelLabel, allowFallback = true) {
-      const statusEl = document.getElementById('loading-status');
-      const textEl = document.getElementById('loading-text');
-      const barFill = document.getElementById('load-bar-fill');
-      const barWrap = document.getElementById('load-bar-wrap');
-
-      isModelReady = false;
-      setModelButtonsDisabled(true);
-      setCategoryButtonsDisabled(true);
-      statusEl.classList.remove('ready');
-      barWrap.classList.remove('hidden');
-      barFill.style.width = '0%';
-      textEl.textContent = `[${modelLabel}] 모델 불러오는 중...`;
-
-      const fileProgress = new Map();
-
-      try {
-        clipClassifier = await pipeline(
-          'zero-shot-image-classification',
-          modelId,
-          {
-            quantized: true,
-            progress_callback: (data) => {
-              if (data.status === 'progress' && data.file) {
-                fileProgress.set(data.file, data.progress || 0);
-                let sum = 0;
-                fileProgress.forEach((v) => { sum += v; });
-                const avg = Math.round(sum / fileProgress.size);
-                barFill.style.width = `${avg}%`;
-                textEl.textContent = `[${modelLabel}] 불러오는 중... (${avg}%)`;
-              } else if (data.status === 'ready') {
-                barFill.style.width = '100%';
-              }
-            }
-          }
-        );
-
-        activeModelId = modelId;
-        isModelReady = true;
-        barWrap.classList.add('hidden');
-        textEl.textContent = `준비 완료! (${modelLabel}) — 카테고리를 선택해 시작하세요.`;
-        statusEl.classList.add('ready');
-        document.getElementById('active-model-badge').textContent = `현재: ${modelLabel}`;
-
-        document.querySelectorAll('.model-opt-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.model === modelId);
-        });
-        setModelButtonsDisabled(false);
-        setCategoryButtonsDisabled(false);
-      } catch (err) {
-        console.error('모델 로딩 실패:', modelId, err);
-        if (allowFallback) {
-          const fallback = MODEL_FALLBACK_CHAIN.find(m => m.id !== modelId);
-          if (fallback) {
-            textEl.textContent = `모델 전환 중... 대체 모델(${fallback.label})을 불러옵니다.`;
-            await loadVisionModel(fallback.id, fallback.label, false);
-            return;
-          }
-        }
-        setModelButtonsDisabled(false);
-        textEl.textContent = '모델 로딩 중 오류가 발생했습니다. 다른 모델을 선택하거나 새로고침해 주세요.';
-      }
-    }
-
-    // 초기 기본 모델 로드 (SigLIP-Base-16)
-    loadVisionModel(MODEL_FALLBACK_CHAIN[0].id, MODEL_FALLBACK_CHAIN[0].label, true);
-
-    document.querySelectorAll('.model-opt-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (btn.dataset.model === activeModelId && isModelReady) return;
-        loadVisionModel(btn.dataset.model, btn.dataset.label, true);
-      });
     });
 
-    // RGB -> HSL 변환 및 픽셀 색상 분석기 (실시간 색깔 인식)
-    function rgbToHsl(r, g, b) {
-      r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      let h = 0, s = 0;
-      const l = (max + min) / 2;
+    window.addEventListener('blur', () => { if (ytPlayer?.pauseVideo) ytPlayer.pauseVideo(); });
+    window.addEventListener('focus', () => { if (!isUserPaused && ytPlayer?.playVideo) ytPlayer.playVideo(); });
 
-      if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-          case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
-          case g: h = ((b - r) / d + 2); break;
-          case b: h = ((r - g) / d + 4); break;
-        }
-        h *= 60;
-      }
-      return { h, s, l };
+    // =========================================================================
+    // DoodleNet 345 클래스 영문-한글 매핑 및 출제 단어 사전
+    // =========================================================================
+    const WORD_BANK = [
+      { en: 'apple', ko: '사과', cat: 'food' },
+      { en: 'banana', ko: '바나나', cat: 'food' },
+      { en: 'pizza', ko: '피자', cat: 'food' },
+      { en: 'ice cream', ko: '아이스크림', cat: 'food' },
+      { en: 'cake', ko: '케이크', cat: 'food' },
+      { en: 'cup', ko: '컵', cat: 'food' },
+      { en: 'strawberry', ko: '딸기', cat: 'food' },
+      { en: 'cat', ko: '고양이', cat: 'nature' },
+      { en: 'dog', ko: '강아지', cat: 'nature' },
+      { en: 'fish', ko: '물고기', cat: 'nature' },
+      { en: 'bird', ko: '새', cat: 'nature' },
+      { en: 'butterfly', ko: '나비', cat: 'nature' },
+      { en: 'rabbit', ko: '토끼', cat: 'nature' },
+      { en: 'tree', ko: '나무', cat: 'nature' },
+      { en: 'flower', ko: '꽃', cat: 'nature' },
+      { en: 'sun', ko: '태양', cat: 'nature' },
+      { en: 'moon', ko: '달', cat: 'nature' },
+      { en: 'cloud', ko: '구름', cat: 'nature' },
+      { en: 'star', ko: '별', cat: 'nature' },
+      { en: 'mountain', ko: '산', cat: 'nature' },
+      { en: 'house', ko: '집', cat: 'object' },
+      { en: 'car', ko: '자동차', cat: 'object' },
+      { en: 'bicycle', ko: '자전거', cat: 'object' },
+      { en: 'airplane', ko: '비행기', cat: 'object' },
+      { en: 'sailboat', ko: '돛단배', cat: 'object' },
+      { en: 'clock', ko: '시계', cat: 'object' },
+      { en: 'umbrella', ko: '우산', cat: 'object' },
+      { en: 'glasses', ko: '안경', cat: 'object' },
+      { en: 'book', ko: '책', cat: 'object' },
+      { en: 'crown', ko: '왕관', cat: 'object' }
+    ];
+
+    const EXTRA_LABELS_KO = {
+      'circle': '동그라미',
+      'square': '네모',
+      'triangle': '세모',
+      'line': '선',
+      'smiley face': '웃는 얼굴',
+      'face': '얼굴',
+      'eye': '눈',
+      'hand': '손',
+      'hat': '모자',
+      'shoe': '신발',
+      'sock': '양말',
+      'pants': '바지',
+      't-shirt': '티셔츠',
+      'chair': '의자',
+      'table': '탁자',
+      'bed': '침대',
+      'door': '문',
+      'key': '열쇠',
+      'scissors': '가위',
+      'pencil': '연필',
+      'camera': '카메라',
+      'guitar': '기타',
+      'bus': '버스',
+      'train': '기차',
+      'helicopter': '헬리콥터',
+      'snowman': '눈사람',
+      'heart': '하트',
+      'lightning': '번개',
+      'mushroom': '버섯',
+      'leaf': '나뭇잎',
+      'cookie': '쿠키',
+      'donut': '도넛',
+      'hamburger': '햄버거',
+      'watermelon': '수박',
+      'grapes': '포도',
+      'carrot': '당근'
+    };
+
+    const KO_LOOKUP = {};
+    WORD_BANK.forEach(w => { KO_LOOKUP[w.en] = w.ko; });
+    Object.assign(KO_LOOKUP, EXTRA_LABELS_KO);
+
+    function translateLabel(enLabel) {
+      const clean = enLabel.toLowerCase().replace(/_/g, ' ').trim();
+      return KO_LOOKUP[clean] ? `${KO_LOOKUP[clean]} (${clean})` : clean;
     }
 
-    function classifyPixelColorName(r, g, b) {
-      const { h, s, l } = rgbToHsl(r, g, b);
-      if (l < 0.22 || (s < 0.16 && l < 0.65)) return '검정';
-      if ((h >= 312 || h < 14) && l >= 0.60 && s >= 0.22) return '분홍';
-      if ((h >= 338 || h < 14) && s >= 0.22) return '빨강';
-      if (h >= 14 && h < 42 && l < 0.48 && s >= 0.18) return '갈색';
-      if (h >= 14 && h < 42 && l >= 0.48 && s >= 0.22) return '주황';
-      if (h >= 42 && h < 72 && s >= 0.22) return '노랑';
-      if (h >= 72 && h < 165 && s >= 0.18) return '초록';
-      if (h >= 165 && h < 258 && s >= 0.18) return '파랑';
-      if (h >= 258 && h < 312 && s >= 0.18) return '보라';
-      return '검정';
-    }
+    // =========================================================================
+    // DoodleNet 모델 비동기 로드 및 경량 오프스크린 추론 파이프라인
+    // =========================================================================
+    let classifier = null;
+    let isModelReady = false;
+    let isClassifying = false;
+    let inferenceTimer = null;
 
-    function analyzeCanvasColors() {
-      const w = canvas.width;
-      const h = canvas.height;
-      const data = ctx.getImageData(0, 0, w, h).data;
-      const counts = {};
-      let totalInkPixels = 0;
+    // 추론 전용 소형 오프스크린 캔버스 (고해상도 메인 캔버스 직접 추론 시 프레임 드롭 방지)
+    const inferCanvas = document.createElement('canvas');
+    inferCanvas.width = 112;
+    inferCanvas.height = 112;
+    const inferCtx = inferCanvas.getContext('2d');
 
-      for (let y = 0; y < h; y += 2) {
-        for (let x = 0; x < w; x += 2) {
-          const idx = (y * w + x) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          if (r > 240 && g > 240 && b > 240) continue;
-          const cname = classifyPixelColorName(r, g, b);
-          counts[cname] = (counts[cname] || 0) + 1;
-          totalInkPixels++;
-        }
-      }
+    const modelStatusBanner = document.getElementById('modelStatusBanner');
+    const modelStatusText = document.getElementById('modelStatusText');
 
-      if (totalInkPixels === 0) {
-        latestDetectedColors = [];
-        renderDetectedColorsUI([]);
-        return [];
-      }
-
-      const ranked = Object.entries(counts)
-        .map(([name, count]) => ({
-          name,
-          ratio: count / totalInkPixels,
-          hex: COLOR_PALETTE_META[name] || '#111827'
-        }))
-        .filter(item => item.ratio >= 0.04)
-        .sort((a, b) => b.ratio - a.ratio);
-
-      latestDetectedColors = ranked;
-      renderDetectedColorsUI(ranked);
-      return ranked;
-    }
-
-    function renderDetectedColorsUI(rankedColors) {
-      const wrap = document.getElementById('detected-colors-wrap');
-      if (!rankedColors || rankedColors.length === 0) {
-        wrap.innerHTML = '<span>감지 색상: 없음</span>';
+    function initDoodleNet() {
+      if (typeof ml5 === 'undefined') {
+        modelStatusText.textContent = 'ml5.js 스크립트 로드 실패 — 네트워크 상태를 확인해 주세요.';
         return;
       }
+      classifier = ml5.imageClassifier('DoodleNet', () => {
+        isModelReady = true;
+        modelStatusBanner.classList.add('ready');
+        modelStatusText.textContent = 'DoodleNet AI 모델 로드 완료! 바로 플레이할 수 있습니다.';
+      });
+    }
+    initDoodleNet();
 
-      const chipsHtml = rankedColors.slice(0, 3).map(c =>
-        `<span class="color-chip"><span class="color-chip-dot" style="background:${c.hex};"></span>${c.name} ${Math.round(c.ratio * 100)}%</span>`
-      ).join('');
+    // DOM 요소
+    const startScreen = document.getElementById('startScreen');
+    const playScreen = document.getElementById('playScreen');
+    const resultScreen = document.getElementById('resultScreen');
 
-      let bonusHtml = '';
-      if (currentTarget && Array.isArray(currentTarget.colors)) {
-        const matched = rankedColors.find(c => c.name !== '검정' && currentTarget.colors.includes(c.name) && c.ratio >= 0.08);
-        if (matched) {
-          bonusHtml = `<span class="color-bonus-tag">색상 일치 (${matched.name}) +보너스</span>`;
-        }
-      }
+    const roundIndicator = document.getElementById('roundIndicator');
+    const scoreIndicator = document.getElementById('scoreIndicator');
+    const timerIndicator = document.getElementById('timerIndicator');
+    const targetWordDisplay = document.getElementById('targetWordDisplay');
+    const strokeStatePill = document.getElementById('strokeStatePill');
+    const aiStatusMsg = document.getElementById('aiStatusMsg');
+    const predictionList = document.getElementById('predictionList');
+    const roundFeedback = document.getElementById('roundFeedback');
 
-      wrap.innerHTML = `<span>감지 색상:</span>${chipsHtml}${bonusHtml}`;
+    // 설정 상태
+    let selectedCategory = 'all';
+    let totalRounds = 5;
+    let secondsPerRound = 45;
+
+    // 게임 진행 상태
+    let gameWords = [];
+    let currentRoundIdx = 0;
+    let score = 0;
+    let solvedCount = 0;
+    let roundTimeLeft = 45;
+    let roundTimer = null;
+    let isRoundLocked = false;
+    let roundHistory = [];
+
+    // 캔버스 및 드로잉 상태
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    let isDrawing = false;
+    let currentTool = 'pen'; // 'pen' | 'eraser'
+    let brushSize = 9;
+    let undoStack = [];
+    let hasInkOnCanvas = false;
+
+    function resetCanvasWhite() {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      undoStack = [];
+      hasInkOnCanvas = false;
+      saveUndoSnapshot();
     }
 
-    function saveUndoState() {
-      if (undoStack.length >= 25) {
-        undoStack.shift();
-      }
+    function saveUndoSnapshot() {
+      if (undoStack.length >= 15) undoStack.shift();
       undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-      document.getElementById('undo-btn').disabled = undoStack.length === 0;
-    }
-
-    function performUndo() {
-      if (!isPlaying || undoStack.length === 0) return;
-      const prevState = undoStack.pop();
-      ctx.putImageData(prevState, 0, 0);
-      document.getElementById('undo-btn').disabled = undoStack.length === 0;
-      checkCanvasHasInk();
-      analyzeCanvasColors();
-      if (hasDrawn) {
-        scheduleInference();
-      } else {
-        latestRankedResults = [];
-        document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림을 그리기 시작하세요';
-        document.getElementById('ai-confidence-text').textContent = '0%';
-        document.getElementById('ai-runnerups-text').textContent = '2위 · 3위 대기 중';
-        document.getElementById('ai-progress-fill').style.width = '0%';
-      }
-    }
-
-    function checkCanvasHasInk() {
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      for (let i = 0; i < imgData.length; i += 16) {
-        if (imgData[i] < 245 || imgData[i + 1] < 245 || imgData[i + 2] < 245) {
-          hasDrawn = true;
-          return;
-        }
-      }
-      hasDrawn = false;
-    }
-
-    // 고속 Flood Fill (페인트통 색 채우기)
-    function hexToRgb(hex) {
-      const clean = hex.replace('#', '');
-      return {
-        r: parseInt(clean.slice(0, 2), 16),
-        g: parseInt(clean.slice(2, 4), 16),
-        b: parseInt(clean.slice(4, 6), 16)
-      };
-    }
-
-    function floodFillAt(startX, startY, fillHex) {
-      const w = canvas.width;
-      const h = canvas.height;
-      const x0 = Math.max(0, Math.min(w - 1, Math.floor(startX)));
-      const y0 = Math.max(0, Math.min(h - 1, Math.floor(startY)));
-
-      const imgData = ctx.getImageData(0, 0, w, h);
-      const data = imgData.data;
-      const targetRgb = hexToRgb(fillHex);
-
-      const startIdx = (y0 * w + x0) * 4;
-      const sr = data[startIdx];
-      const sg = data[startIdx + 1];
-      const sb = data[startIdx + 2];
-
-      if (
-        Math.abs(sr - targetRgb.r) < 10 &&
-        Math.abs(sg - targetRgb.g) < 10 &&
-        Math.abs(sb - targetRgb.b) < 10
-      ) {
-        return;
-      }
-
-      saveUndoState();
-
-      const visited = new Uint8Array(w * h);
-      const queue = new Int32Array(w * h);
-      let head = 0;
-      let tail = 0;
-
-      const tolerance = 52;
-      const matchesStart = (idx) => {
-        return (
-          Math.abs(data[idx] - sr) <= tolerance &&
-          Math.abs(data[idx + 1] - sg) <= tolerance &&
-          Math.abs(data[idx + 2] - sb) <= tolerance
-        );
-      };
-
-      const startPos = y0 * w + x0;
-      visited[startPos] = 1;
-      queue[tail++] = startPos;
-
-      while (head < tail) {
-        const pos = queue[head++];
-        const px = pos % w;
-        const py = (pos - px) / w;
-        const dIdx = pos * 4;
-
-        data[dIdx] = targetRgb.r;
-        data[dIdx + 1] = targetRgb.g;
-        data[dIdx + 2] = targetRgb.b;
-        data[dIdx + 3] = 255;
-
-        if (px > 0) {
-          const nPos = pos - 1;
-          if (!visited[nPos] && matchesStart(nPos * 4)) {
-            visited[nPos] = 1;
-            queue[tail++] = nPos;
-          }
-        }
-        if (px < w - 1) {
-          const nPos = pos + 1;
-          if (!visited[nPos] && matchesStart(nPos * 4)) {
-            visited[nPos] = 1;
-            queue[tail++] = nPos;
-          }
-        }
-        if (py > 0) {
-          const nPos = pos - w;
-          if (!visited[nPos] && matchesStart(nPos * 4)) {
-            visited[nPos] = 1;
-            queue[tail++] = nPos;
-          }
-        }
-        if (py < h - 1) {
-          const nPos = pos + w;
-          if (!visited[nPos] && matchesStart(nPos * 4)) {
-            visited[nPos] = 1;
-            queue[tail++] = nPos;
-          }
-        }
-      }
-
-      ctx.putImageData(imgData, 0, 0);
-      hasDrawn = true;
-      analyzeCanvasColors();
-      scheduleInference();
     }
 
     function getCanvasCoords(e) {
       const rect = canvas.getBoundingClientRect();
-      const touch = e.touches ? e.touches[0] : e;
       return {
-        x: (touch.clientX - rect.left) * (canvas.width / rect.width),
-        y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+        x: (e.clientX - rect.left) * (canvas.width / rect.width),
+        y: (e.clientY - rect.top) * (canvas.height / rect.height)
       };
     }
 
-    function startStroke(e) {
-      if (!isPlaying) return;
+    // 그리기 시작 (Pointer Events 통합으로 마우스·터치·펜 동시 지원)
+    canvas.addEventListener('pointerdown', (e) => {
+      if (isRoundLocked) return;
       e.preventDefault();
-      const pos = getCanvasCoords(e);
+      canvas.setPointerCapture(e.pointerId);
 
-      if (currentTool === 'fill') {
-        floodFillAt(pos.x, pos.y, strokeColor);
-        return;
+      // 대기 중인 예약 추론이 있으면 취소 (획을 이어 그리는 중에는 절대 추론하지 않음)
+      if (inferenceTimer) {
+        clearTimeout(inferenceTimer);
+        inferenceTimer = null;
       }
 
-      saveUndoState();
       isDrawing = true;
-      lastX = pos.x;
-      lastY = pos.y;
-      midX = pos.x;
-      midY = pos.y;
+      hasInkOnCanvas = true;
+      strokeStatePill.textContent = '그리는 중 (마우스를 떼면 AI 추론)';
+      strokeStatePill.className = 'stroke-state-pill drawing';
 
-      const activeDrawColor = currentTool === 'eraser' ? '#ffffff' : strokeColor;
-      ctx.fillStyle = activeDrawColor;
-      ctx.beginPath();
-      ctx.arc(lastX, lastY, strokeWidth / 2, 0, Math.PI * 2);
-      ctx.fill();
-      if (currentTool !== 'eraser') hasDrawn = true;
-
-      clearInterval(midStrokeInterval);
-      midStrokeInterval = setInterval(() => {
-        if (isDrawing && isPlaying && hasDrawn) {
-          analyzeCanvasColors();
-          scheduleInference();
-        }
-      }, 950);
-    }
-
-    function moveStroke(e) {
-      if (!isPlaying || !isDrawing || currentTool === 'fill') return;
-      e.preventDefault();
       const pos = getCanvasCoords(e);
-      const activeDrawColor = currentTool === 'eraser' ? '#ffffff' : strokeColor;
-
-      // 2차 베지어 곡선 스무딩으로 부드러운 획 렌더링
-      const nextMidX = (lastX + pos.x) / 2;
-      const nextMidY = (lastY + pos.y) / 2;
-
-      ctx.strokeStyle = activeDrawColor;
-      ctx.lineWidth = strokeWidth;
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-
-      ctx.beginPath();
-      ctx.moveTo(midX, midY);
-      ctx.quadraticCurveTo(lastX, lastY, nextMidX, nextMidY);
-      ctx.stroke();
-
-      lastX = pos.x;
-      lastY = pos.y;
-      midX = nextMidX;
-      midY = nextMidY;
-      if (currentTool !== 'eraser') hasDrawn = true;
-    }
-
-    function endStroke() {
-      if (!isDrawing) return;
-      isDrawing = false;
-      clearInterval(midStrokeInterval);
-      if (currentTool === 'eraser') {
-        checkCanvasHasInk();
-      }
-      analyzeCanvasColors();
-      if (isPlaying && hasDrawn) {
-        scheduleInference();
-      }
-    }
-
-    canvas.addEventListener('mousedown', startStroke);
-    canvas.addEventListener('mousemove', moveStroke);
-    window.addEventListener('mouseup', endStroke);
-
-    canvas.addEventListener('touchstart', startStroke, { passive: false });
-    canvas.addEventListener('touchmove', moveStroke, { passive: false });
-    window.addEventListener('touchend', endStroke);
-
-    function setActiveTool(toolName) {
-      currentTool = toolName;
-      document.getElementById('tool-pen-btn').classList.toggle('active', toolName === 'pen');
-      document.getElementById('tool-fill-btn').classList.toggle('active', toolName === 'fill');
-      document.getElementById('tool-eraser-btn').classList.toggle('active', toolName === 'eraser');
-      canvas.classList.toggle('fill-cursor', toolName === 'fill');
-    }
-
-    document.getElementById('tool-pen-btn').addEventListener('click', () => setActiveTool('pen'));
-    document.getElementById('tool-fill-btn').addEventListener('click', () => setActiveTool('fill'));
-    document.getElementById('tool-eraser-btn').addEventListener('click', () => setActiveTool('eraser'));
-
-    window.addEventListener('keydown', (e) => {
-      if (!isPlaying) return;
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-        e.preventDefault();
-        performUndo();
-      } else if (e.key.toLowerCase() === 'p') {
-        setActiveTool('pen');
-      } else if (e.key.toLowerCase() === 'f') {
-        setActiveTool('fill');
-      } else if (e.key.toLowerCase() === 'e') {
-        setActiveTool('eraser');
-      }
+      ctx.lineWidth = currentTool === 'eraser' ? brushSize * 2.4 : brushSize;
+      ctx.strokeStyle = currentTool === 'eraser' ? '#ffffff' : '#111111';
     });
 
-    // 추론 전처리: 중심 크롭 + 얇은 선 보강(인식률 향상)
-    function prepareCroppedDataUrl() {
-      const w = canvas.width;
-      const h = canvas.height;
-      const imgData = ctx.getImageData(0, 0, w, h).data;
+    // 그리는 도중: 순수 2D 선 렌더링만 수행 (AI 추론 호출 없음 -> 끊김/멈춤 현상 원천 차단)
+    canvas.addEventListener('pointermove', (e) => {
+      if (!isDrawing || isRoundLocked) return;
+      e.preventDefault();
+      const pos = getCanvasCoords(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    });
 
-      let minX = w, minY = h, maxX = 0, maxY = 0;
-      let found = false;
-
-      for (let y = 0; y < h; y += 2) {
-        for (let x = 0; x < w; x += 2) {
-          const idx = (y * w + x) * 4;
-          if (imgData[idx] < 245 || imgData[idx + 1] < 245 || imgData[idx + 2] < 245) {
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
-            found = true;
-          }
-        }
+    // 마우스/터치를 뗄 때: 획 마무리 후 AI 추론 시작
+    function handleStrokeEnd(e) {
+      if (!isDrawing) return;
+      isDrawing = false;
+      if (e && e.pointerId !== undefined && canvas.hasPointerCapture(e.pointerId)) {
+        canvas.releasePointerCapture(e.pointerId);
       }
 
-      cropCtx.fillStyle = '#ffffff';
-      cropCtx.fillRect(0, 0, 224, 224);
+      saveUndoSnapshot();
 
-      if (!found) {
-        cropCtx.drawImage(canvas, 0, 0, 224, 224);
-        return cropCanvas.toDataURL('image/png');
-      }
+      if (!isRoundLocked && hasInkOnCanvas) {
+        strokeStatePill.textContent = 'AI 분석 준비 중...';
+        strokeStatePill.className = 'stroke-state-pill inferring';
 
-      const boxW = Math.max(24, maxX - minX);
-      const boxH = Math.max(24, maxY - minY);
-      const maxSide = Math.max(boxW, boxH);
-      const pad = Math.round(maxSide * 0.14);
-      const targetSize = 224 - pad * 2;
-      const scale = targetSize / maxSide;
-
-      const drawW = boxW * scale;
-      const drawH = boxH * scale;
-      const offsetX = (224 - drawW) / 2;
-      const offsetY = (224 - drawH) / 2;
-
-      cropCtx.drawImage(canvas, minX, minY, boxW, boxH, offsetX, offsetY, drawW, drawH);
-
-      // 얇은 선이 축소 시 흐려지는 것을 막기 위한 경량 1px 최소값 필터 (선 선명도 보강)
-      const cImg = cropCtx.getImageData(0, 0, 224, 224);
-      const src = cImg.data;
-      const copy = new Uint8ClampedArray(src);
-      for (let y = 1; y < 223; y++) {
-        for (let x = 1; x < 223; x++) {
-          const idx = (y * 224 + x) * 4;
-          if (copy[idx] > 235 && copy[idx + 1] > 235 && copy[idx + 2] > 235) {
-            const left = idx - 4;
-            const up = idx - 224 * 4;
-            if (copy[left] < 200 || copy[left + 1] < 200 || copy[left + 2] < 200) {
-              src[idx] = Math.round((copy[idx] + copy[left]) * 0.5);
-              src[idx + 1] = Math.round((copy[idx + 1] + copy[left + 1]) * 0.5);
-              src[idx + 2] = Math.round((copy[idx + 2] + copy[left + 2]) * 0.5);
-            } else if (copy[up] < 200 || copy[up + 1] < 200 || copy[up + 2] < 200) {
-              src[idx] = Math.round((copy[idx] + copy[up]) * 0.5);
-              src[idx + 1] = Math.round((copy[idx + 1] + copy[up + 1]) * 0.5);
-              src[idx + 2] = Math.round((copy[idx + 2] + copy[up + 2]) * 0.5);
-            }
-          }
-        }
-      }
-      cropCtx.putImageData(cImg, 0, 0);
-
-      return cropCanvas.toDataURL('image/png');
-    }
-
-    // 다중 프롬프트 앙상블 + 색상-의미 결합 추론 엔진
-    async function evaluateCanvasOnce() {
-      const imageDataUrl = prepareCroppedDataUrl();
-      const detectedColors = analyzeCanvasColors();
-      const catObj = CATEGORIES[currentCategoryKey];
-      const words = catObj.words;
-
-      const candidateLabels = [];
-      const promptToWord = new Map();
-
-      words.forEach(w => {
-        w.prompts.forEach(p => {
-          candidateLabels.push(p);
-          promptToWord.set(p, w);
-        });
-      });
-
-      const output = await clipClassifier(imageDataUrl, candidateLabels, {
-        hypothesis_template: '{}'
-      });
-
-      if (Array.isArray(output) && output.length > 0) {
-        const wordScoresMap = new Map();
-        words.forEach(w => wordScoresMap.set(w.en, []));
-
-        output.forEach(item => {
-          const w = promptToWord.get(item.label);
-          if (w) {
-            wordScoresMap.get(w.en).push(item.score);
-          }
-        });
-
-        // 유채색 감지 목록
-        const chromaticColors = detectedColors.filter(c => c.name !== '검정' && c.ratio >= 0.08);
-        const dominantChromatic = chromaticColors.length > 0 ? chromaticColors[0] : null;
-
-        const rawEntries = words.map(w => {
-          const scores = wordScoresMap.get(w.en) || [0];
-          const maxScore = Math.max(...scores);
-          const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
-          // 앙상블 결합 점수
-          let combined = maxScore * 0.65 + avgScore * 0.35;
-
-          // 색상 결합 보정: 사용자가 유채색을 칠한 경우 사물의 고유 색상과 매칭
-          if (dominantChromatic && Array.isArray(w.colors) && w.colors.length > 0) {
-            if (w.colors[0] === dominantChromatic.name) {
-              combined *= 1.24;
-            } else if (w.colors.includes(dominantChromatic.name)) {
-              combined *= 1.14;
-            } else if (catObj.isColorChallenge) {
-              combined *= 0.72;
-            } else if (dominantChromatic.ratio >= 0.25) {
-              combined *= 0.92;
-            }
-          }
-
-          return {
-            en: w.en,
-            ko: w.ko,
-            requiredColor: w.requiredColor || null,
-            raw: combined
-          };
-        });
-
-        const totalRaw = rawEntries.reduce((sum, item) => sum + item.raw, 0);
-        latestRankedResults = rawEntries
-          .map(item => ({
-            en: item.en,
-            ko: item.ko,
-            requiredColor: item.requiredColor,
-            confidence: totalRaw > 0 ? (item.raw / totalRaw) : 0
-          }))
-          .sort((a, b) => b.confidence - a.confidence);
+        // 브라우저가 마지막 획을 화면에 먼저 그린 뒤 추론을 시작하도록 짧은 지연 부여
+        if (inferenceTimer) clearTimeout(inferenceTimer);
+        inferenceTimer = setTimeout(() => {
+          runInferenceOnRelease();
+        }, 50);
       }
     }
 
-    function scheduleInference() {
-      if (!isModelReady || !isPlaying || !hasDrawn) return;
-      if (inferenceState === 'RUNNING') {
-        inferenceState = 'QUEUED';
-        return;
-      }
-      runInferenceLoop();
-    }
+    canvas.addEventListener('pointerup', handleStrokeEnd);
+    canvas.addEventListener('pointercancel', handleStrokeEnd);
 
-    function isTargetSatisfied(top1) {
-      if (!top1 || top1.en !== currentTarget.en) return false;
-      const catObj = CATEGORIES[currentCategoryKey];
-      const uniformBaseline = 1 / catObj.words.length;
-      if (top1.confidence <= uniformBaseline * 1.18) return false;
+    // 마우스를 뗐을 때 실행되는 단일 추론 함수
+    function runInferenceOnRelease() {
+      if (isRoundLocked || isDrawing || !hasInkOnCanvas) return;
 
-      // 컬러 챌린지 모드에서는 지정 색상이 실제로 12% 이상 칠해졌는지 함께 검증
-      if (catObj.isColorChallenge && currentTarget.requiredColor) {
-        const reqColorStat = latestDetectedColors.find(c => c.name === currentTarget.requiredColor);
-        if (!reqColorStat || reqColorStat.ratio < 0.12) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    async function runInferenceLoop() {
-      if (!isModelReady || !isPlaying || !hasDrawn) {
-        inferenceState = 'IDLE';
+      if (!isModelReady || !classifier) {
+        aiStatusMsg.textContent = 'AI 모델이 아직 준비 중입니다. 잠시 후 다시 획을 그어주세요.';
+        strokeStatePill.textContent = '모델 로딩 대기';
+        strokeStatePill.className = 'stroke-state-pill';
         return;
       }
 
-      inferenceState = 'RUNNING';
+      if (isClassifying) return;
+      isClassifying = true;
 
-      try {
-        await evaluateCanvasOnce();
+      strokeStatePill.textContent = 'AI 추론 실행 중...';
+      strokeStatePill.className = 'stroke-state-pill inferring';
+      aiStatusMsg.textContent = '방금 그린 획을 바탕으로 AI가 그림을 분석하고 있습니다...';
 
-        if (!isPlaying || !hasDrawn) {
-          inferenceState = 'IDLE';
+      // 112x112 오프스크린 캔버스로 축소 복사 후 추론 (연산 부하 대폭 감소)
+      inferCtx.fillStyle = '#ffffff';
+      inferCtx.fillRect(0, 0, inferCanvas.width, inferCanvas.height);
+      inferCtx.drawImage(canvas, 0, 0, inferCanvas.width, inferCanvas.height);
+
+      classifier.classify(inferCanvas, 5, (err, results) => {
+        isClassifying = false;
+
+        // 추론 완료 시점에 사용자가 이미 다음 획을 그리고 있다면 UI 덮어쓰기 방지
+        if (isDrawing) return;
+
+        strokeStatePill.textContent = '추론 완료 (추가 획 그리기 가능)';
+        strokeStatePill.className = 'stroke-state-pill';
+
+        if (err || !results || results.length === 0) {
+          aiStatusMsg.textContent = '그림을 판독하지 못했습니다. 조금 더 크게 그려보세요!';
           return;
         }
 
-        if (latestRankedResults.length > 0) {
-          const top1 = latestRankedResults[0];
-          const percent = Math.round(top1.confidence * 100);
+        renderPredictions(results);
+      });
+    }
 
-          const catObj = CATEGORIES[currentCategoryKey];
-          let statusSuffix = '';
-          if (catObj.isColorChallenge && top1.en === currentTarget.en && currentTarget.requiredColor) {
-            const reqColorStat = latestDetectedColors.find(c => c.name === currentTarget.requiredColor);
-            if (!reqColorStat || reqColorStat.ratio < 0.12) {
-              statusSuffix = ` (${currentTarget.requiredColor} 색칠 필요!)`;
-            }
-          }
+    function renderPredictions(results) {
+      const target = gameWords[currentRoundIdx];
+      predictionList.innerHTML = '';
 
-          document.getElementById('ai-guess-text').textContent = `AI 실시간 추측: ${top1.ko}${statusSuffix}`;
-          document.getElementById('ai-confidence-text').textContent = `${percent}%`;
-          document.getElementById('ai-progress-fill').style.width = `${percent}%`;
+      let matchedRank = -1;
+      let topGuessKo = translateLabel(results[0].label);
 
-          const runnerText = latestRankedResults
-            .slice(1, 3)
-            .map((r, i) => `${i + 2}위 ${r.ko} ${Math.round(r.confidence * 100)}%`)
-            .join(' · ');
-          document.getElementById('ai-runnerups-text').textContent = runnerText || '후보 분석 중';
+      results.slice(0, 5).forEach((res, idx) => {
+        const labelClean = res.label.toLowerCase().replace(/_/g, ' ').trim();
+        const pct = Math.round(res.confidence * 100);
+        const isMatch = labelClean === target.en;
+        if (isMatch && matchedRank === -1) matchedRank = idx + 1;
 
-          if (isTargetSatisfied(top1)) {
-            inferenceState = 'IDLE';
-            endGame(true);
-            return;
-          }
-        }
-      } catch (err) {
-        console.error('추론 오류:', err);
-      }
+        const item = document.createElement('div');
+        item.className = `pred-item ${isMatch ? 'matched' : ''}`;
+        item.innerHTML = `
+          <div class="pred-top-row">
+            <span>${idx + 1}위. ${translateLabel(labelClean)}</span>
+            <span>${pct}%</span>
+          </div>
+          <div class="pred-bar-track">
+            <div class="pred-bar-fill" style="width: ${Math.max(4, pct)}%;"></div>
+          </div>
+        `;
+        predictionList.appendChild(item);
+      });
 
-      if (inferenceState === 'QUEUED' && isPlaying) {
-        inferenceState = 'IDLE';
-        runInferenceLoop();
+      if (matchedRank !== -1 && !isRoundLocked) {
+        handleRoundSuccess(matchedRank, topGuessKo);
       } else {
-        inferenceState = 'IDLE';
+        aiStatusMsg.textContent = `AI의 생각: "${topGuessKo}" 같아요! 조금 더 그려볼까요?`;
       }
     }
 
-    function startGame(catKey) {
-      currentCategoryKey = catKey;
-      const catData = CATEGORIES[catKey];
-      const candidates = catData.words.filter(w => w.en !== lastTargetByCat[catKey]);
-      const pool = candidates.length > 0 ? candidates : catData.words;
-      currentTarget = pool[Math.floor(Math.random() * pool.length)];
-      lastTargetByCat[catKey] = currentTarget.en;
+    function handleRoundSuccess(rank, topGuessKo) {
+      isRoundLocked = true;
+      clearInterval(roundTimer);
 
-      document.getElementById('category-section').classList.add('hidden');
-      document.getElementById('result-section').classList.add('hidden');
-      document.getElementById('game-section').classList.remove('hidden');
+      const bonus = Math.max(10, roundTimeLeft * 2);
+      score += bonus;
+      solvedCount++;
+      scoreIndicator.textContent = score;
 
-      document.getElementById('display-category').textContent = catData.name;
-      document.getElementById('display-target').textContent = currentTarget.ko;
+      const target = gameWords[currentRoundIdx];
+      roundHistory.push({
+        word: target.ko,
+        solved: true,
+        aiGuess: topGuessKo,
+        image: canvas.toDataURL('image/png')
+      });
 
-      const colorHintEl = document.getElementById('display-color-hint');
-      if (catData.isColorChallenge && currentTarget.requiredColor) {
-        colorHintEl.textContent = `필수색: ${currentTarget.requiredColor}`;
-        colorHintEl.style.background = COLOR_PALETTE_META[currentTarget.requiredColor] || '#ffd83b';
-        colorHintEl.style.color = ['파랑', '빨강', '갈색', '검정'].includes(currentTarget.requiredColor) ? '#ffffff' : '#0f0f0f';
-      } else if (currentTarget.colors && currentTarget.colors.length > 0) {
-        colorHintEl.textContent = `추천색: ${currentTarget.colors.slice(0, 2).join('/')}`;
-        colorHintEl.style.background = '#ffffff';
-        colorHintEl.style.color = '#0f0f0f';
+      aiStatusMsg.textContent = `정답 적중! AI가 ${rank}순위로 "${target.ko}"를 맞혔습니다!`;
+      roundFeedback.className = 'round-feedback success';
+      roundFeedback.textContent = `정답입니다! AI가 "${target.ko}" 그림을 알아봤어요! (+${bonus}점) · 잠시 후 다음 문제로 넘어갑니다.`;
+
+      setTimeout(() => {
+        currentRoundIdx++;
+        loadRound();
+      }, 1800);
+    }
+
+    function handleRoundFail(reasonText) {
+      if (isRoundLocked) return;
+      isRoundLocked = true;
+      clearInterval(roundTimer);
+
+      const target = gameWords[currentRoundIdx];
+      const firstPred = predictionList.querySelector('.pred-top-row span')?.textContent || '판독 불가';
+      roundHistory.push({
+        word: target.ko,
+        solved: false,
+        aiGuess: firstPred.replace(/^\d+위\.\s*/, ''),
+        image: canvas.toDataURL('image/png')
+      });
+
+      roundFeedback.className = 'round-feedback timeout';
+      roundFeedback.textContent = `${reasonText} 제시어는 "${target.ko}"였습니다. 다음 문제로 넘어갑니다.`;
+
+      setTimeout(() => {
+        currentRoundIdx++;
+        loadRound();
+      }, 1800);
+    }
+
+    // 툴바 이벤트
+    const penToolBtn = document.getElementById('penToolBtn');
+    const eraserToolBtn = document.getElementById('eraserToolBtn');
+
+    penToolBtn.addEventListener('click', () => {
+      currentTool = 'pen';
+      penToolBtn.classList.add('active-tool');
+      eraserToolBtn.classList.remove('active-tool');
+    });
+
+    eraserToolBtn.addEventListener('click', () => {
+      currentTool = 'eraser';
+      eraserToolBtn.classList.add('active-tool');
+      penToolBtn.classList.remove('active-tool');
+    });
+
+    document.querySelectorAll('[data-size]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-size]').forEach(b => b.classList.remove('active-tool'));
+        btn.classList.add('active-tool');
+        brushSize = parseInt(btn.dataset.size, 10);
+      });
+    });
+
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      if (isRoundLocked || undoStack.length <= 1) return;
+      undoStack.pop();
+      const prev = undoStack[undoStack.length - 1];
+      ctx.putImageData(prev, 0, 0);
+      if (undoStack.length === 1) {
+        hasInkOnCanvas = false;
+        aiStatusMsg.textContent = '캔버스가 비었습니다. 그림을 그린 뒤 마우스를 떼어보세요.';
+      } else {
+        runInferenceOnRelease();
+      }
+    });
+
+    document.getElementById('clearCanvasBtn').addEventListener('click', () => {
+      if (isRoundLocked) return;
+      resetCanvasWhite();
+      strokeStatePill.textContent = '대기 중 (획을 그리세요)';
+      strokeStatePill.className = 'stroke-state-pill';
+      aiStatusMsg.textContent = '캔버스를 지웠습니다. 새로 그린 뒤 마우스를 떼면 추론합니다.';
+      predictionList.innerHTML = `
+        <div class="pred-item">
+          <div class="pred-top-row"><span>1위. 대기 중...</span><span>0%</span></div>
+          <div class="pred-bar-track"><div class="pred-bar-fill" style="width: 0%;"></div></div>
+        </div>
+      `;
+    });
+
+    // 시작 화면 옵션 선택
+    function bindOptionGroup(containerId, onSelect) {
+      document.querySelectorAll(`#${containerId} .option-chip`).forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll(`#${containerId} .option-chip`).forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+          onSelect(chip);
+        });
+      });
+    }
+
+    bindOptionGroup('categoryChips', c => { selectedCategory = c.dataset.cat; });
+    bindOptionGroup('roundChips', c => { totalRounds = parseInt(c.dataset.rounds, 10); });
+    bindOptionGroup('timeChips', c => { secondsPerRound = parseInt(c.dataset.sec, 10); });
+
+    function startGame() {
+      const pool = selectedCategory === 'all'
+        ? [...WORD_BANK]
+        : WORD_BANK.filter(w => w.cat === selectedCategory);
+
+      const shuffled = pool.sort(() => Math.random() - 0.5);
+      gameWords = shuffled.slice(0, Math.min(totalRounds, shuffled.length));
+
+      currentRoundIdx = 0;
+      score = 0;
+      solvedCount = 0;
+      roundHistory = [];
+
+      scoreIndicator.textContent = '0';
+      startScreen.classList.remove('active');
+      resultScreen.classList.remove('active');
+      playScreen.classList.add('active');
+
+      loadRound();
+    }
+
+    function loadRound() {
+      if (currentRoundIdx >= gameWords.length) {
+        finishGame();
+        return;
       }
 
-      setActiveTool('pen');
-      resetCanvas(false);
-      isPlaying = true;
+      isRoundLocked = false;
       isDrawing = false;
-      inferenceState = 'IDLE';
-      timeLeft = 30;
+      roundTimeLeft = secondsPerRound;
 
-      const timerEl = document.getElementById('display-timer');
-      timerEl.textContent = `${timeLeft}초`;
-      timerEl.classList.remove('urgent');
+      const target = gameWords[currentRoundIdx];
+      roundIndicator.textContent = `${currentRoundIdx + 1} / ${gameWords.length}`;
+      targetWordDisplay.textContent = target.ko;
+      timerIndicator.textContent = roundTimeLeft;
 
-      const finishBtn = document.getElementById('finish-btn');
-      finishBtn.disabled = false;
-      finishBtn.textContent = '그림 완성! 판정받기';
+      roundFeedback.className = 'round-feedback';
+      roundFeedback.textContent = '';
 
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        timerEl.textContent = `${timeLeft}초`;
-        if (timeLeft <= 10) {
-          timerEl.classList.add('urgent');
-        }
-        if (timeLeft <= 0) {
-          endGame(false);
+      currentTool = 'pen';
+      penToolBtn.classList.add('active-tool');
+      eraserToolBtn.classList.remove('active-tool');
+
+      resetCanvasWhite();
+      strokeStatePill.textContent = '대기 중 (획을 그리세요)';
+      strokeStatePill.className = 'stroke-state-pill';
+      aiStatusMsg.textContent = '캔버스에 그림을 그리고 마우스를 떼면 AI가 추론을 시작합니다.';
+      predictionList.innerHTML = `
+        <div class="pred-item">
+          <div class="pred-top-row"><span>1위. 대기 중...</span><span>0%</span></div>
+          <div class="pred-bar-track"><div class="pred-bar-fill" style="width: 0%;"></div></div>
+        </div>
+      `;
+
+      if (roundTimer) clearInterval(roundTimer);
+      roundTimer = setInterval(() => {
+        if (isRoundLocked) return;
+        roundTimeLeft--;
+        timerIndicator.textContent = roundTimeLeft;
+        if (roundTimeLeft <= 0) {
+          handleRoundFail('시간이 종료되었습니다!');
         }
       }, 1000);
     }
 
-    function resetCanvas(recordUndo = true) {
-      if (recordUndo && hasDrawn) {
-        saveUndoState();
-      } else if (!recordUndo) {
-        undoStack = [];
-        document.getElementById('undo-btn').disabled = true;
-      }
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      hasDrawn = false;
-      latestRankedResults = [];
-      latestDetectedColors = [];
-      renderDetectedColorsUI([]);
-      document.getElementById('ai-guess-text').textContent = 'AI 실시간 추측: 그림을 그리기 시작하세요';
-      document.getElementById('ai-confidence-text').textContent = '0%';
-      document.getElementById('ai-runnerups-text').textContent = '2위 · 3위 대기 중';
-      document.getElementById('ai-progress-fill').style.width = '0%';
-    }
+    function finishGame() {
+      clearInterval(roundTimer);
+      playScreen.classList.remove('active');
+      resultScreen.classList.add('active');
 
-    function updateScoreUI() {
-      document.getElementById('streak-count').textContent = streak;
-      document.getElementById('total-score').textContent = score;
-    }
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('finalSolved').textContent = solvedCount;
+      document.getElementById('finalTotal').textContent = gameWords.length;
 
-    function endGame(isSuccess) {
-      if (!isPlaying) return;
-      isPlaying = false;
-      isDrawing = false;
-      clearInterval(timerInterval);
-      clearInterval(midStrokeInterval);
-
-      const dataUrl = canvas.toDataURL('image/png');
-      document.getElementById('result-image').src = dataUrl;
-      document.getElementById('result-answer').textContent = currentTarget.ko;
-
-      const titleEl = document.getElementById('result-title');
-      const bonusEl = document.getElementById('result-bonus-text');
-      const colorSummaryEl = document.getElementById('result-color-summary');
-      const wrongDetailBox = document.getElementById('wrong-detail-box');
-      const listEl = document.getElementById('top3-list');
-
-      if (latestDetectedColors.length > 0) {
-        const summaryStr = latestDetectedColors
-          .slice(0, 3)
-          .map(c => `${c.name}(${Math.round(c.ratio * 100)}%)`)
-          .join(', ');
-        colorSummaryEl.textContent = `AI 감지 색상 분포: ${summaryStr}`;
-      } else {
-        colorSummaryEl.textContent = '';
-      }
-
-      if (isSuccess) {
-        streak += 1;
-        const catObj = CATEGORIES[currentCategoryKey];
-        const colorBonus = (currentTarget.colors || []).some(col =>
-          latestDetectedColors.some(dc => dc.name === col && dc.ratio >= 0.1)
-        ) ? 50 : 0;
-        const modeBonus = catObj.isColorChallenge ? 50 : 0;
-        const earned = 100 + Math.max(0, timeLeft) * 10 + colorBonus + modeBonus;
-        score += earned;
-        updateScoreUI();
-
-        titleEl.textContent = '정답입니다! AI가 그림을 맞혔습니다.';
-        titleEl.className = 'result-banner success';
-        const bonusParts = [`${timeLeft}초 남기고 성공`];
-        if (colorBonus > 0) bonusParts.push(`색상 일치 +${colorBonus}`);
-        if (modeBonus > 0) bonusParts.push(`컬러챌린지 +${modeBonus}`);
-        bonusEl.textContent = `${bonusParts.join(' · ')} (총 +${earned}점 획득)`;
-        wrongDetailBox.classList.add('hidden');
-        listEl.innerHTML = '';
-      } else {
-        streak = 0;
-        updateScoreUI();
-
-        titleEl.textContent = '아쉽습니다! AI가 맞히지 못했습니다.';
-        titleEl.className = 'result-banner fail';
-        const catObj = CATEGORIES[currentCategoryKey];
-        if (catObj.isColorChallenge && currentTarget.requiredColor) {
-          bonusEl.textContent = `형태와 지정 색상(${currentTarget.requiredColor})이 모두 충분히 표현되어야 합니다.`;
-        } else {
-          bonusEl.textContent = '다음 문제에서 다시 도전해 보세요.';
-        }
-        wrongDetailBox.classList.remove('hidden');
-        listEl.innerHTML = '';
-
-        if (latestRankedResults.length === 0) {
-          listEl.innerHTML = '<li class="top3-item">그려진 그림이 없어 판정하지 못했습니다.</li>';
-        } else {
-          latestRankedResults.slice(0, 3).forEach((item, idx) => {
-            const li = document.createElement('li');
-            li.className = 'top3-item';
-            li.innerHTML = `<span>${idx + 1}위. ${item.ko}</span> <span style="color: var(--blue);">${Math.round(item.confidence * 100)}%</span>`;
-            listEl.appendChild(li);
-          });
-        }
-      }
-
-      document.getElementById('game-section').classList.add('hidden');
-      document.getElementById('result-section').classList.remove('hidden');
-    }
-
-    document.querySelectorAll('.cat-btn').forEach(btn => {
-      btn.addEventListener('click', () => startGame(btn.dataset.cat));
-    });
-
-    document.querySelectorAll('.color-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        strokeColor = btn.dataset.color;
-        if (currentTool === 'eraser') {
-          setActiveTool('pen');
-        }
+      const galleryGrid = document.getElementById('galleryGrid');
+      galleryGrid.innerHTML = '';
+      roundHistory.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'gallery-card';
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.word}">
+          <span class="gallery-tag ${item.solved ? 'ok' : 'fail'}">${item.solved ? '성공' : '실패'}</span>
+          <div style="font-weight:900; font-size:1rem;">제시어: ${item.word}</div>
+          <div style="font-size:0.84rem; color:#333;">AI 판독: ${item.aiGuess}</div>
+        `;
+        galleryGrid.appendChild(card);
       });
+    }
+
+    document.getElementById('startBtn').addEventListener('click', startGame);
+    document.getElementById('skipBtn').addEventListener('click', () => handleRoundFail('제시어를 건너뛰었습니다.'));
+    document.getElementById('quitBtn').addEventListener('click', finishGame);
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      resultScreen.classList.remove('active');
+      startScreen.classList.add('active');
     });
+  });
+</script>
 
-    const strokeSlider = document.getElementById('stroke-slider');
-    strokeSlider.addEventListener('input', (e) => {
-      strokeWidth = Number(e.target.value);
-      document.getElementById('stroke-val').textContent = `${strokeWidth}px`;
-    });
-
-    document.getElementById('undo-btn').addEventListener('click', performUndo);
-    document.getElementById('clear-btn').addEventListener('click', () => resetCanvas(true));
-
-    document.getElementById('finish-btn').addEventListener('click', async () => {
-      if (!isPlaying) return;
-      const finishBtn = document.getElementById('finish-btn');
-      finishBtn.disabled = true;
-      finishBtn.textContent = '판정 중...';
-
-      if (hasDrawn && isModelReady) {
-        try {
-          await evaluateCanvasOnce();
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      const top1 = hasDrawn && latestRankedResults.length > 0 ? latestRankedResults[0] : null;
-      const isOk = Boolean(top1 && top1.en === currentTarget.en && (
-        !CATEGORIES[currentCategoryKey].isColorChallenge ||
-        (latestDetectedColors.find(c => c.name === currentTarget.requiredColor)?.ratio || 0) >= 0.12
-      ));
-      endGame(isOk);
-    });
-
-    document.getElementById('restart-btn').addEventListener('click', () => {
-      startGame(currentCategoryKey);
-    });
-
-    document.getElementById('category-back-btn').addEventListener('click', () => {
-      document.getElementById('result-section').classList.add('hidden');
-      document.getElementById('category-section').classList.remove('hidden');
-    });
-  </script>
 </body>
 </html>
