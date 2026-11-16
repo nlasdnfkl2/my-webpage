@@ -4,22 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#ffd83b">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="오운완 기록장">
-  <title>문태양 - 운동 기록 저장·조회 및 월간 통계 앱</title>
-  <link id="pwaManifestLink" rel="manifest">
-  <link id="appleTouchIconLink" rel="apple-touch-icon">
+  <title>오운완! - 운동 기록 저장 · 월간 통계</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 
     :root {
-      --bg: #dfdcd3;
+      --bg: #fdfbf7;
       --black: #111111;
-      --white: #ffffff;
-      --cream: #f9f6ef;
       --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
+      --shadow-sm: 4px 4px 0 var(--black);
+      --shadow-md: 6px 6px 0 var(--black);
 
       --yellow: #ffd83b;
       --red: #ff4757;
@@ -27,9 +23,6 @@
       --green: #2ed573;
       --pink: #ff9ff3;
       --cyan: #48dbfb;
-      --orange: #ff9f43;
-      --shadow-sm: 4px 4px 0 var(--black);
-      --shadow-lg: 8px 8px 0 var(--black);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,76 +30,94 @@
 
     body {
       font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background-color: var(--bg);
+      background: var(--bg);
       color: var(--black);
-      line-height: 1.7;
+      line-height: 1.65;
       -webkit-font-smoothing: antialiased;
-      position: relative;
-      padding-top: 72px;
-      word-break: keep-all;
+      padding-top: 74px;
+      padding-bottom: 60px;
     }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font-family: inherit; color: var(--black); }
 
     /* 상단 고정 바 */
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
-      width: 100%; height: 60px;
+      width: 100%;
+      min-height: 60px;
       background: var(--yellow);
       border-bottom: var(--border-thick);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 24px;
+      gap: 10px;
+      padding: 8px 24px;
       z-index: 2000;
       box-shadow: 0 4px 0 var(--black);
     }
 
     .fixed-top-bar .current-time {
       font-weight: 900;
-      font-size: 0.95rem;
-      background: var(--white);
+      font-size: 0.92rem;
+      background: #ffffff;
       border: var(--border);
       padding: 4px 10px;
       box-shadow: 2px 2px 0 var(--black);
+      white-space: nowrap;
     }
 
     .fixed-top-bar .icon-group {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .pwa-install-top-btn {
-      background: var(--white);
-      color: var(--black);
+      background: #ffffff;
       border: var(--border);
-      padding: 5px 12px;
-      font-family: inherit;
-      font-size: 0.86rem;
+      padding: 5px 11px;
       font-weight: 900;
+      font-size: 0.82rem;
       box-shadow: 3px 3px 0 var(--black);
       cursor: pointer;
-      transition: all 0.1s ease;
+      transition: all 0.12s ease;
+      white-space: nowrap;
     }
 
     .pwa-install-top-btn:hover {
+      background: var(--green);
       transform: translate(-2px, -2px);
       box-shadow: 5px 5px 0 var(--black);
-      background: var(--green);
+    }
+
+    .mobile-app-link {
+      background: var(--cyan);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .qr-top-btn {
+      background: var(--pink);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .fixed-top-bar .icon-btn {
-      width: 38px; height: 38px;
-      background: var(--white);
+      width: 36px; height: 36px;
+      background: #ffffff;
       border: var(--border);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 3px 3px 0 var(--black);
       cursor: pointer;
-      font-weight: 900;
-      transition: all 0.1s ease;
-      text-decoration: none;
-      color: var(--black);
+      transition: all 0.12s ease;
+      flex-shrink: 0;
     }
 
     .fixed-top-bar .icon-btn:hover {
@@ -115,553 +126,814 @@
       background: var(--cyan);
     }
 
-    .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px 80px; }
-    a { color: inherit; text-decoration: none; }
-
-    .top {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: 24px 0; border-bottom: var(--border-thick); font-size: 1rem; font-weight: 800;
-      flex-wrap: wrap; gap: 12px;
+    .wrap {
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 0 20px;
     }
 
-    .top b {
-      font-size: 1.4rem; letter-spacing: 0.05em; text-transform: uppercase;
-      background: var(--black); color: var(--yellow); padding: 4px 12px; transform: skew(-5deg);
-    }
-
-    .top nav { display: flex; gap: 16px; flex-wrap: wrap; }
-    .top nav a { padding: 4px 8px; }
-    .top nav a:hover { background: var(--black); color: var(--bg); }
-
+    /* 히어로 영역 */
     .hero {
-      background: var(--white);
-      border: var(--border-thick);
-      box-shadow: var(--shadow-lg);
-      padding: 36px 32px;
-      margin-top: 28px;
-    }
-
-    .hero .small {
-      display: inline-block; font-size: 0.92rem; font-weight: 900;
-      background: var(--cyan); border: var(--border); padding: 4px 12px;
-      box-shadow: 4px 4px 0 var(--black); margin-bottom: 16px;
-    }
-
-    .hero h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); line-height: 1.25; font-weight: 900; }
-    .hero h1 span {
-      display: inline-block; color: var(--black); background: var(--yellow);
-      border: var(--border-thick); padding: 0 14px; box-shadow: 5px 5px 0 var(--black);
-    }
-
-    .hero p {
-      max-width: 48em; margin-top: 18px; font-size: 1.02rem; font-weight: 600;
-      border-left: 6px solid var(--black); padding-left: 18px;
-    }
-
-    /* PWA 안내 배너 */
-    .pwa-banner {
-      display: none;
-      margin-top: 20px;
-      background: var(--cream);
-      border: var(--border);
-      padding: 14px 18px;
-      box-shadow: var(--shadow-sm);
-      font-size: 0.92rem;
-      font-weight: 800;
-    }
-
-    /* 메인 앱 카드 */
-    .app-card {
-      background: var(--white);
-      border: var(--border-thick);
-      box-shadow: var(--shadow-lg);
-      padding: 36px;
-      margin-top: 32px;
-    }
-
-    @media (max-width: 640px) {
-      .app-card, .hero { padding: 22px 18px; }
-    }
-
-    /* 상단 날짜 선택 및 유틸리티 바 */
-    .date-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      background: var(--cream);
-      border: var(--border-thick);
-      padding: 14px 18px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 24px;
-    }
-
-    .date-nav-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .date-input {
-      padding: 8px 12px;
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 900;
-      border: var(--border);
-      background: var(--white);
-      box-shadow: 2px 2px 0 var(--black);
-      cursor: pointer;
-    }
-
-    .btn-sm {
-      font-family: inherit;
-      font-size: 0.88rem;
-      font-weight: 900;
-      padding: 8px 14px;
-      background: var(--white);
-      border: var(--border);
-      box-shadow: 3px 3px 0 var(--black);
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-
-    .btn-sm:hover {
-      transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0 var(--black);
-      background: var(--cyan);
-    }
-
-    .btn-sm.btn-yellow { background: var(--yellow); }
-    .btn-sm.btn-green { background: var(--green); }
-    .btn-sm.btn-pink { background: var(--pink); }
-
-    /* 대시보드 진행률 스타일 */
-    .dashboard {
-      background: var(--cream);
-      border: var(--border);
-      padding: 22px;
-      margin-bottom: 28px;
-      box-shadow: var(--shadow-sm);
-      text-align: center;
-    }
-
-    .dashboard h2 { font-size: 1.4rem; font-weight: 900; margin-bottom: 14px; }
-
-    .progress-container {
-      width: 100%; height: 32px; border: var(--border-thick); background: var(--white);
-      position: relative; margin-bottom: 10px;
-    }
-
-    .progress-bar {
-      height: 100%; background: var(--green); width: 0%;
-      transition: width 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .progress-text {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-weight: 900; font-size: 1.05rem; color: var(--black);
-      text-shadow: 1px 1px 0 var(--white), -1px -1px 0 var(--white), 1px -1px 0 var(--white), -1px 1px 0 var(--white);
-    }
-
-    .status-msg { font-weight: 800; font-size: 1.02rem; color: var(--blue); }
-
-    /* 빠른 추천 운동/습관 칩 */
-    .preset-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .preset-label {
-      font-size: 0.88rem;
-      font-weight: 900;
-      color: #333;
-    }
-
-    .preset-chip {
-      background: var(--white);
-      border: 2px solid var(--black);
-      box-shadow: 2px 2px 0 var(--black);
-      padding: 4px 10px;
-      font-family: inherit;
-      font-size: 0.84rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-
-    .preset-chip:hover {
-      background: var(--yellow);
-      transform: translate(-1px, -1px);
-    }
-
-    /* 입력 폼 (운동명 + 수치 + 단위) */
-    .add-form {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr auto;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 720px) {
-      .add-form {
-        grid-template-columns: 1fr 1fr;
-      }
-      .add-form .input-main {
-        grid-column: 1 / -1;
-      }
-      .add-form .btn-submit {
-        grid-column: 1 / -1;
-      }
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 13px 14px;
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 800;
-      border: var(--border-thick);
-      box-shadow: var(--shadow-sm);
-      background: var(--white);
-      outline: none;
-      transition: transform 0.1s;
-    }
-
-    .form-control:focus {
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0 var(--black);
-      background: #fffdf5;
-    }
-
-    .btn {
-      font-family: inherit; font-size: 1.02rem; font-weight: 900; padding: 13px 22px;
-      background: var(--yellow); border: var(--border-thick); box-shadow: var(--shadow-sm);
-      cursor: pointer; transition: all 0.1s; display: inline-flex; align-items: center; justify-content: center;
-      white-space: nowrap;
-    }
-
-    .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); background: var(--cyan); }
-    .btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
-
-    /* 체크리스트 영역 */
-    .todo-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-
-    .todo-item {
-      display: flex; align-items: center; justify-content: space-between; gap: 14px;
-      background: var(--white); border: var(--border-thick); padding: 14px 18px;
-      box-shadow: 6px 6px 0 var(--black); transition: all 0.15s;
-      flex-wrap: wrap;
-    }
-
-    .todo-item:hover { transform: translateX(3px); }
-    .todo-item.completed { background: #e8ece9; border-color: #333; box-shadow: 4px 4px 0 #333; }
-
-    .todo-content { flex: 1; display: flex; align-items: center; gap: 14px; cursor: pointer; min-width: 200px; }
-
-    .checkbox {
-      width: 28px; height: 28px; flex-shrink: 0; border: var(--border); background: var(--white);
-      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-    }
-
-    .todo-item.completed .checkbox { background: var(--green); }
-    .todo-item.completed .checkbox::after {
-      content: '✓'; font-weight: 900; color: var(--black); font-size: 1.25rem;
-    }
-
-    .todo-text { display: flex; flex-direction: column; }
-    .todo-title { font-weight: 900; font-size: 1.15rem; }
-    .todo-item.completed .todo-title { text-decoration: line-through; color: #555; }
-
-    .todo-meta-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 4px;
-    }
-
-    .metric-badge {
-      display: inline-block;
-      background: var(--cyan);
-      border: 2px solid var(--black);
-      padding: 1px 8px;
-      font-size: 0.84rem;
-      font-weight: 900;
-      box-shadow: 2px 2px 0 var(--black);
-    }
-
-    .todo-item.completed .metric-badge {
-      background: var(--yellow);
-    }
-
-    .item-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .edit-btn {
-      background: var(--white); color: var(--black); border: var(--border); font-weight: 900;
-      padding: 7px 11px; cursor: pointer; box-shadow: 3px 3px 0 var(--black); font-size: 0.85rem;
-    }
-
-    .edit-btn:hover { background: var(--yellow); }
-
-    .delete-btn {
-      background: var(--red); color: var(--white); border: var(--border); font-weight: 900;
-      padding: 7px 11px; cursor: pointer; box-shadow: 3px 3px 0 var(--black); font-size: 0.85rem;
-    }
-
-    .delete-btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--black); }
-
-    .empty-state {
-      text-align: center; padding: 36px 20px; font-weight: 800; color: #444;
-      background: var(--cream); border: 3px dashed var(--black);
-    }
-
-    /* =========================================================================
-       월별 달력 & 월간 누적 통계 그래프 섹션 (실습 18 핵심 기능)
-       ========================================================================= */
-    .section-header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
+      padding: 44px 0 38px;
       border-bottom: var(--border-thick);
     }
 
-    .section-header-bar h2 {
-      font-size: 1.45rem;
+    .hero .small {
+      display: inline-block;
+      font-size: 0.92rem;
+      font-weight: 900;
+      background: var(--cyan);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.1rem, 5.5vw, 3.6rem);
+      line-height: 1.22;
       font-weight: 900;
     }
 
-    .month-switcher {
+    .hero h1 span {
+      display: inline-block;
+      margin-top: 6px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 2px 14px;
+      box-shadow: var(--shadow-md);
+      transform: rotate(-1.2deg);
+    }
+
+    .hero > p {
+      max-width: 44em;
+      margin-top: 24px;
+      font-size: 1.02rem;
+      font-weight: 600;
+      border-left: 6px solid var(--black);
+      padding-left: 16px;
+    }
+
+    .hero-btn-row {
       display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .hero-app-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      background: var(--yellow);
+      color: var(--black);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-sm);
+      font-weight: 900;
+      font-size: 0.94rem;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .hero-app-btn.qr-hero-btn {
+      background: var(--pink);
+    }
+
+    .hero-app-btn:hover {
+      background: var(--green);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+
+    .pwa-banner {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 16px;
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-sm);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .pwa-banner.show {
+      display: block;
+    }
+
+    /* 메인 앱 대시보드 그리드 */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      margin-top: 32px;
+      align-items: start;
+    }
+
+    .card-box {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-md);
+      padding: 22px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: var(--border);
     }
 
-    .month-label {
-      font-size: 1.1rem;
+    .card-title {
+      font-size: 1.25rem;
       font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-tag {
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border: 2px solid var(--black);
       background: var(--yellow);
-      border: var(--border);
-      padding: 4px 14px;
       box-shadow: 2px 2px 0 var(--black);
     }
 
-    /* 월간 누적 요약 카드 4종 */
-    .monthly-kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 24px;
-    }
+    .badge-tag.green { background: var(--green); }
+    .badge-tag.cyan { background: var(--cyan); }
+    .badge-tag.pink { background: var(--pink); }
 
-    @media (max-width: 680px) {
-      .monthly-kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .kpi-card {
-      border: var(--border-thick);
-      box-shadow: var(--shadow-sm);
-      padding: 16px 12px;
-      text-align: center;
-      background: var(--white);
-    }
-
-    .kpi-card.c-green { background: var(--green); }
-    .kpi-card.c-cyan { background: var(--cyan); }
-    .kpi-card.c-yellow { background: var(--yellow); }
-    .kpi-card.c-orange { background: var(--orange); }
-
-    .kpi-title {
-      font-size: 0.85rem;
-      font-weight: 900;
-      margin-bottom: 4px;
-    }
-
-    .kpi-val {
-      font-size: 1.45rem;
-      font-weight: 900;
-    }
-
-    /* 달력 그리드 */
-    .calendar-legend {
+    /* 날짜 컨트롤 바 */
+    .date-nav-bar {
       display: flex;
-      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
       flex-wrap: wrap;
-      font-size: 0.84rem;
-      font-weight: 800;
-      margin-bottom: 12px;
+      background: var(--bg);
+      border: var(--border);
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      box-shadow: 3px 3px 0 var(--black);
     }
 
-    .legend-item {
-      display: inline-flex;
+    .date-controls {
+      display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .legend-dot {
-      width: 14px;
-      height: 14px;
+    .brutal-btn {
+      background: #ffffff;
+      border: var(--border);
+      padding: 6px 12px;
+      font-weight: 900;
+      font-size: 0.86rem;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+
+    .brutal-btn:hover {
+      background: var(--yellow);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .brutal-btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .brutal-btn.primary { background: var(--green); }
+    .brutal-btn.cyan { background: var(--cyan); }
+    .brutal-btn.pink { background: var(--pink); }
+    .brutal-btn.danger { background: var(--red); color: #ffffff; }
+
+    .date-input {
+      border: var(--border);
+      background: #ffffff;
+      padding: 5px 10px;
+      font-weight: 900;
+      font-size: 0.92rem;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* 일일 달성률 프로그레스 바 */
+    .progress-wrap {
+      margin-bottom: 18px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 22px;
+      background: var(--bg);
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      border-right: 3px solid var(--black);
+      transition: width 0.25s ease;
+    }
+
+    /* 운동 항목 리스트 */
+    .workout-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .workout-item {
+      border: var(--border);
+      background: var(--bg);
+      padding: 12px 14px;
+      box-shadow: 4px 4px 0 var(--black);
+      transition: background 0.15s ease;
+    }
+
+    .workout-item.is-done {
+      background: #e6ffed;
+    }
+
+    .workout-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 1.02rem;
+      flex: 1;
+    }
+
+    .brutal-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border: var(--border);
+      background: #ffffff;
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      flex-shrink: 0;
+    }
+
+    .brutal-checkbox:checked {
+      background: var(--green);
+    }
+
+    .brutal-checkbox:checked::after {
+      content: "✓";
+      font-weight: 900;
+      font-size: 1rem;
+      color: var(--black);
+    }
+
+    .workout-item.is-done .item-name-text {
+      text-decoration: line-through;
+      color: #2f5e3b;
+    }
+
+    .item-target-chip {
+      font-size: 0.78rem;
+      font-weight: 800;
+      background: #ffffff;
       border: 2px solid var(--black);
-      display: inline-block;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+
+    .delete-item-btn {
+      background: #ffffff;
+      border: 2px solid var(--black);
+      width: 26px;
+      height: 26px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+      flex-shrink: 0;
+    }
+
+    .delete-item-btn:hover {
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .workout-inputs {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 8px;
+      margin-top: 10px;
+      padding-left: 34px;
+    }
+
+    .val-input-group {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 2px solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+      padding: 0 8px;
+    }
+
+    .val-input-group input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-weight: 900;
+      font-size: 0.9rem;
+      padding: 5px 2px;
+      background: transparent;
+    }
+
+    .val-unit {
+      font-size: 0.78rem;
+      font-weight: 900;
+      color: #444;
+      white-space: nowrap;
+    }
+
+    .memo-input {
+      width: 100%;
+      border: 2px solid var(--black);
+      background: #ffffff;
+      box-shadow: 2px 2px 0 var(--black);
+      padding: 5px 9px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      outline: none;
+    }
+
+    /* 새 운동 추가 폼 */
+    .add-item-box {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: var(--border);
+    }
+
+    .add-item-title {
+      font-size: 0.9rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .add-item-form {
+      display: grid;
+      grid-template-columns: 1.5fr 0.7fr 0.7fr auto;
+      gap: 8px;
+    }
+
+    .brutal-input {
+      border: var(--border);
+      background: #ffffff;
+      padding: 7px 10px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      box-shadow: 2px 2px 0 var(--black);
+      width: 100%;
+    }
+
+    /* 월별 달력 */
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .calendar-month-label {
+      font-weight: 900;
+      font-size: 1rem;
+      min-width: 96px;
+      text-align: center;
     }
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 6px;
-      margin-bottom: 28px;
-    }
-
-    .cal-weekday {
       text-align: center;
-      font-weight: 900;
-      font-size: 0.88rem;
-      padding: 6px 0;
-      background: var(--black);
-      color: var(--white);
     }
 
-    .cal-weekday.sun { color: var(--pink); }
-    .cal-weekday.sat { color: var(--cyan); }
+    .cal-dow {
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 4px 0;
+      background: var(--black);
+      color: #ffffff;
+    }
 
-    .cal-day {
-      min-height: 68px;
+    .cal-dow.sun { background: var(--red); }
+    .cal-dow.sat { background: var(--blue); }
+
+    .cal-cell {
+      aspect-ratio: 1 / 1;
       border: 2px solid var(--black);
-      background: var(--white);
-      padding: 6px;
+      background: #ffffff;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.85rem;
       cursor: pointer;
-      transition: all 0.1s;
       box-shadow: 2px 2px 0 var(--black);
+      position: relative;
+      transition: transform 0.1s ease;
     }
 
-    .cal-day.empty {
+    .cal-cell:hover:not(.empty) {
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .cal-cell.empty {
       background: transparent;
       border: none;
       box-shadow: none;
       cursor: default;
     }
 
-    .cal-day:not(.empty):hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0 var(--black);
-    }
-
-    .cal-day.status-100 { background: var(--green); }
-    .cal-day.status-part { background: var(--yellow); }
-    .cal-day.status-plan { background: #e3f6fc; }
-    .cal-day.selected-day {
-      outline: 3px solid var(--blue);
+    .cal-cell.partial { background: var(--yellow); }
+    .cal-cell.complete { background: var(--green); }
+    .cal-cell.selected {
+      outline: 3px solid var(--red);
       outline-offset: -3px;
     }
 
-    .cal-day-num {
-      font-weight: 900;
-      font-size: 0.92rem;
+    .cal-dot-text {
+      font-size: 0.65rem;
+      font-weight: 800;
+      margin-top: 1px;
     }
 
-    .cal-day-badge {
-      font-size: 0.74rem;
-      font-weight: 900;
-      background: var(--white);
-      border: 1.5px solid var(--black);
-      padding: 1px 4px;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* 차트 영역 */
-    .chart-box {
-      background: var(--cream);
-      border: var(--border-thick);
-      box-shadow: var(--shadow-sm);
-      padding: 20px;
-    }
-
-    .chart-header {
+    .calendar-legend {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      gap: 12px;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 14px;
+      margin-top: 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
     }
 
-    .chart-header h3 {
-      font-size: 1.12rem;
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--black);
+      display: inline-block;
+    }
+
+    /* 월간 누적 통계 & 차트 섹션 */
+    .stats-section {
+      margin-top: 28px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .kpi-card {
+      border: var(--border);
+      background: var(--bg);
+      padding: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-card:nth-child(1) { background: #ffeaa7; }
+    .kpi-card:nth-child(2) { background: #81ecec; }
+    .kpi-card:nth-child(3) { background: #55efc4; }
+    .kpi-card:nth-child(4) { background: #fab1a0; }
+
+    .kpi-label {
+      font-size: 0.8rem;
       font-weight: 900;
+      margin-bottom: 4px;
     }
 
-    .chart-tabs {
+    .kpi-value {
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .chart-controls {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
 
-    .chart-tab {
-      padding: 6px 12px;
-      font-family: inherit;
-      font-size: 0.85rem;
-      font-weight: 900;
-      background: var(--white);
+    .chart-tab-btn {
+      background: #ffffff;
       border: 2px solid var(--black);
+      padding: 5px 12px;
+      font-size: 0.82rem;
+      font-weight: 900;
       box-shadow: 2px 2px 0 var(--black);
       cursor: pointer;
     }
 
-    .chart-tab.active {
-      background: var(--yellow);
-      transform: translate(-1px, -1px);
-      box-shadow: 3px 3px 0 var(--black);
+    .chart-tab-btn.active {
+      background: var(--black);
+      color: var(--yellow);
     }
 
-    .canvas-wrap {
-      width: 100%;
-      background: var(--white);
+    .chart-container {
       border: var(--border);
-      padding: 10px;
+      background: var(--bg);
+      padding: 18px 14px 12px;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
     }
 
-    #monthlyChartCanvas {
+    .bar-chart-area {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 180px;
+      min-width: 520px;
+      padding-top: 20px;
+      border-bottom: 3px solid var(--black);
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      min-width: 16px;
+    }
+
+    .bar-val-tip {
+      font-size: 0.68rem;
+      font-weight: 900;
+      margin-bottom: 3px;
+      white-space: nowrap;
+    }
+
+    .bar-stick {
       width: 100%;
-      height: 250px;
-      display: block;
+      max-width: 36px;
+      background: var(--cyan);
+      border: 2px solid var(--black);
+      border-bottom: none;
+      transition: height 0.25s ease;
+      min-height: 3px;
     }
 
-    /* 하단 공유·백업 바 */
-    .share-backup-bar {
+    .bar-stick.full { background: var(--green); }
+    .bar-stick.mid { background: var(--yellow); }
+
+    .bar-labels-row {
+      display: flex;
+      gap: 6px;
+      min-width: 520px;
+      margin-top: 6px;
+    }
+
+    .bar-x-label {
+      flex: 1;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 900;
+      min-width: 16px;
+      word-break: keep-all;
+    }
+
+    .utility-footer-bar {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 10px;
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: var(--border);
+      flex-wrap: wrap;
     }
 
-    footer {
-      padding: 36px 20px; color: var(--white); background: var(--black);
-      font-size: 0.95rem; font-weight: 800; text-align: center;
-      border-top: var(--border-thick); margin-top: 64px;
+    /* QR코드 스마트폰 연결 모달 */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.82);
+      backdrop-filter: blur(4px);
+      z-index: 3500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox-modal.open {
+      display: flex;
+    }
+
+    .lightbox-box {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: 10px 10px 0 var(--black);
+      max-width: 430px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .lightbox-bar {
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 0.95rem;
+    }
+
+    .lightbox-close {
+      background: var(--red);
+      color: #ffffff;
+      border: 2px solid var(--black);
+      width: 30px;
+      height: 30px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .qr-modal-body {
+      padding: 22px 20px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .qr-target-tabs {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .qr-tab-btn {
+      flex: 1;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 7px 10px;
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+    }
+
+    .qr-tab-btn.active {
+      background: var(--cyan);
+    }
+
+    .qr-canvas-frame {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 242px;
+      min-height: 242px;
+    }
+
+    .qr-url-pill {
+      width: 100%;
+      background: #ffffff;
+      border: 2px solid var(--black);
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      word-break: break-all;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .qr-action-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .qr-action-btn {
+      flex: 1;
+      font-size: 0.86rem;
+      font-weight: 900;
+      padding: 9px 12px;
+      background: var(--green);
+      color: var(--black);
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .qr-action-btn.secondary {
+      background: var(--yellow);
+    }
+
+    .qr-action-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    /* 토스트 알림 */
+    .toast-msg {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--border);
+      padding: 10px 18px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      box-shadow: 4px 4px 0 var(--red);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 4000;
+      white-space: nowrap;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 860px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding-top: 104px;
+      }
+      .fixed-top-bar {
+        padding: 8px 12px;
+      }
+      .fixed-top-bar .current-time {
+        font-size: 0.82rem;
+        padding: 3px 8px;
+      }
+      .pwa-install-top-btn {
+        font-size: 0.76rem;
+        padding: 4px 8px;
+      }
+      .add-item-form {
+        grid-template-columns: 1fr 1fr;
+      }
+      .workout-inputs {
+        padding-left: 0;
+        grid-template-columns: 105px 1fr;
+      }
     }
   </style>
 </head>
@@ -670,6 +942,8 @@
 <div class="fixed-top-bar">
   <div class="current-time" id="currentTimeDisplay">--:--:--</div>
   <div class="icon-group">
+    <a href="https://nlasdnfkl2.github.io/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="pwa-install-top-btn mobile-app-link" id="topMobileAppLink">모바일 앱 버전 &nearr;</a>
+    <button type="button" class="pwa-install-top-btn qr-top-btn" id="openTopQrBtn">QR 폰 연결</button>
     <button type="button" class="pwa-install-top-btn" id="pwaInstallBtn">+ 홈 화면 추가 (PWA)</button>
     <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
@@ -678,764 +952,787 @@
 </div>
 
 <div class="wrap">
-  <div class="top">
-    <b>문태양</b>
-    <nav>
-      <a href="#dailyCheckSection">오늘의 운동 체크</a>
-      <a href="#monthlyStatsSection">월별 달력 · 통계 차트</a>
-    </nav>
-  </div>
-
   <header class="hero">
     <p class="small">실습 18 · 기록이 남고 공유할 수 있는 PWA 웹 앱</p>
     <h1>오운완!<br><span>운동 기록 저장 · 월간 통계</span></h1>
-    <p>운동 항목별 달성 체크와 수치(km, 개수, 분)를 날짜별로 자동 저장합니다. 브라우저 로컬 스토리지(LocalStorage)와 월별 달력·누적 통계 차트, 스마트폰 홈 화면 추가(PWA)를 지원해 언제 어디서나 꾸준한 습관을 관리할 수 있습니다.</p>
+    <p>운동 항목별 달성 체크와 수치를 저장하고 날짜별로 자동 저장합니다. 브라우저 로컬 스토리지(LocalStorage)와 월별 달력·누적 통계 차트, 스마트폰 홈 화면 추가(PWA) 및 QR 연결을 지원해 언제 어디서나 꾸준한 습관을 관리할 수 있습니다.</p>
+    <div class="hero-btn-row">
+      <a href="https://nlasdnfkl2.github.io/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="hero-app-btn" id="heroMobileAppBtn">모바일 앱 버전(PWA) 바로가기 &rarr;</a>
+      <button type="button" class="hero-app-btn qr-hero-btn" id="openHeroQrBtn">QR코드로 스마트폰 연결</button>
+    </div>
     <div class="pwa-banner" id="pwaGuideBanner"></div>
   </header>
 
-  <!-- 1. 일별 운동 체크리스트 & 수치 입력 카드 -->
-  <section class="app-card" id="dailyCheckSection">
-    <div class="date-toolbar">
-      <div class="date-nav-group">
-        <button type="button" class="btn-sm" id="prevDayBtn">이전 날</button>
-        <input type="date" id="selectedDateInput" class="date-input">
-        <button type="button" class="btn-sm" id="nextDayBtn">다음 날</button>
-        <button type="button" class="btn-sm btn-yellow" id="todayBtn">오늘</button>
+  <main class="dashboard-grid">
+    <!-- 좌측: 일일 운동 체크리스트 & 수치 기록 -->
+    <section class="card-box" aria-label="오늘의 운동 기록">
+      <div class="card-header">
+        <h2 class="card-title">오늘의 운동 체크리스트 <span class="badge-tag green" id="saveStatusBadge">자동 저장됨</span></h2>
+        <button type="button" class="brutal-btn cyan" id="shareRecordBtn">오운완 기록 공유</button>
       </div>
-      <div style="font-weight: 900; font-size: 0.92rem;" id="selectedDateLabel">선택된 날짜 기록</div>
-    </div>
 
-    <!-- 달성도 대시보드 -->
-    <div class="dashboard">
-      <h2 id="dashboardTitle">오늘의 운동 달성도</h2>
-      <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-        <div class="progress-text" id="progressText">0 / 0 완료 (0%)</div>
+      <div class="date-nav-bar">
+        <div class="date-controls">
+          <button type="button" class="brutal-btn" id="prevDayBtn" aria-label="이전 날짜">&larr;</button>
+          <input type="date" class="date-input" id="selectedDateInput" aria-label="기록 날짜 선택">
+          <button type="button" class="brutal-btn" id="nextDayBtn" aria-label="다음 날짜">&rarr;</button>
+        </div>
+        <button type="button" class="brutal-btn primary" id="todayBtn">오늘</button>
       </div>
-      <div class="status-msg" id="statusMsg">운동 계획을 추가해 보세요!</div>
-    </div>
 
-    <!-- 빠른 운동/습관 프리셋 칩 -->
-    <div class="preset-row">
-      <span class="preset-label">빠른 입력:</span>
-      <button type="button" class="preset-chip" data-name="러닝" data-val="5" data-unit="km">러닝 5km</button>
-      <button type="button" class="preset-chip" data-name="푸시업" data-val="50" data-unit="개">푸시업 50개</button>
-      <button type="button" class="preset-chip" data-name="스쿼트" data-val="60" data-unit="개">스쿼트 60개</button>
-      <button type="button" class="preset-chip" data-name="플랭크" data-val="3" data-unit="분">플랭크 3분</button>
-      <button type="button" class="preset-chip" data-name="독서 기록" data-val="30" data-unit="분">독서 30분 (습관)</button>
-    </div>
-
-    <!-- 입력 폼 (운동명 + 수치 + 단위) -->
-    <form class="add-form" id="todoForm">
-      <input type="text" id="todoInput" class="form-control input-main" placeholder="운동 또는 습관 이름 (예: 러닝, 푸시업, 스쿼트)" required>
-      <input type="number" id="todoValueInput" class="form-control" placeholder="수치 (예: 5)" step="0.1" min="0" required>
-      <select id="todoUnitSelect" class="form-control">
-        <option value="개">개 (회)</option>
-        <option value="km">km</option>
-        <option value="분">분</option>
-        <option value="세트">세트</option>
-      </select>
-      <button type="submit" class="btn btn-submit">기록 추가</button>
-    </form>
-
-    <!-- 체크리스트 -->
-    <ul class="todo-list" id="todoList"></ul>
-
-    <div class="share-backup-bar">
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-sm btn-green" id="shareSummaryBtn">오늘 기록 텍스트 복사 (공유)</button>
-        <button type="button" class="btn-sm" id="exportJsonBtn">백업 파일 저장 (.json)</button>
-        <button type="button" class="btn-sm" id="importJsonBtn">백업 불러오기</button>
-        <input type="file" id="importFileInput" accept=".json" style="display:none;">
-      </div>
-      <span style="font-size: 0.84rem; font-weight: 800; color: #444;">LocalStorage 자동 저장 중</span>
-    </div>
-  </section>
-
-  <!-- 2. 월별 달력 데이터 조회 & 월간 누적 통계 그래프 카드 -->
-  <section class="app-card" id="monthlyStatsSection">
-    <div class="section-header-bar">
-      <h2>월별 운동 달력 및 누적 통계</h2>
-      <div class="month-switcher">
-        <button type="button" class="btn-sm" id="prevMonthBtn">이전 달</button>
-        <span class="month-label" id="currentMonthLabel">2026년 11월</span>
-        <button type="button" class="btn-sm" id="nextMonthBtn">다음 달</button>
-      </div>
-    </div>
-
-    <!-- 월간 누적 통계 요약 카드 -->
-    <div class="monthly-kpi-grid">
-      <div class="kpi-card c-green">
-        <div class="kpi-title">월간 운동 실천일</div>
-        <div class="kpi-val" id="kpiActiveDays">0일</div>
-      </div>
-      <div class="kpi-card c-cyan">
-        <div class="kpi-title">월간 누적 거리</div>
-        <div class="kpi-val" id="kpiTotalKm">0 km</div>
-      </div>
-      <div class="kpi-card c-yellow">
-        <div class="kpi-title">월간 누적 개수</div>
-        <div class="kpi-val" id="kpiTotalCount">0 개</div>
-      </div>
-      <div class="kpi-card c-orange">
-        <div class="kpi-title">월간 누적 시간</div>
-        <div class="kpi-val" id="kpiTotalMin">0 분</div>
-      </div>
-    </div>
-
-    <!-- 월별 달력 -->
-    <div class="calendar-legend">
-      <span class="legend-item"><i class="legend-dot" style="background: var(--green);"></i>100% 달성</span>
-      <span class="legend-item"><i class="legend-dot" style="background: var(--yellow);"></i>일부 달성</span>
-      <span class="legend-item"><i class="legend-dot" style="background: #e3f6fc;"></i>계획 등록됨</span>
-      <span style="color:#444;">(날짜를 클릭하면 해당 일자의 기록을 조회·수정할 수 있습니다)</span>
-    </div>
-
-    <div class="calendar-grid" id="calendarGrid"></div>
-
-    <!-- 월간 통계 그래프 -->
-    <div class="chart-box">
-      <div class="chart-header">
-        <h3 id="chartTitle">월간 일별 운동 달성률 (%) 그래프</h3>
-        <div class="chart-tabs">
-          <button type="button" class="chart-tab active" data-chart="rate">일별 달성률 (%)</button>
-          <button type="button" class="chart-tab" data-chart="km">일별 거리 (km)</button>
-          <button type="button" class="chart-tab" data-chart="count">일별 반복 (개)</button>
-          <button type="button" class="chart-tab" data-chart="min">일별 시간 (분)</button>
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="dailyDateLabel">오늘의 달성률</span>
+          <span id="dailyProgressText">0% (0 / 0 완료)</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="dailyProgressFill"></div>
         </div>
       </div>
-      <div class="canvas-wrap">
-        <canvas id="monthlyChartCanvas"></canvas>
+
+      <div class="workout-list" id="workoutList"></div>
+
+      <div class="add-item-box">
+        <div class="add-item-title">+ 새 운동 종목 추가</div>
+        <form class="add-item-form" id="addWorkoutForm">
+          <input type="text" class="brutal-input" id="newItemName" placeholder="운동명 (예: 턱걸이)" required>
+          <input type="number" class="brutal-input" id="newItemTarget" placeholder="목표 수치" min="1" value="30" required>
+          <select class="brutal-input" id="newItemUnit" aria-label="단위 선택">
+            <option value="회">회</option>
+            <option value="분">분</option>
+            <option value="초">초</option>
+            <option value="세트">세트</option>
+            <option value="km">km</option>
+          </select>
+          <button type="submit" class="brutal-btn primary">추가</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 우측: 월별 달력 -->
+    <section class="card-box" aria-label="월별 운동 달력">
+      <div class="card-header">
+        <h2 class="card-title">월별 달성 달력</h2>
+        <div class="calendar-nav">
+          <button type="button" class="brutal-btn" id="prevMonthBtn" aria-label="이전 달">&larr;</button>
+          <span class="calendar-month-label" id="calendarMonthLabel">2026년 11월</span>
+          <button type="button" class="brutal-btn" id="nextMonthBtn" aria-label="다음 달">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid"></div>
+
+      <div class="calendar-legend">
+        <span class="legend-item"><span class="legend-swatch" style="background: var(--green);"></span>100% 오운완</span>
+        <span class="legend-item"><span class="legend-swatch" style="background: var(--yellow);"></span>일부 달성</span>
+        <span class="legend-item"><span class="legend-swatch" style="background: #ffffff;"></span>미기록</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- 하단: 월간 누적 통계 & 시각화 차트 -->
+  <section class="card-box stats-section" aria-label="월간 누적 통계 및 차트">
+    <div class="card-header">
+      <h2 class="card-title">월간 누적 통계 차트 <span class="badge-tag cyan" id="statsMonthBadge">2026년 11월</span></h2>
+      <div class="chart-controls">
+        <button type="button" class="chart-tab-btn active" data-chart-mode="daily">일별 달성률 (%)</button>
+        <button type="button" class="chart-tab-btn" data-chart-mode="items">종목별 누적 수치</button>
       </div>
     </div>
-  </section>
 
-  <footer>
-    © 문태양. 바이브코딩 실습 18 포트폴리오 · 운동 기록 저장·조회 및 월간 통계 PWA.
-  </footer>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">이번 달 운동 일수</div>
+        <div class="kpi-value" id="kpiActiveDays">0일</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">평균 달성률</div>
+        <div class="kpi-value" id="kpiAvgRate">0%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">100% 오운완 달성</div>
+        <div class="kpi-value" id="kpiPerfectDays">0일</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">누적 완료 종목 수</div>
+        <div class="kpi-value" id="kpiTotalChecks">0회</div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <div class="bar-chart-area" id="barChartArea"></div>
+      <div class="bar-labels-row" id="barLabelsRow"></div>
+    </div>
+
+    <div class="utility-footer-bar">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="brutal-btn" id="seedDemoBtn">샘플 기록 채우기</button>
+        <button type="button" class="brutal-btn cyan" id="exportJsonBtn">기록 JSON 백업</button>
+      </div>
+      <button type="button" class="brutal-btn danger" id="resetAllBtn">전체 초기화</button>
+    </div>
+  </section>
 </div>
 
+<!-- QR코드 스마트폰 연결 모달 -->
+<div class="lightbox-modal" id="qrConnectModal" role="dialog" aria-modal="true" aria-label="QR코드로 스마트폰 연결">
+  <div class="lightbox-box">
+    <div class="lightbox-bar">
+      <span id="qrModalTitle">QR코드로 스마트폰 연결</span>
+      <button type="button" class="lightbox-close" id="qrModalCloseBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="qr-modal-body">
+      <div class="qr-target-tabs">
+        <button type="button" class="qr-tab-btn active" id="qrTabPwa">모바일 앱 (phycheck_pwa)</button>
+        <button type="button" class="qr-tab-btn" id="qrTabCurrent">현재 웹 페이지</button>
+      </div>
+      <div class="qr-canvas-frame" id="qrCodeRenderBox"></div>
+      <p style="font-size: 0.86rem; font-weight: 800; color: #222;" id="qrModalDesc">
+        스마트폰 기본 카메라로 스캔하면 운동 기록 모바일 앱(PWA)이 바로 열립니다.
+      </p>
+      <div class="qr-url-pill" id="qrModalUrlText">https://nlasdnfkl2.github.io/phycheck_pwa/</div>
+      <div class="qr-action-row">
+        <button type="button" class="qr-action-btn" id="qrCopyUrlBtn">주소 복사</button>
+        <a href="https://nlasdnfkl2.github.io/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="qr-action-btn secondary" id="qrOpenNewTabBtn">새 창으로 열기 &nearr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-msg" id="toastMsg">저장되었습니다!</div>
+
 <script>
-  // =========================================================================
-  // 1. PWA(스마트폰 홈 화면 추가) 동적 매니페스트 및 아이콘 구성
-  // =========================================================================
-  let deferredInstallPrompt = null;
+  const ITEMS_STORAGE_KEY = 'phycheck_items_v1';
+  const LOGS_STORAGE_KEY = 'phycheck_logs_v1';
+  const PWA_APP_URL = 'https://nlasdnfkl2.github.io/phycheck_pwa/';
 
-  function setupDynamicPWA() {
-    const iconCanvas = document.createElement('canvas');
-    iconCanvas.width = 512;
-    iconCanvas.height = 512;
-    const ictx = iconCanvas.getContext('2d');
+  const DEFAULT_ITEMS = [
+    { id: 'w1', name: '푸시업 · 상체 근력', target: 30, unit: '회' },
+    { id: 'w2', name: '스쿼트 · 하체 근력', target: 50, unit: '회' },
+    { id: 'w3', name: '플랭크 · 코어 유지', target: 90, unit: '초' },
+    { id: 'w4', name: '러닝 / 빠른 걷기', target: 30, unit: '분' }
+  ];
 
-    ictx.fillStyle = '#ffd83b';
-    ictx.fillRect(0, 0, 512, 512);
-    ictx.lineWidth = 28;
-    ictx.strokeStyle = '#111111';
-    ictx.strokeRect(14, 14, 484, 484);
+  function formatDateKey(dateObj) {
+    const y = dateObj.getFullYear();
+    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const d = String(dateObj.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
 
-    ictx.fillStyle = '#111111';
-    ictx.font = '900 118px sans-serif';
-    ictx.textAlign = 'center';
-    ictx.textBaseline = 'middle';
-    ictx.fillText('오운완', 256, 220);
+  function parseDateKey(key) {
+    const [y, m, d] = key.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
 
-    ictx.fillStyle = '#2ed573';
-    ictx.fillRect(106, 310, 300, 74);
-    ictx.lineWidth = 10;
-    ictx.strokeRect(106, 310, 300, 74);
+  function showToast(text) {
+    const toast = document.getElementById('toastMsg');
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
 
-    ictx.fillStyle = '#111111';
-    ictx.font = '900 44px sans-serif';
-    ictx.fillText('WORKOUT LOG', 256, 349);
-
-    const iconDataUrl = iconCanvas.toDataURL('image/png');
-    document.getElementById('appleTouchIconLink').href = iconDataUrl;
-
-    const manifestObj = {
-      name: '문태양 - 오운완 운동 기록장',
-      short_name: '오운완기록',
-      description: '날짜별 운동 수치 기록 및 월간 통계 차트 PWA',
-      start_url: location.href,
-      display: 'standalone',
-      background_color: '#dfdcd3',
-      theme_color: '#ffd83b',
-      icons: [
-        { src: iconDataUrl, sizes: '192x192', type: 'image/png' },
-        { src: iconDataUrl, sizes: '512x512', type: 'image/png' }
-      ]
-    };
-
+  function loadItems() {
     try {
-      const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-      document.getElementById('pwaManifestLink').href = URL.createObjectURL(blob);
+      const raw = localStorage.getItem(ITEMS_STORAGE_KEY);
+      if (!raw) {
+        localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(DEFAULT_ITEMS));
+        return [...DEFAULT_ITEMS];
+      }
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.length > 0 ? parsed : [...DEFAULT_ITEMS];
     } catch (e) {
-      // 로컬 파일 환경 예외 무시
+      return [...DEFAULT_ITEMS];
     }
   }
-  setupDynamicPWA();
 
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredInstallPrompt = e;
-  });
+  function saveItems(items) {
+    localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(items));
+  }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function loadLogs() {
+    try {
+      const raw = localStorage.getItem(LOGS_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveLogs(logs) {
+    localStorage.setItem(LOGS_STORAGE_KEY, JSON.stringify(logs));
+    const badge = document.getElementById('saveStatusBadge');
+    if (badge) {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      badge.textContent = `${hh}:${mm} 저장됨`;
+    }
+  }
+
+  let items = loadItems();
+  let logs = loadLogs();
+  let selectedDateKey = formatDateKey(new Date());
+  let viewYear = new Date().getFullYear();
+  let viewMonth = new Date().getMonth(); // 0-indexed
+  let chartMode = 'daily';
+  let deferredInstallPrompt = null;
+
+  function getDayStats(dateKey) {
+    const dayLog = logs[dateKey] || {};
+    const total = items.length;
+    if (total === 0) return { doneCount: 0, total: 0, pct: 0 };
+    let doneCount = 0;
+    items.forEach(item => {
+      if (dayLog[item.id] && dayLog[item.id].done) doneCount++;
+    });
+    const pct = Math.round((doneCount / total) * 100);
+    return { doneCount, total, pct };
+  }
+
+  function renderWorkoutList() {
+    const listEl = document.getElementById('workoutList');
+    const dateInput = document.getElementById('selectedDateInput');
+    dateInput.value = selectedDateKey;
+
+    const dayLog = logs[selectedDateKey] || {};
+    listEl.innerHTML = '';
+
+    items.forEach(item => {
+      const entry = dayLog[item.id] || { done: false, value: item.target, note: '' };
+      const row = document.createElement('div');
+      row.className = 'workout-item' + (entry.done ? ' is-done' : '');
+
+      row.innerHTML = `
+        <div class="workout-top">
+          <label class="check-label">
+            <input type="checkbox" class="brutal-checkbox" ${entry.done ? 'checked' : ''} data-action="toggle" data-id="${item.id}">
+            <span class="item-name-text">${escapeHtml(item.name)}</span>
+          </label>
+          <span class="item-target-chip">목표 ${item.target}${escapeHtml(item.unit)}</span>
+          <button type="button" class="delete-item-btn" title="종목 삭제" data-action="delete" data-id="${item.id}">&times;</button>
+        </div>
+        <div class="workout-inputs">
+          <div class="val-input-group">
+            <input type="number" min="0" step="any" value="${entry.value !== undefined ? entry.value : item.target}" data-action="value" data-id="${item.id}" aria-label="${escapeHtml(item.name)} 수치">
+            <span class="val-unit">${escapeHtml(item.unit)}</span>
+          </div>
+          <input type="text" class="memo-input" placeholder="메모 (세트 수, 컨디션 등)" value="${escapeHtml(entry.note || '')}" data-action="note" data-id="${item.id}">
+        </div>
+      `;
+      listEl.appendChild(row);
+    });
+
+    updateDailyProgress();
+  }
+
+  function updateDailyProgress() {
+    const { doneCount, total, pct } = getDayStats(selectedDateKey);
+    const todayKey = formatDateKey(new Date());
+    const dateLabel = selectedDateKey === todayKey ? `오늘 (${selectedDateKey})` : selectedDateKey;
+
+    document.getElementById('dailyDateLabel').textContent = `${dateLabel} 달성률`;
+    document.getElementById('dailyProgressText').textContent = `${pct}% (${doneCount} / ${total} 완료)`;
+    document.getElementById('dailyProgressFill').style.width = `${pct}%`;
+  }
+
+  function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const monthLabel = document.getElementById('calendarMonthLabel');
+    monthLabel.textContent = `${viewYear}년 ${viewMonth + 1}월`;
+
+    const dows = [
+      { label: '일', cls: 'sun' },
+      { label: '월', cls: '' },
+      { label: '화', cls: '' },
+      { label: '수', cls: '' },
+      { label: '목', cls: '' },
+      { label: '금', cls: '' },
+      { label: '토', cls: 'sat' }
+    ];
+
+    grid.innerHTML = dows.map(d => `<div class="cal-dow ${d.cls}">${d.label}</div>`).join('');
+
+    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'cal-cell empty';
+      grid.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const { pct, doneCount } = getDayStats(dKey);
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'cal-cell';
+
+      if (pct === 100 && doneCount > 0) cell.classList.add('complete');
+      else if (doneCount > 0) cell.classList.add('partial');
+
+      if (dKey === selectedDateKey) cell.classList.add('selected');
+
+      cell.innerHTML = `<span>${day}</span><span class="cal-dot-text">${doneCount > 0 ? pct + '%' : ''}</span>`;
+      cell.addEventListener('click', () => {
+        selectedDateKey = dKey;
+        renderAll();
+      });
+      grid.appendChild(cell);
+    }
+  }
+
+  function renderStatsAndChart() {
+    const monthStr = `${viewYear}년 ${viewMonth + 1}월`;
+    document.getElementById('statsMonthBadge').textContent = monthStr;
+
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    let activeDays = 0;
+    let perfectDays = 0;
+    let totalPctSum = 0;
+    let totalChecks = 0;
+
+    const dailySeries = [];
+    const itemTotals = {};
+    items.forEach(it => { itemTotals[it.id] = 0; });
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const { pct, doneCount } = getDayStats(dKey);
+      dailySeries.push({ label: `${day}`, pct });
+
+      if (doneCount > 0) {
+        activeDays++;
+        totalPctSum += pct;
+        totalChecks += doneCount;
+      }
+      if (pct === 100 && doneCount > 0) {
+        perfectDays++;
+      }
+
+      const dayLog = logs[dKey] || {};
+      items.forEach(it => {
+        if (dayLog[it.id] && dayLog[it.id].done) {
+          const v = Number(dayLog[it.id].value);
+          itemTotals[it.id] += isNaN(v) ? 0 : v;
+        }
+      });
+    }
+
+    const avgRate = activeDays > 0 ? Math.round(totalPctSum / activeDays) : 0;
+    document.getElementById('kpiActiveDays').textContent = `${activeDays}일`;
+    document.getElementById('kpiAvgRate').textContent = `${avgRate}%`;
+    document.getElementById('kpiPerfectDays').textContent = `${perfectDays}일`;
+    document.getElementById('kpiTotalChecks').textContent = `${totalChecks}회`;
+
+    const chartArea = document.getElementById('barChartArea');
+    const labelsRow = document.getElementById('barLabelsRow');
+    chartArea.innerHTML = '';
+    labelsRow.innerHTML = '';
+
+    if (chartMode === 'daily') {
+      dailySeries.forEach(pt => {
+        const col = document.createElement('div');
+        col.className = 'bar-col';
+        const stickCls = pt.pct === 100 ? 'full' : (pt.pct > 0 ? 'mid' : '');
+        const heightPct = Math.max(2, pt.pct);
+        col.innerHTML = `
+          <span class="bar-val-tip">${pt.pct > 0 ? pt.pct : ''}</span>
+          <div class="bar-stick ${stickCls}" style="height: ${heightPct}%;" title="${pt.label}일: ${pt.pct}%"></div>
+        `;
+        chartArea.appendChild(col);
+
+        const lbl = document.createElement('div');
+        lbl.className = 'bar-x-label';
+        lbl.textContent = pt.label;
+        labelsRow.appendChild(lbl);
+      });
+    } else {
+      const maxVal = Math.max(1, ...items.map(it => itemTotals[it.id] || 0));
+      items.forEach(it => {
+        const val = Math.round((itemTotals[it.id] || 0) * 10) / 10;
+        const heightPct = Math.max(4, Math.round((val / maxVal) * 100));
+        const col = document.createElement('div');
+        col.className = 'bar-col';
+        col.innerHTML = `
+          <span class="bar-val-tip">${val}${escapeHtml(it.unit)}</span>
+          <div class="bar-stick full" style="height: ${heightPct}%;"></div>
+        `;
+        chartArea.appendChild(col);
+
+        const lbl = document.createElement('div');
+        lbl.className = 'bar-x-label';
+        lbl.textContent = it.name.split('·')[0].trim();
+        labelsRow.appendChild(lbl);
+      });
+    }
+  }
+
+  function renderAll() {
+    renderWorkoutList();
+    renderCalendar();
+    renderStatsAndChart();
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
     // 실시간 시계
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
-      timeDisplay.textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+      timeDisplay.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
     }
     updateClock();
     setInterval(updateClock, 1000);
 
-    // PWA 홈 화면 추가 버튼 핸들러
+    // PWA 단독 실행 모드 감지 시 안내 배지 전환
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      const topLink = document.getElementById('topMobileAppLink');
+      const heroBtn = document.getElementById('heroMobileAppBtn');
+      if (topLink) topLink.style.display = 'none';
+      if (heroBtn) {
+        heroBtn.textContent = '모바일 앱(PWA) 실행 중';
+        heroBtn.style.background = 'var(--green)';
+      }
+    }
+
+    // PWA 홈 화면 추가 이벤트 처리
     const pwaInstallBtn = document.getElementById('pwaInstallBtn');
     const pwaGuideBanner = document.getElementById('pwaGuideBanner');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      pwaInstallBtn.style.background = 'var(--green)';
+    });
+
     pwaInstallBtn.addEventListener('click', async () => {
       if (deferredInstallPrompt) {
         deferredInstallPrompt.prompt();
-        await deferredInstallPrompt.userChoice;
+        const result = await deferredInstallPrompt.userChoice;
+        if (result.outcome === 'accepted') {
+          showToast('홈 화면에 앱이 추가되었습니다!');
+        }
         deferredInstallPrompt = null;
         return;
       }
-      const isVisible = pwaGuideBanner.style.display === 'block';
-      if (isVisible) {
-        pwaGuideBanner.style.display = 'none';
-      } else {
-        pwaGuideBanner.style.display = 'block';
-        pwaGuideBanner.innerHTML = '<strong>스마트폰 홈 화면 추가(PWA) 안내:</strong><br>• <strong>Android (Chrome):</strong> 우측 상단 <strong>[⋮ 메뉴] → [홈 화면에 추가]</strong> 또는 <strong>[앱 설치]</strong> 선택<br>• <strong>iPhone / iPad (Safari):</strong> 하단 <strong>[공유 버튼] → [홈 화면에 추가]</strong> 선택 (웹 서버 배포 시 앱 아이콘으로 즉시 실행됩니다)';
+
+      const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      pwaGuideBanner.classList.toggle('show');
+      pwaGuideBanner.innerHTML = isIos
+        ? '📱 <strong>iPhone / iPad 설치 방법:</strong> Safari 하단 <strong>공유 버튼(□↑)</strong>을 누른 뒤 <strong>"홈 화면에 추가"</strong>를 선택하세요.'
+        : '📱 <strong>스마트폰 홈 화면 추가:</strong> 브라우저 우측 상단 <strong>메뉴(⋮) → "홈 화면에 추가" 또는 "앱 설치"</strong>를 누르거나, 위의 <strong>QR코드로 스마트폰 연결</strong>을 스캔해 바로 설치할 수 있습니다.';
+    });
+
+    // 체크리스트 이벤트 위임
+    const workoutList = document.getElementById('workoutList');
+    workoutList.addEventListener('change', (e) => {
+      const target = e.target;
+      const action = target.dataset.action;
+      const id = target.dataset.id;
+      if (!action || !id) return;
+
+      if (!logs[selectedDateKey]) logs[selectedDateKey] = {};
+      const itemObj = items.find(it => it.id === id);
+      if (!logs[selectedDateKey][id]) {
+        logs[selectedDateKey][id] = { done: false, value: itemObj ? itemObj.target : 0, note: '' };
+      }
+
+      if (action === 'toggle') {
+        logs[selectedDateKey][id].done = target.checked;
+        saveLogs(logs);
+        renderAll();
+        if (target.checked) showToast('운동 완료 체크! 오운완에 한 걸음 더!');
+      } else if (action === 'value') {
+        logs[selectedDateKey][id].value = Number(target.value);
+        saveLogs(logs);
+        renderStatsAndChart();
+      } else if (action === 'note') {
+        logs[selectedDateKey][id].note = target.value;
+        saveLogs(logs);
       }
     });
 
-    // =========================================================================
-    // 2. 날짜 유틸리티 및 LocalStorage 구조 (날짜별 운동 기록 영구 저장)
-    // =========================================================================
-    function getTodayStr() {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    }
-
-    function shiftDateStr(dateStr, deltaDays) {
-      const [y, m, d] = dateStr.split('-').map(Number);
-      const dt = new Date(y, m - 1, d + deltaDays);
-      return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
-    }
-
-    const STORAGE_KEY_V2 = 'vibe_workout_logs_v2';
-    const LEGACY_KEY_V1 = 'vibe_exercise_checklist';
-
-    let workoutLogs = JSON.parse(localStorage.getItem(STORAGE_KEY_V2)) || {};
-    let selectedDate = getTodayStr();
-    let viewYear = Number(selectedDate.split('-')[0]);
-    let viewMonth = Number(selectedDate.split('-')[1]); // 1 ~ 12
-    let activeChartMetric = 'rate'; // 'rate' | 'km' | 'count' | 'min'
-
-    // 기존 실습 17 데이터 자동 마이그레이션
-    const legacyTodos = JSON.parse(localStorage.getItem(LEGACY_KEY_V1) || '[]');
-    if (Array.isArray(legacyTodos) && legacyTodos.length > 0 && !workoutLogs[selectedDate]) {
-      workoutLogs[selectedDate] = legacyTodos.map(t => {
-        const parsedNum = parseFloat(String(t.sub || '').replace(/[^0-9.]/g, '')) || 1;
-        const unit = String(t.sub || '').includes('km') ? 'km' : (String(t.sub || '').includes('분') ? '분' : '개');
-        return {
-          title: t.title,
-          value: parsedNum,
-          unit,
-          done: Boolean(t.done)
-        };
-      });
-      localStorage.setItem(STORAGE_KEY_V2, JSON.stringify(workoutLogs));
-      localStorage.removeItem(LEGACY_KEY_V1);
-    }
-
-    function getDayItems(dateStr) {
-      if (!Array.isArray(workoutLogs[dateStr])) {
-        workoutLogs[dateStr] = [];
-      }
-      return workoutLogs[dateStr];
-    }
-
-    function saveAllLogs() {
-      // 빈 날짜 키 정리
-      Object.keys(workoutLogs).forEach(k => {
-        if (!Array.isArray(workoutLogs[k]) || workoutLogs[k].length === 0) {
-          delete workoutLogs[k];
-        }
-      });
-      localStorage.setItem(STORAGE_KEY_V2, JSON.stringify(workoutLogs));
-      renderAll();
-    }
-
-    // DOM 참조
-    const selectedDateInput = document.getElementById('selectedDateInput');
-    const selectedDateLabel = document.getElementById('selectedDateLabel');
-    const dashboardTitle = document.getElementById('dashboardTitle');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
-    const statusMsg = document.getElementById('statusMsg');
-
-    const todoForm = document.getElementById('todoForm');
-    const todoInput = document.getElementById('todoInput');
-    const todoValueInput = document.getElementById('todoValueInput');
-    const todoUnitSelect = document.getElementById('todoUnitSelect');
-    const todoList = document.getElementById('todoList');
-
-    // =========================================================================
-    // 3. 일별 체크리스트 & 대시보드 렌더링
-    // =========================================================================
-    function renderDailySection() {
-      selectedDateInput.value = selectedDate;
-      const isToday = selectedDate === getTodayStr();
-      selectedDateLabel.textContent = isToday ? `${selectedDate} (오늘)` : `${selectedDate} 기록 조회 중`;
-      dashboardTitle.textContent = isToday ? '오늘의 운동 달성도' : `${selectedDate} 운동 달성도`;
-
-      const items = getDayItems(selectedDate);
-      const total = items.length;
-      const completed = items.filter(t => t.done).length;
-      const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
-
-      progressBar.style.width = `${percentage}%`;
-      progressText.textContent = `${completed} / ${total} 완료 (${percentage}%)`;
-
-      if (total === 0) {
-        statusMsg.textContent = '이 날짜에 등록된 운동 계획을 추가해 보세요!';
-        statusMsg.style.color = 'var(--blue)';
-      } else if (percentage === 100) {
-        statusMsg.textContent = '완벽합니다! 계획한 모든 운동 수치를 달성했습니다!';
-        statusMsg.style.color = '#128a43';
-      } else if (percentage >= 50) {
-        statusMsg.textContent = '절반 이상 완료했습니다! 나머지 항목도 마무리해 보세요.';
-        statusMsg.style.color = 'var(--black)';
-      } else {
-        statusMsg.textContent = '시작이 반입니다! 완료한 운동을 체크해 주세요.';
-        statusMsg.style.color = 'var(--red)';
-      }
-
-      todoList.innerHTML = '';
-      if (items.length === 0) {
-        todoList.innerHTML = `<div class="empty-state">${selectedDate}에 등록된 운동 기록이 없습니다.<br>위 입력창에서 운동 이름과 목표 수치(km, 개수, 분)를 입력해 주세요.</div>`;
+    workoutList.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action="delete"]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (items.length <= 1) {
+        showToast('최소 1개 이상의 운동 종목이 필요합니다.');
         return;
       }
-
-      items.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.className = `todo-item ${item.done ? 'completed' : ''}`;
-        li.innerHTML = `
-          <div class="todo-content" data-index="${index}">
-            <div class="checkbox"></div>
-            <div class="todo-text">
-              <span class="todo-title">${item.title}</span>
-              <div class="todo-meta-row">
-                <span class="metric-badge">${item.value} ${item.unit}</span>
-                <span style="font-size:0.84rem; font-weight:800; color:#444;">${item.done ? '달성 완료 (월간 통계 반영)' : '진행 전'}</span>
-              </div>
-            </div>
-          </div>
-          <div class="item-actions">
-            <button type="button" class="edit-btn" data-index="${index}">수치 수정</button>
-            <button type="button" class="delete-btn" data-index="${index}">삭제</button>
-          </div>
-        `;
-        todoList.appendChild(li);
-      });
-    }
-
-    // 빠른 입력 칩
-    document.querySelectorAll('.preset-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        todoInput.value = chip.dataset.name;
-        todoValueInput.value = chip.dataset.val;
-        todoUnitSelect.value = chip.dataset.unit;
-        todoInput.focus();
-      });
+      items = items.filter(it => it.id !== id);
+      saveItems(items);
+      renderAll();
+      showToast('운동 종목이 삭제되었습니다.');
     });
 
-    // 운동 기록 추가
-    todoForm.addEventListener('submit', (e) => {
+    // 새 운동 종목 추가
+    document.getElementById('addWorkoutForm').addEventListener('submit', (e) => {
       e.preventDefault();
-      const title = todoInput.value.trim();
-      const value = parseFloat(todoValueInput.value);
-      const unit = todoUnitSelect.value;
+      const nameInput = document.getElementById('newItemName');
+      const targetInput = document.getElementById('newItemTarget');
+      const unitSelect = document.getElementById('newItemUnit');
 
-      if (!title || isNaN(value) || value < 0) return;
+      const name = nameInput.value.trim();
+      const target = Math.max(1, Number(targetInput.value) || 1);
+      const unit = unitSelect.value;
 
-      const items = getDayItems(selectedDate);
-      items.push({ title, value, unit, done: false });
-      todoInput.value = '';
-      todoValueInput.value = '';
-      todoInput.focus();
-      saveAllLogs();
-    });
-
-    // 체크 토글 / 수치 수정 / 삭제
-    todoList.addEventListener('click', (e) => {
-      const deleteBtn = e.target.closest('.delete-btn');
-      const editBtn = e.target.closest('.edit-btn');
-      const contentBtn = e.target.closest('.todo-content');
-      const items = getDayItems(selectedDate);
-
-      if (deleteBtn) {
-        const idx = Number(deleteBtn.dataset.index);
-        items.splice(idx, 1);
-        saveAllLogs();
-      } else if (editBtn) {
-        const idx = Number(editBtn.dataset.index);
-        const target = items[idx];
-        const nextValStr = prompt(`"${target.title}"의 실제 달성 수치(${target.unit})를 입력하세요:`, target.value);
-        if (nextValStr !== null) {
-          const parsed = parseFloat(nextValStr);
-          if (!isNaN(parsed) && parsed >= 0) {
-            target.value = parsed;
-            saveAllLogs();
-          }
-        }
-      } else if (contentBtn) {
-        const idx = Number(contentBtn.dataset.index);
-        items[idx].done = !items[idx].done;
-        saveAllLogs();
-      }
+      if (!name) return;
+      items.push({
+        id: 'w_' + Date.now(),
+        name,
+        target,
+        unit
+      });
+      saveItems(items);
+      nameInput.value = '';
+      renderAll();
+      showToast(`"${name}" 종목이 추가되었습니다.`);
     });
 
     // 날짜 이동 컨트롤
-    selectedDateInput.addEventListener('change', () => {
-      if (!selectedDateInput.value) return;
-      selectedDate = selectedDateInput.value;
-      const [y, m] = selectedDate.split('-').map(Number);
-      viewYear = y;
-      viewMonth = m;
+    document.getElementById('selectedDateInput').addEventListener('change', (e) => {
+      if (!e.target.value) return;
+      selectedDateKey = e.target.value;
+      const d = parseDateKey(selectedDateKey);
+      viewYear = d.getFullYear();
+      viewMonth = d.getMonth();
       renderAll();
     });
 
     document.getElementById('prevDayBtn').addEventListener('click', () => {
-      selectedDate = shiftDateStr(selectedDate, -1);
-      const [y, m] = selectedDate.split('-').map(Number);
-      viewYear = y;
-      viewMonth = m;
+      const d = parseDateKey(selectedDateKey);
+      d.setDate(d.getDate() - 1);
+      selectedDateKey = formatDateKey(d);
+      viewYear = d.getFullYear();
+      viewMonth = d.getMonth();
       renderAll();
     });
 
     document.getElementById('nextDayBtn').addEventListener('click', () => {
-      selectedDate = shiftDateStr(selectedDate, 1);
-      const [y, m] = selectedDate.split('-').map(Number);
-      viewYear = y;
-      viewMonth = m;
+      const d = parseDateKey(selectedDateKey);
+      d.setDate(d.getDate() + 1);
+      selectedDateKey = formatDateKey(d);
+      viewYear = d.getFullYear();
+      viewMonth = d.getMonth();
       renderAll();
     });
 
     document.getElementById('todayBtn').addEventListener('click', () => {
-      selectedDate = getTodayStr();
-      const [y, m] = selectedDate.split('-').map(Number);
-      viewYear = y;
-      viewMonth = m;
+      const now = new Date();
+      selectedDateKey = formatDateKey(now);
+      viewYear = now.getFullYear();
+      viewMonth = now.getMonth();
       renderAll();
-    });
-
-    // =========================================================================
-    // 4. 월별 달력 데이터 & 월간 누적 통계 계산
-    // =========================================================================
-    function getMonthSummaryData(year, month) {
-      const daysInMonth = new Date(year, month, 0).getDate();
-      const prefix = `${year}-${String(month).padStart(2, '0')}-`;
-
-      let activeDays = 0;
-      let totalKm = 0;
-      let totalCount = 0;
-      let totalMin = 0;
-
-      const dailySeries = [];
-
-      for (let d = 1; d <= daysInMonth; d++) {
-        const dateKey = `${prefix}${String(d).padStart(2, '0')}`;
-        const items = Array.isArray(workoutLogs[dateKey]) ? workoutLogs[dateKey] : [];
-        const completedItems = items.filter(i => i.done);
-
-        if (completedItems.length > 0) activeDays++;
-
-        let dayKm = 0;
-        let dayCount = 0;
-        let dayMin = 0;
-
-        completedItems.forEach(item => {
-          const val = Number(item.value) || 0;
-          if (item.unit === 'km') dayKm += val;
-          else if (item.unit === '분') dayMin += val;
-          else dayCount += val; // '개', '세트'
-        });
-
-        totalKm += dayKm;
-        totalCount += dayCount;
-        totalMin += dayMin;
-
-        const rate = items.length === 0 ? 0 : Math.round((completedItems.length / items.length) * 100);
-        dailySeries.push({
-          day: d,
-          dateKey,
-          totalItems: items.length,
-          completedCount: completedItems.length,
-          rate,
-          km: Number(dayKm.toFixed(1)),
-          count: Math.round(dayCount),
-          min: Math.round(dayMin)
-        });
-      }
-
-      return {
-        daysInMonth,
-        activeDays,
-        totalKm: Number(totalKm.toFixed(1)),
-        totalCount: Math.round(totalCount),
-        totalMin: Math.round(totalMin),
-        dailySeries
-      };
-    }
-
-    function renderMonthlyCalendarAndKPIs() {
-      document.getElementById('currentMonthLabel').textContent = `${viewYear}년 ${viewMonth}월`;
-      const summary = getMonthSummaryData(viewYear, viewMonth);
-
-      document.getElementById('kpiActiveDays').textContent = `${summary.activeDays}일`;
-      document.getElementById('kpiTotalKm').textContent = `${summary.totalKm} km`;
-      document.getElementById('kpiTotalCount').textContent = `${summary.totalCount} 개`;
-      document.getElementById('kpiTotalMin').textContent = `${summary.totalMin} 분`;
-
-      const calendarGrid = document.getElementById('calendarGrid');
-      calendarGrid.innerHTML = '';
-
-      const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-      weekdays.forEach((w, idx) => {
-        const el = document.createElement('div');
-        el.className = `cal-weekday ${idx === 0 ? 'sun' : idx === 6 ? 'sat' : ''}`;
-        el.textContent = w;
-        calendarGrid.appendChild(el);
-      });
-
-      const firstDayOfWeek = new Date(viewYear, viewMonth - 1, 1).getDay();
-      for (let i = 0; i < firstDayOfWeek; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'cal-day empty';
-        calendarGrid.appendChild(emptyCell);
-      }
-
-      summary.dailySeries.forEach(info => {
-        const cell = document.createElement('div');
-        let statusClass = '';
-        if (info.totalItems > 0 && info.completedCount === info.totalItems) statusClass = 'status-100';
-        else if (info.completedCount > 0) statusClass = 'status-part';
-        else if (info.totalItems > 0) statusClass = 'status-plan';
-
-        const isSelected = info.dateKey === selectedDate ? 'selected-day' : '';
-        cell.className = `cal-day ${statusClass} ${isSelected}`;
-
-        let badgeHtml = '';
-        if (info.totalItems > 0) {
-          badgeHtml = `<span class="cal-day-badge">${info.completedCount}/${info.totalItems} (${info.rate}%)</span>`;
-        }
-
-        cell.innerHTML = `
-          <span class="cal-day-num">${info.day}</span>
-          ${badgeHtml}
-        `;
-
-        cell.addEventListener('click', () => {
-          selectedDate = info.dateKey;
-          renderAll();
-          document.getElementById('dailyCheckSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-
-        calendarGrid.appendChild(cell);
-      });
-
-      drawMonthlyChart(summary.dailySeries);
-    }
-
-    // =========================================================================
-    // 5. HTML5 Canvas 네오브루탈리즘 월간 통계 그래프 렌더링
-    // =========================================================================
-    function drawMonthlyChart(dailySeries) {
-      const canvas = document.getElementById('monthlyChartCanvas');
-      const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      const width = Math.max(300, rect.width);
-      const height = 250;
-
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-
-      ctx.clearRect(0, 0, width, height);
-
-      const metaMap = {
-        rate: { title: '월간 일별 운동 달성률 (%) 그래프', unit: '%', color: '#2ed573', fixedMax: 100 },
-        km: { title: '월간 일별 누적 러닝·이동 거리 (km) 그래프', unit: 'km', color: '#48dbfb', fixedMax: null },
-        count: { title: '월간 일별 근력·반복 횟수 (개) 그래프', unit: '개', color: '#ffd83b', fixedMax: null },
-        min: { title: '월간 일별 운동 시간 (분) 그래프', unit: '분', color: '#ff9f43', fixedMax: null }
-      };
-
-      const cfg = metaMap[activeChartMetric];
-      document.getElementById('chartTitle').textContent = cfg.title;
-
-      const values = dailySeries.map(d => d[activeChartMetric]);
-      const rawMax = Math.max(...values, 0);
-      const maxVal = cfg.fixedMax !== null ? cfg.fixedMax : (rawMax === 0 ? 10 : Math.ceil(rawMax * 1.2));
-
-      const padLeft = 44;
-      const padRight = 14;
-      const padTop = 20;
-      const padBottom = 32;
-      const plotW = width - padLeft - padRight;
-      const plotH = height - padTop - padBottom;
-
-      // 가로 눈금선 및 Y축 라벨
-      ctx.font = '800 11px Pretendard, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-
-      const gridSteps = 4;
-      for (let i = 0; i <= gridSteps; i++) {
-        const y = padTop + (plotH * i) / gridSteps;
-        const labelVal = Math.round(maxVal * (1 - i / gridSteps));
-
-        ctx.strokeStyle = i === gridSteps ? '#111111' : '#dcdcdc';
-        ctx.lineWidth = i === gridSteps ? 2.5 : 1;
-        ctx.beginPath();
-        ctx.moveTo(padLeft, y);
-        ctx.lineTo(width - padRight, y);
-        ctx.stroke();
-
-        ctx.fillStyle = '#333333';
-        ctx.fillText(`${labelVal}`, padLeft - 8, y);
-      }
-
-      // Y축 기준선
-      ctx.strokeStyle = '#111111';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(padLeft, padTop);
-      ctx.lineTo(padLeft, padTop + plotH);
-      ctx.stroke();
-
-      // 일별 막대 렌더링
-      const n = dailySeries.length;
-      const slotW = plotW / n;
-      const barW = Math.max(4, Math.min(18, slotW * 0.68));
-
-      dailySeries.forEach((d, idx) => {
-        const val = d[activeChartMetric];
-        const barH = maxVal === 0 ? 0 : (val / maxVal) * plotH;
-        const x = padLeft + idx * slotW + (slotW - barW) / 2;
-        const y = padTop + plotH - barH;
-
-        if (val > 0) {
-          // 하드 섀도우
-          ctx.fillStyle = '#111111';
-          ctx.fillRect(x + 2, y + 2, barW, Math.max(0, barH - 2));
-
-          // 막대 본체
-          ctx.fillStyle = d.dateKey === selectedDate ? '#ff4757' : cfg.color;
-          ctx.fillRect(x, y, barW, barH);
-
-          // 테두리
-          ctx.strokeStyle = '#111111';
-          ctx.lineWidth = 1.8;
-          ctx.strokeRect(x, y, barW, barH);
-        }
-
-        // X축 날짜 눈금 (1일, 5일 단위, 말일 표시)
-        if (d.day === 1 || d.day % 5 === 0 || d.day === n) {
-          ctx.fillStyle = d.dateKey === selectedDate ? '#ff4757' : '#111111';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'top';
-          ctx.fillText(`${d.day}`, padLeft + idx * slotW + slotW / 2, padTop + plotH + 8);
-        }
-      });
-    }
-
-    // 차트 탭 전환
-    document.querySelectorAll('.chart-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        activeChartMetric = tab.dataset.chart;
-        const summary = getMonthSummaryData(viewYear, viewMonth);
-        drawMonthlyChart(summary.dailySeries);
-      });
     });
 
     // 월 이동 컨트롤
     document.getElementById('prevMonthBtn').addEventListener('click', () => {
       viewMonth--;
-      if (viewMonth < 1) { viewMonth = 12; viewYear--; }
-      renderMonthlyCalendarAndKPIs();
+      if (viewMonth < 0) {
+        viewMonth = 11;
+        viewYear--;
+      }
+      renderCalendar();
+      renderStatsAndChart();
     });
 
     document.getElementById('nextMonthBtn').addEventListener('click', () => {
       viewMonth++;
-      if (viewMonth > 12) { viewMonth = 1; viewYear++; }
-      renderMonthlyCalendarAndKPIs();
+      if (viewMonth > 11) {
+        viewMonth = 0;
+        viewYear++;
+      }
+      renderCalendar();
+      renderStatsAndChart();
     });
 
-    // =========================================================================
-    // 6. 기록 텍스트 공유 복사 및 JSON 백업/복원
-    // =========================================================================
-    document.getElementById('shareSummaryBtn').addEventListener('click', async () => {
-      const items = getDayItems(selectedDate);
-      const completed = items.filter(i => i.done);
-      const lines = [
-        `[오운완 운동 기록 · ${selectedDate}]`,
-        `달성 현황: ${completed.length} / ${items.length} 완료`,
-        ...items.map(i => `${i.done ? '[완료]' : '[미완료]'} ${i.title} - ${i.value}${i.unit}`)
-      ];
-      const text = lines.join('\n');
+    // 차트 모드 전환
+    document.querySelectorAll('.chart-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.chart-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        chartMode = btn.dataset.chartMode;
+        renderStatsAndChart();
+      });
+    });
+
+    // 오운완 기록 공유
+    document.getElementById('shareRecordBtn').addEventListener('click', async () => {
+      const { doneCount, total, pct } = getDayStats(selectedDateKey);
+      const dayLog = logs[selectedDateKey] || {};
+      const lines = items.map(it => {
+        const ent = dayLog[it.id];
+        const mark = ent && ent.done ? '✅' : '⬜';
+        const val = ent ? ent.value : it.target;
+        return `${mark} ${it.name}: ${val}${it.unit}`;
+      });
+      const shareText = `[오운완! 운동 기록 - ${selectedDateKey}]\n달성률: ${pct}% (${doneCount}/${total})\n\n${lines.join('\n')}\n\n기록 앱: ${PWA_APP_URL}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: `오운완! (${selectedDateKey})`, text: shareText });
+          return;
+        } catch (e) {
+          // 사용자가 공유 창을 닫은 경우 클립보드 복사로 폴백
+        }
+      }
+
       try {
-        await navigator.clipboard.writeText(text);
-        alert('선택한 날짜의 운동 기록 요약이 클립보드에 복사되었습니다!');
+        await navigator.clipboard.writeText(shareText);
+        showToast('오운완 기록 텍스트가 클립보드에 복사되었습니다!');
       } catch (e) {
-        prompt('아래 내용을 복사하여 공유하세요:', text);
+        prompt('아래 운동 기록을 복사해 공유하세요:', shareText);
       }
     });
 
+    // 샘플 기록 채우기 / 백업 / 초기화
+    document.getElementById('seedDemoBtn').addEventListener('click', () => {
+      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+      const today = new Date();
+      const maxDay = (viewYear === today.getFullYear() && viewMonth === today.getMonth())
+        ? today.getDate()
+        : Math.min(20, daysInMonth);
+
+      for (let d = 1; d <= maxDay; d++) {
+        if (d % 4 === 0) continue; // 휴식일 패턴 반영
+        const dKey = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        if (!logs[dKey]) logs[dKey] = {};
+        items.forEach((it, idx) => {
+          const done = (d + idx) % 3 !== 0 || d % 2 === 1;
+          logs[dKey][it.id] = {
+            done,
+            value: it.target,
+            note: done ? '목표 달성' : ''
+          };
+        });
+      }
+      saveLogs(logs);
+      renderAll();
+      showToast(`${viewMonth + 1}월 샘플 운동 기록이 채워졌습니다!`);
+    });
+
     document.getElementById('exportJsonBtn').addEventListener('click', () => {
-      const blob = new Blob([JSON.stringify(workoutLogs, null, 2)], { type: 'application/json' });
+      const payload = JSON.stringify({ items, logs, exportedAt: new Date().toISOString() }, null, 2);
+      const blob = new Blob([payload], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `workout-backup-${getTodayStr()}.json`;
+      a.download = `phycheck_backup_${selectedDateKey}.json`;
       a.click();
       URL.revokeObjectURL(url);
+      showToast('운동 기록 JSON 파일이 다운로드되었습니다.');
     });
 
-    const importFileInput = document.getElementById('importFileInput');
-    document.getElementById('importJsonBtn').addEventListener('click', () => importFileInput.click());
-    importFileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          const parsed = JSON.parse(ev.target.result);
-          if (typeof parsed === 'object' && parsed !== null) {
-            workoutLogs = parsed;
-            saveAllLogs();
-            alert('운동 기록 백업 데이터를 성공적으로 불러왔습니다.');
-          }
-        } catch (err) {
-          alert('올바른 JSON 백업 파일이 아닙니다.');
-        }
-      };
-      reader.readAsText(file);
+    document.getElementById('resetAllBtn').addEventListener('click', () => {
+      if (!confirm('저장된 모든 운동 기록과 종목 설정을 초기화할까요?')) return;
+      localStorage.removeItem(ITEMS_STORAGE_KEY);
+      localStorage.removeItem(LOGS_STORAGE_KEY);
+      items = loadItems();
+      logs = {};
+      renderAll();
+      showToast('모든 기록이 초기화되었습니다.');
     });
 
-    function renderAll() {
-      renderDailySection();
-      renderMonthlyCalendarAndKPIs();
+    // QR코드 스마트폰 연결 모달 제어
+    const qrConnectModal = document.getElementById('qrConnectModal');
+    const qrCodeRenderBox = document.getElementById('qrCodeRenderBox');
+    const qrModalTitle = document.getElementById('qrModalTitle');
+    const qrModalDesc = document.getElementById('qrModalDesc');
+    const qrModalUrlText = document.getElementById('qrModalUrlText');
+    const qrOpenNewTabBtn = document.getElementById('qrOpenNewTabBtn');
+    const qrTabPwa = document.getElementById('qrTabPwa');
+    const qrTabCurrent = document.getElementById('qrTabCurrent');
+
+    let currentQrUrl = PWA_APP_URL;
+
+    function getCurrentPageUrl() {
+      if (window.location.protocol.startsWith('http')) {
+        return window.location.href.split('#')[0];
+      }
+      return 'https://nlasdnfkl2.github.io/phycheck.html';
     }
 
-    window.addEventListener('resize', () => {
-      const summary = getMonthSummaryData(viewYear, viewMonth);
-      drawMonthlyChart(summary.dailySeries);
+    function renderQrModalMode(mode) {
+      const isPwa = mode === 'pwa';
+      qrTabPwa.classList.toggle('active', isPwa);
+      qrTabCurrent.classList.toggle('active', !isPwa);
+
+      currentQrUrl = isPwa ? PWA_APP_URL : getCurrentPageUrl();
+      qrModalTitle.textContent = isPwa
+        ? '오운완 모바일 앱(PWA) QR 연결'
+        : '현재 운동 기록 웹 페이지 QR 연결';
+      qrModalDesc.textContent = isPwa
+        ? '스마트폰 카메라로 스캔하면 전용 모바일 앱(PWA)이 바로 열립니다.'
+        : '스마트폰 카메라로 스캔하면 현재 보고 있는 웹 페이지가 바로 열립니다.';
+      qrModalUrlText.textContent = currentQrUrl;
+      qrOpenNewTabBtn.href = currentQrUrl;
+
+      qrCodeRenderBox.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrCodeRenderBox, {
+          text: currentQrUrl,
+          width: 210,
+          height: 210,
+          colorDark: '#111111',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } else {
+        qrCodeRenderBox.innerHTML = '<p style="font-size:0.85rem;font-weight:800;">오프라인 상태입니다.<br>아래 주소를 복사해 접속해 주세요.</p>';
+      }
+    }
+
+    function openQrModal(mode = 'pwa') {
+      renderQrModalMode(mode);
+      qrConnectModal.classList.add('open');
+    }
+
+    function closeQrModal() {
+      qrConnectModal.classList.remove('open');
+    }
+
+    document.getElementById('openTopQrBtn').addEventListener('click', () => openQrModal('pwa'));
+    document.getElementById('openHeroQrBtn').addEventListener('click', () => openQrModal('pwa'));
+    qrTabPwa.addEventListener('click', () => renderQrModalMode('pwa'));
+    qrTabCurrent.addEventListener('click', () => renderQrModalMode('current'));
+
+    document.getElementById('qrCopyUrlBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(currentQrUrl);
+        showToast('연결 주소가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        prompt('아래 주소를 복사해 스마트폰에서 열어주세요:', currentQrUrl);
+      }
     });
 
+    document.getElementById('qrModalCloseBtn').addEventListener('click', closeQrModal);
+    qrConnectModal.addEventListener('click', (e) => {
+      if (e.target === qrConnectModal) closeQrModal();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && qrConnectModal.classList.contains('open')) {
+        closeQrModal();
+      }
+    });
+
+    // 초기 렌더링 실행
     renderAll();
   });
 </script>
