@@ -511,11 +511,21 @@
     }
     .app-card:nth-child(2n) .browser-bar { background: var(--pink); }
     .app-card:nth-child(3n) .browser-bar { background: var(--yellow); }
-    .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: white; }
+    .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: white; flex-shrink: 0; }
+
+    .slot-file-tag {
+      margin-left: auto;
+      font-size: 0.72rem;
+      font-weight: 900;
+      background: white;
+      border: 2px solid var(--black);
+      padding: 1px 7px;
+      box-shadow: 2px 2px 0 var(--black);
+    }
 
     .mockup-window {
       width: 100%; padding-top: 60%; position: relative; overflow: hidden;
-      background: white; border-bottom: var(--border-thick);
+      background: #f5f2eb; border-bottom: var(--border-thick);
     }
     .mockup-window iframe {
       position: absolute; top: 0; left: 0;
@@ -531,6 +541,9 @@
       font-size: 0.75rem; font-weight: 900; margin-bottom: 8px;
       border: 2px solid var(--black); display: inline-block; align-self: flex-start;
       padding: 2px 8px; background: var(--yellow); box-shadow: 2px 2px 0 var(--black);
+    }
+    .app-info .tech.is-slot {
+      background: var(--bg);
     }
     .app-info h3 { font-size: 1.15rem; margin-bottom: 8px; font-weight: 900; }
     .app-info p { font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; flex-grow: 1; }
@@ -711,7 +724,7 @@
   <div class="nav-dot" data-tooltip="About" data-target="about"></div>
   <div class="nav-dot" data-tooltip="Visual Design" data-target="work-visual"></div>
   <div class="nav-dot" data-tooltip="Policy & Research" data-target="work-policy"></div>
-  <div class="nav-dot" data-tooltip="Web Apps (Lab 1-17)" data-target="work-web"></div>
+  <div class="nav-dot" data-tooltip="Web Apps (Lab 1-24)" data-target="work-web"></div>
   <div class="nav-dot" data-tooltip="Contact" data-target="contact"></div>
 </div>
 
@@ -757,7 +770,7 @@
   <section id="work">
     <p class="label">Activities</p>
     <h2 class="brutal-reveal">해본 것</h2>
-    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 실습 1부터 17까지 구현한 웹 앱 프로젝트 아카이브입니다.</p>
+    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 실습 1부터 24까지 구현·연결한 웹 앱 프로젝트 아카이브입니다.</p>
 
     <!-- Group 1: 시각 디자인 -->
     <div class="work-group scroll-section brutal-reveal" id="work-visual">
@@ -906,12 +919,12 @@
       </article>
     </div>
 
-    <!-- Group 3: 웹 앱 (실습 1 ~ 17 통합) -->
+    <!-- Group 3: 웹 앱 (실습 1 ~ 24 통합) -->
     <div class="work-group scroll-section brutal-reveal" id="work-web">
       <div class="work-group-header">
-        <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 17)</div>
+        <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 24)</div>
         <div class="app-filter-bar" id="appFilterBar">
-          <button type="button" class="app-filter-btn active" data-filter="all">전체 (13)</button>
+          <button type="button" class="app-filter-btn active" data-filter="all">전체 (19)</button>
           <button type="button" class="app-filter-btn" data-filter="ai">AI · 시각화</button>
           <button type="button" class="app-filter-btn" data-filter="edu">교육 · 교구</button>
           <button type="button" class="app-filter-btn" data-filter="util">유틸리티 · 생활</button>
@@ -1056,9 +1069,99 @@
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
           <div class="mockup-window"><iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
           <div class="app-info">
-            <div class="tech">건강 관리 (실습 17)</div>
-            <h3>운동 체크리스트 앱</h3>
-            <p>오늘의 운동 목록을 관리하고 달성 현황을 점검합니다.</p>
+            <div class="tech">건강 관리 (실습 17·18)</div>
+            <h3>운동 기록 · 월간 통계 앱</h3>
+            <p>운동 항목별 달성 체크와 수치를 저장하고 월별 달력·차트로 관리합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 실습 19: 영수증 정리도우미 앱 -->
+        <a href="mymoney.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">mymoney.html</span>
+          </div>
+          <div class="mockup-window"><iframe src="mymoney.html" title="영수증 정리도우미 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech">OCR 정산 (실습 19)</div>
+            <h3>영수증 정리도우미 앱</h3>
+            <p>로컬 OCR로 영수증의 가맹점·일시·금액·부가세를 자동 추출하고 엑셀(.xlsx)로 정리합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 실습 20: 지출관리 가계부 앱 (연결 슬롯) -->
+        <a href="ggb.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">ggb.html</span>
+          </div>
+          <div class="mockup-window"><iframe src="ggb.html" title="지출관리 가계부 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech is-slot">가계부 · 시트 연동 (실습 20 · 예정)</div>
+            <h3>지출관리 가계부 앱</h3>
+            <p>영수증 추출 내역을 항목별로 분류해 쌓고 월별·항목별 지출 흐름을 차트로 관리합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 실습 21: 학급 생일 관리 앱 (연결 슬롯) -->
+        <a href="birthday.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">birthday.html</span>
+          </div>
+          <div class="mockup-window"><iframe src="birthday.html" title="학급 생일 관리 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech is-slot">학급 관리 · 시트 연동 (실습 21 · 예정)</div>
+            <h3>학급 생일 관리 앱</h3>
+            <p>구글 시트와 연동해 다가오는 생일을 하이라이트하고 월별 필터 및 D-Day 순으로 정렬합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 실습 22: 비밀 우체통 앱 (연결 슬롯) -->
+        <a href="uche.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">uche.html</span>
+          </div>
+          <div class="mockup-window"><iframe src="uche.html" title="비밀 우체통 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech is-slot">학급 소통 · 시트 연동 (실습 22 · 예정)</div>
+            <h3>비밀 우체통 앱</h3>
+            <p>학생의 고민 내용을 구글 시트에 자동 저장하고 교사 이메일 알림 및 QR 접속을 지원합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 실습 23: 2D 가상 미술관 앱 (연결 슬롯) -->
+        <a href="gamiart.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">gamiart.html</span>
+          </div>
+          <div class="mockup-window"><iframe src="gamiart.html" title="2D 가상 미술관 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech is-slot">2D 전시 · DB 연동 (실습 23 · 예정)</div>
+            <h3>2D 가상 미술관 앱</h3>
+            <p>방향키로 2D 아바타를 조종해 작품을 관람하고 이미지 업로드 및 감상평을 실시간 공유합니다.</p>
+            <span class="app-link-btn">열기 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- 실습 24: 우리 반 스마트 장보기 미션 앱 (연결 슬롯) -->
+        <a href="jang.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">jang.html</span>
+          </div>
+          <div class="mockup-window"><iframe src="jang.html" title="우리 반 스마트 장보기 미션 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <div class="app-info">
+            <div class="tech is-slot">경제 교육 교구 (실습 24 · 예정)</div>
+            <h3>우리 반 스마트 장보기 미션 앱</h3>
+            <p>주어진 예산 안에서 상품 수량을 조절하고 구매 이유를 서술하며 합리적 소비를 연습합니다.</p>
             <span class="app-link-btn">열기 &rarr;</span>
           </div>
         </a>
@@ -1127,7 +1230,6 @@
       ytPlayer.unMute();
       ytPlayer.setVolume(50);
       const state = typeof ytPlayer.getPlayerState === 'function' ? ytPlayer.getPlayerState() : -1;
-      // 이미 재생 중이거나 버퍼링 중이면 중복 호출하지 않음
       if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
         ytPlayer.playVideo();
       }
@@ -1172,7 +1274,7 @@
     }
   }
 
-  // YouTube IFrame API 싱글톤 초기화 (중복 인스턴스 원천 차단)
+  // YouTube IFrame API 싱글톤 초기화
   window.onYouTubeIframeAPIReady = function () {
     if (ytPlayer || isPlayerInitializing) return;
     isPlayerInitializing = true;
@@ -1209,7 +1311,6 @@
           }
         },
         onStateChange: (event) => {
-          // 사용자가 재생을 허용하지 않은 상태라면 어떤 경우에도 즉시 정지
           if (!isMusicEnabled && (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING)) {
             safeStopMusic();
           }
@@ -1231,7 +1332,7 @@
     }
   })();
 
-  // 스크롤 시 지연 로딩되는 하위 미리보기 iframe 내부의 모든 오디오/미디어 차단
+  // 하위 미리보기 iframe 내부 오디오/미디어 차단
   function silencePreviewIframe(iframe) {
     try {
       const win = iframe.contentWindow;
@@ -1271,12 +1372,11 @@
       const ytBox = doc.getElementById('youtubePlayerContainer');
       if (ytBox) ytBox.remove();
     } catch (e) {
-      // 동일 출처가 아닌 경우 브라우저 보안 정책에 의해 자동 격리됨
+      // 동일 출처 외 iframe은 브라우저 보안 정책에 의해 격리됨
     }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    // 모든 미리보기 iframe에 오디오 차단 핸들러 연결
     document.querySelectorAll('.mockup-window iframe').forEach((iframe) => {
       iframe.addEventListener('load', () => silencePreviewIframe(iframe));
     });
@@ -1294,7 +1394,7 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 초기 상단 라운드 바 예 / 아니오 선택 처리
+    // 상단 라운드 바 예 / 아니오 선택 처리
     const musicYesBtn = document.getElementById('musicYesBtn');
     const musicNoBtn = document.getElementById('musicNoBtn');
 
@@ -1305,7 +1405,7 @@
       musicNoBtn.addEventListener('click', () => applyMusicPreference(false));
     }
 
-    // 우측 상단 음악 아이콘 토글 (연타 중복 방지 디바운스 포함)
+    // 우측 상단 음악 아이콘 토글
     const muteToggleBtn = document.getElementById('muteToggleBtn');
     if (muteToggleBtn) {
       muteToggleBtn.addEventListener('click', () => {
@@ -1322,7 +1422,6 @@
       });
     }
 
-    // 브라우저 탭 가시성 전환 시 단일 상태 유지
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         safeStopMusic();
