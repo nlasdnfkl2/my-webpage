@@ -388,12 +388,12 @@
       display: flex;
       align-items: flex-end;
       gap: 6px;
-      height: 155px;
-      padding: 18px 8px 0;
+      height: 165px;
+      padding: 16px 8px 0;
       background: var(--bg);
       border: var(--border);
-      border-bottom: 3px solid var(--black);
       box-shadow: 3px 3px 0 var(--black);
+      overflow: hidden;
     }
 
     .m-col {
@@ -402,14 +402,20 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      height: 100%;
       cursor: pointer;
+      min-width: 0;
     }
 
     .m-count {
       font-size: 0.72rem;
       font-weight: 900;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+    }
+
+    .m-count.zero {
+      color: #888;
+      font-weight: 700;
     }
 
     .m-stick {
@@ -418,8 +424,11 @@
       background: var(--cyan);
       border: 2px solid var(--black);
       border-bottom: none;
-      min-height: 4px;
       transition: height 0.25s ease, background 0.15s ease;
+    }
+
+    .m-stick.empty {
+      background: #dcd8ce;
     }
 
     .m-col.active .m-stick,
@@ -438,6 +447,12 @@
       text-align: center;
       font-size: 0.74rem;
       font-weight: 900;
+    }
+
+    .m-lbl.active {
+      background: var(--black);
+      color: var(--yellow);
+      padding: 1px 0;
     }
 
     /* 등록 목록 섹션 */
@@ -691,7 +706,7 @@
 <body>
 
 <div class="fixed-top-bar">
-  <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+  <div class="current-time" id="currentTimeDisplay">--. --. --. --:--:--</div>
   <div class="icon-group">
     <button type="button" class="top-pill-btn cyan" id="reloadListBtn">명단 새로고침</button>
     <button type="button" class="top-pill-btn pink" id="openQrBtn">QR 폰 연결</button>
@@ -737,7 +752,7 @@
             <input type="text" class="brutal-input" id="stdName" placeholder="예: 김서윤" required>
           </div>
           <div class="form-field full">
-            <label for="stdBirthDate">생년월일 (YYYY-MM-DD) *</label>
+            <label for="stdBirthDate">생년월일 *</label>
             <input type="date" class="brutal-input" id="stdBirthDate" required>
           </div>
           <div class="form-field full">
@@ -866,7 +881,12 @@
 
 <script>
   const BACKEND_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyM-ia8C6LCZLi4XGUKJjjX2jX9w0L4uqUPXYtxphAXhHNABdgMnD9Vdxl4RfmCv24F/exec';
-  const CACHE_KEY = 'class_birthday_cache_v2';
+  const CACHE_KEY = 'class_birthday_cache_v3';
+
+  const ENG_MONTH_MAP = {
+    jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+    jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
+  };
 
   let students = [];
   let selectedMonth = 0; // 0 = 전체, 1~12 = 해당 월
@@ -919,42 +939,84 @@
     try {
       const raw = localStorage.getItem(CACHE_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((item, idx) => normalizeStudentItem(item, idx)).filter(Boolean);
     } catch (e) {
       return [];
     }
   }
 
-  // 어떤 형식의 날짜가 오더라도 YYYY-MM-DD로 정규화
-  function normalizeBirthDate(val) {
-    if (!val) return '';
+  // 어떤 날짜 형식이든 { year, month, day } 객체로 안전 파싱
+  function parseBirthDateParts(val) {
+    if (!val) return null;
     const str = String(val).trim();
 
-    // ISO UTC 문자열 (예: 2012-03-13T15:00:00.000Z) -> KST(+9시간) 보정
+    // 1) ISO UTC 문자열 (예: 2012-03-13T15:00:00.000Z) -> KST(+9시간) 보정
     if (/^\d{4}-\d{2}-\d{2}T/.test(str)) {
       const dt = new Date(str);
       if (!isNaN(dt.getTime())) {
         const kst = new Date(dt.getTime() + 9 * 60 * 60 * 1000);
-        const y = kst.getUTCFullYear();
-        const m = String(kst.getUTCMonth() + 1).padStart(2, '0');
-        const d = String(kst.getUTCDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
+        return {
+          year: kst.getUTCFullYear(),
+          month: kst.getUTCMonth() + 1,
+          day: kst.getUTCDate()
+        };
       }
     }
 
-    const match = str.match(/(19\d{2}|20\d{2})[./\-년\s]+(\d{1,2})[./\-월\s]+(\d{1,2})/);
-    if (match) {
-      return `${match[1]}-${String(match[2]).padStart(2, '0')}-${String(match[3]).padStart(2, '0')}`;
+    // 2) JS Date.toString() 문자열 (예: Wed Mar 14 2012 00:00:00 GMT+0900 (한국 표준시))
+    const engMatch = str.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{1,2}),?\s+(19\d{2}|20\d{2})\b/i);
+    if (engMatch) {
+      const m = ENG_MONTH_MAP[engMatch[1].slice(0, 3).toLowerCase()];
+      const d = Number(engMatch[2]);
+      const y = Number(engMatch[3]);
+      if (m && d && y) return { year: y, month: m, day: d };
     }
 
-    return str;
+    // 3) YYYY-MM-DD / YYYY. MM. DD. / YYYY년 M월 D일
+    const ymdMatch = str.match(/(19\d{2}|20\d{2})[./\-년\s]+(\d{1,2})[./\-월\s]+(\d{1,2})/);
+    if (ymdMatch) {
+      const y = Number(ymdMatch[1]);
+      const m = Number(ymdMatch[2]);
+      const d = Number(ymdMatch[3]);
+      if (y && m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+        return { year: y, month: m, day: d };
+      }
+    }
+
+    // 4) 일반 Date 파서 최후 보조
+    const fallbackDt = new Date(str);
+    if (!isNaN(fallbackDt.getTime())) {
+      return {
+        year: fallbackDt.getFullYear(),
+        month: fallbackDt.getMonth() + 1,
+        day: fallbackDt.getDate()
+      };
+    }
+
+    return null;
+  }
+
+  // input[type="date"] 및 API 전송용 표준 형식: YYYY-MM-DD
+  function toIsoDate(val) {
+    const p = parseBirthDateParts(val);
+    if (!p) return String(val || '').trim();
+    return `${p.year}-${String(p.month).padStart(2, '0')}-${String(p.day).padStart(2, '0')}`;
+  }
+
+  // 화면 표기용 한국식 날짜 형식: 2012. 03. 14.
+  function formatKoreanDate(val) {
+    const p = parseBirthDateParts(val);
+    if (!p) return String(val || '').trim();
+    return `${p.year}. ${String(p.month).padStart(2, '0')}. ${String(p.day).padStart(2, '0')}.`;
   }
 
   // 시트 행 데이터 정규화
   function normalizeStudentItem(raw, idx) {
     if (!raw || typeof raw !== 'object') return null;
     const name = String(raw.name ?? raw['이름'] ?? '').trim();
-    const birthDate = normalizeBirthDate(raw.birthDate ?? raw.birthday ?? raw['생년월일'] ?? '');
+    const rawBirth = raw.birthDate ?? raw.birthday ?? raw['생년월일'] ?? '';
+    const birthDate = toIsoDate(rawBirth);
     if (!name && !birthDate) return null;
 
     return {
@@ -977,16 +1039,24 @@
     return rawList.map((item, idx) => normalizeStudentItem(item, idx)).filter(Boolean);
   }
 
-  // 생년월일(YYYY-MM-DD) 기준 D-Day 계산
+  // 생년월일 기준 D-Day 및 한국식 날짜 메타 계산
   function calcBirthdayMeta(birthDateStr) {
-    const normalized = normalizeBirthDate(birthDateStr);
-    const parts = normalized.split('-').map(Number);
-    if (parts.length < 3 || !parts[1] || !parts[2]) {
-      return { month: 0, day: 0, dday: 999, label: '날짜 확인', monthDayKey: 9999 };
+    const p = parseBirthDateParts(birthDateStr);
+    if (!p) {
+      return {
+        year: 0,
+        month: 0,
+        day: 0,
+        krDate: String(birthDateStr || ''),
+        dday: 999,
+        label: '날짜 확인',
+        monthDayKey: 9999
+      };
     }
 
-    const month = parts[1];
-    const day = parts[2];
+    const { year, month, day } = p;
+    const krDate = `${year}. ${String(month).padStart(2, '0')}. ${String(day).padStart(2, '0')}.`;
+
     const now = new Date();
     const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -1001,8 +1071,10 @@
     else if (diffDays === 1) label = '내일 (D-1)';
 
     return {
+      year,
       month,
       day,
+      krDate,
       dday: diffDays,
       label,
       monthDayKey: month * 100 + day
@@ -1026,8 +1098,8 @@
   function renderUpcomingHighlights() {
     const grid = document.getElementById('upcomingGrid');
     const now = new Date();
-    document.getElementById('todayDateSummary').textContent =
-      `기준일: ${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
+    const todayKr = `${now.getFullYear()}. ${String(now.getMonth() + 1).padStart(2, '0')}. ${String(now.getDate()).padStart(2, '0')}.`;
+    document.getElementById('todayDateSummary').textContent = `기준일: ${todayKr}`;
 
     if (isLoading && students.length === 0) {
       grid.innerHTML = '<p style="font-weight:800; color:#555;">생일 명단을 불러오는 중입니다...</p>';
@@ -1049,12 +1121,15 @@
       const isSoon = item.meta.dday > 0 && item.meta.dday <= 14;
       const cardCls = isToday ? 'is-today' : (isSoon ? 'is-soon' : '');
       const pillCls = isToday ? '' : 'soon';
+      const dateText = item.meta.month > 0
+        ? `${item.meta.krDate} (${item.meta.month}월 ${item.meta.day}일)`
+        : escapeHtml(item.birthDate);
 
       return `
         <div class="upcoming-card ${cardCls}">
           <span class="dday-pill ${pillCls}">${escapeHtml(item.meta.label)}</span>
           <div class="upcoming-name">${escapeHtml(item.name)} <span style="font-size:0.85rem; font-weight:700;">(${item.number}번)</span></div>
-          <div class="upcoming-meta">${item.meta.month}월 ${item.meta.day}일 (${escapeHtml(item.birthDate)})</div>
+          <div class="upcoming-meta">${escapeHtml(dateText)}</div>
           <div class="upcoming-meta">${escapeHtml(item.note || '소속·메모 없음')}</div>
         </div>
       `;
@@ -1077,17 +1152,23 @@
 
     barsEl.innerHTML = counts.map((cnt, idx) => {
       const mNum = idx + 1;
-      const hPct = cnt > 0 ? Math.max(14, Math.round((cnt / maxCnt) * 85)) : 4;
+      const barPx = cnt > 0 ? Math.max(22, Math.round((cnt / maxCnt) * 112)) : 6;
       const activeCls = selectedMonth === mNum ? 'active' : '';
+      const emptyCls = cnt === 0 ? 'empty' : '';
+      const countCls = cnt === 0 ? 'zero' : '';
       return `
         <div class="m-col ${activeCls}" data-month="${mNum}" title="${mNum}월: ${cnt}명">
-          <span class="m-count">${cnt > 0 ? cnt + '명' : ''}</span>
-          <div class="m-stick" style="height:${hPct}%;"></div>
+          <span class="m-count ${countCls}">${cnt}명</span>
+          <div class="m-stick ${emptyCls}" style="height:${barPx}px;"></div>
         </div>
       `;
     }).join('');
 
-    labelsEl.innerHTML = counts.map((_, idx) => `<div class="m-lbl">${idx + 1}월</div>`).join('');
+    labelsEl.innerHTML = counts.map((_, idx) => {
+      const mNum = idx + 1;
+      const activeCls = selectedMonth === mNum ? 'active' : '';
+      return `<div class="m-lbl ${activeCls}">${mNum}월</div>`;
+    }).join('');
 
     barsEl.querySelectorAll('.m-col').forEach(col => {
       col.addEventListener('click', () => {
@@ -1146,7 +1227,7 @@
       .filter(s => {
         if (selectedMonth !== 0 && s.meta.month !== selectedMonth) return false;
         if (kw) {
-          const hay = `${s.name} ${s.note} ${s.birthDate}`.toLowerCase();
+          const hay = `${s.name} ${s.note} ${s.meta.krDate} ${s.birthDate}`.toLowerCase();
           if (!hay.includes(kw)) return false;
         }
         return true;
@@ -1176,11 +1257,15 @@
     tbody.innerHTML = filtered.map(s => {
       const dupHtml = dupSet.has(s.name) ? '<span class="dup-badge">동명이인</span>' : '';
       const chipCls = s.meta.dday === 0 ? 'today' : (s.meta.dday <= 14 ? 'soon' : '');
+      const formattedBirth = s.meta.month > 0
+        ? `${s.meta.krDate} (${s.meta.month}월 ${s.meta.day}일)`
+        : escapeHtml(s.birthDate);
+
       return `
         <tr>
           <td>${s.number}번</td>
           <td style="font-weight:900;">${escapeHtml(s.name)}${dupHtml}</td>
-          <td style="white-space:nowrap;">${escapeHtml(s.birthDate)} (${s.meta.month}월 ${s.meta.day}일)</td>
+          <td style="white-space:nowrap;">${escapeHtml(formattedBirth)}</td>
           <td>${escapeHtml(s.note || '-')}</td>
           <td><span class="dday-chip ${chipCls}">${escapeHtml(s.meta.label)}</span></td>
           <td>
@@ -1268,7 +1353,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // 실시간 시계
+    // 실시간 시계 (한국식 날짜 형식: 2026. 11. 16. 16:33:00)
     const timeDisplay = document.getElementById('currentTimeDisplay');
     function updateClock() {
       const now = new Date();
@@ -1276,7 +1361,7 @@
       const mm = String(now.getMonth() + 1).padStart(2, '0');
       const dd = String(now.getDate()).padStart(2, '0');
       const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
-      timeDisplay.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+      timeDisplay.textContent = `${yyyy}. ${mm}. ${dd}. ${timeStr}`;
     }
     updateClock();
     setInterval(updateClock, 1000);
@@ -1288,7 +1373,7 @@
       const record = {
         number: document.getElementById('stdNumber').value,
         name: document.getElementById('stdName').value.trim(),
-        birthDate: document.getElementById('stdBirthDate').value,
+        birthDate: toIsoDate(document.getElementById('stdBirthDate').value),
         note: document.getElementById('stdNote').value.trim()
       };
 
@@ -1345,7 +1430,7 @@
         document.getElementById('editRowNumber').value = target.rowNumber;
         document.getElementById('editNumber').value = target.number;
         document.getElementById('editName').value = target.name;
-        document.getElementById('editBirthDate').value = target.birthDate;
+        document.getElementById('editBirthDate').value = toIsoDate(target.birthDate);
         document.getElementById('editNote').value = target.note || '';
         editModal.classList.add('open');
       } else if (action === 'delete') {
@@ -1380,7 +1465,7 @@
         rowNumber: Number(document.getElementById('editRowNumber').value),
         number: Number(document.getElementById('editNumber').value),
         name: document.getElementById('editName').value.trim(),
-        birthDate: document.getElementById('editBirthDate').value,
+        birthDate: toIsoDate(document.getElementById('editBirthDate').value),
         note: document.getElementById('editNote').value.trim()
       };
 
