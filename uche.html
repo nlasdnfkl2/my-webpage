@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffd83b">
+  <title>우리 반 비밀 우체통 - 익명·상담 · 학급 건의</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --black: #111111;
+      --border: 3px solid var(--black);
+      --border-thick: 4px solid var(--black);
+      --shadow-sm: 4px 4px 0 var(--black);
+      --shadow-md: 6px 6px 0 var(--black);
+
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 74px;
+      padding-bottom: 64px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font-family: inherit; color: var(--black); }
+
+    /* 상단 고정 바 */
+    .fixed-top-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      min-height: 60px;
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 24px;
+      z-index: 2000;
+      box-shadow: 0 4px 0 var(--black);
+    }
+
+    .fixed-top-bar .current-time {
+      font-weight: 900;
+      font-size: 0.92rem;
+      background: #ffffff;
+      border: var(--border);
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0 var(--black);
+      white-space: nowrap;
+    }
+
+    .fixed-top-bar .icon-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .count-pill {
+      background: #ffffff;
+      border: var(--border);
+      padding: 5px 11px;
+      font-weight: 900;
+      font-size: 0.82rem;
+      box-shadow: 3px 3px 0 var(--black);
+      white-space: nowrap;
+    }
+
+    .top-pill-btn {
+      background: #ffffff;
+      border: var(--border);
+      padding: 5px 11px;
+      font-weight: 900;
+      font-size: 0.82rem;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .top-pill-btn:hover {
+      background: var(--green);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .top-pill-btn.cyan { background: var(--cyan); }
+    .top-pill-btn.pink { background: var(--pink); }
+
+    .fixed-top-bar .icon-btn {
+      width: 36px; height: 36px;
+      background: #ffffff;
+      border: var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      flex-shrink: 0;
+    }
+
+    .fixed-top-bar .icon-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+      background: var(--cyan);
+    }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 히어로 영역 */
+    .hero {
+      padding: 38px 0 32px;
+      border-bottom: var(--border-thick);
+    }
+
+    .hero .small {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 900;
+      background: var(--pink);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      line-height: 1.22;
+      font-weight: 900;
+    }
+
+    .hero h1 span {
+      display: inline-block;
+      margin-top: 6px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 2px 14px;
+      box-shadow: var(--shadow-md);
+      transform: rotate(-1deg);
+    }
+
+    .hero > p {
+      max-width: 48em;
+      margin-top: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-left: 6px solid var(--black);
+      padding-left: 16px;
+    }
+
+    /* 메인 2단 레이아웃 */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 24px;
+      margin-top: 28px;
+      align-items: start;
+    }
+
+    .card-box {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-md);
+      padding: 22px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: var(--border);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-tag {
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border: 2px solid var(--black);
+      background: var(--yellow);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .badge-tag.green { background: var(--green); }
+    .badge-tag.pink { background: var(--pink); }
+    .badge-tag.cyan { background: var(--cyan); }
+    .badge-tag.red { background: var(--red); color: #ffffff; }
+
+    /* 카테고리 선택 알약 버튼 */
+    .cat-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .cat-pill {
+      border: 2px solid var(--black);
+      background: #ffffff;
+      padding: 6px 12px;
+      font-size: 0.84rem;
+      font-weight: 900;
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+
+    .cat-pill:hover {
+      background: #fff8d6;
+    }
+
+    .cat-pill.active {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    /* 폼 요소 */
+    .form-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field label {
+      font-size: 0.84rem;
+      font-weight: 900;
+    }
+
+    .sender-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .anon-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--cyan);
+      border: var(--border);
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      font-weight: 900;
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .anon-toggle input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--black);
+      cursor: pointer;
+    }
+
+    .brutal-input, .brutal-select, .brutal-textarea {
+      border: var(--border);
+      background: #ffffff;
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      box-shadow: 2px 2px 0 var(--black);
+      width: 100%;
+    }
+
+    .brutal-input:disabled {
+      background: #f0eee9;
+      color: #666;
+    }
+
+    .brutal-textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .brutal-input:focus, .brutal-select:focus, .brutal-textarea:focus {
+      outline: none;
+      background: #fffdf2;
+    }
+
+    .char-hint {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #555;
+      text-align: right;
+    }
+
+    .brutal-btn {
+      background: #ffffff;
+      border: var(--border);
+      padding: 9px 14px;
+      font-weight: 900;
+      font-size: 0.88rem;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .brutal-btn:hover:not(:disabled) {
+      background: var(--yellow);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .brutal-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .brutal-btn.primary { background: var(--green); }
+    .brutal-btn.cyan { background: var(--cyan); }
+    .brutal-btn.pink { background: var(--pink); }
+    .brutal-btn.danger { background: var(--red); color: #ffffff; }
+
+    /* 오류 배너 */
+    .feedback-banner {
+      display: none;
+      margin-top: 14px;
+      padding: 11px 14px;
+      border: var(--border);
+      font-size: 0.86rem;
+      font-weight: 900;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .feedback-banner.error {
+      display: block;
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    /* 발송 완료 접수증 카드 */
+    .receipt-card {
+      display: none;
+      margin-top: 18px;
+      border: var(--border-thick);
+      background: #e9ffef;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .receipt-card.show {
+      display: block;
+    }
+
+    .receipt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 2px dashed var(--black);
+    }
+
+    .receipt-id-badge {
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      padding: 3px 10px;
+      font-weight: 900;
+      font-size: 0.88rem;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .receipt-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border: 2px solid var(--black);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .receipt-table td {
+      padding: 7px 10px;
+      border: 1px solid var(--black);
+      font-weight: 700;
+    }
+
+    .receipt-table td:first-child {
+      background: #f5f3ed;
+      font-weight: 900;
+      width: 115px;
+    }
+
+    /* 우측 안내 카드 리스트 */
+    .guide-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .guide-item {
+      border: var(--border);
+      background: var(--bg);
+      padding: 13px 15px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .guide-item h3 {
+      font-size: 0.95rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guide-item p {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #333;
+      line-height: 1.55;
+    }
+
+    .cat-guide-item {
+      border: 2px solid var(--black);
+      background: #ffffff;
+      padding: 10px 12px;
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.1s ease;
+    }
+
+    .cat-guide-item:hover {
+      background: #fff9db;
+      transform: translate(-1px, -1px);
+    }
+
+    /* 모달 공통 */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.82);
+      backdrop-filter: blur(4px);
+      z-index: 3500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox-modal.open {
+      display: flex;
+    }
+
+    .lightbox-box {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: 10px 10px 0 var(--black);
+      max-width: 440px;
+      width: 100%;
+      overflow: hidden;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lightbox-box.wide {
+      max-width: 820px;
+    }
+
+    .lightbox-bar {
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .lightbox-close {
+      background: var(--red);
+      color: #ffffff;
+      border: 2px solid var(--black);
+      width: 30px;
+      height: 30px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .modal-body {
+      padding: 20px;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+
+    /* 교사 확인함 카드 */
+    .teacher-toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+      background: #ffffff;
+      border: var(--border);
+      padding: 10px 12px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .mail-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mail-card {
+      background: #ffffff;
+      border: var(--border);
+      padding: 15px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mail-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .status-chip {
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border: 2px solid var(--black);
+      background: var(--yellow);
+    }
+
+    .status-chip.checking { background: var(--cyan); }
+    .status-chip.done { background: var(--green); }
+
+    .mail-card-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .mail-card-meta {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    .mail-card-body {
+      background: var(--bg);
+      border: 2px solid var(--black);
+      padding: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: pre-wrap;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+
+    .mail-card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .qr-modal-body {
+      padding: 22px 20px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .qr-canvas-frame {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 242px;
+      min-height: 242px;
+    }
+
+    .qr-url-pill {
+      width: 100%;
+      background: #ffffff;
+      border: 2px solid var(--black);
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      word-break: break-all;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--border);
+      padding: 10px 18px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      box-shadow: 4px 4px 0 var(--red);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 4000;
+      white-space: nowrap;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 880px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding-top: 100px;
+      }
+      .fixed-top-bar {
+        padding: 8px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="fixed-top-bar">
+  <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+  <div class="icon-group">
+    <span class="count-pill" id="totalMailCountPill">누적 편지 0통</span>
+    <button type="button" class="top-pill-btn cyan" id="openTeacherBtn">교사 확인함</button>
+    <button type="button" class="top-pill-btn pink" id="openQrBtn">QR 폰 연결</button>
+    <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="small">실습 22 · 비밀 보장 · 담임교사 즉시 알림</p>
+    <h1>말하기 어려웠던 마음, 편하게 전해요<br><span>우리 반 비밀 우체통</span></h1>
+    <p>고민 상담부터 학급 건의사항, 친구 칭찬까지 누구에게도 공개되지 않고 담임선생님에게만 안전하게 전달됩니다. 익명으로 마음을 전하거나, 원하는 답변 방식을 선택해 선생님과 조용히 소통해 보세요.</p>
+  </header>
+
+  <main class="main-grid">
+    <!-- 좌측: 비밀 편지 작성 폼 -->
+    <section class="card-box" aria-label="비밀 편지 작성하기">
+      <div class="section-head">
+        <h2 class="section-title">비밀 편지 작성하기 <span class="badge-tag green">비공개 전송</span></h2>
+      </div>
+
+      <form id="mailboxForm" class="form-stack">
+        <div class="form-field">
+          <label>1. 편지 주제 (카테고리) *</label>
+          <div class="cat-pills" id="categoryPills">
+            <button type="button" class="cat-pill active" data-cat="고민·마음 상담">고민·마음 상담</button>
+            <button type="button" class="cat-pill" data-cat="학급 건의사항">학급 건의사항</button>
+            <button type="button" class="cat-pill" data-cat="친구 칭찬·고마움">친구 칭찬·고마움</button>
+            <button type="button" class="cat-pill" data-cat="갈등·도움 요청">갈등·도움 요청</button>
+            <button type="button" class="cat-pill" data-cat="기타 이야기">기타 이야기</button>
+          </div>
+          <input type="hidden" id="mailCategory" value="고민·마음 상담">
+        </div>
+
+        <div class="form-field">
+          <label for="mailSender">2. 보내는 사람</label>
+          <div class="sender-row">
+            <label class="anon-toggle" for="isAnonymousCheck">
+              <input type="checkbox" id="isAnonymousCheck" checked>
+              익명으로 보내기 (비밀 보장)
+            </label>
+            <input type="text" class="brutal-input" id="mailSender" placeholder="익명 (이름이 기록되지 않습니다)" disabled style="flex:1; min-width:190px;">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="mailTitle">3. 편지 제목 *</label>
+          <input type="text" class="brutal-input" id="mailTitle" maxlength="80" placeholder="예: 요즘 진로와 공부 때문에 고민이 있어요" required>
+        </div>
+
+        <div class="form-field">
+          <label for="mailContent">4. 편지 내용 *</label>
+          <textarea class="brutal-textarea" id="mailContent" maxlength="2000" placeholder="선생님께 전하고 싶은 이야기를 자유롭게 적어주세요. 작성한 내용은 다른 학생에게 절대 공개되지 않습니다." required></textarea>
+          <div class="char-hint"><span id="charCountDisplay">0</span> / 2,000자</div>
+        </div>
+
+        <div class="form-field">
+          <label for="mailReplyMethod">5. 희망하는 답변 방식</label>
+          <select class="brutal-select" id="mailReplyMethod">
+            <option value="답변 필요 없음 (마음만 전할게요)">답변 필요 없음 (마음만 전할게요)</option>
+            <option value="쉬는 시간·방과 후 조용히 대화">쉬는 시간·방과 후 조용히 대화</option>
+            <option value="포스트잇·쪽지로 몰래 답장">포스트잇·쪽지로 몰래 답장</option>
+            <option value="학급 회의에서 익명으로 함께 논의">학급 회의에서 익명으로 함께 논의</option>
+            <option value="전화·메신저 상담 희망">전화·메신저 상담 희망</option>
+          </select>
+        </div>
+
+        <button type="submit" class="brutal-btn primary" id="submitMailBtn" style="width:100%; padding:11px; font-size:0.98rem;">
+          비밀 우체통에 편지 넣기
+        </button>
+      </form>
+
+      <div class="feedback-banner" id="mailErrorBanner" role="alert"></div>
+
+      <!-- 제출 완료 접수증 -->
+      <div class="receipt-card" id="receiptCard" role="status">
+        <div class="receipt-header">
+          <strong style="font-size:1rem; font-weight:900;">편지가 안전하게 전달되었습니다!</strong>
+          <span class="receipt-id-badge" id="rcptId">MB-00000000-000</span>
+        </div>
+        <table class="receipt-table">
+          <tbody>
+            <tr>
+              <td>접수일시</td>
+              <td id="rcptTime">-</td>
+            </tr>
+            <tr>
+              <td>카테고리</td>
+              <td id="rcptCategory">-</td>
+            </tr>
+            <tr>
+              <td>보내는 사람</td>
+              <td id="rcptSender">-</td>
+            </tr>
+            <tr>
+              <td>희망 답변 방식</td>
+              <td id="rcptReply">-</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.82rem; font-weight:800; color:#222; margin-bottom:10px;">
+          * 담임선생님께 알림 메일이 즉시 전송되었습니다. 접수번호를 메모해 두면 추후 비밀 상담 확인에 활용할 수 있습니다.
+        </p>
+        <button type="button" class="brutal-btn" id="writeAnotherBtn" style="width:100%;">새 편지 작성하기</button>
+      </div>
+    </section>
+
+    <!-- 우측: 비밀 보장 및 주제별 안내 -->
+    <aside class="card-box" aria-label="비밀 우체통 이용 안내">
+      <div class="section-head">
+        <h2 class="section-title">이용 안내 <span class="badge-tag pink">100% 비밀보장</span></h2>
+      </div>
+
+      <div class="guide-list">
+        <div class="guide-item">
+          <h3>🔒 친구들은 볼 수 없어요</h3>
+          <p>편지를 보내면 화면에 목록이 남지 않고 담임선생님 전용 보관함과 메일로만 직통 전달됩니다.</p>
+        </div>
+
+        <div class="guide-item">
+          <h3>⚡ 선생님께 즉시 알림 전송</h3>
+          <p>우체통에 편지를 넣는 순간 선생님 이메일로 알림이 발송되어 빠르게 확인하고 도움을 드릴 수 있습니다.</p>
+        </div>
+
+        <div class="guide-item">
+          <h3>💬 주제별 작성 팁 (클릭 시 선택)</h3>
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+            <div class="cat-guide-item" data-pick-cat="고민·마음 상담">
+              <strong style="font-size:0.84rem;">고민·마음 상담</strong>
+              <p style="font-size:0.8rem;">진로, 학업, 가족, 마음속 걱정거리 등 혼자 풀기 어려운 이야기</p>
+            </div>
+            <div class="cat-guide-item" data-pick-cat="학급 건의사항">
+              <strong style="font-size:0.84rem;">학급 건의사항</strong>
+              <p style="font-size:0.8rem;">우리 반 규칙, 자리 배치, 학급 행사나 환경 개선 아이디어</p>
+            </div>
+            <div class="cat-guide-item" data-pick-cat="친구 칭찬·고마움">
+              <strong style="font-size:0.84rem;">친구 칭찬·고마움</strong>
+              <p style="font-size:0.8rem;">고마웠던 친구나 숨은 선행을 선생님께 몰래 제보하기</p>
+            </div>
+            <div class="cat-guide-item" data-pick-cat="갈등·도움 요청">
+              <strong style="font-size:0.84rem;">갈등·도움 요청</strong>
+              <p style="font-size:0.8rem;">친구 관계의 어려움, 따돌림·불편한 상황 등 즉각적인 도움이 필요할 때</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- 교사 전용 확인함 모달 -->
+<div class="lightbox-modal" id="teacherModal" role="dialog" aria-modal="true" aria-label="교사 전용 비밀 우체통 확인함">
+  <div class="lightbox-box wide">
+    <div class="lightbox-bar">
+      <span>교사 전용 비밀 우체통 확인함</span>
+      <button type="button" class="lightbox-close" id="closeTeacherBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- 비밀번호 잠금 화면 -->
+      <div id="teacherLockView" style="max-width:360px; margin:20px auto; text-align:center;">
+        <p style="font-size:0.95rem; font-weight:900; margin-bottom:12px;">
+          학생 비밀 보호를 위해 교사 비밀번호를 입력해 주세요.
+        </p>
+        <form id="teacherLoginForm" style="display:flex; gap:8px;">
+          <input type="password" class="brutal-input" id="teacherPinInput" placeholder="비밀번호 입력" required>
+          <button type="submit" class="brutal-btn primary" id="teacherUnlockBtn">열기</button>
+        </form>
+        <p id="teacherAuthError" style="color:var(--red); font-size:0.84rem; font-weight:900; margin-top:10px; display:none;"></p>
+      </div>
+
+      <!-- 잠금 해제 후 접수 편지 목록 -->
+      <div id="teacherInboxView" style="display:none;">
+        <div class="teacher-toolbar">
+          <select class="brutal-select" id="teacherCatFilter" style="width:auto;">
+            <option value="ALL">전체 카테고리</option>
+            <option value="고민·마음 상담">고민·마음 상담</option>
+            <option value="학급 건의사항">학급 건의사항</option>
+            <option value="친구 칭찬·고마움">친구 칭찬·고마움</option>
+            <option value="갈등·도움 요청">갈등·도움 요청</option>
+            <option value="기타 이야기">기타 이야기</option>
+          </select>
+          <select class="brutal-select" id="teacherStatusFilter" style="width:auto;">
+            <option value="ALL">전체 상태</option>
+            <option value="접수완료">접수완료</option>
+            <option value="확인중">확인중</option>
+            <option value="답변완료">답변완료</option>
+          </select>
+          <input type="search" class="brutal-input" id="teacherSearchInput" placeholder="제목·내용·접수번호 검색..." style="flex:1; min-width:160px;">
+          <button type="button" class="brutal-btn cyan" id="refreshTeacherBtn">새로고침</button>
+          <button type="button" class="brutal-btn" id="lockTeacherBtn">잠금</button>
+        </div>
+
+        <div class="mail-cards-list" id="teacherMailList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QR코드 스마트폰 연결 모달 -->
+<div class="lightbox-modal" id="qrModal" role="dialog" aria-modal="true" aria-label="QR코드로 스마트폰 연결">
+  <div class="lightbox-box">
+    <div class="lightbox-bar">
+      <span>QR코드로 스마트폰 연결</span>
+      <button type="button" class="lightbox-close" id="closeQrBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="qr-modal-body">
+      <div class="qr-canvas-frame" id="qrRenderBox"></div>
+      <p style="font-size:0.86rem; font-weight:800; color:#222;">
+        스마트폰 기본 카메라로 스캔하면 우리 반 비밀 우체통이 바로 열립니다.
+      </p>
+      <div class="qr-url-pill" id="qrUrlText"></div>
+      <div style="display:flex; gap:10px; width:100%;">
+        <button type="button" class="brutal-btn primary" id="copyQrUrlBtn" style="flex:1;">주소 복사</button>
+        <a href="#" target="_blank" rel="noopener noreferrer" class="brutal-btn cyan" id="openQrTabBtn" style="flex:1;">새 창 열기 &nearr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-msg" id="toastMsg">완료되었습니다!</div>
+
+<script>
+  const BACKEND_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxB9sWXLXUUkp-jCJzmb44W1HbVQ6JTuA19zvFl-f12-QIfFhla6ojIKq4YfgwEz9Ok/exec';
+
+  let verifiedTeacherPin = '';
+  let teacherMessages = [];
+
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toastMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  function showError(msg) {
+    const banner = document.getElementById('mailErrorBanner');
+    banner.className = 'feedback-banner error';
+    banner.textContent = msg;
+    clearTimeout(banner._timer);
+    banner._timer = setTimeout(() => {
+      banner.className = 'feedback-banner';
+    }, 5000);
+  }
+
+  function selectCategory(catName) {
+    document.getElementById('mailCategory').value = catName;
+    document.querySelectorAll('#categoryPills .cat-pill').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.cat === catName);
+    });
+  }
+
+  async function postToBackend(payload) {
+    const res = await fetch(BACKEND_ENDPOINT_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  }
+
+  async function refreshTotalCount() {
+    try {
+      const res = await fetch(BACKEND_ENDPOINT_URL, { method: 'GET', redirect: 'follow' });
+      const data = await res.json();
+      if (data && data.status === 'ok' && typeof data.totalCount === 'number') {
+        document.getElementById('totalMailCountPill').textContent = `누적 편지 ${data.totalCount}통`;
+      }
+    } catch (e) {}
+  }
+
+  function renderTeacherMessages() {
+    const listEl = document.getElementById('teacherMailList');
+    const catFilter = document.getElementById('teacherCatFilter').value;
+    const statusFilter = document.getElementById('teacherStatusFilter').value;
+    const kw = document.getElementById('teacherSearchInput').value.trim().toLowerCase();
+
+    const filtered = teacherMessages.filter(m => {
+      if (catFilter !== 'ALL' && m.category !== catFilter) return false;
+      if (statusFilter !== 'ALL' && m.status !== statusFilter) return false;
+      if (kw) {
+        const hay = `${m.receiptId} ${m.category} ${m.sender} ${m.title} ${m.content}`.toLowerCase();
+        if (!hay.includes(kw)) return false;
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<p style="text-align:center; padding:26px; font-weight:800; color:#555;">표시할 편지가 없습니다.</p>';
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(m => {
+      const statusCls = m.status === '답변완료' ? 'done' : (m.status === '확인중' ? 'checking' : '');
+      return `
+        <article class="mail-card">
+          <div class="mail-card-top">
+            <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+              <span class="badge-tag">${escapeHtml(m.receiptId)}</span>
+              <span class="badge-tag pink">${escapeHtml(m.category)}</span>
+              <span style="font-size:0.8rem; font-weight:800; color:#444;">${escapeHtml(m.createdAt)}</span>
+            </div>
+            <span class="status-chip ${statusCls}">${escapeHtml(m.status)}</span>
+          </div>
+          <div class="mail-card-title">${escapeHtml(m.title)}</div>
+          <div class="mail-card-meta">
+            보낸 사람: <strong>${escapeHtml(m.sender)}</strong> · 희망 답변 방식: <strong>${escapeHtml(m.replyMethod)}</strong>
+          </div>
+          <div class="mail-card-body">${escapeHtml(m.content)}</div>
+          <div class="mail-card-actions">
+            <div style="display:flex; gap:6px; align-items:center;">
+              <label style="font-size:0.8rem; font-weight:900;">상태 변경:</label>
+              <select class="brutal-select" data-status-row="${m.rowNumber}" style="width:auto; padding:4px 8px; font-size:0.82rem;">
+                <option value="접수완료" ${m.status === '접수완료' ? 'selected' : ''}>접수완료</option>
+                <option value="확인중" ${m.status === '확인중' ? 'selected' : ''}>확인중</option>
+                <option value="답변완료" ${m.status === '답변완료' ? 'selected' : ''}>답변완료</option>
+              </select>
+            </div>
+            <button type="button" class="brutal-btn danger" data-delete-row="${m.rowNumber}" style="padding:4px 10px; font-size:0.8rem;">
+              삭제
+            </button>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  async function loadTeacherInbox(pin) {
+    const res = await postToBackend({ action: 'teacher_list', pin });
+    if (res && res.status === 'ok') {
+      verifiedTeacherPin = pin;
+      teacherMessages = Array.isArray(res.items) ? res.items : [];
+      document.getElementById('teacherLockView').style.display = 'none';
+      document.getElementById('teacherInboxView').style.display = 'block';
+      document.getElementById('teacherAuthError').style.display = 'none';
+      renderTeacherMessages();
+      return true;
+    } else {
+      const errEl = document.getElementById('teacherAuthError');
+      errEl.textContent = (res && res.message) || '비밀번호가 일치하지 않습니다.';
+      errEl.style.display = 'block';
+      return false;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 실시간 시계
+    const timeDisplay = document.getElementById('currentTimeDisplay');
+    function updateClock() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+      timeDisplay.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // 카테고리 선택 버튼 및 우측 가이드 클릭 연동
+    document.querySelectorAll('#categoryPills .cat-pill').forEach(btn => {
+      btn.addEventListener('click', () => selectCategory(btn.dataset.cat));
+    });
+
+    document.querySelectorAll('[data-pick-cat]').forEach(card => {
+      card.addEventListener('click', () => {
+        selectCategory(card.dataset.pickCat);
+        document.getElementById('mailTitle').focus();
+        showToast(`"${card.dataset.pickCat}" 주제가 선택되었습니다.`);
+      });
+    });
+
+    // 익명 체크박스 토글
+    const anonCheck = document.getElementById('isAnonymousCheck');
+    const senderInput = document.getElementById('mailSender');
+    anonCheck.addEventListener('change', () => {
+      if (anonCheck.checked) {
+        senderInput.value = '';
+        senderInput.disabled = true;
+        senderInput.placeholder = '익명 (이름이 기록되지 않습니다)';
+      } else {
+        senderInput.disabled = false;
+        senderInput.placeholder = '예: 3번 김서윤';
+        senderInput.focus();
+      }
+    });
+
+    // 글자 수 카운터
+    const contentEl = document.getElementById('mailContent');
+    const charCountEl = document.getElementById('charCountDisplay');
+    contentEl.addEventListener('input', () => {
+      charCountEl.textContent = contentEl.value.length.toLocaleString('ko-KR');
+    });
+
+    // 비밀 편지 제출
+    document.getElementById('mailboxForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitMailBtn');
+      const category = document.getElementById('mailCategory').value;
+      const isAnonymous = anonCheck.checked;
+      const sender = isAnonymous ? '익명' : (senderInput.value.trim() || '익명');
+      const title = document.getElementById('mailTitle').value.trim();
+      const content = contentEl.value.trim();
+      const replyMethod = document.getElementById('mailReplyMethod').value;
+
+      if (!title || !content) {
+        showError('편지 제목과 내용을 모두 입력해 주세요.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '비밀 우체통으로 전달하는 중...';
+      document.getElementById('mailErrorBanner').className = 'feedback-banner';
+
+      try {
+        const res = await postToBackend({
+          action: 'submit',
+          record: { category, isAnonymous, sender, title, content, replyMethod }
+        });
+
+        if (res && res.status === 'ok') {
+          document.getElementById('rcptId').textContent = res.receiptId || '접수완료';
+          document.getElementById('rcptTime').textContent = res.createdAt || '-';
+          document.getElementById('rcptCategory').textContent = category;
+          document.getElementById('rcptSender').textContent = sender;
+          document.getElementById('rcptReply').textContent = replyMethod;
+          document.getElementById('receiptCard').classList.add('show');
+
+          if (typeof res.totalCount === 'number') {
+            document.getElementById('totalMailCountPill').textContent = `누적 편지 ${res.totalCount}통`;
+          }
+
+          document.getElementById('mailboxForm').reset();
+          selectCategory('고민·마음 상담');
+          anonCheck.checked = true;
+          senderInput.disabled = true;
+          senderInput.placeholder = '익명 (이름이 기록되지 않습니다)';
+          charCountEl.textContent = '0';
+
+          showToast('비밀 편지가 선생님께 전달되었습니다!');
+        } else {
+          showError((res && res.message) || '편지 전송에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+        }
+      } catch (err) {
+        showError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '비밀 우체통에 편지 넣기';
+      }
+    });
+
+    document.getElementById('writeAnotherBtn').addEventListener('click', () => {
+      document.getElementById('receiptCard').classList.remove('show');
+      document.getElementById('mailTitle').focus();
+    });
+
+    // 교사 전용 확인함 모달 제어
+    const teacherModal = document.getElementById('teacherModal');
+    document.getElementById('openTeacherBtn').addEventListener('click', () => {
+      teacherModal.classList.add('open');
+      if (verifiedTeacherPin) {
+        loadTeacherInbox(verifiedTeacherPin);
+      } else {
+        document.getElementById('teacherPinInput').focus();
+      }
+    });
+
+    document.getElementById('teacherLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pin = document.getElementById('teacherPinInput').value.trim();
+      const btn = document.getElementById('teacherUnlockBtn');
+      btn.disabled = true;
+      btn.textContent = '확인 중...';
+      try {
+        await loadTeacherInbox(pin);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '열기';
+      }
+    });
+
+    document.getElementById('refreshTeacherBtn').addEventListener('click', async () => {
+      if (!verifiedTeacherPin) return;
+      await loadTeacherInbox(verifiedTeacherPin);
+      showToast('접수 목록을 새로고침했습니다.');
+    });
+
+    document.getElementById('lockTeacherBtn').addEventListener('click', () => {
+      verifiedTeacherPin = '';
+      teacherMessages = [];
+      document.getElementById('teacherPinInput').value = '';
+      document.getElementById('teacherInboxView').style.display = 'none';
+      document.getElementById('teacherLockView').style.display = 'block';
+    });
+
+    document.getElementById('teacherCatFilter').addEventListener('change', renderTeacherMessages);
+    document.getElementById('teacherStatusFilter').addEventListener('change', renderTeacherMessages);
+    document.getElementById('teacherSearchInput').addEventListener('input', renderTeacherMessages);
+
+    // 교사 확인함 내 처리상태 변경 및 삭제
+    document.getElementById('teacherMailList').addEventListener('change', async (e) => {
+      const sel = e.target.closest('[data-status-row]');
+      if (!sel || !verifiedTeacherPin) return;
+      const rowNumber = Number(sel.dataset.statusRow);
+      const status = sel.value;
+      sel.disabled = true;
+      try {
+        const res = await postToBackend({
+          action: 'update_status',
+          pin: verifiedTeacherPin,
+          rowNumber,
+          status
+        });
+        if (res && res.status === 'ok') {
+          teacherMessages = res.items || teacherMessages;
+          renderTeacherMessages();
+          showToast(res.message || '처리상태가 변경되었습니다.');
+        }
+      } finally {
+        sel.disabled = false;
+      }
+    });
+
+    document.getElementById('teacherMailList').addEventListener('click', async (e) => {
+      const delBtn = e.target.closest('[data-delete-row]');
+      if (!delBtn || !verifiedTeacherPin) return;
+      const rowNumber = Number(delBtn.dataset.deleteRow);
+      if (!confirm('이 편지 내역을 삭제할까요?')) return;
+      delBtn.disabled = true;
+      try {
+        const res = await postToBackend({
+          action: 'delete',
+          pin: verifiedTeacherPin,
+          rowNumber
+        });
+        if (res && res.status === 'ok') {
+          teacherMessages = res.items || [];
+          renderTeacherMessages();
+          refreshTotalCount();
+          showToast(res.message || '삭제되었습니다.');
+        }
+      } finally {
+        delBtn.disabled = false;
+      }
+    });
+
+    document.getElementById('closeTeacherBtn').addEventListener('click', () => teacherModal.classList.remove('open'));
+    teacherModal.addEventListener('click', (e) => { if (e.target === teacherModal) teacherModal.classList.remove('open'); });
+
+    // QR코드 스마트폰 연결 모달
+    const qrModal = document.getElementById('qrModal');
+    const qrRenderBox = document.getElementById('qrRenderBox');
+    const qrUrlText = document.getElementById('qrUrlText');
+    const openQrTabBtn = document.getElementById('openQrTabBtn');
+
+    function getAppUrl() {
+      if (window.location.protocol.startsWith('http')) {
+        return window.location.href.split('#')[0];
+      }
+      return 'https://nlasdnfkl2.github.io/mailbox.html';
+    }
+
+    document.getElementById('openQrBtn').addEventListener('click', () => {
+      const url = getAppUrl();
+      qrUrlText.textContent = url;
+      openQrTabBtn.href = url;
+      qrRenderBox.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrRenderBox, {
+          text: url,
+          width: 210,
+          height: 210,
+          colorDark: '#111111',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+      qrModal.classList.add('open');
+    });
+
+    document.getElementById('copyQrUrlBtn').addEventListener('click', async () => {
+      const url = getAppUrl();
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('접속 주소가 복사되었습니다!');
+      } catch (e) {
+        prompt('아래 주소를 복사하세요:', url);
+      }
+    });
+
+    document.getElementById('closeQrBtn').addEventListener('click', () => qrModal.classList.remove('open'));
+    qrModal.addEventListener('click', (e) => { if (e.target === qrModal) qrModal.classList.remove('open'); });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        teacherModal.classList.remove('open');
+        qrModal.classList.remove('open');
+      }
+    });
+
+    // 누적 편지 건수 초기 조회
+    refreshTotalCount();
+  });
+</script>
+
+</body>
+</html>
