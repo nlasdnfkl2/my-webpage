@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffd83b">
+  <title>우리 반 생일 관리 앱 - 다가오는 생일 · 월별 조회</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --black: #111111;
+      --border: 3px solid var(--black);
+      --border-thick: 4px solid var(--black);
+      --shadow-sm: 4px 4px 0 var(--black);
+      --shadow-md: 6px 6px 0 var(--black);
+
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 74px;
+      padding-bottom: 64px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font-family: inherit; color: var(--black); }
+
+    /* 상단 고정 바 */
+    .fixed-top-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      min-height: 60px;
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 24px;
+      z-index: 2000;
+      box-shadow: 0 4px 0 var(--black);
+    }
+
+    .fixed-top-bar .current-time {
+      font-weight: 900;
+      font-size: 0.92rem;
+      background: #ffffff;
+      border: var(--border);
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0 var(--black);
+      white-space: nowrap;
+    }
+
+    .fixed-top-bar .icon-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .top-pill-btn {
+      background: #ffffff;
+      border: var(--border);
+      padding: 5px 11px;
+      font-weight: 900;
+      font-size: 0.82rem;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .top-pill-btn:hover {
+      background: var(--green);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .top-pill-btn.cyan { background: var(--cyan); }
+    .top-pill-btn.pink { background: var(--pink); }
+
+    .fixed-top-bar .icon-btn {
+      width: 36px; height: 36px;
+      background: #ffffff;
+      border: var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.12s ease;
+      flex-shrink: 0;
+    }
+
+    .fixed-top-bar .icon-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+      background: var(--cyan);
+    }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 히어로 영역 */
+    .hero {
+      padding: 38px 0 32px;
+      border-bottom: var(--border-thick);
+    }
+
+    .hero .small {
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 900;
+      background: var(--cyan);
+      border: var(--border);
+      padding: 4px 12px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.3rem);
+      line-height: 1.22;
+      font-weight: 900;
+    }
+
+    .hero h1 span {
+      display: inline-block;
+      margin-top: 6px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 2px 14px;
+      box-shadow: var(--shadow-md);
+      transform: rotate(-1deg);
+    }
+
+    .hero > p {
+      max-width: 46em;
+      margin-top: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-left: 6px solid var(--black);
+      padding-left: 16px;
+    }
+
+    /* 다가오는 생일 하이라이트 배너 */
+    .upcoming-section {
+      margin-top: 28px;
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-md);
+      padding: 20px 22px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: var(--border);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-tag {
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border: 2px solid var(--black);
+      background: var(--yellow);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .badge-tag.green { background: var(--green); }
+    .badge-tag.pink { background: var(--pink); }
+    .badge-tag.cyan { background: var(--cyan); }
+    .badge-tag.red { background: var(--red); color: #ffffff; }
+
+    .upcoming-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .upcoming-card {
+      border: var(--border);
+      background: var(--bg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .upcoming-card.is-today {
+      background: var(--yellow);
+    }
+
+    .upcoming-card.is-soon {
+      background: #e6ffed;
+    }
+
+    .dday-pill {
+      align-self: flex-start;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 2px 9px;
+      border: 2px solid var(--black);
+      background: var(--red);
+      color: #ffffff;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .dday-pill.soon {
+      background: var(--green);
+      color: var(--black);
+    }
+
+    .upcoming-name {
+      font-size: 1.22rem;
+      font-weight: 900;
+      margin-top: 2px;
+    }
+
+    .upcoming-meta {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #333;
+    }
+
+    /* 메인 그리드 (좌: 생일 등록 / 우: 월별 분포 요약) */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
+      margin-top: 28px;
+      align-items: start;
+    }
+
+    .card-box {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-md);
+      padding: 22px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 12px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-field label {
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .brutal-input, .brutal-select {
+      border: var(--border);
+      background: #ffffff;
+      padding: 8px 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 2px 2px 0 var(--black);
+      width: 100%;
+    }
+
+    .brutal-input:focus, .brutal-select:focus {
+      outline: none;
+      background: #fffdf2;
+    }
+
+    .brutal-btn {
+      background: #ffffff;
+      border: var(--border);
+      padding: 8px 14px;
+      font-weight: 900;
+      font-size: 0.86rem;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .brutal-btn:hover:not(:disabled) {
+      background: var(--yellow);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .brutal-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .brutal-btn.primary { background: var(--green); }
+    .brutal-btn.cyan { background: var(--cyan); }
+    .brutal-btn.pink { background: var(--pink); }
+    .brutal-btn.danger { background: var(--red); color: #ffffff; }
+
+    /* 저장 성공/실패 안내 배너 */
+    .feedback-banner {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: var(--border);
+      font-size: 0.86rem;
+      font-weight: 900;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .feedback-banner.success {
+      display: block;
+      background: var(--green);
+    }
+
+    .feedback-banner.error {
+      display: block;
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    /* 월별 생일 인원 막대 그래프 */
+    .month-chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 155px;
+      padding: 18px 8px 0;
+      background: var(--bg);
+      border: var(--border);
+      border-bottom: 3px solid var(--black);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .m-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .m-count {
+      font-size: 0.72rem;
+      font-weight: 900;
+      margin-bottom: 3px;
+    }
+
+    .m-stick {
+      width: 100%;
+      max-width: 26px;
+      background: var(--cyan);
+      border: 2px solid var(--black);
+      border-bottom: none;
+      min-height: 4px;
+      transition: height 0.25s ease, background 0.15s ease;
+    }
+
+    .m-col.active .m-stick,
+    .m-col:hover .m-stick {
+      background: var(--yellow);
+    }
+
+    .month-chart-labels {
+      display: flex;
+      gap: 6px;
+      padding: 6px 8px 0;
+    }
+
+    .m-lbl {
+      flex: 1;
+      text-align: center;
+      font-size: 0.74rem;
+      font-weight: 900;
+    }
+
+    /* 등록 목록 섹션 */
+    .roster-section {
+      margin-top: 28px;
+    }
+
+    .month-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .month-pill {
+      border: 2px solid var(--black);
+      background: #ffffff;
+      padding: 5px 11px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+    }
+
+    .month-pill.active {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 16px;
+      background: var(--bg);
+      border: var(--border);
+      padding: 12px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table.roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      min-width: 680px;
+      font-size: 0.88rem;
+    }
+
+    table.roster-table th {
+      background: var(--black);
+      color: var(--yellow);
+      font-weight: 900;
+      padding: 10px 12px;
+      text-align: left;
+      white-space: nowrap;
+      border-right: 2px solid #333;
+    }
+
+    table.roster-table td {
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--black);
+      border-right: 2px solid #e5e5e5;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    table.roster-table tr:hover td {
+      background: #fffdf0;
+    }
+
+    .dup-badge {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      background: var(--pink);
+      border: 2px solid var(--black);
+    }
+
+    .dday-chip {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border: 2px solid var(--black);
+      background: var(--bg);
+      box-shadow: 2px 2px 0 var(--black);
+      white-space: nowrap;
+    }
+
+    .dday-chip.today { background: var(--red); color: #ffffff; }
+    .dday-chip.soon { background: var(--green); }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .mini-btn {
+      border: 2px solid var(--black);
+      background: #ffffff;
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .mini-btn:hover { background: var(--cyan); }
+    .mini-btn.del:hover { background: var(--red); color: #ffffff; }
+
+    /* 모달 공통 */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.82);
+      backdrop-filter: blur(4px);
+      z-index: 3500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox-modal.open {
+      display: flex;
+    }
+
+    .lightbox-box {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: 10px 10px 0 var(--black);
+      max-width: 440px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .lightbox-bar {
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 0.95rem;
+    }
+
+    .lightbox-close {
+      background: var(--red);
+      color: #ffffff;
+      border: 2px solid var(--black);
+      width: 30px;
+      height: 30px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .modal-body {
+      padding: 20px;
+      background: var(--bg);
+    }
+
+    .qr-modal-body {
+      padding: 22px 20px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .qr-canvas-frame {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 242px;
+      min-height: 242px;
+    }
+
+    .qr-url-pill {
+      width: 100%;
+      background: #ffffff;
+      border: 2px solid var(--black);
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      word-break: break-all;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--border);
+      padding: 10px 18px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      box-shadow: 4px 4px 0 var(--red);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 4000;
+      white-space: nowrap;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 880px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding-top: 100px;
+      }
+      .fixed-top-bar {
+        padding: 8px 12px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="fixed-top-bar">
+  <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+  <div class="icon-group">
+    <button type="button" class="top-pill-btn cyan" id="reloadListBtn">명단 새로고침</button>
+    <button type="button" class="top-pill-btn pink" id="openQrBtn">QR 폰 연결</button>
+    <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="small">실습 21 · 다가오는 생일 하이라이트 · 월별 조회</p>
+    <h1>다가오는 생일부터 월별 조회까지,<br><span>우리 반 생일 관리 앱</span></h1>
+    <p>학급 구성원의 이름과 생년월일, 소속·역할 메모를 등록하면 실시간으로 저장되고 공유됩니다. 다가오는 생일 하이라이트와 D-Day 자동 계산, 월별 필터 및 생일순 정렬 기능으로 놓치기 쉬운 친구들의 생일을 한눈에 챙길 수 있습니다.</p>
+  </header>
+
+  <!-- 다가오는 생일 하이라이트 영역 -->
+  <section class="upcoming-section" aria-label="다가오는 생일 하이라이트">
+    <div class="section-head">
+      <h2 class="section-title">다가오는 생일 하이라이트 <span class="badge-tag red">D-Day 기준</span></h2>
+      <span style="font-size:0.84rem; font-weight:800;" id="todayDateSummary">오늘 날짜 기준</span>
+    </div>
+    <div class="upcoming-grid" id="upcomingGrid"></div>
+  </section>
+
+  <!-- 좌측: 생일 정보 등록 / 우측: 월별 생일 분포 차트 -->
+  <main class="main-grid">
+    <section class="card-box" aria-label="생일 정보 등록">
+      <div class="section-head">
+        <h2 class="section-title">생일 정보 등록 <span class="badge-tag green">자동 저장</span></h2>
+      </div>
+
+      <form id="addBirthdayForm">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="stdNumber">번호 (선택)</label>
+            <input type="number" class="brutal-input" id="stdNumber" min="1" placeholder="자동 부여">
+          </div>
+          <div class="form-field">
+            <label for="stdName">이름 *</label>
+            <input type="text" class="brutal-input" id="stdName" placeholder="예: 김서윤" required>
+          </div>
+          <div class="form-field full">
+            <label for="stdBirthDate">생년월일 (YYYY-MM-DD) *</label>
+            <input type="date" class="brutal-input" id="stdBirthDate" required>
+          </div>
+          <div class="form-field full">
+            <label for="stdNote">구분 (소속 · 역할 · 메모 — 동명이인 구분용)</label>
+            <input type="text" class="brutal-input" id="stdNote" placeholder="예: 1모둠 · 학급반장, 방송부">
+          </div>
+        </div>
+
+        <button type="submit" class="brutal-btn primary" id="submitAddBtn" style="width:100%; margin-top:14px; padding:10px; font-size:0.95rem;">
+          + 생일 등록하기
+        </button>
+      </form>
+
+      <div class="feedback-banner" id="saveFeedbackBanner" role="status"></div>
+    </section>
+
+    <section class="card-box" aria-label="월별 생일 분포">
+      <div class="section-head">
+        <h2 class="section-title">월별 생일 인원 분포 <span class="badge-tag cyan" id="totalCountBadge">총 0명</span></h2>
+      </div>
+      <div class="month-chart-bars" id="monthChartBars"></div>
+      <div class="month-chart-labels" id="monthChartLabels"></div>
+      <p style="margin-top:12px; font-size:0.8rem; font-weight:700; color:#444;">
+        * 막대를 클릭하면 아래 명단에서 해당 월 생일자만 바로 필터링됩니다.
+      </p>
+    </section>
+  </main>
+
+  <!-- 하단: 전체 / 월별 등록 명단 테이블 -->
+  <section class="card-box roster-section" aria-label="등록된 생일 명단">
+    <div class="section-head">
+      <h2 class="section-title">학급 생일 명단 <span class="badge-tag" id="filteredCountBadge">0명</span></h2>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <select class="brutal-select" id="sortSelect" style="width:auto;" aria-label="정렬 기준 선택">
+          <option value="dday">다가오는 생일순 (D-Day)</option>
+          <option value="month_day">생일순 (1월 → 12월)</option>
+          <option value="number">번호순</option>
+          <option value="name">이름순 (가나다)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 월별 필터 버튼 (전체, 1월~12월) -->
+    <div class="month-pills" id="monthPillsContainer"></div>
+
+    <div class="filter-row">
+      <input type="search" class="brutal-input" id="searchInput" placeholder="이름 또는 소속·역할 메모로 검색..." style="flex:1; min-width:200px;">
+    </div>
+
+    <div class="table-scroll">
+      <table class="roster-table">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>이름</th>
+            <th>생년월일</th>
+            <th>구분 (소속/역할/메모)</th>
+            <th>다가오는 생일</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="rosterTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- 수정 모달 -->
+<div class="lightbox-modal" id="editModal" role="dialog" aria-modal="true" aria-label="생일 정보 수정">
+  <div class="lightbox-box">
+    <div class="lightbox-bar">
+      <span>생일 정보 수정</span>
+      <button type="button" class="lightbox-close" id="closeEditBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="editBirthdayForm">
+        <input type="hidden" id="editRowNumber">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="editNumber">번호</label>
+            <input type="number" class="brutal-input" id="editNumber" min="1" required>
+          </div>
+          <div class="form-field">
+            <label for="editName">이름</label>
+            <input type="text" class="brutal-input" id="editName" required>
+          </div>
+          <div class="form-field full">
+            <label for="editBirthDate">생년월일</label>
+            <input type="date" class="brutal-input" id="editBirthDate" required>
+          </div>
+          <div class="form-field full">
+            <label for="editNote">구분 (소속 · 역할 · 메모)</label>
+            <input type="text" class="brutal-input" id="editNote">
+          </div>
+        </div>
+        <button type="submit" class="brutal-btn primary" id="submitEditBtn" style="width:100%; margin-top:14px; padding:9px;">
+          수정 내용 저장
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- QR코드 스마트폰 연결 모달 -->
+<div class="lightbox-modal" id="qrModal" role="dialog" aria-modal="true" aria-label="QR코드로 스마트폰 연결">
+  <div class="lightbox-box">
+    <div class="lightbox-bar">
+      <span>QR코드로 스마트폰 연결</span>
+      <button type="button" class="lightbox-close" id="closeQrBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="qr-modal-body">
+      <div class="qr-canvas-frame" id="qrRenderBox"></div>
+      <p style="font-size:0.86rem; font-weight:800; color:#222;">
+        스마트폰 기본 카메라로 스캔하면 우리 반 생일 관리 앱이 바로 열립니다.
+      </p>
+      <div class="qr-url-pill" id="qrUrlText"></div>
+      <div style="display:flex; gap:10px; width:100%;">
+        <button type="button" class="brutal-btn primary" id="copyQrUrlBtn" style="flex:1;">주소 복사</button>
+        <a href="#" target="_blank" rel="noopener noreferrer" class="brutal-btn cyan" id="openQrTabBtn" style="flex:1;">새 창 열기 &nearr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-msg" id="toastMsg">완료되었습니다!</div>
+
+<script>
+  const BACKEND_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbzAz4ZeY0Xc2kch0o4Uw8oAOOOvROj_lZzQGmEjaDwVuC_1oBLALXPmGxLqGHyFSPzT/exec';
+  const CACHE_KEY = 'class_birthday_cache_v1';
+
+  let students = [];
+  let selectedMonth = 0; // 0 = 전체, 1~12 = 해당 월
+  let isLoading = true;
+
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toastMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.classList.remove('show'), 2500);
+  }
+
+  function showFeedback(type, text) {
+    const banner = document.getElementById('saveFeedbackBanner');
+    banner.className = 'feedback-banner ' + type;
+    banner.textContent = text;
+    clearTimeout(banner._timer);
+    banner._timer = setTimeout(() => {
+      banner.className = 'feedback-banner';
+    }, 4500);
+  }
+
+  function saveCache(list) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(list));
+    } catch (e) {}
+  }
+
+  function loadCache() {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // 생년월일(YYYY-MM-DD) 기준 D-Day 계산
+  function calcBirthdayMeta(birthDateStr) {
+    const parts = String(birthDateStr || '').split('-').map(Number);
+    if (parts.length < 3 || !parts[1] || !parts[2]) {
+      return { month: 0, day: 0, dday: 999, label: '날짜 확인', monthDayKey: 9999 };
+    }
+
+    const month = parts[1];
+    const day = parts[2];
+    const now = new Date();
+    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    let nextBday = new Date(now.getFullYear(), month - 1, day);
+    if (nextBday < todayMidnight) {
+      nextBday = new Date(now.getFullYear() + 1, month - 1, day);
+    }
+
+    const diffDays = Math.round((nextBday - todayMidnight) / (1000 * 60 * 60 * 24));
+    let label = `D-${diffDays}`;
+    if (diffDays === 0) label = '오늘 생일!';
+    else if (diffDays === 1) label = '내일 (D-1)';
+
+    return {
+      month,
+      day,
+      dday: diffDays,
+      label,
+      monthDayKey: month * 100 + day
+    };
+  }
+
+  // 동명이인 맵 생성
+  function getDuplicateNameSet() {
+    const counts = {};
+    students.forEach(s => {
+      counts[s.name] = (counts[s.name] || 0) + 1;
+    });
+    const dupSet = new Set();
+    Object.entries(counts).forEach(([name, cnt]) => {
+      if (cnt > 1) dupSet.add(name);
+    });
+    return dupSet;
+  }
+
+  // 다가오는 생일 하이라이트 렌더링 (상위 4명)
+  function renderUpcomingHighlights() {
+    const grid = document.getElementById('upcomingGrid');
+    const now = new Date();
+    document.getElementById('todayDateSummary').textContent =
+      `기준일: ${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
+
+    if (isLoading && students.length === 0) {
+      grid.innerHTML = '<p style="font-weight:800; color:#555;">생일 명단을 불러오는 중입니다...</p>';
+      return;
+    }
+
+    if (students.length === 0) {
+      grid.innerHTML = '<p style="font-weight:800; color:#555;">등록된 생일 정보가 없습니다.</p>';
+      return;
+    }
+
+    const enriched = students
+      .map(s => ({ ...s, meta: calcBirthdayMeta(s.birthDate) }))
+      .sort((a, b) => a.meta.dday - b.meta.dday)
+      .slice(0, 4);
+
+    grid.innerHTML = enriched.map(item => {
+      const isToday = item.meta.dday === 0;
+      const isSoon = item.meta.dday > 0 && item.meta.dday <= 14;
+      const cardCls = isToday ? 'is-today' : (isSoon ? 'is-soon' : '');
+      const pillCls = isToday ? '' : 'soon';
+
+      return `
+        <div class="upcoming-card ${cardCls}">
+          <span class="dday-pill ${pillCls}">${escapeHtml(item.meta.label)}</span>
+          <div class="upcoming-name">${escapeHtml(item.name)} <span style="font-size:0.85rem; font-weight:700;">(${item.number}번)</span></div>
+          <div class="upcoming-meta">${item.meta.month}월 ${item.meta.day}일 (${escapeHtml(item.birthDate)})</div>
+          <div class="upcoming-meta">${escapeHtml(item.note || '소속·메모 없음')}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 월별 인원 막대 차트 렌더링
+  function renderMonthChart() {
+    const barsEl = document.getElementById('monthChartBars');
+    const labelsEl = document.getElementById('monthChartLabels');
+    document.getElementById('totalCountBadge').textContent = `총 ${students.length}명`;
+
+    const counts = Array(12).fill(0);
+    students.forEach(s => {
+      const m = calcBirthdayMeta(s.birthDate).month;
+      if (m >= 1 && m <= 12) counts[m - 1]++;
+    });
+
+    const maxCnt = Math.max(1, ...counts);
+
+    barsEl.innerHTML = counts.map((cnt, idx) => {
+      const mNum = idx + 1;
+      const hPct = cnt > 0 ? Math.max(14, Math.round((cnt / maxCnt) * 85)) : 4;
+      const activeCls = selectedMonth === mNum ? 'active' : '';
+      return `
+        <div class="m-col ${activeCls}" data-month="${mNum}" title="${mNum}월: ${cnt}명">
+          <span class="m-count">${cnt > 0 ? cnt + '명' : ''}</span>
+          <div class="m-stick" style="height:${hPct}%;"></div>
+        </div>
+      `;
+    }).join('');
+
+    labelsEl.innerHTML = counts.map((_, idx) => `<div class="m-lbl">${idx + 1}월</div>`).join('');
+
+    barsEl.querySelectorAll('.m-col').forEach(col => {
+      col.addEventListener('click', () => {
+        const m = Number(col.dataset.month);
+        selectedMonth = (selectedMonth === m) ? 0 : m;
+        renderMonthPills();
+        renderMonthChart();
+        renderRosterTable();
+      });
+    });
+  }
+
+  // 월별 필터 알약 버튼 렌더링
+  function renderMonthPills() {
+    const container = document.getElementById('monthPillsContainer');
+    const items = [{ label: '전체', val: 0 }];
+    for (let m = 1; m <= 12; m++) {
+      items.push({ label: `${m}월`, val: m });
+    }
+
+    container.innerHTML = items.map(it => {
+      const activeCls = selectedMonth === it.val ? 'active' : '';
+      return `<button type="button" class="month-pill ${activeCls}" data-month="${it.val}">${it.label}</button>`;
+    }).join('');
+
+    container.querySelectorAll('.month-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedMonth = Number(btn.dataset.month);
+        renderMonthPills();
+        renderMonthChart();
+        renderRosterTable();
+      });
+    });
+  }
+
+  // 등록 목록 테이블 렌더링
+  function renderRosterTable() {
+    const tbody = document.getElementById('rosterTableBody');
+    const sortMode = document.getElementById('sortSelect').value;
+    const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+    const dupSet = getDuplicateNameSet();
+
+    if (isLoading && students.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center; padding:28px; color:#555;">
+            데이터를 불러오는 중입니다...
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    const filtered = students
+      .map(s => ({ ...s, meta: calcBirthdayMeta(s.birthDate) }))
+      .filter(s => {
+        if (selectedMonth !== 0 && s.meta.month !== selectedMonth) return false;
+        if (kw) {
+          const hay = `${s.name} ${s.note} ${s.birthDate}`.toLowerCase();
+          if (!hay.includes(kw)) return false;
+        }
+        return true;
+      });
+
+    filtered.sort((a, b) => {
+      if (sortMode === 'month_day') return a.meta.monthDayKey - b.meta.monthDayKey;
+      if (sortMode === 'number') return a.number - b.number;
+      if (sortMode === 'name') return a.name.localeCompare(b.name, 'ko');
+      return a.meta.dday - b.meta.dday;
+    });
+
+    const titlePrefix = selectedMonth === 0 ? '전체' : `${selectedMonth}월`;
+    document.getElementById('filteredCountBadge').textContent = `${titlePrefix} ${filtered.length}명`;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align:center; padding:28px; color:#555;">
+            해당 조건의 생일 정보가 없습니다.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(s => {
+      const dupHtml = dupSet.has(s.name) ? '<span class="dup-badge">동명이인</span>' : '';
+      const chipCls = s.meta.dday === 0 ? 'today' : (s.meta.dday <= 14 ? 'soon' : '');
+      return `
+        <tr>
+          <td>${s.number}번</td>
+          <td style="font-weight:900;">${escapeHtml(s.name)}${dupHtml}</td>
+          <td style="white-space:nowrap;">${escapeHtml(s.birthDate)} (${s.meta.month}월 ${s.meta.day}일)</td>
+          <td>${escapeHtml(s.note || '-')}</td>
+          <td><span class="dday-chip ${chipCls}">${escapeHtml(s.meta.label)}</span></td>
+          <td>
+            <div class="row-actions">
+              <button type="button" class="mini-btn" data-action="edit" data-row="${s.rowNumber}">수정</button>
+              <button type="button" class="mini-btn del" data-action="delete" data-row="${s.rowNumber}">삭제</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderAll() {
+    renderUpcomingHighlights();
+    renderMonthChart();
+    renderMonthPills();
+    renderRosterTable();
+  }
+
+  // 백엔드 API 통신
+  async function apiGetList() {
+    const res = await fetch(`${BACKEND_ENDPOINT_URL}?action=list`, {
+      method: 'GET',
+      redirect: 'follow'
+    });
+    return await res.json();
+  }
+
+  async function apiPostAction(payload) {
+    const res = await fetch(BACKEND_ENDPOINT_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  }
+
+  async function loadBirthdayList(silent = false) {
+    isLoading = true;
+    renderAll();
+
+    try {
+      const data = await apiGetList();
+      if (data && data.status === 'ok' && Array.isArray(data.items)) {
+        students = data.items;
+        saveCache(students);
+        if (!silent) showToast(`생일 명단(${students.length}명)을 최신화했습니다.`);
+      } else {
+        throw new Error((data && data.message) || '목록 조회 오류');
+      }
+    } catch (err) {
+      if (!silent) showFeedback('error', '명단을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    } finally {
+      isLoading = false;
+      renderAll();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 실시간 시계
+    const timeDisplay = document.getElementById('currentTimeDisplay');
+    function updateClock() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const timeStr = now.toLocaleTimeString('ko-KR', { hour12: false });
+      timeDisplay.textContent = `${yyyy}.${mm}.${dd} ${timeStr}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // 생일 등록 폼 제출
+    document.getElementById('addBirthdayForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitAddBtn');
+      const record = {
+        number: document.getElementById('stdNumber').value,
+        name: document.getElementById('stdName').value.trim(),
+        birthDate: document.getElementById('stdBirthDate').value,
+        note: document.getElementById('stdNote').value.trim()
+      };
+
+      if (!record.name || !record.birthDate) {
+        showFeedback('error', '이름과 생년월일을 모두 입력해 주세요.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '저장하는 중...';
+
+      try {
+        const res = await apiPostAction({ action: 'add', record });
+        if (res && res.status === 'ok') {
+          students = Array.isArray(res.items) ? res.items : students;
+          saveCache(students);
+          document.getElementById('addBirthdayForm').reset();
+          renderAll();
+          showFeedback('success', res.message || `${record.name} 학생의 생일이 등록되었습니다.`);
+          showToast('생일 정보가 저장되었습니다!');
+        } else {
+          showFeedback('error', (res && res.message) || '저장에 실패했습니다.');
+        }
+      } catch (err) {
+        showFeedback('error', '네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '+ 생일 등록하기';
+      }
+    });
+
+    // 정렬 / 검색 / 새로고침
+    document.getElementById('sortSelect').addEventListener('change', renderRosterTable);
+    document.getElementById('searchInput').addEventListener('input', renderRosterTable);
+    document.getElementById('reloadListBtn').addEventListener('click', () => loadBirthdayList(false));
+
+    // 수정 모달 열기 및 삭제 처리
+    const editModal = document.getElementById('editModal');
+    document.getElementById('rosterTableBody').addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const rowNum = Number(btn.dataset.row);
+      const action = btn.dataset.action;
+
+      if (action === 'edit') {
+        const target = students.find(s => Number(s.rowNumber) === rowNum);
+        if (!target) return;
+        document.getElementById('editRowNumber').value = target.rowNumber;
+        document.getElementById('editNumber').value = target.number;
+        document.getElementById('editName').value = target.name;
+        document.getElementById('editBirthDate').value = target.birthDate;
+        document.getElementById('editNote').value = target.note || '';
+        editModal.classList.add('open');
+      } else if (action === 'delete') {
+        const target = students.find(s => Number(s.rowNumber) === rowNum);
+        if (!confirm(`${target ? target.name : '선택한'} 학생의 생일 정보를 삭제할까요?`)) return;
+
+        btn.disabled = true;
+        try {
+          const res = await apiPostAction({ action: 'delete', rowNumber: rowNum });
+          if (res && res.status === 'ok') {
+            students = Array.isArray(res.items) ? res.items : students.filter(s => Number(s.rowNumber) !== rowNum);
+            saveCache(students);
+            renderAll();
+            showToast(res.message || '선택한 항목이 삭제되었습니다.');
+          } else {
+            showFeedback('error', (res && res.message) || '삭제에 실패했습니다.');
+          }
+        } catch (err) {
+          showFeedback('error', '삭제 중 오류가 발생했습니다.');
+        } finally {
+          btn.disabled = false;
+        }
+      }
+    });
+
+    // 수정 폼 제출
+    document.getElementById('editBirthdayForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitEditBtn');
+      const record = {
+        rowNumber: Number(document.getElementById('editRowNumber').value),
+        number: Number(document.getElementById('editNumber').value),
+        name: document.getElementById('editName').value.trim(),
+        birthDate: document.getElementById('editBirthDate').value,
+        note: document.getElementById('editNote').value.trim()
+      };
+
+      btn.disabled = true;
+      btn.textContent = '저장하는 중...';
+
+      try {
+        const res = await apiPostAction({ action: 'update', record });
+        if (res && res.status === 'ok') {
+          students = Array.isArray(res.items) ? res.items : students;
+          saveCache(students);
+          editModal.classList.remove('open');
+          renderAll();
+          showFeedback('success', res.message || '수정 내용이 저장되었습니다.');
+          showToast('수정 내용이 반영되었습니다.');
+        } else {
+          showFeedback('error', (res && res.message) || '수정에 실패했습니다.');
+        }
+      } catch (err) {
+        showFeedback('error', '수정 중 오류가 발생했습니다.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '수정 내용 저장';
+      }
+    });
+
+    document.getElementById('closeEditBtn').addEventListener('click', () => editModal.classList.remove('open'));
+    editModal.addEventListener('click', (e) => { if (e.target === editModal) editModal.classList.remove('open'); });
+
+    // QR코드 스마트폰 연결 모달
+    const qrModal = document.getElementById('qrModal');
+    const qrRenderBox = document.getElementById('qrRenderBox');
+    const qrUrlText = document.getElementById('qrUrlText');
+    const openQrTabBtn = document.getElementById('openQrTabBtn');
+
+    function getAppUrl() {
+      if (window.location.protocol.startsWith('http')) {
+        return window.location.href.split('#')[0];
+      }
+      return 'https://nlasdnfkl2.github.io/birthday.html';
+    }
+
+    document.getElementById('openQrBtn').addEventListener('click', () => {
+      const url = getAppUrl();
+      qrUrlText.textContent = url;
+      openQrTabBtn.href = url;
+      qrRenderBox.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrRenderBox, {
+          text: url,
+          width: 210,
+          height: 210,
+          colorDark: '#111111',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+      qrModal.classList.add('open');
+    });
+
+    document.getElementById('copyQrUrlBtn').addEventListener('click', async () => {
+      const url = getAppUrl();
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('접속 주소가 복사되었습니다!');
+      } catch (e) {
+        prompt('아래 주소를 복사하세요:', url);
+      }
+    });
+
+    document.getElementById('closeQrBtn').addEventListener('click', () => qrModal.classList.remove('open'));
+    qrModal.addEventListener('click', (e) => { if (e.target === qrModal) qrModal.classList.remove('open'); });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        editModal.classList.remove('open');
+        qrModal.classList.remove('open');
+      }
+    });
+
+    // 캐시된 명단 먼저 표시 후 시트 최신 데이터 로드
+    students = loadCache();
+    loadBirthdayList(true);
+  });
+</script>
+
+</body>
+</html>
