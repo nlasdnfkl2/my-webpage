@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>문태양 - Portfolio</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
     
@@ -557,7 +558,30 @@
       background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
     }
 
-    /* 이미지 라이트박스 모달 */
+    .app-link-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+    .app-link-btn.app-link-pwa {
+      background: var(--yellow);
+    }
+    .app-card:hover .app-link-btn.app-link-pwa {
+      background: var(--green);
+      color: var(--black);
+    }
+    .app-link-btn.app-link-qr {
+      background: var(--cyan);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .app-card:hover .app-link-btn.app-link-qr {
+      background: var(--pink);
+      color: var(--black);
+    }
+
+    /* 이미지 라이트박스 & QR코드 모달 공통 */
     .lightbox-modal {
       display: none;
       position: fixed;
@@ -579,6 +603,9 @@
       max-width: 820px;
       width: 100%;
       overflow: hidden;
+    }
+    .lightbox-box.qr-box-modal {
+      max-width: 430px;
     }
     .lightbox-bar {
       background: var(--yellow);
@@ -614,6 +641,82 @@
       object-fit: contain;
       border: var(--border);
       background: white;
+    }
+
+    /* QR 모달 내부 구성 */
+    .qr-modal-body {
+      padding: 22px 20px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+    }
+    .qr-target-tabs {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+    .qr-tab-btn {
+      flex: 1;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 7px 10px;
+      background: white;
+      border: var(--border);
+      box-shadow: 2px 2px 0 var(--black);
+      cursor: pointer;
+    }
+    .qr-tab-btn.active {
+      background: var(--cyan);
+    }
+    .qr-canvas-frame {
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 242px;
+      min-height: 242px;
+    }
+    .qr-url-pill {
+      width: 100%;
+      background: white;
+      border: 2px solid var(--black);
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      word-break: break-all;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .qr-action-row {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    .qr-action-btn {
+      flex: 1;
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 900;
+      padding: 9px 12px;
+      background: var(--green);
+      color: var(--black);
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      text-align: center;
+    }
+    .qr-action-btn.secondary {
+      background: var(--yellow);
+    }
+    .qr-action-btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
     }
 
     .contact { padding: 100px 0; border-bottom: 0; text-align: center; }
@@ -687,6 +790,9 @@
 <div class="fixed-top-bar">
   <div class="current-time" id="currentTimeDisplay">--:--:--</div>
   <div class="icon-group">
+    <button type="button" class="icon-btn" id="openTopQrBtn" title="QR코드로 스마트폰 연결">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"></rect><rect width="5" height="5" x="16" y="3" rx="1"></rect><rect width="5" height="5" x="3" y="16" rx="1"></rect><path d="M21 16h-3a2 2 0 0 0-2 2v3"></path><path d="M21 21v.01"></path><path d="M12 7v3a2 2 0 0 1-2 2H7"></path><path d="M3 12h.01"></path><path d="M12 3h.01"></path><path d="M12 16v.01"></path><path d="M16 12h1"></path><path d="M21 12v.01"></path><path d="M12 21v-1"></path></svg>
+    </button>
     <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
     </a>
@@ -1065,16 +1171,23 @@
           </div>
         </a>
 
-        <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
+        <!-- 실습 17·18: 운동 기록 · 월간 통계 앱 (웹 + 모바일 PWA + QR 폰 연결) -->
+        <div class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="mockup-window" style="display:block;">
+            <iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+          </a>
           <div class="app-info">
             <div class="tech">건강 관리 (실습 17·18)</div>
             <h3>운동 기록 · 월간 통계 앱</h3>
             <p>운동 항목별 달성 체크와 수치를 저장하고 월별 달력·차트로 관리합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+            <div class="app-link-group">
+              <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">웹 버전 &rarr;</a>
+              <a href="https://nlasdnfkl2.github.io/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="app-link-btn app-link-pwa">모바일 앱 버전 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-mode="pwa">QR 폰 연결</button>
+            </div>
           </div>
-        </a>
+        </div>
 
         <!-- 실습 19: 영수증 정리도우미 앱 -->
         <a href="mymoney.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
@@ -1190,6 +1303,31 @@
     </div>
     <div class="lightbox-body">
       <img id="lightboxImg" src="" alt="확대 이미지">
+    </div>
+  </div>
+</div>
+
+<!-- QR코드 스마트폰 연결 모달 -->
+<div class="lightbox-modal" id="qrConnectModal" role="dialog" aria-modal="true" aria-label="QR코드로 스마트폰 연결">
+  <div class="lightbox-box qr-box-modal">
+    <div class="lightbox-bar">
+      <span id="qrModalTitle">QR코드로 스마트폰 연결</span>
+      <button type="button" class="lightbox-close" id="qrModalCloseBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="qr-modal-body">
+      <div class="qr-target-tabs">
+        <button type="button" class="qr-tab-btn active" id="qrTabPwa" data-qr-tab="pwa">모바일 앱 (phycheck_pwa)</button>
+        <button type="button" class="qr-tab-btn" id="qrTabPortfolio" data-qr-tab="portfolio">현재 포트폴리오</button>
+      </div>
+      <div class="qr-canvas-frame" id="qrCodeRenderBox"></div>
+      <p style="font-size: 0.86rem; font-weight: 800; color: #222;" id="qrModalDesc">
+        스마트폰 기본 카메라로 스캔하면 운동 기록 모바일 앱(PWA)이 바로 열립니다.
+      </p>
+      <div class="qr-url-pill" id="qrModalUrlText">https://nlasdnfkl2.github.io/phycheck_pwa/</div>
+      <div class="qr-action-row">
+        <button type="button" class="qr-action-btn" id="qrCopyUrlBtn">주소 복사</button>
+        <a href="https://nlasdnfkl2.github.io/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="qr-action-btn secondary" id="qrOpenNewTabBtn">새 창으로 열기 &nearr;</a>
+      </div>
     </div>
   </div>
 </div>
@@ -1572,9 +1710,96 @@
     lightboxModal.addEventListener('click', (e) => {
       if (e.target === lightboxModal) closeLightbox();
     });
+
+    // QR코드 스마트폰 연결 모달 제어
+    const qrConnectModal = document.getElementById('qrConnectModal');
+    const qrCodeRenderBox = document.getElementById('qrCodeRenderBox');
+    const qrModalTitle = document.getElementById('qrModalTitle');
+    const qrModalDesc = document.getElementById('qrModalDesc');
+    const qrModalUrlText = document.getElementById('qrModalUrlText');
+    const qrOpenNewTabBtn = document.getElementById('qrOpenNewTabBtn');
+    const qrTabPwa = document.getElementById('qrTabPwa');
+    const qrTabPortfolio = document.getElementById('qrTabPortfolio');
+
+    const PWA_APP_URL = 'https://nlasdnfkl2.github.io/phycheck_pwa/';
+    let currentQrUrl = PWA_APP_URL;
+
+    function getPortfolioUrl() {
+      if (window.location.protocol.startsWith('http')) {
+        return window.location.href.split('#')[0];
+      }
+      return 'https://nlasdnfkl2.github.io/';
+    }
+
+    function renderQrModalMode(mode) {
+      const isPwa = mode === 'pwa';
+      qrTabPwa.classList.toggle('active', isPwa);
+      qrTabPortfolio.classList.toggle('active', !isPwa);
+
+      currentQrUrl = isPwa ? PWA_APP_URL : getPortfolioUrl();
+      qrModalTitle.textContent = isPwa
+        ? '오운완 운동 기록장 (모바일 PWA) QR 연결'
+        : '문태양 포트폴리오 모바일 QR 연결';
+      qrModalDesc.textContent = isPwa
+        ? '스마트폰 카메라로 스캔하면 운동 기록 모바일 앱(PWA)이 바로 열립니다.'
+        : '스마트폰 카메라로 스캔하면 현재 포트폴리오 사이트가 바로 열립니다.';
+      qrModalUrlText.textContent = currentQrUrl;
+      qrOpenNewTabBtn.href = currentQrUrl;
+
+      qrCodeRenderBox.innerHTML = '';
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrCodeRenderBox, {
+          text: currentQrUrl,
+          width: 210,
+          height: 210,
+          colorDark: '#111111',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } else {
+        qrCodeRenderBox.innerHTML = '<p style="font-size:0.85rem;font-weight:800;">오프라인 상태입니다.<br>아래 주소를 복사해 접속해 주세요.</p>';
+      }
+    }
+
+    function openQrModal(mode = 'pwa') {
+      renderQrModalMode(mode);
+      qrConnectModal.classList.add('open');
+    }
+
+    function closeQrModal() {
+      qrConnectModal.classList.remove('open');
+    }
+
+    document.querySelectorAll('[data-qr-mode]').forEach(btn => {
+      btn.addEventListener('click', () => openQrModal(btn.dataset.qrMode));
+    });
+
+    const openTopQrBtn = document.getElementById('openTopQrBtn');
+    if (openTopQrBtn) {
+      openTopQrBtn.addEventListener('click', () => openQrModal('pwa'));
+    }
+
+    qrTabPwa.addEventListener('click', () => renderQrModalMode('pwa'));
+    qrTabPortfolio.addEventListener('click', () => renderQrModalMode('portfolio'));
+
+    document.getElementById('qrCopyUrlBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(currentQrUrl);
+        alert('연결 주소가 클립보드에 복사되었습니다:\n' + currentQrUrl);
+      } catch (e) {
+        prompt('아래 주소를 복사해 스마트폰에서 열어주세요:', currentQrUrl);
+      }
+    });
+
+    document.getElementById('qrModalCloseBtn').addEventListener('click', closeQrModal);
+    qrConnectModal.addEventListener('click', (e) => {
+      if (e.target === qrConnectModal) closeQrModal();
+    });
+
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && lightboxModal.classList.contains('open')) {
-        closeLightbox();
+      if (e.key === 'Escape') {
+        if (lightboxModal.classList.contains('open')) closeLightbox();
+        if (qrConnectModal.classList.contains('open')) closeQrModal();
       }
     });
 
