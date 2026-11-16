@@ -7,13 +7,14 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-    
+
     :root {
       --bg: #fdfbf7;
+      --paper: #ffffff;
       --black: #111111;
       --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
-      
+
       --yellow: #ffd83b;
       --red: #ff4757;
       --blue: #3e51ff;
@@ -21,20 +22,30 @@
       --pink: #ff9ff3;
       --cyan: #48dbfb;
     }
-    
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(to right, rgba(17, 17, 17, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(17, 17, 17, 0.045) 1px, transparent 1px);
+      background-size: 28px 28px;
       color: var(--black);
-      line-height: 1.7;
+      line-height: 1.65;
       -webkit-font-smoothing: antialiased;
       position: relative;
-      padding-top: 70px;
+      padding-top: 66px;
+      overflow-x: hidden;
     }
-    
-    /* 상단 고정 바 */
+
+    ::selection {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    /* 상단 고정 바 + 스크롤 진행 게이지 */
     .fixed-top-bar {
       position: fixed;
       top: 0; left: 0;
@@ -49,31 +60,49 @@
       box-shadow: 0 4px 0 var(--black);
     }
 
+    .scroll-progress-track {
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 100%;
+      height: 4px;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .scroll-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--red);
+      transition: width 0.08s linear;
+    }
+
     .fixed-top-bar .current-time {
       font-weight: 900;
-      font-size: 0.95rem;
-      background: white;
+      font-size: 0.92rem;
+      font-variant-numeric: tabular-nums;
+      background: var(--paper);
       border: var(--border);
-      padding: 4px 10px;
+      padding: 4px 11px;
       box-shadow: 2px 2px 0 var(--black);
     }
 
     .fixed-top-bar .icon-group {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
     }
 
     .fixed-top-bar .icon-btn {
       width: 38px; height: 38px;
-      background: white;
+      background: var(--paper);
       border: var(--border);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 3px 3px 0 var(--black);
       cursor: pointer;
       font-weight: 900; font-size: 0.9rem;
-      transition: all 0.12s ease;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
       text-decoration: none;
       color: var(--black);
       position: relative;
@@ -83,6 +112,11 @@
       transform: translate(-2px, -2px);
       box-shadow: 5px 5px 0 var(--black);
       background: var(--cyan);
+    }
+
+    .fixed-top-bar .icon-btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--black);
     }
 
     .fixed-top-bar .icon-btn.music-playing {
@@ -101,7 +135,7 @@
       left: 50%;
       transform: translateX(-50%) translateY(0);
       z-index: 1990;
-      background: #ffffff;
+      background: var(--paper);
       border: var(--border-thick);
       border-radius: 9999px;
       box-shadow: 6px 6px 0 var(--black);
@@ -172,52 +206,59 @@
       box-shadow: 1px 1px 0 var(--black);
     }
 
-    .pill-choice-btn.yes {
-      background: var(--green);
-    }
+    .pill-choice-btn.yes { background: var(--green); }
+    .pill-choice-btn.no { background: var(--bg); }
+    .pill-choice-btn.no:hover { background: var(--pink); }
 
-    .pill-choice-btn.no {
-      background: var(--bg);
-    }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+    a { color: inherit; transition: all 0.16s ease; text-decoration: none; }
 
-    .pill-choice-btn.no:hover {
-      background: var(--pink);
-    }
-
-    .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
-    a { color: inherit; transition: all 0.2s ease; text-decoration: none; }
-
+    /* 상단 브랜드 헤더 */
     .top {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 24px 0;
+      padding: 22px 0;
       border-bottom: var(--border-thick);
       font-size: 1rem; font-weight: 800;
       gap: 16px;
       flex-wrap: wrap;
     }
     .top b {
-      font-size: 1.4rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
       background: var(--black);
       color: var(--yellow);
-      padding: 4px 12px;
-      transform: skew(-5deg);
+      padding: 5px 14px;
+      border: 2px solid var(--black);
+      box-shadow: 4px 4px 0 var(--red);
+      transform: skew(-4deg);
       display: inline-block;
     }
-    .top nav { display: flex; gap: 20px; }
-    .top nav a { position: relative; padding: 4px 10px; }
-    .top nav a:hover { background: var(--black); color: var(--bg); }
+    .top nav { display: flex; gap: 10px; flex-wrap: wrap; }
+    .top nav a {
+      padding: 6px 12px;
+      background: var(--paper);
+      border: 2px solid var(--black);
+      box-shadow: 3px 3px 0 var(--black);
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+    .top nav a:hover {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
 
-    .hero { padding: 100px 0 80px; border-bottom: var(--border-thick); }
+    /* Hero 섹션 */
+    .hero { padding: 76px 0 68px; border-bottom: var(--border-thick); }
     .hero .small {
-      display: inline-block; font-size: 1rem; font-weight: 800;
-      background: var(--cyan); border: var(--border); padding: 4px 12px;
-      box-shadow: 4px 4px 0 var(--black); margin-bottom: 24px;
+      display: inline-block; font-size: 0.95rem; font-weight: 900;
+      background: var(--cyan); border: var(--border); padding: 5px 14px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 22px;
     }
     .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4.2rem);
-      line-height: 1.2; font-weight: 900;
+      font-size: clamp(2.3rem, 5.6vw, 4rem);
+      line-height: 1.22; font-weight: 900;
+      letter-spacing: -0.02em;
     }
     .hero h1 span {
       display: inline-block;
@@ -226,58 +267,179 @@
       border: var(--border-thick);
       padding: 0 16px;
       box-shadow: 6px 6px 0 var(--black);
-      transform: rotate(-2deg);
+      transform: rotate(-1.8deg);
     }
-    .hero p {
-      max-width: 36em; margin-top: 30px; font-size: 1.1rem; font-weight: 600;
-      border-left: 6px solid var(--black); padding-left: 20px;
+    .hero p.hero-copy {
+      max-width: 40em; margin-top: 28px; font-size: 1.08rem; font-weight: 600;
+      background: var(--paper);
+      border: var(--border);
+      border-left: 8px solid var(--black);
+      padding: 16px 20px;
+      box-shadow: 5px 5px 0 var(--black);
     }
-    .hero .meta { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-bottom-row {
+      margin-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .hero .meta { display: flex; flex-wrap: wrap; gap: 10px; }
     .hero .meta span {
       background: var(--pink); border: var(--border); box-shadow: 3px 3px 0 var(--black);
-      padding: 6px 14px; font-size: 0.9rem; font-weight: 800;
+      padding: 6px 13px; font-size: 0.88rem; font-weight: 900;
+    }
+    .hero-cta-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brutal-cta-btn {
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 900;
+      padding: 9px 18px;
+      background: var(--black);
+      color: var(--yellow);
+      border: var(--border);
+      box-shadow: 4px 4px 0 var(--red);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brutal-cta-btn:hover {
+      background: var(--yellow);
+      color: var(--black);
+      box-shadow: 4px 4px 0 var(--black);
+      transform: translate(-2px, -2px);
     }
 
-    section { padding: 80px 0; border-bottom: var(--border-thick); }
-    .label {
-      display: inline-block; font-size: 1rem; font-weight: 900;
-      background: var(--black); color: white; padding: 4px 16px;
-      margin-bottom: 20px; text-transform: uppercase;
+    /* 키네틱 마키 티커 */
+    .marquee-strip {
+      background: var(--black);
+      color: var(--yellow);
+      border-bottom: var(--border-thick);
+      overflow: hidden;
+      padding: 10px 0;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+    .marquee-track {
+      display: inline-flex;
+      gap: 28px;
+      animation: marqueeScroll 28s linear infinite;
+    }
+    .marquee-strip:hover .marquee-track {
+      animation-play-state: paused;
+    }
+    .marquee-dot {
+      color: var(--cyan);
+    }
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* 공통 섹션 스타일 */
+    section { padding: 76px 0; border-bottom: var(--border-thick); }
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      font-weight: 900;
+      background: var(--black);
+      color: #ffffff;
+      padding: 4px 14px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
       box-shadow: 4px 4px 0 var(--red);
     }
-
-    h2 { font-size: 2rem; font-weight: 900; margin-bottom: 20px; }
-    .lead { max-width: 38em; font-size: 1.05rem; font-weight: 600; }
-
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; }
-    .two div {
-      border: var(--border-thick); background: white;
-      padding: 24px; box-shadow: 6px 6px 0 var(--black);
+    .section-kicker span {
+      color: var(--yellow);
     }
-    .two div:nth-child(1) { background: #ffeaa7; }
-    .two div:nth-child(2) { background: #81ecec; }
-    .two h3 { font-size: 1.3rem; margin-bottom: 10px; font-weight: 900; border-bottom: 3px solid var(--black); padding-bottom: 6px; display: inline-block; }
 
-    .work-group { margin-top: 60px; }
+    h2 { font-size: clamp(1.75rem, 3.5vw, 2.2rem); font-weight: 900; margin-bottom: 14px; letter-spacing: -0.02em; }
+    .lead { max-width: 44em; font-size: 1.03rem; font-weight: 600; color: #222222; }
+
+    /* About 2단 카드 */
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+    .two-card {
+      border: var(--border-thick);
+      background: var(--paper);
+      padding: 26px;
+      box-shadow: 6px 6px 0 var(--black);
+      position: relative;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+    .two-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 9px 9px 0 var(--black);
+    }
+    .two-card:nth-child(1) { background: #ffeaa7; }
+    .two-card:nth-child(2) { background: #81ecec; }
+    .two-num {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 900;
+      background: var(--black);
+      color: #ffffff;
+      padding: 2px 8px;
+      margin-bottom: 10px;
+    }
+    .two-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      font-weight: 900;
+      border-bottom: 3px solid var(--black);
+      padding-bottom: 6px;
+    }
+    .two-card p {
+      font-weight: 600;
+      font-size: 0.96rem;
+    }
+
+    /* 활동 그룹 헤더 통일 */
+    .work-group { margin-top: 56px; }
+    .work-group:first-of-type { margin-top: 36px; }
     .work-group-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 14px;
+      padding: 14px 18px;
+      background: var(--paper);
+      border: var(--border-thick);
+      box-shadow: 5px 5px 0 var(--black);
       margin-bottom: 24px;
     }
     .work-group-title {
-      display: inline-block;
-      font-size: 1.1rem; font-weight: 900;
-      border: var(--border); background: var(--yellow);
-      padding: 6px 16px; box-shadow: 4px 4px 0 var(--black);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+    .group-index-pill {
+      background: var(--yellow);
+      border: 2px solid var(--black);
+      padding: 2px 9px;
+      font-size: 0.82rem;
+      box-shadow: 2px 2px 0 var(--black);
     }
 
+    /* 시각 디자인 & 논문 카드 양식 통일 */
     .work {
-      margin-top: 28px; padding: 24px;
-      border: var(--border); background: white;
-      box-shadow: 5px 5px 0 var(--black);
+      margin-top: 24px;
+      padding: 24px;
+      border: var(--border-thick);
+      background: var(--paper);
+      box-shadow: 6px 6px 0 var(--black);
     }
     .work-head {
       display: flex;
@@ -286,10 +448,36 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .work h3 { font-size: 1.35rem; font-weight: 900; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .work h3 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .work-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 10px 0 12px;
+    }
     .work .when {
-      display: inline-block; font-size: 0.85rem; font-weight: 800;
-      background: var(--black); color: white; padding: 2px 8px; margin: 8px 0 12px;
+      display: inline-block;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: var(--black);
+      color: #ffffff;
+      padding: 3px 9px;
+    }
+    .work-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 800;
+      background: var(--bg);
+      border: 2px solid var(--black);
+      padding: 1px 8px;
     }
     .work-desc {
       font-size: 0.95rem;
@@ -299,12 +487,12 @@
     }
 
     .project-link {
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 900;
       background: var(--cyan);
       color: var(--black);
       border: 2px solid var(--black);
-      padding: 3px 10px;
+      padding: 4px 11px;
       box-shadow: 3px 3px 0 var(--black);
       transition: all 0.12s ease;
     }
@@ -322,6 +510,7 @@
     .carousel-counter {
       font-size: 0.82rem;
       font-weight: 900;
+      font-variant-numeric: tabular-nums;
       background: var(--bg);
       border: 2px solid var(--black);
       padding: 4px 10px;
@@ -330,7 +519,7 @@
     .carousel-btn {
       width: 34px;
       height: 34px;
-      background: white;
+      background: var(--paper);
       border: var(--border);
       box-shadow: 3px 3px 0 var(--black);
       font-weight: 900;
@@ -355,22 +544,22 @@
     .carousel::-webkit-scrollbar-track { background: var(--bg); border: 2px solid var(--black); }
     .carousel::-webkit-scrollbar-thumb { background: var(--black); }
     .carousel img {
-      scroll-snap-align: start; flex: 0 0 75%; max-width: 360px; max-height: 280px;
+      scroll-snap-align: start; flex: 0 0 75%; max-width: 350px; max-height: 270px;
       object-fit: contain; padding: 12px;
-      border: var(--border); background: #fff;
+      border: var(--border); background: #ffffff;
       box-shadow: 5px 5px 0 var(--black);
       cursor: zoom-in;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
     .carousel img:hover {
-      transform: translateY(-2px);
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 var(--black);
     }
 
-    /* 카드뉴스 4컷 캐러셀 전용 비율 */
     .carousel.cardnews-carousel img {
       flex: 0 0 72%;
-      max-width: 320px;
-      max-height: 360px;
+      max-width: 310px;
+      max-height: 350px;
     }
 
     /* 플립 카드 컨트롤 및 영역 */
@@ -385,15 +574,13 @@
       font-size: 0.82rem;
       font-weight: 900;
       padding: 5px 12px;
-      background: white;
+      background: var(--paper);
       border: 2px solid var(--black);
       box-shadow: 2px 2px 0 var(--black);
       cursor: pointer;
       transition: all 0.1s ease;
     }
-    .flip-state-btn.active {
-      background: var(--yellow);
-    }
+    .flip-state-btn.active { background: var(--yellow); }
     .zoom-pill-btn {
       font-family: inherit;
       font-size: 0.82rem;
@@ -414,7 +601,7 @@
     .flip-container {
       background-color: transparent;
       perspective: 1000px;
-      margin-top: 16px;
+      margin-top: 14px;
       width: 100%;
       position: relative;
     }
@@ -424,14 +611,14 @@
 
     .flip-inner {
       position: relative; width: 100%; height: 100%;
-      text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center; transition: transform 0.75s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform-style: preserve-3d; cursor: pointer;
     }
     .flip-container.is-flipped .flip-inner { transform: rotateY(180deg); }
     .flip-front, .flip-back {
       position: absolute; width: 100%; height: 100%;
       backface-visibility: hidden; border: var(--border-thick);
-      box-shadow: 6px 6px 0 var(--black); background: white;
+      box-shadow: 6px 6px 0 var(--black); background: #ffffff;
       display: flex; align-items: center; justify-content: center;
     }
     .flip-back { transform: rotateY(180deg); }
@@ -447,34 +634,52 @@
       background: var(--bg);
       box-shadow: 2px 2px 0 var(--black);
     }
-    .flip-back .side-tag {
-      background: var(--green);
-    }
+    .flip-back .side-tag { background: var(--green); }
     .flip-hint {
       position: absolute; bottom: -12px; right: -12px;
       background: var(--yellow); border: var(--border); padding: 4px 12px;
-      font-weight: 900; font-size: 0.85rem; box-shadow: 3px 3px 0 var(--black);
+      font-weight: 900; font-size: 0.82rem; box-shadow: 3px 3px 0 var(--black);
       pointer-events: none;
     }
 
-    details { background: white; border: var(--border-thick); box-shadow: 5px 5px 0 var(--black); margin-top: 16px; }
-    summary { font-weight: 900; cursor: pointer; padding: 12px 20px; background: var(--pink); }
+    details { background: #ffffff; border: var(--border-thick); box-shadow: 5px 5px 0 var(--black); margin-top: 14px; }
+    summary { font-weight: 900; cursor: pointer; padding: 12px 18px; background: var(--pink); }
     details[open] summary { border-bottom: var(--border-thick); }
     .pdf-container { position: relative; padding-bottom: 141.4%; height: 0; background: #e0e0e0; }
     .pdf-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-    /* 앱 필터 탭 */
+    /* 웹 앱 필터 & 검색 컨트롤 패널 */
+    .app-controls-panel {
+      background: var(--paper);
+      border: var(--border-thick);
+      box-shadow: 5px 5px 0 var(--black);
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app-filter-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
     .app-filter-bar {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
+
     .app-filter-btn {
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 900;
-      padding: 6px 14px;
-      background: white;
+      padding: 6px 13px;
+      background: var(--bg);
       border: var(--border);
       box-shadow: 3px 3px 0 var(--black);
       cursor: pointer;
@@ -490,72 +695,197 @@
       color: var(--yellow);
     }
 
-    /* 컴팩트 앱 카드 그리드 */
-    .app-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px; margin-top: 20px;
+    .app-search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 240px;
+      max-width: 360px;
     }
+
+    .app-search-input {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 7px 12px;
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      color: var(--black);
+    }
+    .app-search-input:focus {
+      outline: none;
+      background: #fffdf2;
+      border-color: var(--blue);
+    }
+
+    .app-result-status {
+      font-size: 0.82rem;
+      font-weight: 900;
+      color: #333333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px dashed rgba(17, 17, 17, 0.2);
+      padding-top: 8px;
+    }
+
+    /* 통일된 웹 앱 카드 그리드 */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(295px, 1fr));
+      gap: 24px;
+    }
+
     .app-card {
-      display: flex; flex-direction: column; border: var(--border-thick);
-      background: white; overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease; text-decoration: none;
-      color: var(--black); box-shadow: 6px 6px 0 var(--black);
+      display: flex;
+      flex-direction: column;
+      border: var(--border-thick);
+      background: var(--paper);
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      color: var(--black);
+      box-shadow: 6px 6px 0 var(--black);
     }
     .app-card.is-filtered-out {
       display: none;
     }
-    .app-card:hover { transform: translate(-4px, -4px); box-shadow: 10px 10px 0 var(--black); }
-
-    .browser-bar {
-      height: 36px; background: var(--cyan); border-bottom: var(--border-thick);
-      display: flex; align-items: center; padding: 0 12px; gap: 8px;
+    .app-card:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 10px 10px 0 var(--black);
     }
-    .app-card:nth-child(2n) .browser-bar { background: var(--pink); }
-    .app-card:nth-child(3n) .browser-bar { background: var(--yellow); }
-    .browser-dot { width: 10px; height: 10px; border: 2px solid var(--black); border-radius: 50%; background: white; flex-shrink: 0; }
+
+    /* 브라우저 상단 바 통일 (모든 카드에 파일명 칩 표시) */
+    .browser-bar {
+      height: 36px;
+      background: var(--cyan);
+      border-bottom: var(--border-thick);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+    .app-card[data-cat="ai"] .browser-bar { background: var(--pink); }
+    .app-card[data-cat="sheets"] .browser-bar { background: var(--yellow); }
+    .app-card[data-cat="util"] .browser-bar { background: var(--green); }
+    .app-card[data-cat="edu"] .browser-bar { background: var(--cyan); }
+
+    .browser-dot {
+      width: 10px; height: 10px;
+      border: 2px solid var(--black);
+      border-radius: 50%;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
 
     .slot-file-tag {
       margin-left: auto;
       font-size: 0.72rem;
       font-weight: 900;
-      background: white;
+      font-variant-numeric: tabular-nums;
+      background: #ffffff;
       border: 2px solid var(--black);
-      padding: 1px 7px;
+      padding: 1px 8px;
       box-shadow: 2px 2px 0 var(--black);
+      letter-spacing: 0.01em;
     }
 
+    /* 라이브 미리보기 창 통일 */
     .mockup-window {
-      width: 100%; padding-top: 60%; position: relative; overflow: hidden;
-      background: #f5f2eb; border-bottom: var(--border-thick);
+      display: block;
+      width: 100%;
+      padding-top: 58%;
+      position: relative;
+      overflow: hidden;
+      background: #f5f2eb;
+      border-bottom: var(--border-thick);
+      flex-shrink: 0;
     }
     .mockup-window iframe {
       position: absolute; top: 0; left: 0;
-      width: 400%; height: 400%; transform: scale(0.25); transform-origin: 0 0;
-      pointer-events: none; border: none;
+      width: 400%; height: 400%;
+      transform: scale(0.25);
+      transform-origin: 0 0;
+      pointer-events: none;
+      border: none;
     }
-    .mockup-window img {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+    .mockup-hover-badge {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      background: var(--black);
+      color: var(--yellow);
+      border: 2px solid var(--yellow);
+      padding: 3px 9px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all 0.15s ease;
+      pointer-events: none;
+    }
+    .app-card:hover .mockup-hover-badge {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    .app-info { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; background: white; }
+    /* 카드 본문 레이아웃 통일 */
+    .app-info {
+      padding: 18px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+    }
+
+    .app-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
     .app-info .tech {
-      font-size: 0.75rem; font-weight: 900; margin-bottom: 8px;
-      border: 2px solid var(--black); display: inline-block; align-self: flex-start;
-      padding: 2px 8px; background: var(--yellow); box-shadow: 2px 2px 0 var(--black);
+      font-size: 0.75rem;
+      font-weight: 900;
+      border: 2px solid var(--black);
+      padding: 2px 8px;
+      background: var(--yellow);
+      box-shadow: 2px 2px 0 var(--black);
     }
-    .app-info .tech.is-slot {
-      background: var(--bg);
-    }
-    .app-info h3 { font-size: 1.15rem; margin-bottom: 8px; font-weight: 900; }
-    .app-info p { font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; flex-grow: 1; }
 
-    .app-link-btn {
-      align-self: flex-start; font-size: 0.85rem; font-weight: 900; padding: 8px 14px;
-      background: white; border: var(--border); box-shadow: 3px 3px 0 var(--black);
-      transition: all 0.2s; color: var(--black); text-transform: uppercase;
+    .lab-badge {
+      font-size: 0.72rem;
+      font-weight: 900;
+      background: var(--black);
+      color: #ffffff;
+      padding: 2px 8px;
+      letter-spacing: 0.03em;
     }
-    .app-card:hover .app-link-btn {
-      background: var(--red); color: white; transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black);
+
+    .app-info h3 {
+      font-size: 1.15rem;
+      line-height: 1.35;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .app-info h3 a:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .app-info p {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      font-weight: 600;
+      color: #2b2b2b;
+      margin-bottom: 18px;
+      flex-grow: 1;
     }
 
     .app-link-group {
@@ -563,22 +893,58 @@
       gap: 8px;
       flex-wrap: wrap;
       margin-top: auto;
+      padding-top: 12px;
+      border-top: 2px solid rgba(17, 17, 17, 0.12);
+    }
+
+    .app-link-btn {
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 7px 13px;
+      background: #ffffff;
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      transition: all 0.14s ease;
+      color: var(--black);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .app-link-btn:hover {
+      background: var(--red);
+      color: #ffffff;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
     }
     .app-link-btn.app-link-pwa {
       background: var(--yellow);
     }
-    .app-card:hover .app-link-btn.app-link-pwa {
+    .app-link-btn.app-link-pwa:hover {
       background: var(--green);
       color: var(--black);
     }
     .app-link-btn.app-link-qr {
+      margin-left: auto;
       background: var(--cyan);
-      cursor: pointer;
-      font-family: inherit;
+      padding: 7px 10px;
     }
-    .app-card:hover .app-link-btn.app-link-qr {
+    .app-link-btn.app-link-qr:hover {
       background: var(--pink);
       color: var(--black);
+    }
+
+    .empty-filter-box {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 44px 20px;
+      background: #ffffff;
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      font-weight: 900;
     }
 
     /* 이미지 라이트박스 & QR코드 모달 공통 */
@@ -593,20 +959,16 @@
       justify-content: center;
       padding: 20px;
     }
-    .lightbox-modal.open {
-      display: flex;
-    }
+    .lightbox-modal.open { display: flex; }
     .lightbox-box {
-      background: white;
+      background: #ffffff;
       border: var(--border-thick);
       box-shadow: 10px 10px 0 var(--black);
       max-width: 820px;
       width: 100%;
       overflow: hidden;
     }
-    .lightbox-box.qr-box-modal {
-      max-width: 430px;
-    }
+    .lightbox-box.qr-box-modal { max-width: 430px; }
     .lightbox-bar {
       background: var(--yellow);
       border-bottom: var(--border-thick);
@@ -614,12 +976,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
       font-weight: 900;
       font-size: 0.95rem;
     }
+    .lightbox-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .lightbox-close {
       background: var(--red);
-      color: white;
+      color: #ffffff;
       border: 2px solid var(--black);
       width: 30px;
       height: 30px;
@@ -640,7 +1008,7 @@
       max-height: 68vh;
       object-fit: contain;
       border: var(--border);
-      background: white;
+      background: #ffffff;
     }
 
     /* QR 모달 내부 구성 */
@@ -661,17 +1029,15 @@
     .qr-tab-btn {
       flex: 1;
       font-family: inherit;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 900;
-      padding: 7px 10px;
-      background: white;
+      padding: 7px 8px;
+      background: #ffffff;
       border: var(--border);
       box-shadow: 2px 2px 0 var(--black);
       cursor: pointer;
     }
-    .qr-tab-btn.active {
-      background: var(--cyan);
-    }
+    .qr-tab-btn.active { background: var(--cyan); }
     .qr-canvas-frame {
       background: #ffffff;
       border: var(--border-thick);
@@ -685,7 +1051,7 @@
     }
     .qr-url-pill {
       width: 100%;
-      background: white;
+      background: #ffffff;
       border: 2px solid var(--black);
       padding: 8px 10px;
       font-size: 0.8rem;
@@ -711,55 +1077,65 @@
       cursor: pointer;
       text-align: center;
     }
-    .qr-action-btn.secondary {
-      background: var(--yellow);
-    }
+    .qr-action-btn.secondary { background: var(--yellow); }
     .qr-action-btn:hover {
       transform: translate(-1px, -1px);
       box-shadow: 4px 4px 0 var(--black);
     }
 
-    .contact { padding: 100px 0; border-bottom: 0; text-align: center; }
-    .contact h2 { font-size: 2.2rem; }
-    .contact a {
-      display: inline-block; margin-top: 20px; text-decoration: none;
-      font-size: clamp(1.1rem, 4vw, 1.6rem);
-      font-weight: 900; background: var(--yellow); border: var(--border-thick);
-      padding: 10px 24px; box-shadow: 6px 6px 0 var(--black);
+    /* Contact & Footer */
+    .contact { padding: 88px 0; border-bottom: 0; text-align: center; }
+    .contact h2 { font-size: clamp(1.8rem, 4vw, 2.3rem); }
+    .contact-card {
+      display: inline-block;
+      background: var(--paper);
+      border: var(--border-thick);
+      box-shadow: 8px 8px 0 var(--black);
+      padding: 36px 40px;
+      max-width: 620px;
+      width: 100%;
     }
-    .contact a:hover {
+    .contact a.mail-pill {
+      display: inline-block; margin-top: 20px; text-decoration: none;
+      font-size: clamp(1.05rem, 3.6vw, 1.45rem);
+      font-weight: 900; background: var(--yellow); border: var(--border-thick);
+      padding: 11px 26px; box-shadow: 6px 6px 0 var(--black);
+    }
+    .contact a.mail-pill:hover {
       background: var(--cyan);
       transform: translate(-3px, -3px);
       box-shadow: 9px 9px 0 var(--black);
     }
+
     footer {
-      padding: 30px 0; color: white; background: var(--black);
+      padding: 28px 20px; color: #ffffff; background: var(--black);
       font-size: 0.9rem; font-weight: 800; text-align: center;
       border-top: var(--border-thick);
     }
 
+    /* 우측 네비게이션 도트 */
     .nav-assistant {
       position: fixed; top: 50%; right: 16px; transform: translateY(-50%);
       display: flex; flex-direction: column; gap: 10px;
-      background: white; border: var(--border-thick);
+      background: #ffffff; border: var(--border-thick);
       padding: 12px 10px; box-shadow: 5px 5px 0 var(--black); z-index: 1000;
     }
     .nav-dot {
-      width: 18px; height: 18px; background: white;
+      width: 18px; height: 18px; background: #ffffff;
       border: var(--border); transition: all 0.2s; cursor: pointer; position: relative;
     }
     .nav-dot.active { background: var(--red); box-shadow: 2px 2px 0 var(--black); transform: translate(-2px, -2px); }
     .nav-dot::after {
       content: attr(data-tooltip); position: absolute; right: 26px; top: 50%; transform: translateY(-50%);
-      background: var(--black); color: white; padding: 4px 10px; font-size: 0.8rem;
+      background: var(--black); color: #ffffff; padding: 4px 10px; font-size: 0.8rem;
       border: 2px solid var(--black); opacity: 0; pointer-events: none;
       transition: opacity 0.2s; white-space: nowrap; font-weight: 800;
     }
     .nav-dot:hover::after { opacity: 1; }
 
     .brutal-reveal {
-      opacity: 0; transform: translateY(30px) scale(0.98);
-      transition: opacity 0.5s, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0; transform: translateY(24px) scale(0.985);
+      transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .brutal-reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
 
@@ -770,18 +1146,14 @@
 
     @media (max-width: 768px) {
       .two { grid-template-columns: 1fr; }
-      .hero { padding: 72px 0 60px; }
+      .hero { padding: 54px 0 48px; }
       .music-prompt-bar {
         padding: 7px 10px 7px 14px;
         gap: 10px;
       }
-      .music-prompt-text {
-        font-size: 0.84rem;
-      }
-      .pill-choice-btn {
-        padding: 5px 12px;
-        font-size: 0.82rem;
-      }
+      .music-prompt-text { font-size: 0.84rem; }
+      .pill-choice-btn { padding: 5px 12px; font-size: 0.82rem; }
+      .contact-card { padding: 26px 20px; }
     }
   </style>
 </head>
@@ -807,6 +1179,9 @@
       <svg id="soundOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
     </button>
   </div>
+  <div class="scroll-progress-track">
+    <div class="scroll-progress-fill" id="scrollProgressFill"></div>
+  </div>
 </div>
 
 <!-- 첫 접속 시 상단 양옆 라운드 형태 음악 재생 선택 바 -->
@@ -828,9 +1203,9 @@
 <div class="nav-assistant">
   <div class="nav-dot active" data-tooltip="Intro" data-target="intro"></div>
   <div class="nav-dot" data-tooltip="About" data-target="about"></div>
-  <div class="nav-dot" data-tooltip="Visual Design" data-target="work-visual"></div>
-  <div class="nav-dot" data-tooltip="Policy & Research" data-target="work-policy"></div>
-  <div class="nav-dot" data-tooltip="Web Apps (Lab 1-24)" data-target="work-web"></div>
+  <div class="nav-dot" data-tooltip="01. Visual Design" data-target="work-visual"></div>
+  <div class="nav-dot" data-tooltip="02. Policy & Research" data-target="work-policy"></div>
+  <div class="nav-dot" data-tooltip="03. Web Apps (19)" data-target="work-web"></div>
   <div class="nav-dot" data-tooltip="Contact" data-target="contact"></div>
 </div>
 
@@ -839,7 +1214,9 @@
     <b>문태양</b>
     <nav>
       <a href="#about">소개</a>
-      <a href="#work-visual">활동</a>
+      <a href="#work-visual">시각 디자인</a>
+      <a href="#work-policy">학술·기획</a>
+      <a href="#work-web">웹 앱 (19)</a>
       <a href="#contact">연락</a>
     </nav>
   </div>
@@ -847,41 +1224,69 @@
   <header class="hero scroll-section brutal-reveal" id="intro">
     <p class="small">상업정보교육과 · 문헌정보교육과 복수전공</p>
     <h1>배우고, 엮어내어<br>작은 것을 <span>만들어</span> 봅니다.</h1>
-    <p>
-      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 기획안, 시각 디자인, 또는 실용적인 도구로 구현해 내는 과정을 즐깁니다.
+    <p class="hero-copy">
+      안녕하세요, 문태양입니다. 정보를 수집하고 분류하는 데서 그치지 않고, 기획안, 시각 디자인, 그리고 브라우저에서 바로 작동하는 실용적인 웹 앱 도구로 구현해 내는 과정을 즐깁니다.
     </p>
-    <div class="meta">
-      <span>#교육과 지식정보</span>
-      <span>#시각 디자인</span>
-      <span>#기획 및 웹 앱 개발</span>
+    <div class="hero-bottom-row">
+      <div class="meta">
+        <span>#교육과 지식정보</span>
+        <span>#시각 디자인</span>
+        <span>#기획 및 웹 앱 개발</span>
+      </div>
+      <div class="hero-cta-group">
+        <a href="#work-web" class="brutal-cta-btn">웹 앱 19종 둘러보기 &darr;</a>
+      </div>
     </div>
   </header>
+</div>
 
+<!-- 키네틱 마키 배너 -->
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-track">
+    <span>INFORMATION &amp; EDUCATION</span><span class="marquee-dot">✦</span>
+    <span>VISUAL &amp; 3D GRAPHIC DESIGN</span><span class="marquee-dot">✦</span>
+    <span>OPEN-QUAL LIBRARY RESEARCH</span><span class="marquee-dot">✦</span>
+    <span>19 INTERACTIVE WEB APPS (LAB 01–24)</span><span class="marquee-dot">✦</span>
+    <span>GOOGLE SHEETS FULL-STACK SYNC</span><span class="marquee-dot">✦</span>
+    <span>INFORMATION &amp; EDUCATION</span><span class="marquee-dot">✦</span>
+    <span>VISUAL &amp; 3D GRAPHIC DESIGN</span><span class="marquee-dot">✦</span>
+    <span>OPEN-QUAL LIBRARY RESEARCH</span><span class="marquee-dot">✦</span>
+    <span>19 INTERACTIVE WEB APPS (LAB 01–24)</span><span class="marquee-dot">✦</span>
+    <span>GOOGLE SHEETS FULL-STACK SYNC</span><span class="marquee-dot">✦</span>
+  </div>
+</div>
+
+<div class="wrap">
   <section id="about" class="scroll-section brutal-reveal">
-    <p class="label">About</p>
+    <p class="section-kicker"><span>00</span> / ABOUT ME</p>
     <h2>지금 관심 있는 것</h2>
     <p class="lead">상업정보와 문헌정보학을 함께 배우며, 정보를 사람들에게 더 유용하고 매력적으로 전달하는 방법을 고민합니다.</p>
     <div class="two">
-      <div>
+      <div class="two-card">
+        <span class="two-num">FOCUS 01</span>
         <h3>기획과 제안</h3>
-        <p>복잡한 문제를 분석하고 실현 가능한 아이디어로 풀어냅니다. 도서관 정책부터 지역 축제까지 공간과 사람을 잇는 기획을 시도합니다.</p>
+        <p>복잡한 문제를 분석하고 실현 가능한 아이디어로 풀어냅니다. 도서관 평가 모형 연구부터 학교 행정·학급 운영 자동화까지 공간과 사람을 잇는 기획을 시도합니다.</p>
       </div>
-      <div>
+      <div class="two-card">
+        <span class="two-num">FOCUS 02</span>
         <h3>시각화와 도구 제작</h3>
-        <p>추상적인 아이디어를 포스터와 그래픽으로 표현하고, 브라우저에서 바로 쓸 수 있는 인터랙티브 웹 앱을 직접 제작합니다.</p>
+        <p>추상적인 아이디어를 포스터와 3D 그래픽으로 표현하고, 수업 현장과 일상에서 즉시 활용할 수 있는 인터랙티브 웹 앱과 데이터베이스 연동 도구를 직접 제작합니다.</p>
       </div>
     </div>
   </section>
 
   <section id="work">
-    <p class="label">Activities</p>
+    <p class="section-kicker"><span>ARCHIVE</span> / ACTIVITIES</p>
     <h2 class="brutal-reveal">해본 것</h2>
-    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 그리고 실습 1부터 24까지 구현·연결한 웹 앱 프로젝트 아카이브입니다.</p>
+    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 학술 연구, 그리고 실습 1부터 24까지 구현·연결한 19종의 웹 앱 프로젝트 아카이브입니다.</p>
 
     <!-- Group 1: 시각 디자인 -->
     <div class="work-group scroll-section brutal-reveal" id="work-visual">
       <div class="work-group-header">
-        <div class="work-group-title">시각 디자인 및 3D 모델링</div>
+        <div class="work-group-title">
+          <span class="group-index-pill">SECTION 01</span>
+          <span>시각 디자인 및 3D 모델링 (5)</span>
+        </div>
       </div>
 
       <!-- 1. 대학 밴드부 홍보물 디자인 -->
@@ -894,8 +1299,12 @@
             <button type="button" class="carousel-btn" data-carousel-target="bandCarousel" data-dir="1" aria-label="다음 카드">&rarr;</button>
           </div>
         </div>
-        <p class="when">동아리 홍보 카드뉴스 · 4컷 시리즈</p>
-        <p class="work-desc">대학 밴드부 신입 부원 모집과 정기 공연 안내를 위해 제작한 4컷 카드뉴스 홍보물입니다. (클릭 시 확대)</p>
+        <div class="work-meta-row">
+          <span class="when">동아리 홍보 카드뉴스 · 4컷 시리즈</span>
+          <span class="work-tag">#카드뉴스</span>
+          <span class="work-tag">#그래픽 디자인</span>
+        </div>
+        <p class="work-desc">대학 밴드부 신입 부원 모집과 정기 공연 안내를 위해 제작한 4컷 카드뉴스 홍보물입니다. (이미지 클릭 시 크게 보기)</p>
         <div class="carousel-wrap">
           <div class="carousel cardnews-carousel" id="bandCarousel" data-counter-id="bandCounter" data-total="4">
             <img src="컷1-4 (2).png" alt="밴드부 홍보물 1컷" data-zoom-title="대학 밴드부 홍보물 (1 / 4)">
@@ -916,7 +1325,11 @@
             <button type="button" class="zoom-pill-btn" data-zoom-flip="jacketFlip">크게 보기</button>
           </div>
         </div>
-        <p class="when">학과 단체복 리뉴얼 디자인</p>
+        <div class="work-meta-row">
+          <span class="when">학과 단체복 리뉴얼 디자인</span>
+          <span class="work-tag">#브랜딩</span>
+          <span class="work-tag">#전·후 비교</span>
+        </div>
         <p class="work-desc">기존 과잠 디자인의 요소를 재해석하여 학과 정체성과 배색 균형을 개선한 시안입니다. 카드를 클릭하면 전·후 시안을 비교할 수 있습니다.</p>
         <div class="flip-container ratio-card" id="jacketFlip" data-front-title="학과 과잠 디자인 · 기존 디자인" data-back-title="학과 과잠 디자인 · 리뉴얼 시안">
           <div class="flip-inner">
@@ -943,7 +1356,11 @@
             <button type="button" class="zoom-pill-btn" data-zoom-flip="medalFlip">크게 보기</button>
           </div>
         </div>
-        <p class="when">전국체육대회 메달 디자인 공모</p>
+        <div class="work-meta-row">
+          <span class="when">전국체육대회 메달 디자인 공모</span>
+          <span class="work-tag">#상징 그래픽</span>
+          <span class="work-tag">#양면 구조</span>
+        </div>
         <p class="work-desc">제주의 자연 상징과 대회의 역동성을 앞면과 뒷면 양면 구조로 담아낸 메달 디자인입니다.</p>
         <div class="flip-container ratio-medal" id="medalFlip" data-front-title="제주 전국체전 메달 디자인 · 앞면" data-back-title="제주 전국체전 메달 디자인 · 뒷면">
           <div class="flip-inner">
@@ -959,7 +1376,7 @@
           <div class="flip-hint">CLICK!</div>
         </div>
       </article>
-      
+
       <!-- 4. 학교 마스코트 미니블록 디자인 -->
       <article class="work brutal-reveal">
         <div class="work-head">
@@ -970,7 +1387,12 @@
             <button type="button" class="carousel-btn" data-carousel-target="mascotCarousel" data-dir="1" aria-label="다음 이미지">&rarr;</button>
           </div>
         </div>
-        <p class="when">3학년 · 3D 캐릭터 굿즈 모델링</p>
+        <div class="work-meta-row">
+          <span class="when">3학년 · 3D 캐릭터 굿즈 모델링</span>
+          <span class="work-tag">#3D 모델링</span>
+          <span class="work-tag">#굿즈 디자인</span>
+        </div>
+        <p class="work-desc">학교 마스코트를 입체 미니블록 굿즈 형태로 구현하기 위해 대각선·정면·측면·후면 4면 뷰를 설계한 3D 모델링 작업입니다.</p>
         <div class="carousel-wrap">
           <div class="carousel" id="mascotCarousel" data-counter-id="mascotCounter" data-total="4">
             <img src="대각선.png" alt="미니블록 대각선" data-zoom-title="학교 마스코트 미니블록 (대각선)">
@@ -991,7 +1413,12 @@
             <button type="button" class="zoom-pill-btn" data-zoom-flip="gyeonggiFlip">크게 보기</button>
           </div>
         </div>
-        <p class="when">그래픽 디자인 공모</p>
+        <div class="work-meta-row">
+          <span class="when">그래픽 디자인 공모</span>
+          <span class="work-tag">#통합 엠블럼</span>
+          <span class="work-tag">#공식 포스터</span>
+        </div>
+        <p class="work-desc">전국체육대회 및 전국장애인체육대회의 통합 엠블럼과 공식 포스터를 함께 구성한 그래픽 디자인 출품작입니다.</p>
         <div class="flip-container ratio-poster" id="gyeonggiFlip" data-front-title="경기 전국체전 · 통합 엠블럼" data-back-title="경기 전국체전 · 장애인체전 포스터">
           <div class="flip-inner">
             <div class="flip-front">
@@ -1011,13 +1438,24 @@
     <!-- Group 2: 정책 및 논문 -->
     <div class="work-group scroll-section brutal-reveal" id="work-policy">
       <div class="work-group-header">
-        <div class="work-group-title">정책 기획 및 학술 연구</div>
+        <div class="work-group-title">
+          <span class="group-index-pill">SECTION 02</span>
+          <span>정책 기획 및 학술 연구 (1)</span>
+        </div>
       </div>
       <article class="work brutal-reveal">
-        <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구 <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">새창 열기 &rarr;</a></h3>
-        <p class="when">학술 연구 / OPEN-Qual 모형 개발</p>
+        <div class="work-head">
+          <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구</h3>
+          <a href="소논문_202300133_문태양.pdf" target="_blank" rel="noopener noreferrer" class="project-link">PDF 새창 열기 &rarr;</a>
+        </div>
+        <div class="work-meta-row">
+          <span class="when">학술 연구 · OPEN-Qual 모형 개발</span>
+          <span class="work-tag">#문헌정보학</span>
+          <span class="work-tag">#도서관 품질 평가</span>
+        </div>
+        <p class="work-desc">기존 도서관 서비스 품질 평가 모형의 한계를 분석하고, 개방성과 이용자 경험을 반영한 새로운 평가 지표 체계(OPEN-Qual)를 제안한 학부 연구 소논문입니다.</p>
         <details>
-          <summary>논문 본문 미리보기 (클릭)</summary>
+          <summary>논문 본문 미리보기 (클릭하여 펼치기)</summary>
           <div class="pdf-container">
             <iframe src="소논문_202300133_문태양.pdf" title="학술 소논문 PDF 미리보기" allowfullscreen></iframe>
           </div>
@@ -1025,281 +1463,526 @@
       </article>
     </div>
 
-    <!-- Group 3: 웹 앱 (실습 1 ~ 24 통합) -->
+    <!-- Group 3: 웹 앱 (실습 1 ~ 24 통일 규격) -->
     <div class="work-group scroll-section brutal-reveal" id="work-web">
       <div class="work-group-header">
-        <div class="work-group-title">바이브코딩 및 웹 앱 프로젝트 (실습 1 ~ 24)</div>
-        <div class="app-filter-bar" id="appFilterBar">
-          <button type="button" class="app-filter-btn active" data-filter="all">전체 (19)</button>
-          <button type="button" class="app-filter-btn" data-filter="ai">AI · 시각화</button>
-          <button type="button" class="app-filter-btn" data-filter="edu">교육 · 교구</button>
-          <button type="button" class="app-filter-btn" data-filter="util">유틸리티 · 생활</button>
+        <div class="work-group-title">
+          <span class="group-index-pill">SECTION 03</span>
+          <span>바이브코딩 및 웹 앱 프로젝트 (19)</span>
         </div>
       </div>
-      
-      <div class="app-grid">
-        
-        <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="todo.html" title="오늘의 할 일 관리 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">개인 프로젝트</div>
-            <h3>오늘의 할 일 관리</h3>
-            <p>직관적으로 목표를 추가하고 완료를 체크하는 가벼운 웹 도구입니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
 
-        <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="stamp.html" title="디지털 도장 생성기 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">개인 프로젝트</div>
-            <h3>디지털 도장 생성기</h3>
-            <p>이름과 글꼴을 선택해 투명 도장 이미지를 실시간 생성·다운로드합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+      <!-- 카테고리 필터 + 실시간 검색 통합 바 -->
+      <div class="app-controls-panel brutal-reveal">
+        <div class="app-filter-top">
+          <div class="app-filter-bar" id="appFilterBar">
+            <button type="button" class="app-filter-btn active" data-filter="all">전체 (19)</button>
+            <button type="button" class="app-filter-btn" data-filter="ai">AI · 시각화 (4)</button>
+            <button type="button" class="app-filter-btn" data-filter="edu">교육 · 교구 (5)</button>
+            <button type="button" class="app-filter-btn" data-filter="sheets">시트 연동 · DB (5)</button>
+            <button type="button" class="app-filter-btn" data-filter="util">유틸리티 · 생활 (5)</button>
           </div>
-        </a>
-
-        <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="myeongeon.html" title="감정별 명언 추천 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">인터랙티브 웹 (실습 4)</div>
-            <h3>감정별 명언 추천 앱</h3>
-            <p>감정 상태에 따라 위로의 문장을 무작위로 제시합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="cardgame.html" title="기억력 짝맞추기 게임 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">디지털 교구 (실습 5)</div>
-            <h3>기억력 짝맞추기 게임</h3>
-            <p>초등학생 집중력 향상을 위한 2D 동물 짝맞추기 게임입니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="libgame.html" title="도서관 지식 라운지 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">학습 앱 (실습 6)</div>
-            <h3>도서관 지식 라운지</h3>
-            <p>KDC 강목 짝맞추기와 4지선다형 퀴즈를 통합 제공합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="2d-viewer.html" title="평면도형 학습 도구 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">수학 교구 (실습 7)</div>
-            <h3>평면도형 학습 도구</h3>
-            <p>도형 회전 및 뒤집기 조작을 시각적으로 확인하는 교구입니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="3d-viewer.html" title="입체도형 학습 도구 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">수학 교구 (실습 7)</div>
-            <h3>입체도형 학습 도구</h3>
-            <p>입체도형 회전 조작을 3D로 시각화하는 학습 도구입니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="literacy.html" title="디지털 리터러시 다각형 차트 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">시각화 (실습 9)</div>
-            <h3>디지털 리터러시 다각형 차트</h3>
-            <p>역량 평가 결과를 사전/사후 레이더 차트로 분석합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="dice.html" title="3D 주사위 시뮬레이터 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">통계 도구 (실습 11)</div>
-            <h3>3D 주사위 시뮬레이터</h3>
-            <p>페르소나 카툰풍 3D 주사위와 실시간 확률 집계 차트입니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="clockgame.html" title="시계 읽기 연습 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">수학 교구 (실습 14)</div>
-            <h3>시계 읽기 연습 앱</h3>
-            <p>분침 이동에 따라 시침이 연동되는 초등 저학년 시계 연습 앱입니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="aicatch.html" title="AI 캐치마인드 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">AI 퀴즈 (실습 15)</div>
-            <h3>AI 캐치마인드</h3>
-            <p>그림을 그리고 제미나이 AI 시각 분석 모델로 정답을 맞추는 앱입니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="ai">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <div class="mockup-window"><iframe src="kkfood.html" title="AI 칼로리 자동 계산 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
-          <div class="app-info">
-            <div class="tech">AI 영양 (실습 16)</div>
-            <h3>AI 칼로리 자동 계산 앱</h3>
-            <p>음식 사진을 분석해 칼로리와 영양성분을 추정하고 수정합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
-          </div>
-        </a>
-
-        <!-- 실습 17·18: 운동 기록 · 월간 통계 앱 (웹 + 모바일 PWA + QR 폰 연결) -->
-        <div class="app-card brutal-reveal" data-cat="util">
-          <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
-          <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="mockup-window" style="display:block;">
-            <iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
-          </a>
-          <div class="app-info">
-            <div class="tech">건강 관리 (실습 17·18)</div>
-            <h3>운동 기록 · 월간 통계 앱</h3>
-            <p>운동 항목별 달성 체크와 수치를 저장하고 월별 달력·차트로 관리합니다.</p>
-            <div class="app-link-group">
-              <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">웹 버전 &rarr;</a>
-              <a href="https://nlasdnfkl2.github.io/my-webpage/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="app-link-btn app-link-pwa">모바일 앱 버전 &rarr;</a>
-              <button type="button" class="app-link-btn app-link-qr" data-qr-mode="pwa">QR 폰 연결</button>
-            </div>
+          <div class="app-search-wrap">
+            <input type="search" class="app-search-input" id="appSearchInput" placeholder="앱 제목, 실습 번호, 파일명 검색... (단축키 /)">
           </div>
         </div>
+        <div class="app-result-status">
+          <span id="appVisibleStatus">표시 중인 프로젝트: 19 / 19개</span>
+          <span>카드 상단 파일명 태그 및 우측 QR 버튼으로 모바일 즉시 연결 가능</span>
+        </div>
+      </div>
 
-        <!-- 실습 19: 영수증 정리도우미 앱 -->
-        <a href="mymoney.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
+      <div class="app-grid" id="appGrid">
+
+        <!-- 01 -->
+        <article class="app-card brutal-reveal" data-cat="util">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">todo.html</span>
+          </div>
+          <a href="todo.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="todo.html" title="오늘의 할 일 관리 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">유틸리티</span>
+              <span class="lab-badge">PERSONAL #01</span>
+            </div>
+            <h3><a href="todo.html" target="_blank" rel="noopener noreferrer">오늘의 할 일 관리</a></h3>
+            <p>직관적으로 목표를 추가하고 완료 여부를 체크하며 하루 일정을 정리하는 가벼운 웹 도구입니다.</p>
+            <div class="app-link-group">
+              <a href="todo.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="todo.html" data-qr-title="오늘의 할 일 관리">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 02 -->
+        <article class="app-card brutal-reveal" data-cat="util">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">stamp.html</span>
+          </div>
+          <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="stamp.html" title="디지털 도장 생성기 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">유틸리티</span>
+              <span class="lab-badge">PERSONAL #02</span>
+            </div>
+            <h3><a href="stamp.html" target="_blank" rel="noopener noreferrer">디지털 도장 생성기</a></h3>
+            <p>이름과 서체·테두리 스타일을 선택해 투명 배경 도장 이미지를 실시간 생성하고 다운로드합니다.</p>
+            <div class="app-link-group">
+              <a href="stamp.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="stamp.html" data-qr-title="디지털 도장 생성기">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 03 -->
+        <article class="app-card brutal-reveal" data-cat="util">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">myeongeon.html</span>
+          </div>
+          <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="myeongeon.html" title="감정별 명언 추천 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">인터랙티브 웹</span>
+              <span class="lab-badge">LAB 04</span>
+            </div>
+            <h3><a href="myeongeon.html" target="_blank" rel="noopener noreferrer">감정별 명언 추천 앱</a></h3>
+            <p>현재 감정 상태를 선택하면 상황에 어울리는 위로와 영감의 문장을 무작위로 추천합니다.</p>
+            <div class="app-link-group">
+              <a href="myeongeon.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="myeongeon.html" data-qr-title="감정별 명언 추천 앱">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 04 -->
+        <article class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">cardgame.html</span>
+          </div>
+          <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="cardgame.html" title="기억력 짝맞추기 게임 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">디지털 교구</span>
+              <span class="lab-badge">LAB 05</span>
+            </div>
+            <h3><a href="cardgame.html" target="_blank" rel="noopener noreferrer">기억력 짝맞추기 게임</a></h3>
+            <p>초등학생의 집중력과 작업 기억력 향상을 위해 설계한 2D 동물 카드 짝맞추기 학습 게임입니다.</p>
+            <div class="app-link-group">
+              <a href="cardgame.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="cardgame.html" data-qr-title="기억력 짝맞추기 게임">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 05 -->
+        <article class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">libgame.html</span>
+          </div>
+          <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="libgame.html" title="도서관 지식 라운지 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">문헌정보 학습</span>
+              <span class="lab-badge">LAB 06</span>
+            </div>
+            <h3><a href="libgame.html" target="_blank" rel="noopener noreferrer">도서관 지식 라운지</a></h3>
+            <p>한국십진분류법(KDC) 강목 짝맞추기 훈련과 4지선다형 도서관 상식 퀴즈를 통합 제공합니다.</p>
+            <div class="app-link-group">
+              <a href="libgame.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="libgame.html" data-qr-title="도서관 지식 라운지">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 06 -->
+        <article class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">2d-viewer.html</span>
+          </div>
+          <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="2d-viewer.html" title="평면도형 학습 도구 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">수학 교구</span>
+              <span class="lab-badge">LAB 07-A</span>
+            </div>
+            <h3><a href="2d-viewer.html" target="_blank" rel="noopener noreferrer">평면도형 학습 도구</a></h3>
+            <p>다각형의 밀기·뒤집기·돌리기 조작 결과를 단계별로 시각 비교하는 초등 수학 교구입니다.</p>
+            <div class="app-link-group">
+              <a href="2d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="2d-viewer.html" data-qr-title="평면도형 학습 도구">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 07 -->
+        <article class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">3d-viewer.html</span>
+          </div>
+          <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="3d-viewer.html" title="입체도형 학습 도구 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">수학 교구</span>
+              <span class="lab-badge">LAB 07-B</span>
+            </div>
+            <h3><a href="3d-viewer.html" target="_blank" rel="noopener noreferrer">입체도형 학습 도구</a></h3>
+            <p>각기둥과 각뿔 등 입체도형의 회전과 겨냥도·전개도 구조를 3D로 탐색하는 학습 도구입니다.</p>
+            <div class="app-link-group">
+              <a href="3d-viewer.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="3d-viewer.html" data-qr-title="입체도형 학습 도구">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 08 -->
+        <article class="app-card brutal-reveal" data-cat="ai">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">literacy.html</span>
+          </div>
+          <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="literacy.html" title="디지털 리터러시 다각형 차트 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">데이터 시각화</span>
+              <span class="lab-badge">LAB 09</span>
+            </div>
+            <h3><a href="literacy.html" target="_blank" rel="noopener noreferrer">디지털 리터러시 다각형 차트</a></h3>
+            <p>학생별 디지털 리터러시 핵심 역량 진단 결과를 사전·사후 레이더 다각형 차트로 비교 분석합니다.</p>
+            <div class="app-link-group">
+              <a href="literacy.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="literacy.html" data-qr-title="디지털 리터러시 다각형 차트">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 09 -->
+        <article class="app-card brutal-reveal" data-cat="ai">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">dice.html</span>
+          </div>
+          <a href="dice.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="dice.html" title="3D 주사위 시뮬레이터 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">3D · 통계 시각화</span>
+              <span class="lab-badge">LAB 11</span>
+            </div>
+            <h3><a href="dice.html" target="_blank" rel="noopener noreferrer">3D 주사위 시뮬레이터</a></h3>
+            <p>카툰 셰이딩 3D 주사위 물리 굴림과 시행 횟수에 따른 실시간 확률 분포 차트를 제공합니다.</p>
+            <div class="app-link-group">
+              <a href="dice.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="dice.html" data-qr-title="3D 주사위 시뮬레이터">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 10 -->
+        <article class="app-card brutal-reveal" data-cat="edu">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">clockgame.html</span>
+          </div>
+          <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="clockgame.html" title="시계 읽기 연습 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">수학 교구</span>
+              <span class="lab-badge">LAB 14</span>
+            </div>
+            <h3><a href="clockgame.html" target="_blank" rel="noopener noreferrer">시계 읽기 연습 앱</a></h3>
+            <p>분침 드래그에 따라 시침이 실제 아날로그 시계처럼 연동되는 초등 저학년 시각 읽기 연습 앱입니다.</p>
+            <div class="app-link-group">
+              <a href="clockgame.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="clockgame.html" data-qr-title="시계 읽기 연습 앱">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 11 -->
+        <article class="app-card brutal-reveal" data-cat="ai">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">aicatch.html</span>
+          </div>
+          <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="aicatch.html" title="AI 캐치마인드 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">AI 비전 퀴즈</span>
+              <span class="lab-badge">LAB 15</span>
+            </div>
+            <h3><a href="aicatch.html" target="_blank" rel="noopener noreferrer">AI 캐치마인드</a></h3>
+            <p>캔버스에 스케치를 그리면 Gemini AI 시각 분석 모델이 그림의 주제를 실시간으로 추론해 맞춥니다.</p>
+            <div class="app-link-group">
+              <a href="aicatch.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="aicatch.html" data-qr-title="AI 캐치마인드">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 12 -->
+        <article class="app-card brutal-reveal" data-cat="ai">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">kkfood.html</span>
+          </div>
+          <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="kkfood.html" title="AI 칼로리 자동 계산 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">AI 영양 분석</span>
+              <span class="lab-badge">LAB 16</span>
+            </div>
+            <h3><a href="kkfood.html" target="_blank" rel="noopener noreferrer">AI 칼로리 자동 계산 앱</a></h3>
+            <p>식단 사진을 업로드하면 AI가 음식 종류와 칼로리·탄단지 영양성분을 자동 산출하고 기록합니다.</p>
+            <div class="app-link-group">
+              <a href="kkfood.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="kkfood.html" data-qr-title="AI 칼로리 자동 계산 앱">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 13 -->
+        <article class="app-card brutal-reveal" data-cat="util">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">phycheck.html</span>
+          </div>
+          <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="phycheck.html" title="운동 체크리스트 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">건강 · PWA 앱</span>
+              <span class="lab-badge">LAB 17·18</span>
+            </div>
+            <h3><a href="phycheck.html" target="_blank" rel="noopener noreferrer">운동 기록 · 월간 통계 앱</a></h3>
+            <p>운동 항목별 달성 체크와 수치를 저장하고 월별 캘린더·통계 차트로 관리하는 웹/모바일 앱입니다.</p>
+            <div class="app-link-group">
+              <a href="phycheck.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">웹 버전 &rarr;</a>
+              <a href="https://nlasdnfkl2.github.io/my-webpage/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="app-link-btn app-link-pwa">모바일 PWA &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-mode="pwa">QR</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 14 -->
+        <article class="app-card brutal-reveal" data-cat="util">
           <div class="browser-bar">
             <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
             <span class="slot-file-tag">mymoney.html</span>
           </div>
-          <div class="mockup-window"><iframe src="mymoney.html" title="영수증 정리도우미 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <a href="mymoney.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="mymoney.html" title="영수증 정리도우미 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
           <div class="app-info">
-            <div class="tech">OCR 정산 (실습 19)</div>
-            <h3>영수증 정리도우미 앱</h3>
-            <p>로컬 OCR로 영수증의 가맹점·일시·금액·부가세를 자동 추출하고 엑셀(.xlsx)로 정리합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+            <div class="app-meta-row">
+              <span class="tech">OCR 정산</span>
+              <span class="lab-badge">LAB 19</span>
+            </div>
+            <h3><a href="mymoney.html" target="_blank" rel="noopener noreferrer">영수증 정리도우미 앱</a></h3>
+            <p>로컬 OCR로 영수증의 가맹점·일시·금액·부가세를 자동 추출하고 엑셀(.xlsx) 시트로 정산합니다.</p>
+            <div class="app-link-group">
+              <a href="mymoney.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="mymoney.html" data-qr-title="영수증 정리도우미 앱">QR</button>
+            </div>
           </div>
-        </a>
+        </article>
 
-        <!-- 실습 20: 지출관리 가계부 앱 (연결 슬롯) -->
-        <a href="ggb.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="util">
+        <!-- 15 -->
+        <article class="app-card brutal-reveal" data-cat="sheets">
           <div class="browser-bar">
             <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
             <span class="slot-file-tag">ggb.html</span>
           </div>
-          <div class="mockup-window"><iframe src="ggb.html" title="지출관리 가계부 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <a href="ggb.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="ggb.html" title="지출관리 가계부 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
           <div class="app-info">
-            <div class="tech">가계부 · 시트 연동 (실습 20)</div>
-            <h3>지출관리 가계부 앱</h3>
-            <p>영수증 추출 내역을 항목별로 분류해 쌓고 월별·항목별 지출 흐름을 차트로 관리합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+            <div class="app-meta-row">
+              <span class="tech">가계부 · 시트 연동</span>
+              <span class="lab-badge">LAB 20</span>
+            </div>
+            <h3><a href="ggb.html" target="_blank" rel="noopener noreferrer">지출관리 가계부 앱</a></h3>
+            <p>구글 시트와 연동해 영수증·지출 내역을 항목별로 누적하고 월별·카테고리별 소비 흐름을 분석합니다.</p>
+            <div class="app-link-group">
+              <a href="ggb.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="ggb.html" data-qr-title="지출관리 가계부 앱">QR</button>
+            </div>
           </div>
-        </a>
+        </article>
 
-        <!-- 실습 21: 학급 생일 관리 앱 (연결 슬롯) -->
-        <a href="birthday.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+        <!-- 16 -->
+        <article class="app-card brutal-reveal" data-cat="sheets">
           <div class="browser-bar">
             <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
             <span class="slot-file-tag">birthday.html</span>
           </div>
-          <div class="mockup-window"><iframe src="birthday.html" title="학급 생일 관리 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <a href="birthday.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="birthday.html" title="학급 생일 관리 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
           <div class="app-info">
-            <div class="tech">학급 관리 · 시트 연동 (실습 21)</div>
-            <h3>학급 생일 관리 앱</h3>
-            <p>구글 시트와 연동해 다가오는 생일을 하이라이트하고 월별 필터 및 D-Day 순으로 정렬합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+            <div class="app-meta-row">
+              <span class="tech">학급 관리 · 시트 연동</span>
+              <span class="lab-badge">LAB 21</span>
+            </div>
+            <h3><a href="birthday.html" target="_blank" rel="noopener noreferrer">학급 생일 관리 앱</a></h3>
+            <p>구글 시트 DB와 연동해 다가오는 학생 생일을 자동 강조하고 월별 필터 및 D-Day 순으로 정렬합니다.</p>
+            <div class="app-link-group">
+              <a href="birthday.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="birthday.html" data-qr-title="학급 생일 관리 앱">QR</button>
+            </div>
           </div>
-        </a>
+        </article>
 
-        <!-- 실습 22: 비밀 우체통 앱 (연결 슬롯) -->
-        <a href="uche.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+        <!-- 17 -->
+        <article class="app-card brutal-reveal" data-cat="sheets">
           <div class="browser-bar">
             <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
             <span class="slot-file-tag">uche.html</span>
           </div>
-          <div class="mockup-window"><iframe src="uche.html" title="비밀 우체통 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <a href="uche.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="uche.html" title="비밀 우체통 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
           <div class="app-info">
-            <div class="tech">학급 소통 · 시트 연동 (실습 22)</div>
-            <h3>비밀 우체통 앱</h3>
-            <p>학생의 고민 내용을 구글 시트에 자동 저장하고 교사 이메일 알림 및 QR 접속을 지원합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+            <div class="app-meta-row">
+              <span class="tech">학급 상담 · 시트 연동</span>
+              <span class="lab-badge">LAB 22</span>
+            </div>
+            <h3><a href="uche.html" target="_blank" rel="noopener noreferrer">비밀 우체통 앱</a></h3>
+            <p>학생의 익명·실명 고민 사연을 구글 시트에 자동 저장하고 교사 이메일 알림 및 QR 접속을 지원합니다.</p>
+            <div class="app-link-group">
+              <a href="uche.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="uche.html" data-qr-title="비밀 우체통 앱">QR</button>
+            </div>
           </div>
-        </a>
+        </article>
 
-        <!-- 실습 23: 2D 가상 미술관 앱 (연결 슬롯) -->
-        <a href="gamiart.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+        <!-- 18: 실습 23 (R.E.P.O. 모티브 3D 멀티플레이 작품 전시관) -->
+        <article class="app-card brutal-reveal" data-cat="sheets">
           <div class="browser-bar">
             <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
             <span class="slot-file-tag">gamiart.html</span>
           </div>
-          <div class="mockup-window"><iframe src="gamiart.html" title="2D 가상 미술관 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <a href="gamiart.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="gamiart.html" title="R.E.P.O. 멀티플레이 3D 작품 전시관 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
           <div class="app-info">
-            <div class="tech">2D 전시 · DB 연동 (실습 23)</div>
-            <h3>2D 가상 미술관 앱</h3>
-            <p>방향키로 2D 아바타를 조종해 작품을 관람하고 이미지 업로드 및 감상평을 실시간 공유합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+            <div class="app-meta-row">
+              <span class="tech">3D 멀티플레이 · 시트 DB</span>
+              <span class="lab-badge">LAB 23</span>
+            </div>
+            <h3><a href="gamiart.html" target="_blank" rel="noopener noreferrer">R.E.P.O. 멀티플레이 3D 작품 전시관</a></h3>
+            <p>친구들과 3D 전시관을 탐험하며 시야 포커스 작품 설명 확인, 트랙터 빔 이동, 이미지 업로드·비밀번호 삭제를 지원합니다.</p>
+            <div class="app-link-group">
+              <a href="gamiart.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="gamiart.html" data-qr-title="R.E.P.O. 멀티플레이 3D 작품 전시관">QR</button>
+            </div>
           </div>
-        </a>
+        </article>
 
-        <!-- 실습 24: 우리 반 스마트 장보기 미션 앱 (연결 슬롯) -->
-        <a href="jang.html" target="_blank" rel="noopener noreferrer" class="app-card brutal-reveal" data-cat="edu">
+        <!-- 19: 실습 24 (K-에듀파인 반 단위 스마트 행정지원 포털) -->
+        <article class="app-card brutal-reveal" data-cat="sheets">
           <div class="browser-bar">
             <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
             <span class="slot-file-tag">jang.html</span>
           </div>
-          <div class="mockup-window"><iframe src="jang.html" title="우리 반 스마트 장보기 미션 앱 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe></div>
+          <a href="jang.html" target="_blank" rel="noopener noreferrer" class="mockup-window">
+            <iframe src="jang.html" title="K-에듀파인 반 단위 스마트 행정지원 포털 미리보기" allow="autoplay 'none'" tabindex="-1" loading="lazy"></iframe>
+            <span class="mockup-hover-badge">LIVE PREVIEW &nearr;</span>
+          </a>
           <div class="app-info">
-            <div class="tech">경제 교육 교구 (실습 24)</div>
-            <h3>우리 반 스마트 장보기 미션 앱</h3>
-            <p>주어진 예산 안에서 상품 수량을 조절하고 구매 이유를 서술하며 합리적 소비를 연습합니다.</p>
-            <span class="app-link-btn">열기 &rarr;</span>
+            <div class="app-meta-row">
+              <span class="tech">반 단위 행정 · 시트 DB</span>
+              <span class="lab-badge">LAB 24</span>
+            </div>
+            <h3><a href="jang.html" target="_blank" rel="noopener noreferrer">K-에듀파인 반 단위 스마트 행정지원 포털</a></h3>
+            <p>학급별 예산 집행, 외부 이미지·파일 증빙 첨부, 4단 전자결재 도장 및 공문서 인쇄를 구글 시트로 실시간 연동합니다.</p>
+            <div class="app-link-group">
+              <a href="jang.html" target="_blank" rel="noopener noreferrer" class="app-link-btn">열기 &rarr;</a>
+              <button type="button" class="app-link-btn app-link-qr" data-qr-file="jang.html" data-qr-title="K-에듀파인 반 단위 스마트 행정지원 포털">QR</button>
+            </div>
           </div>
-        </a>
+        </article>
+
+        <div class="empty-filter-box" id="emptyFilterBox">
+          검색 조건과 일치하는 웹 앱 프로젝트가 없습니다. 필터를 초기화해 주세요.
+        </div>
 
       </div>
     </div>
   </section>
 
   <section id="contact" class="scroll-section brutal-reveal contact">
-    <p class="label">Contact</p>
-    <h2>이야기하고 싶은 것이 있다면</h2>
-    <a href="mailto:nn80300@naver.com">nn80300@naver.com</a>
+    <div class="contact-card">
+      <p class="section-kicker" style="margin-bottom:14px;"><span>CONTACT</span> / GET IN TOUCH</p>
+      <h2>이야기하고 싶은 것이 있다면</h2>
+      <p style="margin-top:10px; font-weight:600; color:#333;">교육 정보, 시각 디자인, 웹 앱 협업 제안은 언제든 환영합니다.</p>
+      <a href="mailto:nn80300@naver.com" class="mail-pill">nn80300@naver.com</a>
+    </div>
   </section>
-
-  <footer>
-    © 문태양. 개인 포트폴리오입니다.
-  </footer>
 </div>
 
-<!-- 디자인 이미지 확대 보기 라이트박스 -->
+<footer>
+  © 문태양. 상업정보교육과 · 문헌정보교육과 포트폴리오 아카이브.
+</footer>
+
+<!-- 디자인 이미지 확대 보기 라이트박스 (좌우 전환 지원) -->
 <div class="lightbox-modal" id="lightboxModal" role="dialog" aria-modal="true" aria-label="이미지 크게 보기">
   <div class="lightbox-box">
     <div class="lightbox-bar">
       <span id="lightboxTitle">이미지 미리보기</span>
-      <button type="button" class="lightbox-close" id="lightboxCloseBtn" aria-label="닫기">&times;</button>
+      <div class="lightbox-nav-group">
+        <button type="button" class="carousel-btn" id="lightboxPrevBtn" style="width:30px;height:30px;display:none;" aria-label="이전 이미지">&larr;</button>
+        <button type="button" class="carousel-btn" id="lightboxNextBtn" style="width:30px;height:30px;display:none;" aria-label="다음 이미지">&rarr;</button>
+        <button type="button" class="lightbox-close" id="lightboxCloseBtn" aria-label="닫기">&times;</button>
+      </div>
     </div>
     <div class="lightbox-body">
       <img id="lightboxImg" src="" alt="확대 이미지">
@@ -1307,7 +1990,7 @@
   </div>
 </div>
 
-<!-- QR코드 스마트폰 연결 모달 -->
+<!-- QR코드 스마트폰 연결 모달 (전체 앱 동적 생성 지원) -->
 <div class="lightbox-modal" id="qrConnectModal" role="dialog" aria-modal="true" aria-label="QR코드로 스마트폰 연결">
   <div class="lightbox-box qr-box-modal">
     <div class="lightbox-bar">
@@ -1315,18 +1998,19 @@
       <button type="button" class="lightbox-close" id="qrModalCloseBtn" aria-label="닫기">&times;</button>
     </div>
     <div class="qr-modal-body">
-      <div class="qr-target-tabs">
-        <button type="button" class="qr-tab-btn active" id="qrTabPwa" data-qr-tab="pwa">모바일 앱 (phycheck_pwa)</button>
-        <button type="button" class="qr-tab-btn" id="qrTabPortfolio" data-qr-tab="portfolio">현재 포트폴리오</button>
+      <div class="qr-target-tabs" id="qrTargetTabs">
+        <button type="button" class="qr-tab-btn active" id="qrTabCustom" data-qr-tab="custom">선택한 앱</button>
+        <button type="button" class="qr-tab-btn" id="qrTabPwa" data-qr-tab="pwa">운동 기록 PWA</button>
+        <button type="button" class="qr-tab-btn" id="qrTabPortfolio" data-qr-tab="portfolio">포트폴리오</button>
       </div>
       <div class="qr-canvas-frame" id="qrCodeRenderBox"></div>
       <p style="font-size: 0.86rem; font-weight: 800; color: #222;" id="qrModalDesc">
-        스마트폰 기본 카메라로 스캔하면 운동 기록 모바일 앱(PWA)이 바로 열립니다.
+        스마트폰 기본 카메라로 QR코드를 스캔하면 모바일 화면에서 바로 열립니다.
       </p>
-      <div class="qr-url-pill" id="qrModalUrlText">https://nlasdnfkl2.github.io/my-webpage/phycheck_pwa/</div>
+      <div class="qr-url-pill" id="qrModalUrlText">https://nlasdnfkl2.github.io/</div>
       <div class="qr-action-row">
         <button type="button" class="qr-action-btn" id="qrCopyUrlBtn">주소 복사</button>
-        <a href="https://nlasdnfkl2.github.io/my-webpage/phycheck_pwa/" target="_blank" rel="noopener noreferrer" class="qr-action-btn secondary" id="qrOpenNewTabBtn">새 창으로 열기 &nearr;</a>
+        <a href="https://nlasdnfkl2.github.io/" target="_blank" rel="noopener noreferrer" class="qr-action-btn secondary" id="qrOpenNewTabBtn">새 창으로 열기 &nearr;</a>
       </div>
     </div>
   </div>
@@ -1390,14 +2074,11 @@
 
   function applyMusicPreference(shouldPlay) {
     const promptBar = document.getElementById('musicPromptBar');
-    if (promptBar) {
-      promptBar.classList.add('is-hidden');
-    }
+    if (promptBar) promptBar.classList.add('is-hidden');
 
     if (shouldPlay) {
       isMusicEnabled = true;
       syncMusicButtonUI(true);
-
       if (isPlayerReady && ytPlayer) {
         pendingPlay = false;
         safeStartMusic();
@@ -1412,15 +2093,12 @@
     }
   }
 
-  // YouTube IFrame API 싱글톤 초기화
   window.onYouTubeIframeAPIReady = function () {
     if (ytPlayer || isPlayerInitializing) return;
     isPlayerInitializing = true;
 
     const container = document.getElementById('youtubePlayerContainer');
-    if (container) {
-      container.innerHTML = '';
-    }
+    if (container) container.innerHTML = '';
 
     ytPlayer = new YT.Player('youtubePlayerContainer', {
       height: '0',
@@ -1440,7 +2118,6 @@
           isPlayerInitializing = false;
           isPlayerReady = true;
           event.target.setVolume(50);
-
           if (isMusicEnabled || pendingPlay) {
             pendingPlay = false;
             safeStartMusic();
@@ -1509,9 +2186,7 @@
 
       const ytBox = doc.getElementById('youtubePlayerContainer');
       if (ytBox) ytBox.remove();
-    } catch (e) {
-      // 동일 출처 외 iframe은 브라우저 보안 정책에 의해 격리됨
-    }
+    } catch (e) {}
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -1519,8 +2194,10 @@
       iframe.addEventListener('load', () => silencePreviewIframe(iframe));
     });
 
-    // 실시간 시계
+    // 실시간 시계 + 상단 스크롤 진행 게이지
     const timeDisplay = document.getElementById('currentTimeDisplay');
+    const progressFill = document.getElementById('scrollProgressFill');
+
     function updateClock() {
       const now = new Date();
       const yyyy = now.getFullYear();
@@ -1532,40 +2209,35 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 상단 라운드 바 예 / 아니오 선택 처리
-    const musicYesBtn = document.getElementById('musicYesBtn');
-    const musicNoBtn = document.getElementById('musicNoBtn');
-
-    if (musicYesBtn) {
-      musicYesBtn.addEventListener('click', () => applyMusicPreference(true));
+    function updateScrollProgress() {
+      const docEl = document.documentElement;
+      const maxScroll = docEl.scrollHeight - docEl.clientHeight;
+      const pct = maxScroll > 0 ? Math.min(100, Math.max(0, (window.scrollY / maxScroll) * 100)) : 0;
+      progressFill.style.width = `${pct.toFixed(1)}%`;
     }
-    if (musicNoBtn) {
-      musicNoBtn.addEventListener('click', () => applyMusicPreference(false));
-    }
+    updateScrollProgress();
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
 
-    // 우측 상단 음악 아이콘 토글
+    // 음악 프롬프트 & 토글
+    document.getElementById('musicYesBtn')?.addEventListener('click', () => applyMusicPreference(true));
+    document.getElementById('musicNoBtn')?.addEventListener('click', () => applyMusicPreference(false));
+
     const muteToggleBtn = document.getElementById('muteToggleBtn');
-    if (muteToggleBtn) {
-      muteToggleBtn.addEventListener('click', () => {
-        if (isToggleLocked) return;
-        isToggleLocked = true;
-        setTimeout(() => { isToggleLocked = false; }, 280);
+    muteToggleBtn?.addEventListener('click', () => {
+      if (isToggleLocked) return;
+      isToggleLocked = true;
+      setTimeout(() => { isToggleLocked = false; }, 280);
 
-        const promptBar = document.getElementById('musicPromptBar');
-        if (promptBar && !promptBar.classList.contains('is-hidden')) {
-          promptBar.classList.add('is-hidden');
-        }
-
-        applyMusicPreference(!isMusicEnabled);
-      });
-    }
+      const promptBar = document.getElementById('musicPromptBar');
+      if (promptBar && !promptBar.classList.contains('is-hidden')) {
+        promptBar.classList.add('is-hidden');
+      }
+      applyMusicPreference(!isMusicEnabled);
+    });
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        safeStopMusic();
-      } else if (isMusicEnabled) {
-        safeStartMusic();
-      }
+      if (document.hidden) safeStopMusic();
+      else if (isMusicEnabled) safeStartMusic();
     });
 
     // 스크롤 등장 애니메이션
@@ -1577,7 +2249,7 @@
           revealObserver.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.08 });
     revealElements.forEach(el => revealObserver.observe(el));
 
     // 우측 네비게이션 도트 스크롤 스파이
@@ -1604,21 +2276,15 @@
           dot.classList.toggle('active', dot.dataset.target === activeId);
         });
       }
-    }, {
-      threshold: Array.from({ length: 21 }, (_, i) => i * 0.05)
-    });
+    }, { threshold: Array.from({ length: 21 }, (_, i) => i * 0.05) });
 
     sections.forEach(sec => spyObserver.observe(sec));
 
     navDots.forEach(dot => {
       dot.addEventListener('click', () => {
-        const targetId = dot.dataset.target;
-        const targetElement = document.getElementById(targetId);
+        const targetElement = document.getElementById(dot.dataset.target);
         if (targetElement) {
-          window.scrollTo({
-            top: targetElement.offsetTop - 70,
-            behavior: 'smooth'
-          });
+          window.scrollTo({ top: targetElement.offsetTop - 70, behavior: 'smooth' });
         }
       });
     });
@@ -1649,7 +2315,7 @@
     });
 
     // 다중 캐러셀 좌우 이동 버튼 및 카운터 업데이트
-    document.querySelectorAll('.carousel-btn').forEach(btn => {
+    document.querySelectorAll('.carousel-btn[data-carousel-target]').forEach(btn => {
       btn.addEventListener('click', () => {
         const carousel = document.getElementById(btn.dataset.carouselTarget);
         if (!carousel) return;
@@ -1672,26 +2338,59 @@
       }, { passive: true });
     });
 
-    // 이미지 확대 보기 라이트박스
+    // 이미지 확대 보기 라이트박스 (그룹 내 좌우 탐색 지원)
     const lightboxModal = document.getElementById('lightboxModal');
     const lightboxImg = document.getElementById('lightboxImg');
     const lightboxTitle = document.getElementById('lightboxTitle');
+    const lightboxPrevBtn = document.getElementById('lightboxPrevBtn');
+    const lightboxNextBtn = document.getElementById('lightboxNextBtn');
+    let lightboxGroup = [];
+    let lightboxIndex = 0;
 
-    function openLightbox(src, title) {
-      if (!src) return;
-      lightboxImg.src = src;
-      lightboxTitle.textContent = title || '이미지 미리보기';
+    function renderLightboxSlide() {
+      const item = lightboxGroup[lightboxIndex];
+      if (!item) return;
+      lightboxImg.src = item.src;
+      lightboxTitle.textContent = item.title || '이미지 미리보기';
+      const showNav = lightboxGroup.length > 1;
+      lightboxPrevBtn.style.display = showNav ? 'flex' : 'none';
+      lightboxNextBtn.style.display = showNav ? 'flex' : 'none';
+    }
+
+    function openLightboxGroup(items, startIndex = 0) {
+      if (!items || items.length === 0) return;
+      lightboxGroup = items;
+      lightboxIndex = Math.max(0, Math.min(items.length - 1, startIndex));
+      renderLightboxSlide();
       lightboxModal.classList.add('open');
     }
 
     function closeLightbox() {
       lightboxModal.classList.remove('open');
       lightboxImg.src = '';
+      lightboxGroup = [];
     }
 
-    document.querySelectorAll('.carousel img').forEach(img => {
-      img.addEventListener('click', () => {
-        openLightbox(img.getAttribute('src'), img.dataset.zoomTitle || img.alt);
+    lightboxPrevBtn.addEventListener('click', () => {
+      if (lightboxGroup.length <= 1) return;
+      lightboxIndex = (lightboxIndex - 1 + lightboxGroup.length) % lightboxGroup.length;
+      renderLightboxSlide();
+    });
+
+    lightboxNextBtn.addEventListener('click', () => {
+      if (lightboxGroup.length <= 1) return;
+      lightboxIndex = (lightboxIndex + 1) % lightboxGroup.length;
+      renderLightboxSlide();
+    });
+
+    document.querySelectorAll('.carousel').forEach(carousel => {
+      const imgs = Array.from(carousel.querySelectorAll('img'));
+      const groupData = imgs.map(im => ({
+        src: im.getAttribute('src'),
+        title: im.dataset.zoomTitle || im.alt
+      }));
+      imgs.forEach((img, idx) => {
+        img.addEventListener('click', () => openLightboxGroup(groupData, idx));
       });
     });
 
@@ -1699,10 +2398,13 @@
       btn.addEventListener('click', () => {
         const container = document.getElementById(btn.dataset.zoomFlip);
         if (!container) return;
-        const isFlipped = container.classList.contains('is-flipped');
-        const img = container.querySelector(isFlipped ? '.flip-back img' : '.flip-front img');
-        const title = isFlipped ? container.dataset.backTitle : container.dataset.frontTitle;
-        if (img) openLightbox(img.getAttribute('src'), title);
+        const frontImg = container.querySelector('.flip-front img');
+        const backImg = container.querySelector('.flip-back img');
+        const items = [];
+        if (frontImg) items.push({ src: frontImg.getAttribute('src'), title: container.dataset.frontTitle });
+        if (backImg) items.push({ src: backImg.getAttribute('src'), title: container.dataset.backTitle });
+        const startIdx = container.classList.contains('is-flipped') && items.length > 1 ? 1 : 0;
+        openLightboxGroup(items, startIdx);
       });
     });
 
@@ -1711,18 +2413,28 @@
       if (e.target === lightboxModal) closeLightbox();
     });
 
-    // QR코드 스마트폰 연결 모달 제어
+    // QR코드 스마트폰 연결 모달 제어 (19종 전체 프로젝트 지원)
     const qrConnectModal = document.getElementById('qrConnectModal');
     const qrCodeRenderBox = document.getElementById('qrCodeRenderBox');
     const qrModalTitle = document.getElementById('qrModalTitle');
     const qrModalDesc = document.getElementById('qrModalDesc');
     const qrModalUrlText = document.getElementById('qrModalUrlText');
     const qrOpenNewTabBtn = document.getElementById('qrOpenNewTabBtn');
+    const qrTabCustom = document.getElementById('qrTabCustom');
     const qrTabPwa = document.getElementById('qrTabPwa');
     const qrTabPortfolio = document.getElementById('qrTabPortfolio');
 
     const PWA_APP_URL = 'https://nlasdnfkl2.github.io/my-webpage/phycheck_pwa/';
     let currentQrUrl = PWA_APP_URL;
+    let customAppUrl = '';
+    let customAppTitle = '';
+
+    function getBaseOriginUrl() {
+      if (window.location.protocol.startsWith('http')) {
+        return window.location.href.split('#')[0].replace(/\/[^/]*$/, '/');
+      }
+      return 'https://nlasdnfkl2.github.io/my-webpage/';
+    }
 
     function getPortfolioUrl() {
       if (window.location.protocol.startsWith('http')) {
@@ -1731,25 +2443,17 @@
       return 'https://nlasdnfkl2.github.io/';
     }
 
-    function renderQrModalMode(mode) {
-      const isPwa = mode === 'pwa';
-      qrTabPwa.classList.toggle('active', isPwa);
-      qrTabPortfolio.classList.toggle('active', !isPwa);
-
-      currentQrUrl = isPwa ? PWA_APP_URL : getPortfolioUrl();
-      qrModalTitle.textContent = isPwa
-        ? '오운완 운동 기록장 (모바일 PWA) QR 연결'
-        : '문태양 포트폴리오 모바일 QR 연결';
-      qrModalDesc.textContent = isPwa
-        ? '스마트폰 카메라로 스캔하면 운동 기록 모바일 앱(PWA)이 바로 열립니다.'
-        : '스마트폰 카메라로 스캔하면 현재 포트폴리오 사이트가 바로 열립니다.';
-      qrModalUrlText.textContent = currentQrUrl;
-      qrOpenNewTabBtn.href = currentQrUrl;
+    function drawQrCode(url, title, desc) {
+      currentQrUrl = url;
+      qrModalTitle.textContent = title;
+      qrModalDesc.textContent = desc;
+      qrModalUrlText.textContent = url;
+      qrOpenNewTabBtn.href = url;
 
       qrCodeRenderBox.innerHTML = '';
       if (typeof QRCode !== 'undefined') {
         new QRCode(qrCodeRenderBox, {
-          text: currentQrUrl,
+          text: url,
           width: 210,
           height: 210,
           colorDark: '#111111',
@@ -1761,8 +2465,42 @@
       }
     }
 
-    function openQrModal(mode = 'pwa') {
-      renderQrModalMode(mode);
+    function renderQrModalMode(mode) {
+      qrTabCustom.style.display = customAppUrl ? 'block' : 'none';
+      qrTabCustom.classList.toggle('active', mode === 'custom');
+      qrTabPwa.classList.toggle('active', mode === 'pwa');
+      qrTabPortfolio.classList.toggle('active', mode === 'portfolio');
+
+      if (mode === 'custom' && customAppUrl) {
+        drawQrCode(
+          customAppUrl,
+          `${customAppTitle} · 모바일 QR 연결`,
+          `스마트폰 카메라로 스캔하면 "${customAppTitle}" 웹 앱이 즉시 실행됩니다.`
+        );
+      } else if (mode === 'pwa') {
+        drawQrCode(
+          PWA_APP_URL,
+          '운동 기록 · 월간 통계 (모바일 PWA) QR',
+          '스마트폰 카메라로 스캔하면 운동 기록 모바일 앱(PWA)이 바로 열립니다.'
+        );
+      } else {
+        drawQrCode(
+          getPortfolioUrl(),
+          '문태양 포트폴리오 모바일 QR 연결',
+          '스마트폰 카메라로 스캔하면 현재 포트폴리오 사이트가 바로 열립니다.'
+        );
+      }
+    }
+
+    function openQrModal(mode = 'pwa', file = '', title = '') {
+      if (file) {
+        customAppUrl = getBaseOriginUrl() + file;
+        customAppTitle = title || file;
+        renderQrModalMode('custom');
+      } else {
+        customAppUrl = '';
+        renderQrModalMode(mode);
+      }
       qrConnectModal.classList.add('open');
     }
 
@@ -1770,15 +2508,18 @@
       qrConnectModal.classList.remove('open');
     }
 
-    document.querySelectorAll('[data-qr-mode]').forEach(btn => {
-      btn.addEventListener('click', () => openQrModal(btn.dataset.qrMode));
+    document.querySelectorAll('.app-link-qr').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.qrFile) {
+          openQrModal('custom', btn.dataset.qrFile, btn.dataset.qrTitle);
+        } else {
+          openQrModal(btn.dataset.qrMode || 'pwa');
+        }
+      });
     });
 
-    const openTopQrBtn = document.getElementById('openTopQrBtn');
-    if (openTopQrBtn) {
-      openTopQrBtn.addEventListener('click', () => openQrModal('pwa'));
-    }
-
+    document.getElementById('openTopQrBtn')?.addEventListener('click', () => openQrModal('portfolio'));
+    qrTabCustom.addEventListener('click', () => renderQrModalMode('custom'));
     qrTabPwa.addEventListener('click', () => renderQrModalMode('pwa'));
     qrTabPortfolio.addEventListener('click', () => renderQrModalMode('portfolio'));
 
@@ -1796,26 +2537,56 @@
       if (e.target === qrConnectModal) closeQrModal();
     });
 
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (lightboxModal.classList.contains('open')) closeLightbox();
-        if (qrConnectModal.classList.contains('open')) closeQrModal();
-      }
-    });
-
-    // 웹 앱 카테고리 필터
+    // 웹 앱 카테고리 필터 + 실시간 키워드 검색 통합
     const filterBtns = document.querySelectorAll('#appFilterBar .app-filter-btn');
-    const appCards = document.querySelectorAll('.app-grid .app-card');
+    const searchInput = document.getElementById('appSearchInput');
+    const appCards = document.querySelectorAll('#appGrid .app-card');
+    const visibleStatusEl = document.getElementById('appVisibleStatus');
+    const emptyFilterBox = document.getElementById('emptyFilterBox');
+    let activeCatFilter = 'all';
+
+    function filterAppCards() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      appCards.forEach(card => {
+        const matchCat = (activeCatFilter === 'all' || card.dataset.cat === activeCatFilter);
+        const cardText = card.textContent.toLowerCase();
+        const matchKeyword = (!keyword || cardText.includes(keyword));
+        const show = matchCat && matchKeyword;
+
+        card.classList.toggle('is-filtered-out', !show);
+        if (show) visibleCount++;
+      });
+
+      visibleStatusEl.textContent = `표시 중인 프로젝트: ${visibleCount} / ${appCards.length}개`;
+      emptyFilterBox.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        appCards.forEach(card => {
-          const match = filter === 'all' || card.dataset.cat === filter;
-          card.classList.toggle('is-filtered-out', !match);
-        });
+        activeCatFilter = btn.dataset.filter;
+        filterAppCards();
       });
+    });
+
+    searchInput.addEventListener('input', filterAppCards);
+
+    // 키보드 단축키 (ESC 모달 닫기, / 검색 포커스, 라이트박스 좌우 화살표)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (lightboxModal.classList.contains('open')) closeLightbox();
+        if (qrConnectModal.classList.contains('open')) closeQrModal();
+      } else if (lightboxModal.classList.contains('open')) {
+        if (e.key === 'ArrowLeft') lightboxPrevBtn.click();
+        if (e.key === 'ArrowRight') lightboxNextBtn.click();
+      } else if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     });
   });
 </script>
