@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>문태양 - 영수증 정리도우미 앱 (로컬 OCR)</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #dfdcd3;
+      --black: #111111;
+      --white: #ffffff;
+      --cream: #f9f6ef;
+      --border: 3px solid var(--black);
+      --border-thick: 4px solid var(--black);
+
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
+      --orange: #ff9f43;
+      --shadow-sm: 4px 4px 0 var(--black);
+      --shadow-lg: 8px 8px 0 var(--black);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      color: var(--black);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      padding-top: 72px;
+      word-break: keep-all;
+    }
+
+    /* 상단 고정 바 */
+    .fixed-top-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 60px;
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 2000;
+      box-shadow: 0 4px 0 var(--black);
+    }
+
+    .fixed-top-bar .current-time {
+      font-weight: 900;
+      font-size: 0.95rem;
+      background: var(--white);
+      border: var(--border);
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .fixed-top-bar .icon-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .fixed-top-bar .icon-btn {
+      width: 38px; height: 38px;
+      background: var(--white);
+      border: var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      font-weight: 900;
+      transition: all 0.1s ease;
+      text-decoration: none;
+      color: var(--black);
+    }
+
+    .fixed-top-bar .icon-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+      background: var(--cyan);
+    }
+
+    .wrap { max-width: 1020px; margin: 0 auto; padding: 0 24px 80px; }
+    a { color: inherit; text-decoration: none; }
+
+    .top {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 24px 0; border-bottom: var(--border-thick); font-size: 1rem; font-weight: 800;
+      flex-wrap: wrap; gap: 12px;
+    }
+
+    .top b {
+      font-size: 1.4rem; letter-spacing: 0.05em; text-transform: uppercase;
+      background: var(--black); color: var(--yellow); padding: 4px 12px; transform: skew(-5deg);
+    }
+
+    .top nav { display: flex; gap: 16px; flex-wrap: wrap; }
+    .top nav a { padding: 4px 8px; }
+    .top nav a:hover { background: var(--black); color: var(--bg); }
+
+    .hero {
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-lg);
+      padding: 36px 32px;
+      margin-top: 28px;
+    }
+
+    .hero .small {
+      display: inline-block; font-size: 0.92rem; font-weight: 900;
+      background: var(--cyan); border: var(--border); padding: 4px 12px;
+      box-shadow: 4px 4px 0 var(--black); margin-bottom: 16px;
+    }
+
+    .hero h1 { font-size: clamp(1.9rem, 4.5vw, 2.75rem); line-height: 1.25; font-weight: 900; }
+    .hero h1 span {
+      display: inline-block; color: var(--black); background: var(--yellow);
+      border: var(--border-thick); padding: 0 14px; box-shadow: 5px 5px 0 var(--black);
+    }
+
+    .hero p {
+      max-width: 52em; margin-top: 18px; font-size: 1.02rem; font-weight: 600;
+      border-left: 6px solid var(--black); padding-left: 18px;
+    }
+
+    .app-card {
+      background: var(--white);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-lg);
+      padding: 34px;
+      margin-top: 32px;
+    }
+
+    @media (max-width: 680px) {
+      .app-card, .hero { padding: 22px 16px; }
+    }
+
+    .section-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+      border-bottom: var(--border-thick);
+    }
+
+    .section-title-row h2 {
+      font-size: 1.45rem;
+      font-weight: 900;
+    }
+
+    /* 모드 전환 탭 (OCR 스캔 vs 영수증 없이 직접 입력) */
+    .mode-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mode-tab {
+      padding: 8px 16px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 900;
+      background: var(--white);
+      border: var(--border);
+      box-shadow: 3px 3px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .mode-tab.active {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--black);
+    }
+
+    /* OCR 설정 옵션 바 */
+    .ocr-option-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--cream);
+      border: var(--border);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--black);
+      cursor: pointer;
+    }
+
+    /* 드롭존 */
+    .drop-zone {
+      border: 4px dashed var(--black);
+      padding: 48px 20px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      background: var(--cream);
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      background: var(--green);
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .drop-zone-title {
+      font-size: 1.18rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .drop-zone-sub {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #333;
+    }
+
+    /* OCR 스캔 진행 상태 박스 */
+    .ocr-progress-box {
+      display: none;
+      margin-top: 18px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ocr-progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .ocr-bar-track {
+      width: 100%;
+      height: 22px;
+      background: var(--white);
+      border: var(--border);
+      overflow: hidden;
+    }
+
+    .ocr-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--cyan);
+      transition: width 0.2s ease;
+    }
+
+    /* 예외처리 / 안내 배너 */
+    .notice-banner {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 18px;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-sm);
+      font-weight: 900;
+      font-size: 0.95rem;
+    }
+    .notice-banner.warn { background: var(--pink); }
+    .notice-banner.ok { background: var(--green); }
+
+    /* 스캔 검증 및 수정 패널 */
+    .scan-review-panel {
+      display: none;
+      margin-top: 22px;
+      background: var(--cream);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-sm);
+      padding: 22px;
+    }
+
+    .scan-review-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 760px) {
+      .scan-review-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .receipt-thumb-box {
+      background: var(--white);
+      border: var(--border);
+      padding: 10px;
+      text-align: center;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .receipt-thumb-box img {
+      max-width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      border: 2px solid var(--black);
+      display: block;
+      margin: 0 auto 8px;
+    }
+
+    .raw-ocr-details {
+      margin-top: 12px;
+      background: var(--white);
+      border: 2px solid var(--black);
+      padding: 10px;
+      font-size: 0.84rem;
+    }
+
+    .raw-ocr-details summary {
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .raw-ocr-text {
+      margin-top: 8px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      background: #f3f3f3;
+      padding: 8px;
+      border: 1.5px solid var(--black);
+      max-height: 150px;
+      overflow-y: auto;
+      line-height: 1.45;
+    }
+
+    /* 폼 그리드 */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 680px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field-group label {
+      font-size: 0.86rem;
+      font-weight: 900;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 800;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 3px 3px 0 var(--black);
+      outline: none;
+    }
+
+    .form-control:focus {
+      background: #fffdf5;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .form-control.readonly-calc {
+      background: #eceae2;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 0.98rem;
+      font-weight: 900;
+      padding: 11px 20px;
+      background: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all 0.1s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
+      background: var(--cyan);
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .btn-green { background: var(--green); }
+    .btn-cyan { background: var(--cyan); }
+    .btn-pink { background: var(--pink); }
+    .btn-white { background: var(--white); }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* 요약 KPI 카드 4종 */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 720px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .kpi-card {
+      border: var(--border-thick);
+      box-shadow: var(--shadow-sm);
+      padding: 16px 14px;
+      text-align: center;
+      background: var(--white);
+    }
+
+    .kpi-card.k-yellow { background: var(--yellow); }
+    .kpi-card.k-cyan { background: var(--cyan); }
+    .kpi-card.k-green { background: var(--green); }
+    .kpi-card.k-orange { background: var(--orange); }
+
+    .kpi-label {
+      font-size: 0.84rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 1.38rem;
+      font-weight: 900;
+    }
+
+    /* 필터 및 엑셀 내보내기 툴바 */
+    .table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--cream);
+      border: var(--border);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+
+    .filter-cluster, .export-cluster {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 7px 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 900;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* 지출 내역 테이블 */
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-sm);
+      background: var(--white);
+    }
+
+    table.receipt-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+      font-size: 0.92rem;
+    }
+
+    table.receipt-table th {
+      background: var(--black);
+      color: var(--yellow);
+      font-weight: 900;
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: var(--border-thick);
+      white-space: nowrap;
+    }
+
+    table.receipt-table th.num, table.receipt-table td.num {
+      text-align: right;
+    }
+
+    table.receipt-table td {
+      padding: 11px 10px;
+      border-bottom: 2px solid var(--black);
+      font-weight: 800;
+      vertical-align: middle;
+    }
+
+    table.receipt-table tr:nth-child(even) td {
+      background: var(--cream);
+    }
+
+    table.receipt-table tr:hover td {
+      background: #fff6cf;
+    }
+
+    .cat-select-inline {
+      padding: 4px 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 900;
+      border: 2px solid var(--black);
+      background: var(--white);
+      cursor: pointer;
+    }
+
+    .missing-pill {
+      display: inline-block;
+      background: var(--pink);
+      border: 2px solid var(--black);
+      padding: 1px 7px;
+      font-size: 0.8rem;
+      font-weight: 900;
+    }
+
+    .row-btn-group {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    /* 차트 영역 */
+    .chart-section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 20px;
+      margin-top: 26px;
+    }
+
+    @media (max-width: 780px) {
+      .chart-section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      background: var(--cream);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-sm);
+      padding: 18px;
+    }
+
+    .chart-card h3 {
+      font-size: 1.05rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .canvas-box {
+      background: var(--white);
+      border: var(--border);
+      padding: 10px;
+    }
+
+    #categoryChartCanvas, #monthlyTrendCanvas {
+      width: 100%;
+      height: 230px;
+      display: block;
+    }
+
+    .storage-note {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #333;
+      background: var(--cream);
+      border: 2px solid var(--black);
+      padding: 10px 14px;
+    }
+
+    footer {
+      padding: 36px 20px; color: var(--white); background: var(--black);
+      font-size: 0.95rem; font-weight: 800; text-align: center;
+      border-top: var(--border-thick); margin-top: 64px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="fixed-top-bar">
+  <div class="current-time" id="currentTimeDisplay">--:--:--</div>
+  <div class="icon-group">
+    <a href="https://github.com/nlasdnfkl2" target="_blank" rel="noopener noreferrer" class="icon-btn" title="GitHub">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+    </a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="top">
+    <b>문태양</b>
+    <nav>
+      <a href="#receiptScanSection">영수증 OCR 스캔 · 등록</a>
+      <a href="#receiptTableSection">지출 내역 표 · 차트 · 엑셀</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <p class="small">실습 19 · 로컬 텍스트 스캔 OCR & 엑셀 정산 자동화</p>
+    <h1>영수증 사진 한 장으로<br><span>자동 추출 · 엑셀 정리</span></h1>
+    <p>서버 전송 없이 브라우저 내장 <strong>Tesseract.js 한국어·영문 로컬 OCR 엔진</strong>으로 영수증 이미지에서 가맹점명, 거래 일시(YYYY-MM-DD), 총 금액, 부가세, 공급가액을 자동 추출합니다. 추출된 내역은 지출 항목별로 분류되어 표·차트와 실제 <strong>엑셀(.xlsx) 파일</strong>로 즉시 내려받을 수 있습니다.</p>
+  </header>
+
+  <!-- 1. 영수증 OCR 스캔 및 수동 입력 섹션 -->
+  <section class="app-card" id="receiptScanSection">
+    <div class="section-title-row">
+      <h2>1. 영수증 스캔 및 지출 등록</h2>
+      <div class="mode-tabs">
+        <button type="button" class="mode-tab active" id="tabOcrBtn">영수증 이미지 OCR 스캔</button>
+        <button type="button" class="mode-tab" id="tabManualBtn">영수증 없이 직접 입력</button>
+      </div>
+    </div>
+
+    <!-- A. OCR 이미지 업로드 영역 -->
+    <div id="ocrUploadArea">
+      <div class="ocr-option-bar">
+        <label class="checkbox-label">
+          <input type="checkbox" id="preprocessCheck" checked>
+          영수증 고대비 전처리(그레이스케일·선명화) 적용 (인식률 향상)
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="autoRegisterBatchCheck" checked>
+          스캔 완료 즉시 아래 지출 내역 표에 자동 등록
+        </label>
+      </div>
+
+      <input type="file" id="receiptFileInput" accept="image/*" multiple style="display:none;">
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-title">영수증 이미지를 클릭하거나 드래그 · 붙여넣기(Ctrl+V) 하세요</div>
+        <div class="drop-zone-sub">(여러 장 동시 선택 가능 · 브라우저 내부 로컬 OCR로 개인정보가 외부로 전송되지 않습니다)</div>
+      </div>
+
+      <div class="ocr-progress-box" id="ocrProgressBox">
+        <div class="ocr-progress-top">
+          <span id="ocrStatusLabel">로컬 OCR 엔진 초기화 중...</span>
+          <span id="ocrPercentLabel">0%</span>
+        </div>
+        <div class="ocr-bar-track">
+          <div class="ocr-bar-fill" id="ocrBarFill"></div>
+        </div>
+      </div>
+
+      <div class="notice-banner" id="ocrNoticeBanner"></div>
+
+      <!-- 방금 스캔된 영수증 검증/수정 패널 -->
+      <div class="scan-review-panel" id="scanReviewPanel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <strong style="font-size:1.08rem;">최근 스캔 결과 확인 및 보정</strong>
+          <span style="font-size:0.84rem; font-weight:800; color:#333;">공급가액은 총 금액에서 부가세를 차감해 자동 계산됩니다</span>
+        </div>
+
+        <div class="scan-review-grid">
+          <div class="receipt-thumb-box">
+            <img id="scannedThumbImg" src="" alt="스캔된 영수증">
+            <span style="font-size:0.82rem; font-weight:800; color:#444;">전처리 스캔 미리보기</span>
+            <details class="raw-ocr-details">
+              <summary>원본 OCR 추출 텍스트 보기</summary>
+              <div class="raw-ocr-text" id="rawOcrTextBox"></div>
+            </details>
+          </div>
+
+          <div>
+            <div class="form-grid">
+              <div class="field-group">
+                <label>가맹점명 (상호명)</label>
+                <input type="text" id="revMerchant" class="form-control" placeholder="예: (주)스타벅스코리아">
+              </div>
+              <div class="field-group">
+                <label>거래 일시 (YYYY-MM-DD)</label>
+                <input type="text" id="revDate" class="form-control" placeholder="예: 2026-11-16">
+              </div>
+              <div class="field-group">
+                <label>지출 항목 (자동 할당)</label>
+                <select id="revCategory" class="form-control">
+                  <option value="식비">식비</option>
+                  <option value="카페·간식">카페·간식</option>
+                  <option value="교통">교통</option>
+                  <option value="도서·문구">도서·문구</option>
+                  <option value="사무·통신">사무·통신</option>
+                  <option value="생활·기타">생활·기타</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>총 금액 (원)</label>
+                <input type="number" id="revTotal" class="form-control" min="0" placeholder="0">
+              </div>
+              <div class="field-group">
+                <label>부가세 (원)</label>
+                <input type="number" id="revVat" class="form-control" min="0" placeholder="0">
+              </div>
+              <div class="field-group">
+                <label>공급가액 (총액 - 부가세 자동계산)</label>
+                <input type="text" id="revSupplyDisplay" class="form-control readonly-calc" readonly value="0">
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-green" id="applyReviewBtn">보정 내용 반영 / 내역에 추가</button>
+              <button type="button" class="btn btn-white" id="closeReviewBtn">패널 닫기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B. 영수증 없이 직접 입력 영역 -->
+    <div id="manualInputArea" style="display:none;">
+      <form id="manualEntryForm">
+        <div class="form-grid">
+          <div class="field-group">
+            <label>가맹점명 (상호명) *</label>
+            <input type="text" id="manMerchant" class="form-control" placeholder="예: 공주대 학생식당" required>
+          </div>
+          <div class="field-group">
+            <label>거래 일시 (YYYY-MM-DD) *</label>
+            <input type="date" id="manDate" class="form-control" required>
+          </div>
+          <div class="field-group">
+            <label>지출 항목</label>
+            <select id="manCategory" class="form-control">
+              <option value="식비">식비</option>
+              <option value="카페·간식">카페·간식</option>
+              <option value="교통">교통</option>
+              <option value="도서·문구">도서·문구</option>
+              <option value="사무·통신">사무·통신</option>
+              <option value="생활·기타">생활·기타</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>총 금액 (숫자만 입력) *</label>
+            <input type="number" id="manTotal" class="form-control" min="0" placeholder="예: 11000" required>
+          </div>
+          <div class="field-group">
+            <label>부가세 (미입력 시 10% 자동 산출)</label>
+            <input type="number" id="manVat" class="form-control" min="0" placeholder="예: 1000">
+          </div>
+          <div class="field-group">
+            <label>공급가액 (총 금액 - 부가세)</label>
+            <input type="text" id="manSupplyDisplay" class="form-control readonly-calc" readonly value="0">
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <button type="submit" class="btn btn-green">직접 입력 내역 저장</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 2. 지출 내역 표, 월별/항목별 차트 및 엑셀 내보내기 섹션 -->
+  <section class="app-card" id="receiptTableSection">
+    <div class="section-title-row">
+      <h2>2. 영수증 지출 정산 내역 및 통계</h2>
+      <div class="export-cluster">
+        <button type="button" class="btn btn-green" id="exportExcelBtn">엑셀 파일(.xlsx) 내려받기</button>
+        <button type="button" class="btn btn-white btn-sm" id="clearAllBtn">전체 초기화</button>
+      </div>
+    </div>
+
+    <!-- 요약 KPI 카드 -->
+    <div class="kpi-grid">
+      <div class="kpi-card k-yellow">
+        <div class="kpi-label">조회 건수</div>
+        <div class="kpi-value" id="kpiCount">0건</div>
+      </div>
+      <div class="kpi-card k-cyan">
+        <div class="kpi-label">총 공급가액 합계</div>
+        <div class="kpi-value" id="kpiSupply">0원</div>
+      </div>
+      <div class="kpi-card k-orange">
+        <div class="kpi-label">총 부가세 합계</div>
+        <div class="kpi-value" id="kpiVat">0원</div>
+      </div>
+      <div class="kpi-card k-green">
+        <div class="kpi-label">총 지출 금액 합계</div>
+        <div class="kpi-value" id="kpiTotal">0원</div>
+      </div>
+    </div>
+
+    <!-- 날짜별(월별) 및 지출 항목별 필터 바 -->
+    <div class="table-toolbar">
+      <div class="filter-cluster">
+        <span style="font-weight:900; font-size:0.9rem;">기간(월별) 조회:</span>
+        <select id="monthFilterSelect" class="filter-select">
+          <option value="ALL">전체 기간</option>
+        </select>
+
+        <span style="font-weight:900; font-size:0.9rem; margin-left:6px;">지출 항목:</span>
+        <select id="categoryFilterSelect" class="filter-select">
+          <option value="ALL">전체 항목</option>
+          <option value="식비">식비</option>
+          <option value="카페·간식">카페·간식</option>
+          <option value="교통">교통</option>
+          <option value="도서·문구">도서·문구</option>
+          <option value="사무·통신">사무·통신</option>
+          <option value="생활·기타">생활·기타</option>
+        </select>
+      </div>
+
+      <div style="font-size:0.86rem; font-weight:800; color:#333;">
+        표에서 지출 항목 드롭다운 변경 또는 행 수정이 가능합니다.
+      </div>
+    </div>
+
+    <!-- 지출 내역 테이블 -->
+    <div class="table-scroll">
+      <table class="receipt-table">
+        <thead>
+          <tr>
+            <th style="width:48px;">No</th>
+            <th style="width:120px;">거래 일시</th>
+            <th>가맹점명 (상호명)</th>
+            <th style="width:130px;">지출 항목</th>
+            <th class="num" style="width:115px;">공급가액</th>
+            <th class="num" style="width:105px;">부가세</th>
+            <th class="num" style="width:125px;">총 금액</th>
+            <th style="width:115px; text-align:right;">관리</th>
+          </tr>
+        </thead>
+        <tbody id="receiptTableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- 차트 출력 기능 (항목별 비중 & 월별 지출 추이) -->
+    <div class="chart-section-grid">
+      <div class="chart-card">
+        <h3>지출 항목별 금액 비중</h3>
+        <div class="canvas-box">
+          <canvas id="categoryChartCanvas"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>날짜별(일별) 지출 추이 그래프</h3>
+        <div class="canvas-box">
+          <canvas id="monthlyTrendCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="storage-note">
+      * 저장 안내: 브라우저 로컬 스토리지(LocalStorage) 용량(약 5MB) 효율화를 위해 영수증 원본 이미지는 저장하지 않고 추출된 텍스트·금액 정산 데이터만 안전하게 자동 보관합니다. 다른 기기 이동이나 백업을 위해 상단의 <strong>[엑셀 파일(.xlsx) 내려받기]</strong>를 활용해 주세요.
+    </div>
+  </section>
+
+  <footer>
+    © 문태양. 바이브코딩 실습 19 포트폴리오 · 로컬 OCR 기반 영수증 정리도우미 앱.
+  </footer>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 실시간 시계
+    const timeDisplay = document.getElementById('currentTimeDisplay');
+    function updateClock() {
+      const now = new Date();
+      timeDisplay.textContent = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')} ${now.toLocaleTimeString('ko-KR', { hour12: false })}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    function getTodayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function formatComma(num) {
+      if (num === null || num === undefined || isNaN(Number(num))) return '정보 없음';
+      return Number(num).toLocaleString('ko-KR');
+    }
+
+    // =========================================================================
+    // 1. 상태 및 LocalStorage 관리 (이미지는 제외하고 텍스트·수치 데이터만 저장)
+    // =========================================================================
+    const STORAGE_KEY = 'vibe_receipt_helper_v1';
+    const CATEGORIES = ['식비', '카페·간식', '교통', '도서·문구', '사무·통신', '생활·기타'];
+
+    let receipts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    let lastReviewedReceiptId = null;
+
+    function saveReceipts() {
+      // 이미지 데이터 필드가 절대 포함되지 않도록 정규화된 필드만 직렬화
+      const sanitized = receipts.map(r => ({
+        id: r.id,
+        date: r.date || '정보 없음',
+        merchant: r.merchant || '정보 없음',
+        category: CATEGORIES.includes(r.category) ? r.category : '생활·기타',
+        total: Math.max(0, Math.round(Number(r.total) || 0)),
+        vat: Math.max(0, Math.round(Number(r.vat) || 0)),
+        supply: Math.max(0, Math.round(Number(r.supply) || 0))
+      }));
+      receipts = sanitized;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(receipts));
+      renderAll();
+    }
+
+    // =========================================================================
+    // 2. 모드 전환 (OCR 스캔 vs 영수증 없이 직접 입력)
+    // =========================================================================
+    const tabOcrBtn = document.getElementById('tabOcrBtn');
+    const tabManualBtn = document.getElementById('tabManualBtn');
+    const ocrUploadArea = document.getElementById('ocrUploadArea');
+    const manualInputArea = document.getElementById('manualInputArea');
+
+    tabOcrBtn.addEventListener('click', () => {
+      tabOcrBtn.classList.add('active');
+      tabManualBtn.classList.remove('active');
+      ocrUploadArea.style.display = 'block';
+      manualInputArea.style.display = 'none';
+    });
+
+    tabManualBtn.addEventListener('click', () => {
+      tabManualBtn.classList.add('active');
+      tabOcrBtn.classList.remove('active');
+      manualInputArea.style.display = 'block';
+      ocrUploadArea.style.display = 'none';
+      if (!document.getElementById('manDate').value) {
+        document.getElementById('manDate').value = getTodayStr();
+      }
+    });
+
+    // =========================================================================
+    // 3. 영수증 이미지 고대비 전처리 & 로컬 OCR(Tesseract.js) 실행 엔진
+    // =========================================================================
+    let ocrWorker = null;
+
+    async function getOcrWorker(onProgress) {
+      if (ocrWorker) return ocrWorker;
+      ocrWorker = await Tesseract.createWorker('kor+eng', 1, {
+        logger: m => {
+          if (onProgress && typeof m.progress === 'number') {
+            onProgress(m.status, Math.round(m.progress * 100));
+          }
+        }
+      });
+      return ocrWorker;
+    }
+
+    // 영수증 텍스트 인식률 향상을 위한 그레이스케일 + 대비 강조 전처리
+    function preprocessReceiptImage(file, enableEnhance) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            // 작은 영수증 사진은 1200px 폭으로 업스케일링해 한글 획 분리도 향상
+            const targetWidth = img.width < 1100 ? Math.min(1300, img.width * 1.6) : Math.min(1600, img.width);
+            const scale = targetWidth / img.width;
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            if (enableEnhance) {
+              const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+              const d = imgData.data;
+              // 히스토그램 평균 밝기 산출
+              let sumLum = 0;
+              for (let i = 0; i < d.length; i += 4) {
+                sumLum += 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+              }
+              const avgLum = sumLum / (d.length / 4);
+              const contrast = 1.45;
+
+              for (let i = 0; i < d.length; i += 4) {
+                const lum = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+                let adj = (lum - avgLum) * contrast + avgLum + 12;
+                adj = Math.max(0, Math.min(255, adj));
+                d[i] = d[i + 1] = d[i + 2] = adj;
+              }
+              ctx.putImageData(imgData, 0, 0);
+            }
+
+            resolve(canvas.toDataURL('image/png'));
+          };
+          img.onerror = reject;
+          img.src = ev.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // =========================================================================
+    // 4. PRD 기준 영수증 핵심 정보 추출 및 데이터 정규화 파서
+    // =========================================================================
+    function classifyCategoryByText(merchant, fullText) {
+      const combined = `${merchant} ${fullText}`.toLowerCase();
+
+      if (/스타벅스|투썸|메가커피|메가엠지씨|컴포즈|빽다방|이디야|할리스|폴바셋|카페|커피|베이커리|파리바게뜨|뚜레쥬르|디저트|아이스크림|배스킨|편의점|gs25|cu|세븐일레븐|이마트24/.test(combined)) {
+        return '카페·간식';
+      }
+      if (/주유소|칼텍스|sk에너지|s-oil|현대오일|택시|코레일|ktx|srt|고속버스|시외버스|지하철|주차|하이패스|티머니|카카오t/.test(combined)) {
+        return '교통';
+      }
+      if (/서점|교보문고|영풍문고|알라딘|예스24|문구|알파|모닝글로리|다이소|인쇄|복사|프린트|도서/.test(combined)) {
+        return '도서·문구';
+      }
+      if (/kt|skt|lgu|통신|우체국|택배|클라우드|소프트웨어|사무/.test(combined)) {
+        return '사무·통신';
+      }
+      if (/식당|김밥|국밥|치킨|피자|버거|맥도날드|롯데리아|버거킹|한식|중식|일식|분식|마트|푸드|반점|회관|갈비|삼겹|라멘|초밥|우동|칼국수|돈까스|떡볶이|도시락|한솥|본죽/.test(combined)) {
+        return '식비';
+      }
+      return '생활·기타';
+    }
+
+    function parseReceiptText(rawText) {
+      const lines = rawText
+        .split(/\r?\n/)
+        .map(l => l.replace(/\s+/g, ' ').trim())
+        .filter(l => l.length > 0);
+
+      // 1) 가맹점명 판별 (PRD 4대 판별 기준 반영)
+      let merchant = '정보 없음';
+      const ignoreHeaderRegex = /^(\[?영수증\]?|신용카드|매출전표|고객용|보관용|가맹점용|승인번호|거래일시|사업자|합계|공급가|부가세|카드번호|할부|일시불|tel|fax)/i;
+
+      // 기준 A: 명시적 표기 ("매장명:", "상호명:", "가맹점:", "가맹점명:", "상호:")
+      for (const line of lines) {
+        const labelMatch = line.match(/(?:매장명|상호명|가맹점명|가맹점|상호|점포명)\s*[:：]\s*(.+)/);
+        if (labelMatch && labelMatch[1]) {
+          const candidate = labelMatch[1].replace(/(사업자|대표|TEL|전화).*$/i, '').trim();
+          if (candidate.length >= 2) {
+            merchant = candidate;
+            break;
+          }
+        }
+      }
+
+      // 기준 B: 법인명 표시 ("(주)", "㈜", "주식회사" 포함 텍스트)
+      if (merchant === '정보 없음') {
+        for (const line of lines.slice(0, 12)) {
+          if (/(\(주\)|㈜|주식회사|\(유\))/.test(line) && !/카드|페이|밴|van|결제대행/i.test(line)) {
+            merchant = line.replace(/(사업자|대표|TEL).*$/i, '').trim();
+            break;
+          }
+        }
+      }
+
+      // 기준 C: 위치 기반 (주소나 대표자명 직전에 위치한 고유명사)
+      if (merchant === '정보 없음') {
+        for (let i = 1; i < Math.min(lines.length, 12); i++) {
+          if (/(대표자?|사업자번호|사업자등록|주소|[시도군구]\s+[가-힣0-9]+(?:로|길|동))/.test(lines[i])) {
+            const prev = lines[i - 1];
+            if (prev && prev.length >= 2 && !ignoreHeaderRegex.test(prev) && !/^\d[\d\s-]+$/.test(prev)) {
+              merchant = prev;
+              break;
+            }
+          }
+        }
+      }
+
+      // 기준 D: 디자인 특성 (영수증 상단에 강조된 첫 유효 텍스트)
+      if (merchant === '정보 없음') {
+        for (const line of lines.slice(0, 6)) {
+          if (line.length >= 2 && !ignoreHeaderRegex.test(line) && !/^[\d\s\-:/.]+$/.test(line)) {
+            merchant = line;
+            break;
+          }
+        }
+      }
+
+      // 2) 거래 일시 추출 및 YYYY-MM-DD 정규화
+      let date = '정보 없음';
+      const datePatterns = [
+        /(20\d{2})\s*[-./년]\s*(0?[1-9]|1[0-2])\s*[-./월]\s*(0?[1-9]|[12]\d|3[01])/,
+        /(?:^|\s|일시[:：]?\s*)(\d{2})\s*[-./]\s*(0?[1-9]|1[0-2])\s*[-./]\s*(0?[1-9]|[12]\d|3[01])(?:\s|$|\()/
+      ];
+
+      for (const pat of datePatterns) {
+        const m = rawText.match(pat);
+        if (m) {
+          const year = m[1].length === 2 ? `20${m[1]}` : m[1];
+          const month = String(m[2]).padStart(2, '0');
+          const day = String(m[3]).padStart(2, '0');
+          date = `${year}-${month}-${day}`;
+          break;
+        }
+      }
+
+      // 3) 금액 추출 헬퍼 (기호 제거 후 순수 숫자 변환)
+      function extractAmountFromLine(lineText) {
+        const matches = lineText.match(/(\d{1,3}(?:,\d{3})+|\d{3,8})\s*원?/g);
+        if (!matches) return 0;
+        const nums = matches
+          .map(s => parseInt(s.replace(/[^0-9]/g, ''), 10))
+          .filter(n => !isNaN(n) && n >= 10 && n < 100000000);
+        return nums.length > 0 ? nums[nums.length - 1] : 0;
+      }
+
+      let total = 0;
+      let vat = 0;
+      let parsedSupply = 0;
+
+      for (const line of lines) {
+        const compact = line.replace(/\s+/g, '');
+        if (/(합계|총금액|총액|결제금액|승인금액|받을금액|청구금액|판매합계)/.test(compact)) {
+          const val = extractAmountFromLine(line);
+          if (val > total) total = val;
+        } else if (/(부가세|부가가치세|vat|세액)/i.test(compact)) {
+          const val = extractAmountFromLine(line);
+          if (val > 0) vat = val;
+        } else if (/(공급가액|공급가|과세물품|물품가액)/.test(compact)) {
+          const val = extractAmountFromLine(line);
+          if (val > 0) parsedSupply = val;
+        }
+      }
+
+      // 총액 키워드가 뭉개졌을 경우 영수증 내 최대 금액 후보 탐색 (사업자번호·승인번호 등 10자리 이상 제외)
+      if (total === 0) {
+        let maxCandidate = 0;
+        for (const line of lines) {
+          if (/(사업자|승인번호|카드번호|전화|tel|포스|pos)/i.test(line)) continue;
+          const val = extractAmountFromLine(line);
+          if (val > maxCandidate && val <= 10000000) {
+            maxCandidate = val;
+          }
+        }
+        total = maxCandidate;
+      }
+
+      // 4) PRD 정규화 규칙: 공급가액 = 총 금액 - 부가세 자동 계산
+      let supply = 0;
+      if (total > 0) {
+        if (vat > 0 && vat < total) {
+          supply = total - vat;
+        } else if (parsedSupply > 0 && parsedSupply < total) {
+          supply = parsedSupply;
+          vat = total - supply;
+        } else {
+          // 간이영수증 등으로 부가세 별도 표기가 없는 경우 10% 기준 자동 산출
+          supply = Math.round(total / 1.1);
+          vat = total - supply;
+        }
+      }
+
+      const category = classifyCategoryByText(merchant, rawText);
+
+      return {
+        merchant,
+        date,
+        category,
+        total,
+        vat,
+        supply,
+        isUncertain: (merchant === '정보 없음' && total === 0)
+      };
+    }
+
+    // =========================================================================
+    // 5. 파일 업로드 및 다중 영수증 순차 스캔 처리
+    // =========================================================================
+    const dropZone = document.getElementById('dropZone');
+    const receiptFileInput = document.getElementById('receiptFileInput');
+    const ocrProgressBox = document.getElementById('ocrProgressBox');
+    const ocrStatusLabel = document.getElementById('ocrStatusLabel');
+    const ocrPercentLabel = document.getElementById('ocrPercentLabel');
+    const ocrBarFill = document.getElementById('ocrBarFill');
+    const ocrNoticeBanner = document.getElementById('ocrNoticeBanner');
+
+    dropZone.addEventListener('click', () => receiptFileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        handleReceiptFiles(Array.from(e.dataTransfer.files));
+      }
+    });
+    receiptFileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleReceiptFiles(Array.from(e.target.files));
+        receiptFileInput.value = '';
+      }
+    });
+
+    window.addEventListener('paste', (e) => {
+      if (ocrUploadArea.style.display === 'none') return;
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      const files = [];
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const f = item.getAsFile();
+          if (f) files.push(f);
+        }
+      }
+      if (files.length > 0) handleReceiptFiles(files);
+    });
+
+    async function handleReceiptFiles(files) {
+      const imageFiles = files.filter(f => f.type.startsWith('image/'));
+      if (imageFiles.length === 0) {
+        showNotice('이미지 파일(JPG, PNG, WEBP 등)만 업로드할 수 있습니다.', 'warn');
+        return;
+      }
+
+      ocrNoticeBanner.style.display = 'none';
+      ocrProgressBox.style.display = 'block';
+      const enhance = document.getElementById('preprocessCheck').checked;
+      const autoRegister = document.getElementById('autoRegisterBatchCheck').checked;
+
+      let successCount = 0;
+      let failCount = 0;
+
+      try {
+        const worker = await getOcrWorker((status, pct) => {
+          ocrStatusLabel.textContent = `로컬 OCR 엔진 처리 중 (${status})...`;
+          ocrPercentLabel.textContent = `${pct}%`;
+          ocrBarFill.style.width = `${pct}%`;
+        });
+
+        for (let i = 0; i < imageFiles.length; i++) {
+          const file = imageFiles[i];
+          ocrStatusLabel.textContent = `영수증 스캔 중 (${i + 1} / ${imageFiles.length}장): ${file.name}`;
+          ocrPercentLabel.textContent = '0%';
+          ocrBarFill.style.width = '0%';
+
+          const processedDataUrl = await preprocessReceiptImage(file, enhance);
+          const result = await worker.recognize(processedDataUrl);
+          const rawText = result?.data?.text || '';
+          const parsed = parseReceiptText(rawText);
+
+          // 마지막 스캔 항목을 검증 패널에 표시
+          openReviewPanel(processedDataUrl, rawText, parsed);
+
+          if (parsed.isUncertain) {
+            failCount++;
+            lastReviewedReceiptId = null;
+            showNotice(
+              '인식 실패 안내: 영수증 글자가 흐리거나 인식이 어렵습니다. 더 선명한 사진으로 재업로드하거나 위 [보정 패널] / [영수증 없이 직접 입력]에서 수동으로 입력해 주세요.',
+              'warn'
+            );
+          } else {
+            successCount++;
+            if (autoRegister) {
+              const newId = `rcpt_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+              lastReviewedReceiptId = newId;
+              receipts.unshift({
+                id: newId,
+                date: parsed.date,
+                merchant: parsed.merchant,
+                category: parsed.category,
+                total: parsed.total,
+                vat: parsed.vat,
+                supply: parsed.supply
+              });
+              saveReceipts();
+            } else {
+              lastReviewedReceiptId = null;
+            }
+          }
+        }
+
+        if (successCount > 0 && failCount === 0) {
+          showNotice(
+            `총 ${successCount}장의 영수증 로컬 OCR 스캔 및 추출이 완료되었습니다. 누락 항목은 "정보 없음"으로 표기되며 언제든 수정할 수 있습니다.`,
+            'ok'
+          );
+        }
+      } catch (err) {
+        showNotice(`OCR 처리 중 오류가 발생했습니다: ${err.message}. 수동 입력 탭을 이용해 주세요.`, 'warn');
+      } finally {
+        ocrProgressBox.style.display = 'none';
+      }
+    }
+
+    function showNotice(msg, type) {
+      ocrNoticeBanner.style.display = 'block';
+      ocrNoticeBanner.className = `notice-banner ${type}`;
+      ocrNoticeBanner.textContent = msg;
+    }
+
+    // =========================================================================
+    // 6. 스캔 검증/보정 패널 및 수동 입력 공급가액 실시간 자동 계산
+    // =========================================================================
+    const scanReviewPanel = document.getElementById('scanReviewPanel');
+    const revMerchant = document.getElementById('revMerchant');
+    const revDate = document.getElementById('revDate');
+    const revCategory = document.getElementById('revCategory');
+    const revTotal = document.getElementById('revTotal');
+    const revVat = document.getElementById('revVat');
+    const revSupplyDisplay = document.getElementById('revSupplyDisplay');
+
+    function updateReviewSupply() {
+      const t = Math.max(0, Math.round(Number(revTotal.value) || 0));
+      const v = Math.max(0, Math.round(Number(revVat.value) || 0));
+      const s = Math.max(0, t - v);
+      revSupplyDisplay.value = `${formatComma(s)} 원`;
+    }
+
+    revTotal.addEventListener('input', updateReviewSupply);
+    revVat.addEventListener('input', updateReviewSupply);
+
+    function openReviewPanel(thumbUrl, rawText, parsed) {
+      scanReviewPanel.style.display = 'block';
+      document.getElementById('scannedThumbImg').src = thumbUrl;
+      document.getElementById('rawOcrTextBox').textContent = rawText || '(추출된 텍스트 없음)';
+
+      revMerchant.value = parsed.merchant === '정보 없음' ? '' : parsed.merchant;
+      revDate.value = parsed.date === '정보 없음' ? '' : parsed.date;
+      revCategory.value = parsed.category;
+      revTotal.value = parsed.total || 0;
+      revVat.value = parsed.vat || 0;
+      updateReviewSupply();
+    }
+
+    document.getElementById('applyReviewBtn').addEventListener('click', () => {
+      const merchant = revMerchant.value.trim() || '정보 없음';
+      const rawDate = revDate.value.trim();
+      const date = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : (rawDate || '정보 없음');
+      const category = revCategory.value;
+      const total = Math.max(0, Math.round(Number(revTotal.value) || 0));
+      const vat = Math.max(0, Math.round(Number(revVat.value) || 0));
+      const supply = Math.max(0, total - vat);
+
+      if (lastReviewedReceiptId) {
+        const idx = receipts.findIndex(r => r.id === lastReviewedReceiptId);
+        if (idx !== -1) {
+          receipts[idx] = { id: lastReviewedReceiptId, date, merchant, category, total, vat, supply };
+          saveReceipts();
+          showNotice('보정된 영수증 정보가 지출 내역 표에 업데이트되었습니다.', 'ok');
+          return;
+        }
+      }
+
+      const newId = `rcpt_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+      lastReviewedReceiptId = newId;
+      receipts.unshift({ id: newId, date, merchant, category, total, vat, supply });
+      saveReceipts();
+      showNotice('영수증 내역이 지출 정산 표에 등록되었습니다.', 'ok');
+    });
+
+    document.getElementById('closeReviewBtn').addEventListener('click', () => {
+      scanReviewPanel.style.display = 'none';
+    });
+
+    // 직접 입력 폼 공급가액 자동 계산
+    const manTotal = document.getElementById('manTotal');
+    const manVat = document.getElementById('manVat');
+    const manSupplyDisplay = document.getElementById('manSupplyDisplay');
+
+    function updateManualSupply() {
+      const t = Math.max(0, Math.round(Number(manTotal.value) || 0));
+      let v = manVat.value === '' ? (t - Math.round(t / 1.1)) : Math.max(0, Math.round(Number(manVat.value) || 0));
+      const s = Math.max(0, t - v);
+      manSupplyDisplay.value = `${formatComma(s)} 원 (부가세 ${formatComma(v)}원)`;
+    }
+
+    manTotal.addEventListener('input', updateManualSupply);
+    manVat.addEventListener('input', updateManualSupply);
+
+    document.getElementById('manualEntryForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const merchant = document.getElementById('manMerchant').value.trim() || '정보 없음';
+      const date = document.getElementById('manDate').value || '정보 없음';
+      const category = document.getElementById('manCategory').value;
+      const total = Math.max(0, Math.round(Number(manTotal.value) || 0));
+      const vat = manVat.value === ''
+        ? Math.max(0, total - Math.round(total / 1.1))
+        : Math.max(0, Math.round(Number(manVat.value) || 0));
+      const supply = Math.max(0, total - vat);
+
+      receipts.unshift({
+        id: `rcpt_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        date,
+        merchant,
+        category,
+        total,
+        vat,
+        supply
+      });
+
+      document.getElementById('manMerchant').value = '';
+      manTotal.value = '';
+      manVat.value = '';
+      manSupplyDisplay.value = '0';
+      saveReceipts();
+      alert('직접 입력한 지출 내역이 저장되었습니다.');
+    });
+
+    // =========================================================================
+    // 7. 지출 내역 필터링, 표 렌더링, 인라인 항목 수정, 삭제
+    // =========================================================================
+    const monthFilterSelect = document.getElementById('monthFilterSelect');
+    const categoryFilterSelect = document.getElementById('categoryFilterSelect');
+    const receiptTableBody = document.getElementById('receiptTableBody');
+
+    function syncMonthFilterOptions() {
+      const currentVal = monthFilterSelect.value;
+      const months = new Set();
+      receipts.forEach(r => {
+        if (/^\d{4}-\d{2}/.test(r.date)) {
+          months.add(r.date.slice(0, 7));
+        }
+      });
+
+      const sortedMonths = Array.from(months).sort().reverse();
+      monthFilterSelect.innerHTML = '<option value="ALL">전체 기간</option>';
+      sortedMonths.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = `${m.replace('-', '년 ')}월`;
+        monthFilterSelect.appendChild(opt);
+      });
+
+      if (currentVal === 'ALL' || sortedMonths.includes(currentVal)) {
+        monthFilterSelect.value = currentVal;
+      }
+    }
+
+    function getFilteredReceipts() {
+      const mFilter = monthFilterSelect.value;
+      const cFilter = categoryFilterSelect.value;
+
+      return receipts.filter(r => {
+        const matchMonth = mFilter === 'ALL' || (r.date && r.date.startsWith(mFilter));
+        const matchCat = cFilter === 'ALL' || r.category === cFilter;
+        return matchMonth && matchCat;
+      });
+    }
+
+    monthFilterSelect.addEventListener('change', renderAll);
+    categoryFilterSelect.addEventListener('change', renderAll);
+
+    function renderTableAndKPIs() {
+      syncMonthFilterOptions();
+      const filtered = getFilteredReceipts();
+
+      let sumTotal = 0;
+      let sumVat = 0;
+      let sumSupply = 0;
+
+      filtered.forEach(r => {
+        sumTotal += Number(r.total) || 0;
+        sumVat += Number(r.vat) || 0;
+        sumSupply += Number(r.supply) || 0;
+      });
+
+      document.getElementById('kpiCount').textContent = `${filtered.length}건`;
+      document.getElementById('kpiSupply').textContent = `${formatComma(sumSupply)}원`;
+      document.getElementById('kpiVat').textContent = `${formatComma(sumVat)}원`;
+      document.getElementById('kpiTotal').textContent = `${formatComma(sumTotal)}원`;
+
+      receiptTableBody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        receiptTableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align:center; padding:36px 12px; color:#555;">
+              등록된 영수증 지출 내역이 없습니다. 상단에서 영수증 이미지를 스캔하거나 직접 입력해 주세요.
+            </td>
+          </tr>
+        `;
+        return filtered;
+      }
+
+      filtered.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        const dateCell = item.date === '정보 없음'
+          ? `<span class="missing-pill">정보 없음</span>`
+          : item.date;
+        const merchantCell = item.merchant === '정보 없음'
+          ? `<span class="missing-pill">정보 없음</span>`
+          : item.merchant;
+
+        const catOptions = CATEGORIES.map(c =>
+          `<option value="${c}" ${item.category === c ? 'selected' : ''}>${c}</option>`
+        ).join('');
+
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${dateCell}</td>
+          <td>${merchantCell}</td>
+          <td>
+            <select class="cat-select-inline" data-id="${item.id}">${catOptions}</select>
+          </td>
+          <td class="num">${formatComma(item.supply)}원</td>
+          <td class="num">${formatComma(item.vat)}원</td>
+          <td class="num" style="color:var(--blue); font-weight:900;">${formatComma(item.total)}원</td>
+          <td>
+            <div class="row-btn-group">
+              <button type="button" class="btn btn-white btn-sm edit-row-btn" data-id="${item.id}">수정</button>
+              <button type="button" class="btn btn-pink btn-sm del-row-btn" data-id="${item.id}">삭제</button>
+            </div>
+          </td>
+        `;
+        receiptTableBody.appendChild(tr);
+      });
+
+      return filtered;
+    }
+
+    // 표 내부 이벤트 위임 (카테고리 즉시 변경, 행 수정, 행 삭제)
+    receiptTableBody.addEventListener('change', (e) => {
+      const catSel = e.target.closest('.cat-select-inline');
+      if (catSel) {
+        const id = catSel.dataset.id;
+        const target = receipts.find(r => r.id === id);
+        if (target) {
+          target.category = catSel.value;
+          saveReceipts();
+        }
+      }
+    });
+
+    receiptTableBody.addEventListener('click', (e) => {
+      const delBtn = e.target.closest('.del-row-btn');
+      const editBtn = e.target.closest('.edit-row-btn');
+
+      if (delBtn) {
+        const id = delBtn.dataset.id;
+        if (confirm('이 영수증 지출 내역을 삭제하시겠습니까?')) {
+          receipts = receipts.filter(r => r.id !== id);
+          saveReceipts();
+        }
+      } else if (editBtn) {
+        const id = editBtn.dataset.id;
+        const target = receipts.find(r => r.id === id);
+        if (!target) return;
+
+        const newMerchant = prompt('가맹점명(상호명)을 입력하세요:', target.merchant);
+        if (newMerchant === null) return;
+
+        const newDate = prompt('거래 일시(YYYY-MM-DD)를 입력하세요:', target.date);
+        if (newDate === null) return;
+
+        const newTotalStr = prompt('총 금액(숫자만)을 입력하세요:', target.total);
+        if (newTotalStr === null) return;
+
+        const newVatStr = prompt('부가세(숫자만)를 입력하세요:', target.vat);
+        if (newVatStr === null) return;
+
+        const parsedTotal = Math.max(0, Math.round(Number(newTotalStr.replace(/[^0-9]/g, '')) || 0));
+        const parsedVat = Math.max(0, Math.round(Number(newVatStr.replace(/[^0-9]/g, '')) || 0));
+
+        target.merchant = newMerchant.trim() || '정보 없음';
+        target.date = newDate.trim() || '정보 없음';
+        target.total = parsedTotal;
+        target.vat = parsedVat;
+        target.supply = Math.max(0, parsedTotal - parsedVat);
+        saveReceipts();
+      }
+    });
+
+    // =========================================================================
+    // 8. 차트 출력 기능 (지출 항목별 비중 & 날짜별 지출 흐름)
+    // =========================================================================
+    function renderCharts(filtered) {
+      drawCategoryChart(filtered);
+      drawDailyTrendChart(filtered);
+    }
+
+    function drawCategoryChart(filtered) {
+      const canvas = document.getElementById('categoryChartCanvas');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(260, rect.width);
+      const height = 230;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      const totalsByCat = CATEGORIES.map(cat => {
+        const sum = filtered
+          .filter(r => r.category === cat)
+          .reduce((acc, cur) => acc + (Number(cur.total) || 0), 0);
+        return { cat, sum };
+      });
+
+      const maxVal = Math.max(...totalsByCat.map(c => c.sum), 1);
+      const colors = ['#ffd83b', '#ff9ff3', '#48dbfb', '#2ed573', '#ff9f43', '#a4b0be'];
+
+      const padLeft = 74;
+      const padRight = 76;
+      const padTop = 12;
+      const rowH = (height - padTop * 2) / CATEGORIES.length;
+
+      ctx.font = '800 12px Pretendard, sans-serif';
+      ctx.textBaseline = 'middle';
+
+      totalsByCat.forEach((item, idx) => {
+        const cy = padTop + idx * rowH + rowH / 2;
+        const barH = 18;
+        const maxBarW = Math.max(40, width - padLeft - padRight);
+        const barW = item.sum > 0 ? Math.max(6, (item.sum / maxVal) * maxBarW) : 0;
+
+        // 항목 라벨
+        ctx.fillStyle = '#111111';
+        ctx.textAlign = 'right';
+        ctx.fillText(item.cat, padLeft - 10, cy);
+
+        // 배경 트랙
+        ctx.fillStyle = '#f0eee6';
+        ctx.fillRect(padLeft, cy - barH / 2, maxBarW, barH);
+
+        if (barW > 0) {
+          ctx.fillStyle = colors[idx % colors.length];
+          ctx.fillRect(padLeft, cy - barH / 2, barW, barH);
+          ctx.strokeStyle = '#111111';
+          ctx.lineWidth = 1.8;
+          ctx.strokeRect(padLeft, cy - barH / 2, barW, barH);
+        }
+
+        // 금액 텍스트
+        ctx.fillStyle = '#111111';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${formatComma(item.sum)}원`, padLeft + maxBarW + 8, cy);
+      });
+    }
+
+    function drawDailyTrendChart(filtered) {
+      const canvas = document.getElementById('monthlyTrendCanvas');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(280, rect.width);
+      const height = 230;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      // 날짜별 합계 집계
+      const dayMap = new Map();
+      filtered.forEach(r => {
+        const key = /^\d{4}-\d{2}-\d{2}$/.test(r.date) ? r.date : '날짜미상';
+        dayMap.set(key, (dayMap.get(key) || 0) + (Number(r.total) || 0));
+      });
+
+      const entries = Array.from(dayMap.entries())
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .slice(-14);
+
+      if (entries.length === 0) {
+        ctx.font = '800 13px Pretendard, sans-serif';
+        ctx.fillStyle = '#666666';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('표시할 날짜별 지출 데이터가 없습니다.', width / 2, height / 2);
+        return;
+      }
+
+      const maxVal = Math.max(...entries.map(e => e[1]), 1000);
+      const padLeft = 58;
+      const padRight = 14;
+      const padTop = 18;
+      const padBottom = 30;
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      ctx.font = '800 11px Pretendard, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      for (let i = 0; i <= 3; i++) {
+        const y = padTop + (plotH * i) / 3;
+        const val = Math.round((maxVal * (1 - i / 3)) / 100) * 100;
+        ctx.strokeStyle = i === 3 ? '#111111' : '#e0e0e0';
+        ctx.lineWidth = i === 3 ? 2 : 1;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(width - padRight, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#333333';
+        ctx.fillText(formatComma(val), padLeft - 6, y);
+      }
+
+      const slotW = plotW / entries.length;
+      const barW = Math.max(10, Math.min(28, slotW * 0.6));
+
+      entries.forEach(([dateKey, amount], idx) => {
+        const barH = (amount / maxVal) * plotH;
+        const x = padLeft + idx * slotW + (slotW - barW) / 2;
+        const y = padTop + plotH - barH;
+
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(x + 2, y + 2, barW, Math.max(0, barH - 2));
+
+        ctx.fillStyle = '#48dbfb';
+        ctx.fillRect(x, y, barW, barH);
+
+        ctx.strokeStyle = '#111111';
+        ctx.lineWidth = 1.8;
+        ctx.strokeRect(x, y, barW, barH);
+
+        const shortLabel = dateKey.length === 10 ? dateKey.slice(5) : dateKey;
+        ctx.fillStyle = '#111111';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(shortLabel, padLeft + idx * slotW + slotW / 2, padTop + plotH + 8);
+      });
+    }
+
+    // =========================================================================
+    // 9. 엑셀 파일(.xlsx) 생성 및 다운로드 (SheetJS + CSV 폴백)
+    // =========================================================================
+    document.getElementById('exportExcelBtn').addEventListener('click', () => {
+      const filtered = getFilteredReceipts();
+      if (filtered.length === 0) {
+        alert('내보낼 영수증 지출 내역이 없습니다.');
+        return;
+      }
+
+      const rows = filtered.map((item, idx) => ({
+        '번호': idx + 1,
+        '거래일시': item.date,
+        '가맹점명(상호명)': item.merchant,
+        '지출항목': item.category,
+        '공급가액(원)': Number(item.supply) || 0,
+        '부가세(원)': Number(item.vat) || 0,
+        '총금액(원)': Number(item.total) || 0
+      }));
+
+      const totalSupply = rows.reduce((s, r) => s + r['공급가액(원)'], 0);
+      const totalVat = rows.reduce((s, r) => s + r['부가세(원)'], 0);
+      const totalAmount = rows.reduce((s, r) => s + r['총금액(원)'], 0);
+
+      rows.push({
+        '번호': '합계',
+        '거래일시': '',
+        '가맹점명(상호명)': `총 ${filtered.length}건`,
+        '지출항목': '',
+        '공급가액(원)': totalSupply,
+        '부가세(원)': totalVat,
+        '총금액(원)': totalAmount
+      });
+
+      const fileName = `영수증_지출정리_${getTodayStr()}.xlsx`;
+
+      if (typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.json_to_sheet(rows);
+        ws['!cols'] = [
+          { wch: 8 },
+          { wch: 14 },
+          { wch: 24 },
+          { wch: 14 },
+          { wch: 15 },
+          { wch: 13 },
+          { wch: 15 }
+        ];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, '영수증지출내역');
+        XLSX.writeFile(wb, fileName);
+      } else {
+        // 오프라인 폴백: UTF-8 BOM CSV
+        const headers = Object.keys(rows[0]);
+        const csvLines = [
+          headers.join(','),
+          ...rows.map(r => headers.map(h => `"${String(r[h]).replace(/"/g, '""')}"`).join(','))
+        ];
+        const blob = new Blob(['\uFEFF' + csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName.replace('.xlsx', '.csv');
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    });
+
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+      if (receipts.length === 0) return;
+      if (confirm('저장된 모든 영수증 지출 내역을 초기화하시겠습니까? (삭제 전 엑셀 백업을 권장합니다)')) {
+        receipts = [];
+        lastReviewedReceiptId = null;
+        scanReviewPanel.style.display = 'none';
+        saveReceipts();
+      }
+    });
+
+    function renderAll() {
+      const filtered = renderTableAndKPIs();
+      renderCharts(filtered);
+    }
+
+    window.addEventListener('resize', () => {
+      renderCharts(getFilteredReceipts());
+    });
+
+    document.getElementById('manDate').value = getTodayStr();
+    renderAll();
+  });
+</script>
+
+</body>
+</html>
