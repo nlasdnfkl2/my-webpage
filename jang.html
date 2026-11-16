@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f2c59">
+  <title>K-에듀파인 학급·교무 스마트 행정지원 포털 (실습 24)</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --navy-dark: #0b2246;
+      --navy: #0f2c59;
+      --navy-light: #1d4ed8;
+      --blue-tint: #eff6ff;
+      --bg-page: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-th: #f8fafc;
+      --border: #cbd5e1;
+      --border-strong: #94a3b8;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #64748b;
+
+      --status-draft-bg: #fef3c7;
+      --status-draft-fg: #92400e;
+      --status-review-bg: #dbeafe;
+      --status-review-fg: #1e40af;
+      --status-done-bg: #dcfce7;
+      --status-done-fg: #166534;
+      --status-reject-bg: #fee2e2;
+      --status-reject-fg: #991b1b;
+
+      --stamp-red: #dc2626;
+      --sidebar-w: 248px;
+      --header-h: 56px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Malgun Gothic", "맑은 고딕", sans-serif;
+      background: var(--bg-page);
+      color: var(--text-main);
+      font-size: 13.5px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    /* 상단 K-에듀파인 글로벌 헤더 */
+    .ef-topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: linear-gradient(90deg, var(--navy-dark) 0%, var(--navy) 65%, #163e7a 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 1200;
+      border-bottom: 2px solid #081833;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+    }
+
+    .ef-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .ef-menu-toggle {
+      display: none;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+      width: 34px;
+      height: 34px;
+      border-radius: 4px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ef-logo-badge {
+      background: #2563eb;
+      border: 1px solid #60a5fa;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .ef-system-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ef-system-sub {
+      font-size: 11.5px;
+      color: #cbd5e1;
+      margin-left: 6px;
+      font-weight: 400;
+    }
+
+    .ef-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .ef-user-chip {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #f8fafc;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .ef-user-chip:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .ef-top-btn {
+      background: #ffffff;
+      color: var(--navy);
+      border: 1px solid #cbd5e1;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ef-top-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .ef-top-btn.accent {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #1d4ed8;
+    }
+
+    .ef-top-btn.accent:hover {
+      background: #1d4ed8;
+    }
+
+    /* 좌측 에듀파인 트리 사이드바 */
+    .ef-layout {
+      display: flex;
+      padding-top: var(--header-h);
+      min-height: 100vh;
+    }
+
+    .ef-sidebar {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: #ffffff;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 1100;
+      transition: transform 0.22s ease;
+    }
+
+    .ef-sidebar-head {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ef-sidebar-head strong {
+      font-size: 12.5px;
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .ef-fiscal-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--blue-tint);
+      color: var(--navy-light);
+      border: 1px solid #bfdbfe;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .ef-tree {
+      padding: 10px 8px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .ef-tree-group {
+      margin-bottom: 12px;
+    }
+
+    .ef-tree-folder {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--navy);
+      padding: 6px 8px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .ef-tree-item {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 7px 10px 7px 22px;
+      border-radius: 4px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .ef-tree-item:hover {
+      background: #f8fafc;
+      color: var(--navy);
+    }
+
+    .ef-tree-item.active {
+      background: var(--blue-tint);
+      color: var(--navy-light);
+      border-color: #bfdbfe;
+      font-weight: 800;
+    }
+
+    .ef-tree-count {
+      font-size: 11px;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: #334155;
+      padding: 0 6px;
+      border-radius: 10px;
+    }
+
+    .ef-tree-item.active .ef-tree-count {
+      background: var(--navy-light);
+      color: #ffffff;
+    }
+
+    .ef-sidebar-foot {
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      background: #f8fafc;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .ef-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 1050;
+    }
+
+    .ef-backdrop.open {
+      display: block;
+    }
+
+    /* 메인 콘텐츠 영역 */
+    .ef-main {
+      flex: 1;
+      margin-left: var(--sidebar-w);
+      padding: 16px 20px 64px;
+      min-width: 0;
+    }
+
+    /* 경로(Breadcrumb) 및 화면 타이틀 바 */
+    .ef-breadcrumb-bar {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ef-page-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ef-page-title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: var(--navy-light);
+      border-radius: 2px;
+    }
+
+    .ef-crumb-path {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    /* 예산 집행 요약 4단 KPI 패널 */
+    .ef-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .ef-kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--navy);
+      border-radius: 4px;
+      padding: 12px 14px;
+    }
+
+    .ef-kpi-card.pending { border-top-color: #d97706; }
+    .ef-kpi-card.approved { border-top-color: #16a34a; }
+    .ef-kpi-card.balance { border-top-color: #2563eb; }
+
+    .ef-kpi-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ef-kpi-val {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .ef-kpi-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .ef-progress-track {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .ef-progress-fill {
+      height: 100%;
+      background: #2563eb;
+      transition: width 0.25s ease;
+    }
+
+    /* 패널 박스 공통 */
+    .ef-panel {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .ef-panel-head {
+      background: var(--bg-th);
+      border-bottom: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ef-panel-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ef-panel-body {
+      padding: 14px;
+    }
+
+    /* 버튼 스타일 */
+    .btn-ef {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
+      padding: 5px 11px;
+      border-radius: 3px;
+      font-weight: 700;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: background 0.12s ease;
+    }
+
+    .btn-ef:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-ef.primary {
+      background: var(--navy);
+      border-color: var(--navy-dark);
+      color: #ffffff;
+    }
+
+    .btn-ef.primary:hover {
+      background: #173f7a;
+    }
+
+    .btn-ef.blue {
+      background: #2563eb;
+      border-color: #1d4ed8;
+      color: #ffffff;
+    }
+
+    .btn-ef.blue:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-ef.green {
+      background: #15803d;
+      border-color: #166534;
+      color: #ffffff;
+    }
+
+    .btn-ef.danger {
+      background: #ffffff;
+      border-color: #fca5a5;
+      color: #b91c1c;
+    }
+
+    .btn-ef.danger:hover {
+      background: #fef2f2;
+    }
+
+    /* 에듀파인 품의·증빙 등록 2단 폼 */
+    .ef-form-layout {
+      display: grid;
+      grid-template-columns: 1.35fr 0.85fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    table.ef-form-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-top: 2px solid var(--navy);
+    }
+
+    table.ef-form-table th {
+      background: var(--bg-th);
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 700;
+      color: #1e293b;
+      width: 112px;
+      white-space: nowrap;
+    }
+
+    table.ef-form-table td {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      background: #ffffff;
+    }
+
+    .req-star {
+      color: #dc2626;
+      margin-left: 2px;
+    }
+
+    .ef-input, .ef-select, .ef-textarea {
+      width: 100%;
+      border: 1px solid var(--border-strong);
+      border-radius: 3px;
+      padding: 6px 8px;
+      background: #ffffff;
+      font-size: 13px;
+    }
+
+    .ef-input:focus, .ef-select:focus, .ef-textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.14);
+    }
+
+    .ef-textarea {
+      min-height: 68px;
+      resize: vertical;
+    }
+
+    /* 외부 이미지 연동 박스 */
+    .ext-img-box {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 4px;
+      padding: 12px;
+    }
+
+    .ext-img-preview-frame {
+      width: 100%;
+      height: 176px;
+      background: #e2e8f0;
+      border: 1px solid var(--border-strong);
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .ext-img-preview-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .ext-img-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(15, 44, 89, 0.88);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .preset-chip {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      border-radius: 3px;
+      padding: 3px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--navy);
+    }
+
+    .preset-chip:hover {
+      background: var(--blue-tint);
+      border-color: #2563eb;
+    }
+
+    /* 검색 조건 바 */
+    .ef-search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ef-search-bar .ef-select,
+    .ef-search-bar .ef-input {
+      width: auto;
+      min-width: 135px;
+    }
+
+    /* 에듀파인 데이터 그리드 테이블 */
+    .ef-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table.ef-grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+      font-size: 12.8px;
+    }
+
+    table.ef-grid-table th {
+      background: #eef2f6;
+      border-bottom: 1px solid var(--border-strong);
+      border-right: 1px solid var(--border);
+      padding: 8px 10px;
+      font-weight: 800;
+      color: #1e293b;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    table.ef-grid-table td {
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid #e2e8f0;
+      padding: 8px 10px;
+      vertical-align: middle;
+    }
+
+    table.ef-grid-table tbody tr:hover td {
+      background: #f8fafc;
+    }
+
+    .thumb-cell {
+      width: 54px;
+      height: 38px;
+      border: 1px solid var(--border-strong);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 0 auto;
+      cursor: pointer;
+      background: #e2e8f0;
+    }
+
+    .thumb-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11.5px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status-pill.draft { background: var(--status-draft-bg); color: var(--status-draft-fg); border: 1px solid #fcd34d; }
+    .status-pill.review { background: var(--status-review-bg); color: var(--status-review-fg); border: 1px solid #93c5fd; }
+    .status-pill.done { background: var(--status-done-bg); color: var(--status-done-fg); border: 1px solid #86efac; }
+    .status-pill.reject { background: var(--status-reject-bg); color: var(--status-reject-fg); border: 1px solid #fca5a5; }
+
+    /* 증빙 사진 갤러리 그리드 */
+    .evidence-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .ev-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ev-card-img {
+      width: 100%;
+      height: 165px;
+      background: #e2e8f0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .ev-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.2s ease;
+    }
+
+    .ev-card-img:hover img {
+      transform: scale(1.03);
+    }
+
+    .ev-card-body {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+
+    /* 모달 & 공문서 기안문 양식 */
+    .ef-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.62);
+      z-index: 2500;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .ef-modal.open {
+      display: flex;
+    }
+
+    .ef-modal-box {
+      background: #ffffff;
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.3);
+      width: 100%;
+      max-width: 780px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ef-modal-box.sm {
+      max-width: 440px;
+    }
+
+    .ef-modal-head {
+      background: var(--navy);
+      color: #ffffff;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .ef-modal-close {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      width: 26px;
+      height: 26px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .ef-modal-body {
+      padding: 18px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+
+    /* 실제 대한민국 학교 공문서 기안 용지 스타일 */
+    .official-doc-paper {
+      background: #ffffff;
+      border: 1px solid #94a3b8;
+      padding: 26px 28px;
+      color: #111111;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .doc-top-banner {
+      text-align: center;
+      border-bottom: 2px solid #111111;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    .doc-school-name {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+    }
+
+    .doc-header-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .doc-meta-info {
+      font-size: 12.5px;
+      line-height: 1.75;
+    }
+
+    /* 4단 전자결재란 */
+    table.approval-box-table {
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 11.5px;
+      background: #ffffff;
+    }
+
+    table.approval-box-table th,
+    table.approval-box-table td {
+      border: 1px solid #111111;
+    }
+
+    table.approval-box-table th {
+      background: #f1f5f9;
+      padding: 3px 8px;
+      font-weight: 800;
+    }
+
+    .stamp-slot {
+      width: 66px;
+      height: 54px;
+      cursor: pointer;
+      position: relative;
+      vertical-align: middle;
+      transition: background 0.12s ease;
+    }
+
+    .stamp-slot:hover {
+      background: #fef2f2;
+    }
+
+    .red-stamp {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--stamp-red);
+      border-radius: 50%;
+      color: var(--stamp-red);
+      font-weight: 900;
+      font-size: 10.5px;
+      line-height: 1.1;
+      transform: rotate(-6deg);
+    }
+
+    .stamp-hint-txt {
+      font-size: 10px;
+      color: #94a3b8;
+    }
+
+    table.doc-detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 12.5px;
+    }
+
+    table.doc-detail-table th,
+    table.doc-detail-table td {
+      border: 1px solid #111111;
+      padding: 7px 10px;
+    }
+
+    table.doc-detail-table th {
+      background: #f1f5f9;
+      width: 110px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .doc-evidence-box {
+      margin-top: 14px;
+      border: 1px solid #111111;
+      padding: 10px;
+    }
+
+    .doc-evidence-box img {
+      max-width: 100%;
+      max-height: 240px;
+      display: block;
+      margin: 8px auto 0;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* 모바일 하단 퀵 내비게이션 */
+    .ef-mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 54px;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      z-index: 1200;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .ef-mob-btn {
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      cursor: pointer;
+      gap: 2px;
+    }
+
+    .ef-mob-btn.active {
+      color: var(--navy-light);
+      background: var(--blue-tint);
+      font-weight: 800;
+    }
+
+    .ef-toast {
+      position: fixed;
+      bottom: 66px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--navy-dark);
+      color: #ffffff;
+      padding: 9px 16px;
+      border-radius: 4px;
+      font-size: 12.5px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 3000;
+      white-space: nowrap;
+    }
+
+    .ef-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1024px) {
+      .ef-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .ef-form-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .ef-menu-toggle {
+        display: inline-flex;
+      }
+      .ef-system-sub {
+        display: none;
+      }
+      .ef-sidebar {
+        transform: translateX(-100%);
+      }
+      .ef-sidebar.open {
+        transform: translateX(0);
+      }
+      .ef-main {
+        margin-left: 0;
+        padding: 12px 12px 72px;
+      }
+      .ef-kpi-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .ef-kpi-val {
+        font-size: 16px;
+      }
+      .ef-mobile-nav {
+        display: grid;
+      }
+      .official-doc-paper {
+        padding: 16px 14px;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #docModal, #docModal * {
+        visibility: visible;
+      }
+      #docModal {
+        position: absolute;
+        left: 0; top: 0;
+        background: #ffffff;
+        padding: 0;
+      }
+      .ef-modal-box {
+        box-shadow: none;
+        border: none;
+        max-height: none;
+        max-width: 100%;
+      }
+      .ef-modal-head, .no-print {
+        display: none !important;
+      }
+      .ef-modal-body {
+        padding: 0;
+        background: #ffffff;
+        overflow: visible;
+      }
+      .official-doc-paper {
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 상단 K-에듀파인 통합 헤더 -->
+<header class="ef-topbar">
+  <div class="ef-brand">
+    <button type="button" class="ef-menu-toggle" id="sidebarToggleBtn" aria-label="업무 메뉴 열기">☰</button>
+    <span class="ef-logo-badge">K-에듀파인</span>
+    <span class="ef-system-title">학급·교무 스마트 행정지원 포털 <span class="ef-system-sub">| 학급운영비 · 체험학습 품의 및 증빙관리</span></span>
+  </div>
+  <div class="ef-top-actions">
+    <button type="button" class="ef-user-chip" id="openSettingsBtn" title="학급 및 배정 예산 설정">
+      <span id="schoolClassLabel">공주부설초 5학년 2반</span> · <strong id="teacherNameLabel">문태양 교사</strong>
+    </button>
+    <button type="button" class="ef-top-btn accent" id="quickNewBtn">+ 신규 품의기안</button>
+  </div>
+</header>
+
+<div class="ef-backdrop" id="sidebarBackdrop"></div>
+
+<div class="ef-layout">
+  <!-- 좌측 업무 트리 메뉴 -->
+  <aside class="ef-sidebar" id="efSidebar" aria-label="에듀파인 업무 메뉴">
+    <div class="ef-sidebar-head">
+      <strong>업무메뉴 트리</strong>
+      <span class="ef-fiscal-badge">2026학년도</span>
+    </div>
+    <nav class="ef-tree">
+      <div class="ef-tree-group">
+        <div class="ef-tree-folder">📁 학급회계 · 전자결재</div>
+        <button type="button" class="ef-tree-item active" data-view="all">
+          <span>└ 전체 품의·지출 대장</span>
+          <span class="ef-tree-count" id="cntAll">0</span>
+        </button>
+        <button type="button" class="ef-tree-item" data-view="pending">
+          <span>└ 결재 대기함 (기안중)</span>
+          <span class="ef-tree-count" id="cntPending">0</span>
+        </button>
+        <button type="button" class="ef-tree-item" data-view="done">
+          <span>└ 승인 · 집행 완료</span>
+          <span class="ef-tree-count" id="cntDone">0</span>
+        </button>
+      </div>
+
+      <div class="ef-tree-group">
+        <div class="ef-tree-folder">🖼️ 외부이미지 · 증빙대장</div>
+        <button type="button" class="ef-tree-item" data-view="gallery">
+          <span>└ 증빙 사진 갤러리</span>
+          <span class="ef-tree-count" id="cntGallery">0</span>
+        </button>
+        <button type="button" class="ef-tree-item" data-view="create">
+          <span>└ 품의서 · 증빙 등록</span>
+        </button>
+      </div>
+
+      <div class="ef-tree-group">
+        <div class="ef-tree-folder">⚙️ 학급 설정 · 백업</div>
+        <button type="button" class="ef-tree-item" id="treeBudgetBtn">
+          <span>└ 배정 예산 · 학급 설정</span>
+        </button>
+        <button type="button" class="ef-tree-item" id="treeExportBtn">
+          <span>└ 행정 데이터 JSON 백업</span>
+        </button>
+        <button type="button" class="ef-tree-item" id="treeResetBtn">
+          <span>└ 기본 예시 데이터 복원</span>
+        </button>
+      </div>
+    </nav>
+    <div class="ef-sidebar-foot">
+      <div>접속일시: <span id="clockText">-</span></div>
+      <div style="margin-top:2px;">단독 로컬 저장 모드 (자동 저장)</div>
+    </div>
+  </aside>
+
+  <!-- 메인 작업 영역 -->
+  <main class="ef-main">
+    <div class="ef-breadcrumb-bar">
+      <div class="ef-page-title" id="activeViewTitle">전체 품의·지출 결재 대장</div>
+      <div class="ef-crumb-path" id="activeBreadcrumb">학교회계 &gt; 학급운영비 관리 &gt; 전체 품의·지출 대장</div>
+    </div>
+
+    <!-- 상단 4단 예산 요약 카드 -->
+    <section class="ef-kpi-grid" aria-label="학급 예산 집행 현황">
+      <div class="ef-kpi-card">
+        <div class="ef-kpi-label">
+          <span>학급운영비 배정액</span>
+          <button type="button" class="btn-ef" id="editBudgetMiniBtn" style="padding:1px 6px; font-size:11px;">수정</button>
+        </div>
+        <div class="ef-kpi-val" id="kpiTotalBudget">1,500,000원</div>
+        <div class="ef-kpi-sub">2026학년도 연간 배정 예산</div>
+      </div>
+
+      <div class="ef-kpi-card pending">
+        <div class="ef-kpi-label"><span>결재 진행액 (기안·검토)</span></div>
+        <div class="ef-kpi-val" style="color:#b45309;" id="kpiPendingAmount">0원</div>
+        <div class="ef-kpi-sub" id="kpiPendingCount">결재 대기 0건</div>
+      </div>
+
+      <div class="ef-kpi-card approved">
+        <div class="ef-kpi-label"><span>승인 · 집행 완료액</span></div>
+        <div class="ef-kpi-val" style="color:#15803d;" id="kpiApprovedAmount">0원</div>
+        <div class="ef-kpi-sub" id="kpiApprovedCount">승인 완료 0건</div>
+      </div>
+
+      <div class="ef-kpi-card balance">
+        <div class="ef-kpi-label">
+          <span>집행 가능 잔액</span>
+          <span style="font-size:11px; color:#2563eb;" id="kpiExecRate">집행률 0%</span>
+        </div>
+        <div class="ef-kpi-val" style="color:#1d4ed8;" id="kpiRemainAmount">1,500,000원</div>
+        <div class="ef-progress-track">
+          <div class="ef-progress-fill" id="kpiProgressFill" style="width:0%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 신규 품의서 및 외부 이미지 증빙 등록 패널 -->
+    <section class="ef-panel" id="createSectionPanel">
+      <div class="ef-panel-head">
+        <h2 class="ef-panel-title">📝 신규 품의서 및 외부 이미지 증빙 등록</h2>
+        <span style="font-size:11.5px; color:var(--text-muted);">외부 이미지 URL 또는 구글 드라이브 사진 공유 링크를 바로 연동할 수 있습니다.</span>
+      </div>
+      <div class="ef-panel-body">
+        <form id="voucherForm" class="ef-form-layout">
+          <div>
+            <table class="ef-form-table">
+              <tbody>
+                <tr>
+                  <th>세부사업<span class="req-star">*</span></th>
+                  <td>
+                    <select class="ef-select" id="fCategory" required>
+                      <option value="교구·학습준비물">교구 · 학습준비물 구입</option>
+                      <option value="현장체험학습">현장체험학습 · 답사 운영</option>
+                      <option value="학급행사·간식">학급행사 · 학생 격려 간식</option>
+                      <option value="도서·문구구입">학급문고 도서 · 문구류</option>
+                      <option value="환경미화·안전">학급 환경미화 · 보건안전</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>기안일자<span class="req-star">*</span></th>
+                  <td>
+                    <input type="date" class="ef-input" id="fDate" required>
+                  </td>
+                </tr>
+                <tr>
+                  <th>품의제목<span class="req-star">*</span></th>
+                  <td>
+                    <input type="text" class="ef-input" id="fTitle" placeholder="예: 2학기 과학탐구 실험 교구 및 모둠 활동 재료 구입" required>
+                  </td>
+                </tr>
+                <tr>
+                  <th>집행금액<span class="req-star">*</span></th>
+                  <td>
+                    <input type="number" class="ef-input" id="fAmount" min="0" step="100" placeholder="숫자만 입력 (예: 85000)" required>
+                  </td>
+                </tr>
+                <tr>
+                  <th>거래처명</th>
+                  <td>
+                    <input type="text" class="ef-input" id="fVendor" placeholder="예: 교보문고, 스쿨팡 교육몰, 공주박물관">
+                  </td>
+                </tr>
+                <tr>
+                  <th>산출기초<span class="req-star">*</span></th>
+                  <td>
+                    <textarea class="ef-textarea" id="fBasis" placeholder="예: 모둠별 실험 키트 6세트 × 12,000원 = 72,000원, 배송비 3,000원 (합계 75,000원)" required></textarea>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 우측: 외부 이미지 연동 패널 -->
+          <div class="ext-img-box">
+            <div style="font-size:12.5px; font-weight:800; color:var(--navy); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+              <span>🖼️ 외부 증빙 이미지 연동</span>
+              <span id="imgStatusText" style="font-size:11px; color:#15803d;">연동 준비됨</span>
+            </div>
+
+            <div class="ext-img-preview-frame" id="previewFrame">
+              <span class="ext-img-badge" id="previewSourceBadge">외부 이미지 미리보기</span>
+              <img id="fImagePreview" src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&w=800&q=80" alt="증빙 이미지 미리보기">
+            </div>
+
+            <div style="display:flex; gap:6px; margin-bottom:6px;">
+              <input type="url" class="ef-input" id="fImageUrl" value="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&w=800&q=80" placeholder="외부 이미지 URL(https://...) 또는 구글드라이브 링크">
+              <button type="button" class="btn-ef" id="applyImageBtn">적용</button>
+            </div>
+
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">추천 외부 증빙 이미지 원클릭 연동:</div>
+            <div class="preset-chips" id="presetChips">
+              <button type="button" class="preset-chip" data-url="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&w=800&q=80">학습문구</button>
+              <button type="button" class="preset-chip" data-url="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80">과학실험</button>
+              <button type="button" class="preset-chip" data-url="https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80">미술재료</button>
+              <button type="button" class="preset-chip" data-url="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80">학급문고</button>
+              <button type="button" class="preset-chip" data-url="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80">체험학습</button>
+              <button type="button" class="preset-chip" data-url="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80">체육교구</button>
+            </div>
+
+            <div style="margin-top:12px; display:flex; gap:6px;">
+              <button type="submit" class="btn-ef primary" style="flex:1; padding:8px;">품의서 저장 및 기안등록</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 품의·지출 데이터 그리드 패널 -->
+    <section class="ef-panel" id="tableSectionPanel">
+      <div class="ef-panel-head">
+        <h2 class="ef-panel-title">📋 품의 · 지출결의 및 전자결재 현황 <span style="font-size:12px; color:#2563eb;" id="tableCountLabel">(0건)</span></h2>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="btn-ef blue" id="batchApproveBtn">선택/대기건 일괄 승인</button>
+        </div>
+      </div>
+
+      <div class="ef-search-bar">
+        <select class="ef-select" id="filterCategory">
+          <option value="ALL">전체 세부사업</option>
+          <option value="교구·학습준비물">교구·학습준비물</option>
+          <option value="현장체험학습">현장체험학습</option>
+          <option value="학급행사·간식">학급행사·간식</option>
+          <option value="도서·문구구입">도서·문구구입</option>
+          <option value="환경미화·안전">환경미화·안전</option>
+        </select>
+        <select class="ef-select" id="filterStatus">
+          <option value="ALL">전체 결재상태</option>
+          <option value="기안중">기안중</option>
+          <option value="검토중">검토중</option>
+          <option value="승인완료">승인완료</option>
+          <option value="반려">반려</option>
+        </select>
+        <input type="search" class="ef-input" id="filterKeyword" placeholder="품의번호, 제목, 거래처 검색..." style="flex:1; min-width:180px;">
+      </div>
+
+      <div class="ef-table-wrap">
+        <table class="ef-grid-table">
+          <thead>
+            <tr>
+              <th style="width:125px;">품의번호</th>
+              <th style="width:92px;">기안일자</th>
+              <th style="width:120px;">세부사업</th>
+              <th>품의제목 및 산출기초</th>
+              <th style="width:74px;">증빙사진</th>
+              <th style="width:105px;">집행금액</th>
+              <th style="width:86px;">결재상태</th>
+              <th style="width:136px;">기안문 · 관리</th>
+            </tr>
+          </thead>
+          <tbody id="voucherTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 외부 이미지 증빙 대장 갤러리 패널 -->
+    <section class="ef-panel" id="gallerySectionPanel">
+      <div class="ef-panel-head">
+        <h2 class="ef-panel-title">🖼️ 외부 이미지 증빙 대장 갤러리</h2>
+        <span style="font-size:11.5px; color:var(--text-muted);">사진을 클릭하면 증빙 원본 확대 및 공문서 기안문을 확인할 수 있습니다.</span>
+      </div>
+      <div class="ef-panel-body">
+        <div class="evidence-gallery-grid" id="evidenceGalleryGrid"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 모바일 하단 퀵 탭 바 -->
+<nav class="ef-mobile-nav" aria-label="모바일 빠른 메뉴">
+  <button type="button" class="ef-mob-btn active" data-mob-view="all">📋<span>전체대장</span></button>
+  <button type="button" class="ef-mob-btn" data-mob-view="pending">⏳<span>결재대기</span></button>
+  <button type="button" class="ef-mob-btn" data-mob-view="gallery">🖼️<span>증빙사진</span></button>
+  <button type="button" class="ef-mob-btn" data-mob-view="create">📝<span>신규기안</span></button>
+</nav>
+
+<!-- 공문서 기안문 및 4단 전자결재 모달 -->
+<div class="ef-modal" id="docModal" role="dialog" aria-modal="true" aria-label="공문서 기안문 및 전자결재">
+  <div class="ef-modal-box">
+    <div class="ef-modal-head no-print">
+      <span>전자결재 기안문 상세 및 결재 처리</span>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button type="button" class="btn-ef" onclick="window.print()" style="padding:3px 9px; font-size:12px;">🖨️ 공문서 인쇄</button>
+        <button type="button" class="ef-modal-close" id="closeDocModalBtn">&times;</button>
+      </div>
+    </div>
+    <div class="ef-modal-body" id="docModalBody"></div>
+  </div>
+</div>
+
+<!-- 학급 및 배정 예산 설정 모달 -->
+<div class="ef-modal" id="settingsModal" role="dialog" aria-modal="true" aria-label="학급 및 예산 설정">
+  <div class="ef-modal-box sm">
+    <div class="ef-modal-head">
+      <span>학급 · 교사 및 배정 예산 설정</span>
+      <button type="button" class="ef-modal-close" id="closeSettingsBtn">&times;</button>
+    </div>
+    <div class="ef-modal-body">
+      <form id="settingsForm">
+        <table class="ef-form-table">
+          <tbody>
+            <tr>
+              <th>학교·학급</th>
+              <td><input type="text" class="ef-input" id="setSchoolClass" required></td>
+            </tr>
+            <tr>
+              <th>기안교사</th>
+              <td><input type="text" class="ef-input" id="setTeacherName" required></td>
+            </tr>
+            <tr>
+              <th>배정예산</th>
+              <td><input type="number" class="ef-input" id="setTotalBudget" min="0" step="10000" required></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
+          <button type="submit" class="btn-ef primary">설정 저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="ef-toast" id="efToast">처리되었습니다.</div>
+
+<script>
+  const STORAGE_KEY = 'k_edufine_lab24_v1';
+  const SETTINGS_KEY = 'k_edufine_lab24_settings_v1';
+
+  const DEFAULT_SETTINGS = {
+    schoolClass: '공주부설초 5학년 2반',
+    teacherName: '문태양',
+    totalBudget: 1500000
+  };
+
+  const DEFAULT_VOUCHERS = [
+    {
+      id: '품의-2026-001',
+      date: '2026-09-04',
+      category: '도서·문구구입',
+      title: '2학기 학급문고 신간 도서 및 독서기록장 구입',
+      amount: 245000,
+      vendor: '교보문고 공주점',
+      basis: '학급문고 추천도서 15권(210,000원) + 독서기록장 25권(35,000원)',
+      imageUrl: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80',
+      status: '승인완료',
+      approvals: { drafter: '2026.09.04', head: '2026.09.04', vice: '2026.09.05', principal: '2026.09.05' }
+    },
+    {
+      id: '품의-2026-002',
+      date: '2026-09-18',
+      category: '과학실험',
+      title: '과학 교과 연계 간이 수질 측정 및 현미경 관찰 키트 구입',
+      amount: 168000,
+      vendor: '사이언스존 교구몰',
+      basis: '모둠별 수질 검사 키트 6세트 × 28,000원 = 168,000원',
+      imageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80',
+      status: '승인완료',
+      approvals: { drafter: '2026.09.18', head: '2026.09.18', vice: '2026.09.19', principal: '2026.09.19' }
+    },
+    {
+      id: '품의-2026-003',
+      date: '2026-10-12',
+      category: '현장체험학습',
+      title: '가을 지역문화유산 현장체험학습 사전답사 및 활동지 제작',
+      amount: 132000,
+      vendor: '공주문화체험센터',
+      basis: '체험학습 워크북 인쇄 25부(62,000원) + 안전 구급낭 및 비상용품(70,000원)',
+      imageUrl: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80',
+      status: '승인완료',
+      approvals: { drafter: '2026.10.12', head: '2026.10.13', vice: '2026.10.13', principal: '2026.10.14' }
+    },
+    {
+      id: '품의-2026-004',
+      date: '2026-11-02',
+      category: '교구·학습준비물',
+      title: '미술·실과 융합 프로젝트 수채화 물감 및 캔버스 보드 구입',
+      amount: 184000,
+      vendor: '화방넷 교육사업부',
+      basis: '8절 캔버스 보드 25매(75,000원) + 수채화 물감 및 붓 세트(109,000원)',
+      imageUrl: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80',
+      status: '검토중',
+      approvals: { drafter: '2026.11.02', head: '2026.11.03', vice: '', principal: '' }
+    },
+    {
+      id: '품의-2026-005',
+      date: '2026-11-16',
+      category: '학급행사·간식',
+      title: '학급 협동 체육대회 및 학급 자치의 날 응원 용품·간식 구입',
+      amount: 95000,
+      vendor: '스쿨팡 문구·행사몰',
+      basis: '학급 단체 응원 머리띠 및 리본 25개(45,000원) + 학생 간식 음료(50,000원)',
+      imageUrl: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80',
+      status: '기안중',
+      approvals: { drafter: '2026.11.16', head: '', vice: '', principal: '' }
+    }
+  ];
+
+  let settings = { ...DEFAULT_SETTINGS };
+  let vouchers = [];
+  let currentView = 'all'; // all | pending | done | gallery | create
+
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function formatWon(num) {
+    return Number(num || 0).toLocaleString('ko-KR') + '원';
+  }
+
+  function formatKoreanDate(isoDate) {
+    const parts = String(isoDate || '').split('-');
+    if (parts.length === 3) {
+      return `${parts[0]}. ${parts[1]}. ${parts[2]}.`;
+    }
+    return isoDate || '-';
+  }
+
+  // 오프라인/방화벽 환경에서도 깨지지 않는 SVG 행정 증빙 대체 이미지 생성
+  function buildFallbackSvg(title, category) {
+    const safeTitle = String(title || '증빙 이미지').slice(0, 22);
+    const safeCat = String(category || 'K-에듀파인 증빙').slice(0, 18);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="360" viewBox="0 0 600 360">
+      <rect width="600" height="360" fill="#e2e8f0"/>
+      <rect x="20" y="20" width="560" height="320" rx="8" fill="#ffffff" stroke="#0f2c59" stroke-width="3"/>
+      <rect x="20" y="20" width="560" height="48" fill="#0f2c59"/>
+      <text x="40" y="50" fill="#ffffff" font-family="sans-serif" font-size="18" font-weight="bold">K-에듀파인 전자증빙 첨부자료</text>
+      <text x="40" y="120" fill="#2563eb" font-family="sans-serif" font-size="16" font-weight="bold">[${safeCat}]</text>
+      <text x="40" y="160" fill="#0f172a" font-family="sans-serif" font-size="22" font-weight="bold">${safeTitle}</text>
+      <text x="40" y="215" fill="#64748b" font-family="sans-serif" font-size="15">외부 이미지 URL이 연결된 행정 증빙 항목입니다.</text>
+    </svg>`;
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+
+  // 구글 드라이브 공유 이미지 링크를 직접 표시 가능한 링크로 자동 변환
+  function normalizeExternalImageUrl(rawUrl) {
+    const url = String(rawUrl || '').trim();
+    if (!url) return '';
+    const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch && driveMatch[1]) {
+      return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+    }
+    const openMatch = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+    if (openMatch && openMatch[1]) {
+      return `https://lh3.googleusercontent.com/d/${openMatch[1]}`;
+    }
+    return url;
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('efToast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(vouchers));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    } catch (e) {}
+  }
+
+  function loadState() {
+    try {
+      const savedSet = localStorage.getItem(SETTINGS_KEY);
+      if (savedSet) settings = { ...DEFAULT_SETTINGS, ...JSON.parse(savedSet) };
+    } catch (e) {}
+
+    try {
+      const savedV = localStorage.getItem(STORAGE_KEY);
+      if (savedV) {
+        const parsed = JSON.parse(savedV);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          vouchers = parsed;
+          return;
+        }
+      }
+    } catch (e) {}
+
+    vouchers = JSON.parse(JSON.stringify(DEFAULT_VOUCHERS));
+    saveState();
+  }
+
+  function updateHeaderAndKpis() {
+    document.getElementById('schoolClassLabel').textContent = settings.schoolClass;
+    document.getElementById('teacherNameLabel').textContent = `${settings.teacherName} 교사`;
+
+    const totalBudget = Number(settings.totalBudget) || 0;
+    let pendingAmt = 0, pendingCnt = 0;
+    let approvedAmt = 0, approvedCnt = 0;
+
+    vouchers.forEach(v => {
+      const amt = Number(v.amount) || 0;
+      if (v.status === '승인완료') {
+        approvedAmt += amt;
+        approvedCnt++;
+      } else if (v.status === '기안중' || v.status === '검토중') {
+        pendingAmt += amt;
+        pendingCnt++;
+      }
+    });
+
+    const remainAmt = totalBudget - approvedAmt - pendingAmt;
+    const usedRatio = totalBudget > 0 ? Math.min(100, Math.round(((approvedAmt + pendingAmt) / totalBudget) * 100)) : 0;
+
+    document.getElementById('kpiTotalBudget').textContent = formatWon(totalBudget);
+    document.getElementById('kpiPendingAmount').textContent = formatWon(pendingAmt);
+    document.getElementById('kpiPendingCount').textContent = `결재 대기 ${pendingCnt}건`;
+    document.getElementById('kpiApprovedAmount').textContent = formatWon(approvedAmt);
+    document.getElementById('kpiApprovedCount').textContent = `승인 완료 ${approvedCnt}건`;
+    document.getElementById('kpiRemainAmount').textContent = formatWon(remainAmt);
+    document.getElementById('kpiRemainAmount').style.color = remainAmt < 0 ? '#dc2626' : '#1d4ed8';
+    document.getElementById('kpiExecRate').textContent = `집행률 ${usedRatio}%`;
+    document.getElementById('kpiProgressFill').style.width = `${usedRatio}%`;
+
+    // 트리 카운트 업데이트
+    document.getElementById('cntAll').textContent = vouchers.length;
+    document.getElementById('cntPending').textContent = pendingCnt;
+    document.getElementById('cntDone').textContent = approvedCnt;
+    document.getElementById('cntGallery').textContent = vouchers.filter(v => v.imageUrl).length;
+  }
+
+  function getStatusBadgeClass(status) {
+    if (status === '승인완료') return 'done';
+    if (status === '검토중') return 'review';
+    if (status === '반려') return 'reject';
+    return 'draft';
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('voucherTableBody');
+    const catFilter = document.getElementById('filterCategory').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const kw = document.getElementById('filterKeyword').value.trim().toLowerCase();
+
+    const filtered = vouchers.filter(v => {
+      if (currentView === 'pending' && !(v.status === '기안중' || v.status === '검토중')) return false;
+      if (currentView === 'done' && v.status !== '승인완료') return false;
+      if (catFilter !== 'ALL' && v.category !== catFilter) return false;
+      if (statusFilter !== 'ALL' && v.status !== statusFilter) return false;
+      if (kw) {
+        const hay = `${v.id} ${v.title} ${v.vendor} ${v.basis} ${v.category}`.toLowerCase();
+        if (!hay.includes(kw)) return false;
+      }
+      return true;
+    });
+
+    document.getElementById('tableCountLabel').textContent = `(${filtered.length}건)`;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align:center; padding:32px; color:#64748b; font-weight:700;">
+            조회 조건에 해당하는 품의·지출 내역이 없습니다.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(v => {
+      const fb = buildFallbackSvg(v.title, v.category);
+      const imgSrc = escapeHtml(v.imageUrl || fb);
+      const badgeCls = getStatusBadgeClass(v.status);
+
+      return `
+        <tr>
+          <td style="text-align:center; font-weight:700; color:#0f2c59; white-space:nowrap;">${escapeHtml(v.id)}</td>
+          <td style="text-align:center; white-space:nowrap;">${escapeHtml(formatKoreanDate(v.date))}</td>
+          <td style="text-align:center;"><span style="background:#f1f5f9; border:1px solid #cbd5e1; padding:2px 6px; border-radius:3px; font-size:11.5px; font-weight:700;">${escapeHtml(v.category)}</span></td>
+          <td>
+            <div style="font-weight:800; color:#0f172a;">${escapeHtml(v.title)}</div>
+            <div style="font-size:11.5px; color:#64748b; margin-top:2px;">거래처: ${escapeHtml(v.vendor || '미지정')} | ${escapeHtml(v.basis)}</div>
+          </td>
+          <td>
+            <div class="thumb-cell" data-open-doc="${escapeHtml(v.id)}" title="증빙 사진 및 기안문 보기">
+              <img src="${imgSrc}" alt="${escapeHtml(v.title)}" onerror="this.onerror=null; this.src='${fb}';">
+            </div>
+          </td>
+          <td style="text-align:right; font-weight:800; white-space:nowrap;">${formatWon(v.amount)}</td>
+          <td style="text-align:center;">
+            <span class="status-pill ${badgeCls}">${escapeHtml(v.status)}</span>
+          </td>
+          <td style="text-align:center; white-space:nowrap;">
+            <button type="button" class="btn-ef blue" data-open-doc="${escapeHtml(v.id)}" style="padding:3px 8px; font-size:11.5px;">기안문·결재</button>
+            <button type="button" class="btn-ef danger" data-del-id="${escapeHtml(v.id)}" style="padding:3px 7px; font-size:11.5px;">삭제</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderGallery() {
+    const grid = document.getElementById('evidenceGalleryGrid');
+    if (vouchers.length === 0) {
+      grid.innerHTML = '<p style="color:#64748b; font-weight:700;">등록된 증빙 사진이 없습니다.</p>';
+      return;
+    }
+
+    grid.innerHTML = vouchers.map(v => {
+      const fb = buildFallbackSvg(v.title, v.category);
+      const imgSrc = escapeHtml(v.imageUrl || fb);
+      const badgeCls = getStatusBadgeClass(v.status);
+
+      return `
+        <article class="ev-card">
+          <div class="ev-card-img" data-open-doc="${escapeHtml(v.id)}">
+            <img src="${imgSrc}" alt="${escapeHtml(v.title)}" onerror="this.onerror=null; this.src='${fb}';">
+            <span class="ext-img-badge">${escapeHtml(v.id)}</span>
+          </div>
+          <div class="ev-card-body">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+              <span style="font-size:11px; font-weight:700; color:#2563eb;">${escapeHtml(v.category)}</span>
+              <span class="status-pill ${badgeCls}">${escapeHtml(v.status)}</span>
+            </div>
+            <div style="font-weight:800; font-size:13px; color:#0f172a;">${escapeHtml(v.title)}</div>
+            <div style="font-size:11.5px; color:#64748b;">${escapeHtml(formatKoreanDate(v.date))} · ${formatWon(v.amount)}</div>
+            <div style="margin-top:auto; padding-top:6px;">
+              <button type="button" class="btn-ef" data-open-doc="${escapeHtml(v.id)}" style="width:100%; font-size:12px;">공문서 · 증빙 상세보기</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function switchView(viewName) {
+    currentView = viewName;
+
+    document.querySelectorAll('.ef-tree-item[data-view]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === viewName);
+    });
+    document.querySelectorAll('.ef-mob-btn[data-mob-view]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mobView === viewName);
+    });
+
+    const titleMap = {
+      all: ['전체 품의·지출 결재 대장', '학교회계 > 학급운영비 관리 > 전체 품의·지출 대장'],
+      pending: ['결재 대기함 (기안중 · 검토중)', '전자결재 > 결재진행함 > 결재 대기함'],
+      done: ['승인 · 집행 완료 내역', '학교회계 > 지출결의 > 승인·집행 완료 내역'],
+      gallery: ['외부 이미지 증빙 대장 갤러리', '증빙관리 > 전자증빙 > 외부 이미지 증빙 갤러리'],
+      create: ['신규 품의서 및 증빙 등록', '학교회계 > 품의관리 > 신규 품의서 기안']
+    };
+
+    const [t, path] = titleMap[viewName] || titleMap.all;
+    document.getElementById('activeViewTitle').textContent = t;
+    document.getElementById('activeBreadcrumb').textContent = path;
+
+    const createPanel = document.getElementById('createSectionPanel');
+    const tablePanel = document.getElementById('tableSectionPanel');
+    const galleryPanel = document.getElementById('gallerySectionPanel');
+
+    if (viewName === 'gallery') {
+      createPanel.style.display = 'none';
+      tablePanel.style.display = 'none';
+      galleryPanel.style.display = 'block';
+    } else if (viewName === 'create') {
+      createPanel.style.display = 'block';
+      tablePanel.style.display = 'block';
+      galleryPanel.style.display = 'none';
+      document.getElementById('fTitle').focus();
+    } else {
+      createPanel.style.display = 'block';
+      tablePanel.style.display = 'block';
+      galleryPanel.style.display = 'block';
+    }
+
+    renderTable();
+    renderGallery();
+  }
+
+  // 전자결재 기안문 모달 열기 및 결재 도장 찍기
+  function openOfficialDocModal(voucherId) {
+    const v = vouchers.find(item => item.id === voucherId);
+    if (!v) return;
+
+    const fb = buildFallbackSvg(v.title, v.category);
+    const imgSrc = escapeHtml(v.imageUrl || fb);
+    const apps = v.approvals || { drafter: '', head: '', vice: '', principal: '' };
+
+    function renderStampHtml(roleKey, labelText) {
+      if (apps[roleKey]) {
+        return `<div class="red-stamp"><span>${escapeHtml(labelText)}</span><span style="font-size:8.5px;">${escapeHtml(apps[roleKey].slice(5))}</span></div>`;
+      }
+      return `<span class="stamp-hint-txt">클릭결재</span>`;
+    }
+
+    const bodyEl = document.getElementById('docModalBody');
+    bodyEl.innerHTML = `
+      <div class="official-doc-paper">
+        <div class="doc-top-banner">
+          <div style="font-size:11.5px; color:#475569; font-weight:700;">K-에듀파인 학교회계 전자결재 기안문</div>
+          <div class="doc-school-name">${escapeHtml(settings.schoolClass)}</div>
+        </div>
+
+        <div class="doc-header-grid">
+          <div class="doc-meta-info">
+            <div><strong>문서번호 :</strong> ${escapeHtml(v.id)} (${escapeHtml(formatKoreanDate(v.date))})</div>
+            <div><strong>세부사업 :</strong> 학급운영비 - ${escapeHtml(v.category)}</div>
+            <div><strong>기 안 자 :</strong> ${escapeHtml(settings.schoolClass)} 담임 ${escapeHtml(settings.teacherName)}</div>
+            <div><strong>결재상태 :</strong> <span class="status-pill ${getStatusBadgeClass(v.status)}">${escapeHtml(v.status)}</span></div>
+          </div>
+
+          <table class="approval-box-table" aria-label="4단 전자결재란">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width:24px; writing-mode:vertical-rl; padding:4px;">결재</th>
+                <th>담당</th>
+                <th>연구부장</th>
+                <th>교감</th>
+                <th>교장</th>
+              </tr>
+              <tr>
+                <td class="stamp-slot" data-stamp-id="${escapeHtml(v.id)}" data-role="drafter">${renderStampHtml('drafter', settings.teacherName.slice(0, 3))}</td>
+                <td class="stamp-slot" data-stamp-id="${escapeHtml(v.id)}" data-role="head">${renderStampHtml('head', '부장인')}</td>
+                <td class="stamp-slot" data-stamp-id="${escapeHtml(v.id)}" data-role="vice">${renderStampHtml('vice', '교감인')}</td>
+                <td class="stamp-slot" data-stamp-id="${escapeHtml(v.id)}" data-role="principal">${renderStampHtml('principal', '교장인')}</td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+
+        <table class="doc-detail-table">
+          <tbody>
+            <tr>
+              <th>품의제목</th>
+              <td style="font-weight:800;">${escapeHtml(v.title)}</td>
+            </tr>
+            <tr>
+              <th>집행금액</th>
+              <td style="font-weight:800; color:#0f2c59;">일금 ${formatWon(v.amount)}</td>
+            </tr>
+            <tr>
+              <th>거래처명</th>
+              <td>${escapeHtml(v.vendor || '미지정')}</td>
+            </tr>
+            <tr>
+              <th>산출기초</th>
+              <td style="white-space:pre-wrap; line-height:1.6;">${escapeHtml(v.basis)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="doc-evidence-box">
+          <div style="font-size:12px; font-weight:800; color:#0f2c59;">[첨부] 외부 이미지 연동 전자증빙 자료</div>
+          <img src="${imgSrc}" alt="${escapeHtml(v.title)}" onerror="this.onerror=null; this.src='${fb}';">
+          <div style="font-size:11px; color:#64748b; margin-top:6px; word-break:break-all;">연동 URL: ${escapeHtml(v.imageUrl || '기본 대체 증빙')}</div>
+        </div>
+      </div>
+
+      <div class="no-print" style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <span style="font-size:12px; color:#475569; font-weight:700;">* 상단 결재란(담당~교장)을 클릭하면 전자결재 도장이 찍힙니다.</span>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="btn-ef green" id="modalFullApproveBtn" data-id="${escapeHtml(v.id)}">전결 승인완료 처리</button>
+          <button type="button" class="btn-ef danger" id="modalRejectBtn" data-id="${escapeHtml(v.id)}">반려 처리</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('docModal').classList.add('open');
+  }
+
+  function renderAll() {
+    updateHeaderAndKpis();
+    renderTable();
+    renderGallery();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+
+    // 오늘 날짜 기본값
+    const now = new Date();
+    const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    document.getElementById('fDate').value = todayIso;
+
+    function updateClock() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const t = d.toLocaleTimeString('ko-KR', { hour12: false });
+      document.getElementById('clockText').textContent = `${y}.${m}.${day} ${t}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // 모바일 사이드바 토글
+    const sidebar = document.getElementById('efSidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('open');
+    }
+    document.getElementById('sidebarToggleBtn').addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      backdrop.classList.toggle('open');
+    });
+    backdrop.addEventListener('click', closeSidebar);
+
+    // 좌측 트리 및 모바일 하단 메뉴 전환
+    document.querySelectorAll('.ef-tree-item[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchView(btn.dataset.view);
+        closeSidebar();
+      });
+    });
+
+    document.querySelectorAll('.ef-mob-btn[data-mob-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchView(btn.dataset.mobView);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    document.getElementById('quickNewBtn').addEventListener('click', () => {
+      switchView('create');
+      document.getElementById('createSectionPanel').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // 외부 이미지 URL 미리보기 연동
+    const imgUrlInput = document.getElementById('fImageUrl');
+    const imgPreview = document.getElementById('fImagePreview');
+    const imgStatusText = document.getElementById('imgStatusText');
+
+    function applyPreviewImage(rawUrl) {
+      const normalized = normalizeExternalImageUrl(rawUrl);
+      imgUrlInput.value = normalized;
+      if (!normalized) {
+        imgPreview.src = buildFallbackSvg('증빙 이미지 미지정', 'K-에듀파인');
+        imgStatusText.textContent = '기본 대체 이미지';
+        imgStatusText.style.color = '#64748b';
+        return;
+      }
+      imgStatusText.textContent = '불러오는 중...';
+      imgStatusText.style.color = '#2563eb';
+      imgPreview.onload = () => {
+        imgStatusText.textContent = '외부 이미지 연결됨 ✓';
+        imgStatusText.style.color = '#15803d';
+      };
+      imgPreview.onerror = () => {
+        imgPreview.onerror = null;
+        imgPreview.src = buildFallbackSvg('외부 이미지 대체 카드', 'URL 확인 필요');
+        imgStatusText.textContent = '대체 증빙 적용됨';
+        imgStatusText.style.color = '#b45309';
+      };
+      imgPreview.src = normalized;
+    }
+
+    document.getElementById('applyImageBtn').addEventListener('click', () => {
+      applyPreviewImage(imgUrlInput.value);
+      showToast('외부 이미지 URL을 미리보기에 적용했습니다.');
+    });
+
+    document.querySelectorAll('#presetChips .preset-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        applyPreviewImage(chip.dataset.url);
+        showToast(`"${chip.textContent}" 증빙 이미지를 연동했습니다.`);
+      });
+    });
+
+    // 신규 품의서 저장
+    document.getElementById('voucherForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const dateVal = document.getElementById('fDate').value || todayIso;
+      const yearStr = dateVal.slice(0, 4);
+      const nextSeq = String(vouchers.length + 1).padStart(3, '0');
+      const newId = `품의-${yearStr}-${nextSeq}`;
+
+      const newVoucher = {
+        id: newId,
+        date: dateVal,
+        category: document.getElementById('fCategory').value,
+        title: document.getElementById('fTitle').value.trim(),
+        amount: Number(document.getElementById('fAmount').value) || 0,
+        vendor: document.getElementById('fVendor').value.trim(),
+        basis: document.getElementById('fBasis').value.trim(),
+        imageUrl: normalizeExternalImageUrl(imgUrlInput.value),
+        status: '기안중',
+        approvals: {
+          drafter: formatKoreanDate(dateVal).replace(/\s/g, '').replace(/\.$/, ''),
+          head: '',
+          vice: '',
+          principal: ''
+        }
+      };
+
+      vouchers.unshift(newVoucher);
+      saveState();
+      renderAll();
+
+      document.getElementById('fTitle').value = '';
+      document.getElementById('fAmount').value = '';
+      document.getElementById('fVendor').value = '';
+      document.getElementById('fBasis').value = '';
+      showToast(`${newId} 품의서가 등록되었습니다.`);
+    });
+
+    // 테이블 필터 이벤트
+    document.getElementById('filterCategory').addEventListener('change', renderTable);
+    document.getElementById('filterStatus').addEventListener('change', renderTable);
+    document.getElementById('filterKeyword').addEventListener('input', renderTable);
+
+    // 대기건 일괄 승인
+    document.getElementById('batchApproveBtn').addEventListener('click', () => {
+      const todayStamp = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
+      let changed = 0;
+      vouchers.forEach(v => {
+        if (v.status === '기안중' || v.status === '검토중') {
+          v.status = '승인완료';
+          v.approvals = {
+            drafter: v.approvals?.drafter || todayStamp,
+            head: v.approvals?.head || todayStamp,
+            vice: v.approvals?.vice || todayStamp,
+            principal: todayStamp
+          };
+          changed++;
+        }
+      });
+      if (changed === 0) {
+        showToast('승인 대기 중인 기안 건이 없습니다.');
+        return;
+      }
+      saveState();
+      renderAll();
+      showToast(`결재 대기 ${changed}건이 일괄 승인완료 처리되었습니다.`);
+    });
+
+    // 테이블 및 갤러리 클릭 이벤트 위임
+    document.addEventListener('click', (e) => {
+      const docTrigger = e.target.closest('[data-open-doc]');
+      if (docTrigger) {
+        openOfficialDocModal(docTrigger.dataset.openDoc);
+        return;
+      }
+
+      const delBtn = e.target.closest('[data-del-id]');
+      if (delBtn) {
+        const id = delBtn.dataset.delId;
+        if (!confirm(`${id} 품의서를 삭제하시겠습니까?`)) return;
+        vouchers = vouchers.filter(v => v.id !== id);
+        saveState();
+        renderAll();
+        showToast(`${id} 항목이 삭제되었습니다.`);
+        return;
+      }
+
+      // 공문서 내 4단 결재란 도장 찍기
+      const stampSlot = e.target.closest('.stamp-slot');
+      if (stampSlot) {
+        const v = vouchers.find(item => item.id === stampSlot.dataset.stampId);
+        if (!v) return;
+        const role = stampSlot.dataset.role;
+        const todayStamp = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
+        v.approvals = v.approvals || { drafter: '', head: '', vice: '', principal: '' };
+        v.approvals[role] = v.approvals[role] ? '' : todayStamp;
+
+        if (v.approvals.principal) v.status = '승인완료';
+        else if (v.approvals.head || v.approvals.vice) v.status = '검토중';
+        else v.status = '기안중';
+
+        saveState();
+        renderAll();
+        openOfficialDocModal(v.id);
+        showToast('전자결재 상태가 반영되었습니다.');
+        return;
+      }
+
+      if (e.target.id === 'modalFullApproveBtn') {
+        const v = vouchers.find(item => item.id === e.target.dataset.id);
+        if (!v) return;
+        const todayStamp = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
+        v.approvals = { drafter: todayStamp, head: todayStamp, vice: todayStamp, principal: todayStamp };
+        v.status = '승인완료';
+        saveState();
+        renderAll();
+        openOfficialDocModal(v.id);
+        showToast('교장 전결 승인완료 처리되었습니다.');
+      }
+
+      if (e.target.id === 'modalRejectBtn') {
+        const v = vouchers.find(item => item.id === e.target.dataset.id);
+        if (!v) return;
+        v.status = '반려';
+        saveState();
+        renderAll();
+        openOfficialDocModal(v.id);
+        showToast('반려 처리되었습니다.');
+      }
+    });
+    // 공문서 모달 닫기
+    const docModal = document.getElementById('docModal');
+    document.getElementById('closeDocModalBtn').addEventListener('click', () => docModal.classList.remove('open'));
+    docModal.addEventListener('click', (e) => { if (e.target === docModal) docModal.classList.remove('open'); });
+
+    // 학급·예산 설정 모달
+    const settingsModal = document.getElementById('settingsModal');
+    function openSettingsModal() {
+      document.getElementById('setSchoolClass').value = settings.schoolClass;
+      document.getElementById('setTeacherName').value = settings.teacherName;
+      document.getElementById('setTotalBudget').value = settings.totalBudget;
+      settingsModal.classList.add('open');
+      closeSidebar();
+    }
+    document.getElementById('openSettingsBtn').addEventListener('click', openSettingsModal);
+    document.getElementById('editBudgetMiniBtn').addEventListener('click', openSettingsModal);
+    document.getElementById('treeBudgetBtn').addEventListener('click', openSettingsModal);
+
+    document.getElementById('settingsForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      settings.schoolClass = document.getElementById('setSchoolClass').value.trim() || DEFAULT_SETTINGS.schoolClass;
+      settings.teacherName = document.getElementById('setTeacherName').value.trim() || DEFAULT_SETTINGS.teacherName;
+      settings.totalBudget = Number(document.getElementById('setTotalBudget').value) || 0;
+      saveState();
+      renderAll();
+      settingsModal.classList.remove('open');
+      showToast('학급 및 예산 설정이 저장되었습니다.');
+    });
+
+    document.getElementById('closeSettingsBtn').addEventListener('click', () => settingsModal.classList.remove('open'));
+    settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) settingsModal.classList.remove('open'); });
+
+    // JSON 백업 및 기본 예시 복원
+    document.getElementById('treeExportBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify({ settings, vouchers }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `edufine_class_backup_${todayIso}.json`;
+      a.click();
+      closeSidebar();
+      showToast('행정 데이터 JSON 백업 파일을 다운로드했습니다.');
+    });
+
+    document.getElementById('treeResetBtn').addEventListener('click', () => {
+      if (!confirm('기본 예시 품의 데이터 5건으로 초기화하시겠습니까?')) return;
+      vouchers = JSON.parse(JSON.stringify(DEFAULT_VOUCHERS));
+      settings = { ...DEFAULT_SETTINGS };
+      saveState();
+      renderAll();
+      closeSidebar();
+      showToast('기본 예시 데이터로 복원되었습니다.');
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        docModal.classList.remove('open');
+        settingsModal.classList.remove('open');
+        closeSidebar();
+      }
+    });
+
+    renderAll();
+  });
+</script>
+
+</body>
+</html>
