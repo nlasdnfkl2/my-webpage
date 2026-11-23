@@ -27,7 +27,7 @@
       --orange: #ffa502;
     }
 
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
@@ -316,6 +316,43 @@
       pointer-events: none;
     }
 
+    /* 로그인 및 서버 요청 시 표시되는 로딩 오버레이 */
+    .action-loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.52);
+      backdrop-filter: blur(2px);
+      z-index: 6500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .action-loading-overlay.active {
+      display: flex;
+    }
+
+    .action-loader-box {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: 7px 7px 0 var(--ink);
+      padding: 22px 26px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .action-loader-tag {
+      display: inline-block;
+      background: var(--cyan);
+      border: var(--border-thin);
+      padding: 2px 9px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
     .loader-card {
       background: var(--paper);
       border: var(--border);
@@ -408,6 +445,7 @@
       border-top-color: transparent;
       border-radius: 50%;
       animation: spinLoader 0.75s linear infinite;
+      flex-shrink: 0;
     }
 
     .container {
@@ -507,7 +545,7 @@
     }
 
     .btn:disabled {
-      opacity: 0.5;
+      opacity: 0.65;
       cursor: not-allowed;
       background: #e9e9e9;
       box-shadow: 2px 2px 0 #777777;
@@ -1247,7 +1285,17 @@
   </div>
 </div>
 
-<!-- 학생 또는 교사 로그인 화면 -> 접속 -->
+<!-- 로그인 및 서버 요청 시 표시되는 로딩 오버레이 -->
+<div class="action-loading-overlay" id="actionLoadingOverlay" role="status" aria-live="assertive" aria-label="요청 처리 중">
+  <div class="action-loader-box">
+    <div class="action-loader-tag" id="actionLoaderTag">인증 및 동기화</div>
+    <div class="loader-spinner" style="width:38px; height:38px; margin-bottom:12px;" aria-hidden="true"></div>
+    <div class="loader-title" style="font-size:1.05rem;" id="actionLoaderTitle">로그인 중입니다...</div>
+    <div class="loader-sub" id="actionLoaderSub">잠시만 기다려 주세요.</div>
+  </div>
+</div>
+
+<!-- 학생 또는 교사 입장 로그인 화면 -> 접속 -->
 <section class="login-gate" id="loginGateScreen" aria-label="학생 또는 교사 로그인">
   <div class="gate-card">
     <div class="gate-header">
@@ -1278,7 +1326,7 @@
           <label for="gateStudentPin">학생 비밀번호 (PIN, 초기: 1111)</label>
           <input type="password" id="gateStudentPin" value="1111" maxlength="6" placeholder="PIN 4자리" required />
         </div>
-        <button type="submit" class="btn btn-green" style="width:100%; padding:11px 16px; font-size:0.96rem;">
+        <button type="submit" class="btn btn-green" id="gateStudentSubmitBtn" data-default-label="학생으로 접속 &rarr;" style="width:100%; padding:11px 16px; font-size:0.96rem;">
           학생으로 접속 &rarr;
         </button>
       </form>
@@ -1295,7 +1343,7 @@
             기본 교사 비밀번호 <strong>1234</strong>가 입력되어 있습니다. 바로 <strong>[교사로 접속]</strong>을 누르세요.
           </div>
         </div>
-        <button type="submit" class="btn btn-cyan" style="width:100%; padding:11px 16px; font-size:0.96rem;">
+        <button type="submit" class="btn btn-cyan" id="gateTeacherSubmitBtn" data-default-label="교사로 접속 &rarr;" style="width:100%; padding:11px 16px; font-size:0.96rem;">
           교사로 접속 &rarr;
         </button>
       </form>
@@ -1341,7 +1389,7 @@
       <form class="login-form-inline" id="studentLoginForm">
         <div class="student-picker inline" id="inlineStudentPicker"></div>
         <input type="password" maxlength="6" class="input-box" id="loginStudentPin" value="1111" placeholder="PIN 4자리" style="width:105px;" required />
-        <button type="submit" class="btn btn-green">내 지갑 열기</button>
+        <button type="submit" class="btn btn-green" id="inlineStudentSubmitBtn" data-default-label="내 지갑 열기">내 지갑 열기</button>
       </form>
     </div>
 
@@ -1472,7 +1520,7 @@
       <div class="info-card">
         <h3>💡 디지털 학급 보상 상점 이용 규칙</h3>
         <ul style="font-size:0.88rem; font-weight:700; padding-left:18px; display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
-          <li><strong>포인트 적립:</strong> 수업 적극 참여, 아침 독서, 학급 봉사 및 배려 행동을 실천하면 선생님이 칭찬 포인트를 적립해 줍니다.</li>
+          <li><strong>포인트 적립:</strong> 수업 적극 참여, 아침 독서, 학급 봉사 및 배려 행동으로 모은 칭찬 포인트를 적립해 줍니다.</li>
           <li><strong>보상 쿠폰 신청:</strong> 본인의 출석 번호·이름 검색과 4자리 비밀번호(초기 PIN: <code>1111</code>)로 로그인한 뒤 원하는 보상 쿠폰을 신청합니다.</li>
           <li><strong>교사 승인 및 수령:</strong> 신청된 쿠폰은 <code>대기중</code> 상태로 등록되며, 선생님이 확인 후 <code>승인완료</code> 처리하면 쿠폰 혜택을 사용할 수 있습니다.</li>
           <li><strong>신청 반려 시 자동 복구:</strong> 선생님이 신청을 반려하면 사용했던 포인트와 아이템 재고가 자동으로 복구됩니다.</li>
@@ -1535,7 +1583,7 @@
             기본 교사 비밀번호 <strong>1234</strong>가 입력되어 있습니다. 바로 <strong>[교사 모드 시작]</strong>을 누르시면 됩니다.
           </div>
         </div>
-        <button type="submit" class="btn btn-dark" style="width:100%; margin-top:6px;">교사 모드 시작</button>
+        <button type="submit" class="btn btn-dark" id="modalTeacherSubmitBtn" data-default-label="교사 모드 시작" style="width:100%; margin-top:6px;">교사 모드 시작</button>
       </form>
     </div>
   </div>
@@ -2057,6 +2105,33 @@
     document.getElementById('initialLoader')?.classList.add('hidden');
   }
 
+  function showActionLoading(title = '로그인 중입니다...', sub = '구글 스프레드시트와 확인하고 있어요.', tag = '로그인 처리') {
+    const overlay = document.getElementById('actionLoadingOverlay');
+    if (!overlay) return;
+    document.getElementById('actionLoaderTag').textContent = tag;
+    document.getElementById('actionLoaderTitle').textContent = title;
+    document.getElementById('actionLoaderSub').textContent = sub;
+    overlay.classList.add('active');
+  }
+
+  function hideActionLoading() {
+    document.getElementById('actionLoadingOverlay')?.classList.remove('active');
+  }
+
+  function setButtonLoading(btnEl, isLoading, loadingText = '처리 중...') {
+    if (!btnEl) return;
+    if (!btnEl.dataset.defaultHtml) {
+      btnEl.dataset.defaultHtml = btnEl.innerHTML;
+    }
+    if (isLoading) {
+      btnEl.disabled = true;
+      btnEl.innerHTML = `<span class="mini-spin"></span><span>${escapeHtml(loadingText)}</span>`;
+    } else {
+      btnEl.disabled = false;
+      btnEl.innerHTML = btnEl.dataset.defaultHtml;
+    }
+  }
+
   function showCornerSync(state, text, autoHideMs = 0) {
     const pill = document.getElementById('cornerSyncPill');
     const spinner = document.getElementById('cornerSyncSpinner');
@@ -2079,7 +2154,8 @@
     }
   }
 
-  function beginSyncActivity(labelText = '구글 시트 동기화 중...') {
+  function beginSyncActivity(labelText = '구글 시트 동기화 중...', options = {}) {
+    const { showOverlay = false, title = '요청 처리 중입니다...', tag = '실시간 동기화' } = options;
     if (appState.isInitialLoad) {
       setSyncBadge('loading', '초기 동기화 중...');
       const sub = document.getElementById('initialLoaderSub');
@@ -2088,9 +2164,17 @@
       setSyncBadge('loading', '동기화 중...');
       showCornerSync('syncing', labelText);
     }
+    if (showOverlay) {
+      showActionLoading(title, labelText, tag);
+    }
   }
 
-  function endSyncActivity(success = true, doneText = '동기화 완료') {
+  function endSyncActivity(success = true, doneText = '동기화 완료', options = {}) {
+    const { showOverlay = false } = options;
+    if (showOverlay) {
+      hideActionLoading();
+    }
+
     if (appState.isInitialLoad) {
       if (success) {
         setSyncBadge('ok', '시트 실시간 연동됨');
@@ -2156,8 +2240,9 @@
     }
   }
 
-  async function postAction(payload, labelText = '시트에 저장 및 동기화 중...') {
-    beginSyncActivity(labelText);
+  async function postAction(payload, labelText = '시트에 저장 및 동기화 중...', overlayOptions = null) {
+    const useOverlay = Boolean(overlayOptions);
+    beginSyncActivity(labelText, overlayOptions || {});
     try {
       const res = await fetch(WEB_APP_URL, {
         method: 'POST',
@@ -2166,16 +2251,16 @@
       });
       const json = await res.json();
       if (!json.ok) {
-        endSyncActivity(false, '반영 실패');
+        endSyncActivity(false, '반영 실패', { showOverlay: useOverlay });
         throw new Error(json.message || '요청 처리에 실패했습니다.');
       }
       if (json.data) {
         applyServerPayload(json.data);
       }
-      endSyncActivity(true, '시트 반영 완료');
+      endSyncActivity(true, '시트 반영 완료', { showOverlay: useOverlay });
       return json;
     } catch (err) {
-      endSyncActivity(false, '요청 실패');
+      endSyncActivity(false, '요청 실패', { showOverlay: useOverlay });
       throw err;
     }
   }
@@ -2536,8 +2621,14 @@
         showToast('목록에서 학생을 검색해 선택한 뒤 비밀번호를 입력해 주세요.');
         return;
       }
+      const submitBtn = document.getElementById('gateStudentSubmitBtn');
+      setButtonLoading(submitBtn, true, '학생 로그인 중...');
       try {
-        const res = await postAction({ action: 'studentLogin', studentNum, pin }, '학생 지갑 인증 및 접속 중...');
+        const res = await postAction(
+          { action: 'studentLogin', studentNum, pin },
+          '학생 지갑 정보를 확인하고 상점에 입장 중입니다...',
+          { showOverlay: true, title: '학생 로그인 중입니다...', tag: '학생 인증' }
+        );
         appState.loggedStudent = {
           studentNum: res.student.studentNum,
           studentName: res.student.studentName,
@@ -2549,6 +2640,8 @@
         showToast(`${res.student.studentNum}번 ${res.student.studentName} 학생으로 접속했습니다!`);
       } catch (err) {
         showToast(err.message);
+      } finally {
+        setButtonLoading(submitBtn, false);
       }
     });
 
@@ -2557,8 +2650,14 @@
       e.preventDefault();
       const pin = document.getElementById('gateTeacherPin').value.trim();
       if (!pin) return;
+      const submitBtn = document.getElementById('gateTeacherSubmitBtn');
+      setButtonLoading(submitBtn, true, '교사 로그인 중...');
       try {
-        await postAction({ action: 'verifyTeacher', pin }, '교사 PIN 인증 및 접속 중...');
+        await postAction(
+          { action: 'verifyTeacher', pin },
+          '교사 비밀번호를 확인하고 관리 모드로 접속 중입니다...',
+          { showOverlay: true, title: '교사 로그인 중입니다...', tag: '교사 인증' }
+        );
         appState.teacherPin = pin;
         appState.enteredStore = true;
         sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, pin);
@@ -2566,6 +2665,8 @@
         showToast('교사 모드로 접속했습니다.');
       } catch (err) {
         showToast(err.message);
+      } finally {
+        setButtonLoading(submitBtn, false);
       }
     });
 
@@ -2601,8 +2702,14 @@
         showToast('목록에서 학생을 검색해 선택한 뒤 4자리 비밀번호를 입력해 주세요.');
         return;
       }
+      const submitBtn = document.getElementById('inlineStudentSubmitBtn');
+      setButtonLoading(submitBtn, true, '로그인 중...');
       try {
-        const res = await postAction({ action: 'studentLogin', studentNum, pin }, '학생 지갑 인증 동기화 중...');
+        const res = await postAction(
+          { action: 'studentLogin', studentNum, pin },
+          '학생 지갑 정보를 불러오고 있습니다...',
+          { showOverlay: true, title: '내 지갑 로그인 중...', tag: '학생 인증' }
+        );
         appState.loggedStudent = {
           studentNum: res.student.studentNum,
           studentName: res.student.studentName,
@@ -2613,6 +2720,8 @@
         showToast(`${res.student.studentNum}번 ${res.student.studentName} 학생 환영합니다!`);
       } catch (err) {
         showToast(err.message);
+      } finally {
+        setButtonLoading(submitBtn, false);
       }
     });
 
@@ -2639,12 +2748,16 @@
       const oldPin = document.getElementById('oldStudentPinInput').value.trim();
       const newPin = document.getElementById('newStudentPinInput').value.trim();
       try {
-        await postAction({
-          action: 'changeStudentPin',
-          studentNum: appState.loggedStudent.studentNum,
-          oldPin,
-          newPin
-        }, '비밀번호 변경 동기화 중...');
+        await postAction(
+          {
+            action: 'changeStudentPin',
+            studentNum: appState.loggedStudent.studentNum,
+            oldPin,
+            newPin
+          },
+          '비밀번호 변경 동기화 중...',
+          { showOverlay: true, title: '비밀번호 변경 중...', tag: '보안 설정' }
+        );
         appState.loggedStudent.pin = newPin;
         sessionStorage.setItem(STORAGE_KEYS.STUDENT_SESSION, JSON.stringify(appState.loggedStudent));
         closeModal('changePinModal');
@@ -2682,8 +2795,14 @@
       e.preventDefault();
       const pin = document.getElementById('teacherPinInput').value.trim();
       if (!pin) return;
+      const submitBtn = document.getElementById('modalTeacherSubmitBtn');
+      setButtonLoading(submitBtn, true, '로그인 중...');
       try {
-        await postAction({ action: 'verifyTeacher', pin }, '교사 PIN 인증 중...');
+        await postAction(
+          { action: 'verifyTeacher', pin },
+          '교사 비밀번호를 확인하고 있습니다...',
+          { showOverlay: true, title: '교사 모드 로그인 중...', tag: '교사 인증' }
+        );
         appState.teacherPin = pin;
         sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, pin);
         closeModal('teacherLoginModal');
@@ -2691,6 +2810,8 @@
         showToast('교사 관리 모드가 활성화되었습니다.');
       } catch (err) {
         showToast(err.message);
+      } finally {
+        setButtonLoading(submitBtn, false);
       }
     });
 
@@ -2807,13 +2928,17 @@
       const itemId = document.getElementById('purchaseItemId').value;
       const note = document.getElementById('purchaseNoteInput').value.trim();
       try {
-        await postAction({
-          action: 'purchaseItem',
-          studentNum: appState.loggedStudent.studentNum,
-          pin: appState.loggedStudent.pin,
-          itemId,
-          note
-        }, '쿠폰 교환 신청 동기화 중...');
+        await postAction(
+          {
+            action: 'purchaseItem',
+            studentNum: appState.loggedStudent.studentNum,
+            pin: appState.loggedStudent.pin,
+            itemId,
+            note
+          },
+          '쿠폰 교환 신청을 반영하고 있습니다...',
+          { showOverlay: true, title: '쿠폰 신청 처리 중...', tag: '쿠폰 교환' }
+        );
         closeModal('purchaseModal');
         showToast('쿠폰 교환 신청이 완료되었습니다! 선생님 승인 후 사용할 수 있어요.');
       } catch (err) {
