@@ -51,6 +51,79 @@
       color: var(--ink);
     }
 
+    /* 학생 / 교사 입장 로그인 화면 */
+    .login-gate {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .login-gate.hidden {
+      display: none;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 460px;
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: 8px 8px 0 var(--ink);
+      overflow: hidden;
+    }
+
+    .gate-header {
+      background: var(--yellow);
+      border-bottom: var(--border);
+      padding: 20px 22px;
+    }
+
+    .gate-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: var(--border);
+      background: var(--bg);
+    }
+
+    .gate-tab-btn {
+      padding: 13px 10px;
+      font-size: 0.95rem;
+      font-weight: 900;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    .gate-tab-btn:first-child {
+      border-right: var(--border);
+    }
+
+    .gate-tab-btn.active[data-role="student"] {
+      background: var(--green);
+    }
+
+    .gate-tab-btn.active[data-role="teacher"] {
+      background: var(--cyan);
+    }
+
+    .gate-body {
+      padding: 22px;
+    }
+
+    .gate-pane {
+      display: none;
+    }
+
+    .gate-pane.active {
+      display: block;
+    }
+
+    .app-shell.hidden {
+      display: none;
+    }
+
     /* 첫 접속 전체 로딩 화면 */
     .initial-loader {
       position: fixed;
@@ -1004,13 +1077,71 @@
   </div>
 </div>
 
-<!-- 사용 중 동기화 시 우측 하단 구석에 잠깐 나타나는 인디케이터 -->
+<!-- 학생 또는 교사 로그인 화면 -> 접속 -->
+<section class="login-gate" id="loginGateScreen" aria-label="학생 또는 교사 로그인">
+  <div class="gate-card">
+    <div class="gate-header">
+      <div class="badge-row" style="margin-bottom:6px;">
+        <span class="badge-pill dark" id="gateClassBadge">공주부설초등학교 · 5학년 2반</span>
+      </div>
+      <h1 class="store-title" style="font-size:1.45rem;" id="gateStoreTitle">우리반 칭찬 포인트 보상 상점</h1>
+      <p class="store-notice" style="font-size:0.86rem; margin-top:4px;">학생 또는 교사를 선택한 뒤 <strong>접속</strong> 버튼을 눌러 입장하세요.</p>
+    </div>
+
+    <div class="gate-tabs" role="tablist">
+      <button type="button" class="gate-tab-btn active" data-role="student" role="tab" aria-selected="true">
+        🎒 학생 로그인
+      </button>
+      <button type="button" class="gate-tab-btn" data-role="teacher" role="tab" aria-selected="false">
+        👩‍🏫 교사 로그인
+      </button>
+    </div>
+
+    <div class="gate-body">
+      <!-- 학생 로그인 폼 -> 접속 -->
+      <form class="gate-pane active" id="gateStudentForm">
+        <div class="form-group">
+          <label for="gateStudentSelect">출석 번호 · 이름 선택</label>
+          <select id="gateStudentSelect" required>
+            <option value="">학생 번호·이름 선택</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gateStudentPin">학생 비밀번호 (PIN, 초기: 1111)</label>
+          <input type="password" id="gateStudentPin" value="1111" maxlength="6" placeholder="PIN 4자리" required />
+        </div>
+        <button type="submit" class="btn btn-green" style="width:100%; padding:11px 16px; font-size:0.96rem;">
+          학생으로 접속 &rarr;
+        </button>
+      </form>
+
+      <!-- 교사 로그인 폼 -> 접속 -->
+      <form class="gate-pane" id="gateTeacherForm">
+        <div class="form-group">
+          <label for="gateTeacherPin">교사 관리 비밀번호 (PIN, 기본: 1234)</label>
+          <div class="pin-input-row">
+            <input type="text" id="gateTeacherPin" value="1234" placeholder="교사 비밀번호 입력 (기본: 1234)" required />
+            <button type="button" class="btn btn-sm" id="toggleGateTeacherPinBtn">숨기기</button>
+          </div>
+          <div class="pin-hint-box">
+            기본 교사 비밀번호 <strong>1234</strong>가 입력되어 있습니다. 바로 <strong>[교사로 접속]</strong>을 누르세요.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-cyan" style="width:100%; padding:11px 16px; font-size:0.96rem;">
+          교사로 접속 &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 사용 중 구석 동기화 인디케이터 -->
 <div class="corner-sync-pill" id="cornerSyncPill" aria-live="polite">
   <span class="mini-spin" id="cornerSyncSpinner"></span>
   <span id="cornerSyncText">구글 시트 동기화 중...</span>
 </div>
 
-<div class="container">
+<div class="container app-shell hidden" id="mainAppShell">
   <!-- 상단 헤더 -->
   <header class="top-header">
     <div class="header-top-row">
@@ -1026,6 +1157,7 @@
       <div class="header-actions">
         <button type="button" class="btn btn-cyan" id="refreshBtn">새로고침</button>
         <button type="button" class="btn btn-dark" id="teacherModeBtn">교사 모드 로그인</button>
+        <button type="button" class="btn btn-sm" id="backToLoginGateBtn">로그인 화면</button>
       </div>
     </div>
   </header>
@@ -1447,6 +1579,7 @@
     transactions: [],
     loggedStudent: null,
     teacherPin: '',
+    enteredStore: false,
     itemCatFilter: 'all',
     itemSearch: '',
     txFilter: 'all',
@@ -1474,6 +1607,7 @@
 
   function setSyncBadge(status, text) {
     const badge = document.getElementById('syncStatusBadge');
+    if (!badge) return;
     badge.className = 'badge-pill ' + (status === 'ok' ? 'sync-ok' : status === 'err' ? 'sync-err' : 'sync-loading');
     badge.textContent = text;
   }
@@ -1510,7 +1644,7 @@
       setSyncBadge('loading', '초기 동기화 중...');
       const sub = document.getElementById('initialLoaderSub');
       if (sub) sub.textContent = labelText;
-    } else {
+    } else if (appState.enteredStore) {
       setSyncBadge('loading', '동기화 중...');
       showCornerSync('syncing', labelText);
     }
@@ -1532,10 +1666,10 @@
 
     if (success) {
       setSyncBadge('ok', '시트 실시간 연동됨');
-      showCornerSync('done', `✓ ${doneText}`, 1500);
+      if (appState.enteredStore) showCornerSync('done', `✓ ${doneText}`, 1500);
     } else {
       setSyncBadge('err', '동기화 오류');
-      showCornerSync('error', '✕ 동기화 오류', 2400);
+      if (appState.enteredStore) showCornerSync('error', '✕ 동기화 오류', 2400);
     }
   }
 
@@ -1550,6 +1684,18 @@
   function getCurrentStudentData() {
     if (!appState.loggedStudent) return null;
     return appState.students.find(s => Number(s.studentNum) === Number(appState.loggedStudent.studentNum)) || null;
+  }
+
+  function syncGateVisibility() {
+    const gateEl = document.getElementById('loginGateScreen');
+    const shellEl = document.getElementById('mainAppShell');
+    if (appState.enteredStore) {
+      gateEl.classList.add('hidden');
+      shellEl.classList.remove('hidden');
+    } else {
+      gateEl.classList.remove('hidden');
+      shellEl.classList.add('hidden');
+    }
   }
 
   /* ==================== Apps Script 통신 ==================== */
@@ -1603,6 +1749,7 @@
 
   /* ==================== 전체 화면 렌더링 ==================== */
   function renderAll() {
+    syncGateVisibility();
     renderHeaderAndSettings();
     renderStudentWallet();
     renderItems();
@@ -1612,6 +1759,8 @@
 
   function renderHeaderAndSettings() {
     const s = appState.settings;
+    document.getElementById('gateClassBadge').textContent = `${s.schoolName} · ${s.className}`;
+    document.getElementById('gateStoreTitle').textContent = s.storeTitle;
     document.getElementById('schoolClassBadge').textContent = `${s.schoolName} · ${s.className}`;
     document.getElementById('teacherNameBadge').textContent = `담임: ${s.teacherName}`;
     document.getElementById('storeTitleHeading').textContent = s.storeTitle;
@@ -1650,10 +1799,17 @@
   }
 
   function renderStudentWallet() {
+    const optionsHtml = `<option value="">학생 번호·이름 선택</option>` +
+      appState.students.map(s => `<option value="${s.studentNum}">${s.studentNum}번 ${escapeHtml(s.studentName)}</option>`).join('');
+
+    const gateSelect = document.getElementById('gateStudentSelect');
+    const prevGateVal = gateSelect.value;
+    gateSelect.innerHTML = optionsHtml;
+    if (prevGateVal) gateSelect.value = prevGateVal;
+
     const selectEl = document.getElementById('loginStudentSelect');
     const prevVal = selectEl.value;
-    selectEl.innerHTML = `<option value="">학생 번호·이름 선택</option>` +
-      appState.students.map(s => `<option value="${s.studentNum}">${s.studentNum}번 ${escapeHtml(s.studentName)}</option>`).join('');
+    selectEl.innerHTML = optionsHtml;
     if (prevVal) selectEl.value = prevVal;
 
     const stuData = getCurrentStudentData();
@@ -1870,12 +2026,89 @@
       if (savedStu) appState.loggedStudent = JSON.parse(savedStu);
       const savedTeacher = sessionStorage.getItem(STORAGE_KEYS.TEACHER_PIN);
       if (savedTeacher) appState.teacherPin = savedTeacher;
+      if (appState.loggedStudent || appState.teacherPin) {
+        appState.enteredStore = true;
+      }
     } catch (_) {}
 
-    // 첫 접속 시 전체 로딩 화면 표시 상태로 초기 데이터 동기화
+    syncGateVisibility();
     fetchAllData('구글 스프레드시트와 실시간 동기화하고 있어요...');
 
-    // 새로고침 (우측 하단 구석 동기화 뱃지 표시)
+    // 입장 화면: 학생 / 교사 탭 전환
+    document.querySelectorAll('.gate-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const role = btn.dataset.role;
+        document.querySelectorAll('.gate-tab-btn').forEach(b => {
+          const active = b.dataset.role === role;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', String(active));
+        });
+        document.getElementById('gateStudentForm').classList.toggle('active', role === 'student');
+        document.getElementById('gateTeacherForm').classList.toggle('active', role === 'teacher');
+      });
+    });
+
+    // 입장 화면: 교사 PIN 보기/숨기기
+    document.getElementById('toggleGateTeacherPinBtn').addEventListener('click', (e) => {
+      const inp = document.getElementById('gateTeacherPin');
+      if (inp.type === 'text') {
+        inp.type = 'password';
+        e.target.textContent = '보기';
+      } else {
+        inp.type = 'text';
+        e.target.textContent = '숨기기';
+      }
+    });
+
+    // 입장 화면: 학생으로 접속
+    document.getElementById('gateStudentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const studentNum = Number(document.getElementById('gateStudentSelect').value);
+      const pin = document.getElementById('gateStudentPin').value.trim();
+      if (!studentNum || !pin) {
+        showToast('출석 번호와 4자리 비밀번호를 입력해 주세요.');
+        return;
+      }
+      try {
+        const res = await postAction({ action: 'studentLogin', studentNum, pin }, '학생 지갑 인증 및 접속 중...');
+        appState.loggedStudent = {
+          studentNum: res.student.studentNum,
+          studentName: res.student.studentName,
+          pin
+        };
+        appState.enteredStore = true;
+        sessionStorage.setItem(STORAGE_KEYS.STUDENT_SESSION, JSON.stringify(appState.loggedStudent));
+        renderAll();
+        showToast(`${res.student.studentNum}번 ${res.student.studentName} 학생으로 접속했습니다!`);
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 입장 화면: 교사로 접속
+    document.getElementById('gateTeacherForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pin = document.getElementById('gateTeacherPin').value.trim();
+      if (!pin) return;
+      try {
+        await postAction({ action: 'verifyTeacher', pin }, '교사 PIN 인증 및 접속 중...');
+        appState.teacherPin = pin;
+        appState.enteredStore = true;
+        sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, pin);
+        renderAll();
+        showToast('교사 모드로 접속했습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 상점 상단: 로그인 화면으로 돌아가기
+    document.getElementById('backToLoginGateBtn').addEventListener('click', () => {
+      appState.enteredStore = false;
+      syncGateVisibility();
+    });
+
+    // 새로고침
     document.getElementById('refreshBtn').addEventListener('click', () => {
       fetchAllData('최신 상점 정보 동기화 중...');
     });
@@ -1890,7 +2123,7 @@
       });
     });
 
-    // 학생 로그인
+    // 상점 내부 학생 로그인
     document.getElementById('studentLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const studentNum = Number(document.getElementById('loginStudentSelect').value);
@@ -1914,12 +2147,13 @@
       }
     });
 
-    // 학생 로그아웃
+    // 학생 로그아웃 -> 로그인 화면 복귀
     document.getElementById('studentLogoutBtn').addEventListener('click', () => {
       appState.loggedStudent = null;
+      appState.enteredStore = false;
       sessionStorage.removeItem(STORAGE_KEYS.STUDENT_SESSION);
       renderAll();
-      showToast('학생 지갑에서 로그아웃되었습니다.');
+      showToast('로그아웃되었습니다. 로그인 화면으로 이동합니다.');
     });
 
     // 학생 비밀번호 변경 모달
@@ -1993,9 +2227,10 @@
 
     document.getElementById('logoutTeacherBtn').addEventListener('click', () => {
       appState.teacherPin = '';
+      appState.enteredStore = false;
       sessionStorage.removeItem(STORAGE_KEYS.TEACHER_PIN);
       renderAll();
-      showToast('교사 모드가 종료되었습니다.');
+      showToast('교사 모드가 종료되었습니다. 로그인 화면으로 이동합니다.');
     });
 
     // 상점 필터 & 검색
