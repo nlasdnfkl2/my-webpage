@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#ffd83b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="우리반 알림장" />
+  <title>우리반 스마트 학급 게시판</title>
+  <link id="pwaManifestLink" rel="manifest" href="" />
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --paper: #ffffff;
+      --ink: #111111;
+      --muted: #555555;
+      --border: 3px solid #111111;
+      --border-thin: 2px solid #111111;
+      --shadow: 5px 5px 0 #111111;
+      --shadow-sm: 3px 3px 0 #111111;
+
+      --yellow: #ffd83b;
+      --cyan: #48dbfb;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --orange: #ffa502;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(to right, rgba(17, 17, 17, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(17, 17, 17, 0.045) 1px, transparent 1px);
+      background-size: 26px 26px;
+      color: var(--ink);
+      line-height: 1.55;
+      padding-bottom: 72px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: var(--ink);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+    }
+
+    /* 상단 헤더 배너 */
+    .top-header {
+      background: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+      margin-bottom: 18px;
+      position: relative;
+    }
+
+    .header-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .school-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 3px 10px;
+      background: var(--paper);
+      border: var(--border-thin);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .badge-pill.dark {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    .badge-pill.sync-ok {
+      background: var(--green);
+    }
+
+    .badge-pill.sync-loading {
+      background: var(--cyan);
+    }
+
+    .badge-pill.sync-err {
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .board-title {
+      font-size: clamp(1.55rem, 3.6vw, 2.15rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .board-motto {
+      margin-top: 6px;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #222222;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.86rem;
+      font-weight: 900;
+      padding: 8px 14px;
+      background: var(--paper);
+      border: var(--border-thin);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-yellow { background: var(--yellow); }
+    .btn-cyan { background: var(--cyan); }
+    .btn-green { background: var(--green); }
+    .btn-pink { background: var(--pink); }
+    .btn-red { background: var(--red); color: #ffffff; }
+    .btn-dark { background: var(--ink); color: var(--yellow); }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+
+    /* 학생 내 정보 빠른 설정 바 */
+    .student-bar {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .student-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .student-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .input-box {
+      padding: 7px 11px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: #ffffff;
+      border: var(--border-thin);
+      outline: none;
+    }
+
+    .input-box:focus {
+      background: #fffef4;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .input-num { width: 78px; }
+    .input-name { width: 115px; }
+    .input-pin { width: 92px; letter-spacing: 0.08em; }
+
+    /* 교사 모드 알림 배너 */
+    .teacher-ribbon {
+      display: none;
+      background: var(--ink);
+      color: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 11px 16px;
+      margin-bottom: 18px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .teacher-ribbon.active {
+      display: flex;
+    }
+
+    .teacher-ribbon-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      color: var(--yellow);
+    }
+
+    .teacher-ribbon-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 메인 탭 내비게이션 */
+    .main-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 12px 10px;
+      font-size: 0.95rem;
+      font-weight: 900;
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.12s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--cyan);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .tab-count {
+      background: var(--ink);
+      color: #ffffff;
+      font-size: 0.75rem;
+      padding: 1px 7px;
+      border-radius: 999px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* 공지 필터 & 검색 패널 */
+    .filter-panel {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      padding: 5px 11px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: var(--bg);
+      border: var(--border-thin);
+      cursor: pointer;
+    }
+
+    .chip-btn.active {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    .search-box {
+      min-width: 220px;
+      flex: 1;
+      max-width: 310px;
+    }
+
+    /* 섹션 구분 헤더 */
+    .sub-section-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 900;
+      background: var(--ink);
+      color: #ffffff;
+      padding: 5px 14px;
+      margin-bottom: 14px;
+      box-shadow: 3px 3px 0 var(--red);
+    }
+
+    .sub-section-title span {
+      color: var(--yellow);
+    }
+
+    /* 공지 카드 리스트 */
+    .notice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .notice-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      position: relative;
+    }
+
+    .notice-card.pinned {
+      background: #fffdf0;
+      border-width: 3px;
+      box-shadow: 6px 6px 0 var(--red);
+    }
+
+    .notice-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .notice-badges {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .cat-badge {
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 2px 9px;
+      border: var(--border-thin);
+      background: var(--cyan);
+    }
+
+    .cat-badge.urgent { background: var(--red); color: #ffffff; }
+    .cat-badge.letter { background: var(--pink); }
+    .cat-badge.prep { background: var(--green); }
+    .cat-badge.event { background: var(--yellow); }
+
+    .pin-badge {
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 2px 9px;
+      background: var(--ink);
+      color: var(--yellow);
+      border: var(--border-thin);
+    }
+
+    .dday-badge {
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      background: #ffffff;
+      border: var(--border-thin);
+    }
+
+    .dday-badge.today {
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .notice-date-meta {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .notice-title {
+      font-size: 1.22rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.38;
+    }
+
+    .notice-content {
+      font-size: 0.96rem;
+      font-weight: 500;
+      white-space: pre-line;
+      background: #ffffff;
+      border: 2px solid rgba(17, 17, 17, 0.14);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .notice-attachment {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+      font-weight: 900;
+      padding: 6px 12px;
+      background: var(--cyan);
+      border: var(--border-thin);
+      box-shadow: 2px 2px 0 var(--ink);
+      margin-bottom: 14px;
+    }
+
+    /* 읽음 확인 바 */
+    .read-box {
+      background: var(--bg);
+      border: var(--border-thin);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .read-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .read-stat-text {
+      font-size: 0.86rem;
+      font-weight: 900;
+    }
+
+    .read-progress-track {
+      width: 100%;
+      height: 12px;
+      background: #ffffff;
+      border: var(--border-thin);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .read-progress-fill {
+      height: 100%;
+      background: var(--green);
+      transition: width 0.3s ease;
+    }
+
+    .read-students-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .student-read-chip {
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      background: #ffffff;
+      border: 1.5px solid var(--ink);
+    }
+
+    .student-read-chip.me {
+      background: var(--yellow);
+      font-weight: 900;
+    }
+
+    /* 댓글 섹션 */
+    .comment-section {
+      border-top: 2px dashed rgba(17, 17, 17, 0.25);
+      padding-top: 14px;
+    }
+
+    .comment-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .comment-item {
+      background: #ffffff;
+      border: 2px solid var(--ink);
+      padding: 9px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .comment-item.teacher-comment {
+      background: #eef6ff;
+      border-left: 6px solid var(--blue);
+    }
+
+    .comment-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      font-weight: 900;
+      margin-bottom: 3px;
+    }
+
+    .role-tag {
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border: 1.5px solid var(--ink);
+      background: var(--yellow);
+    }
+
+    .role-tag.teacher {
+      background: var(--blue);
+      color: #ffffff;
+    }
+
+    .comment-time {
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+
+    .comment-body {
+      font-size: 0.88rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .comment-form {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .comment-form .input-content {
+      flex: 1;
+      min-width: 190px;
+    }
+
+    /* 교사 카드 컨트롤 바 */
+    .teacher-card-tools {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 2px solid var(--ink);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 학급 달력 탭 */
+    .calendar-wrapper {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .calendar-card, .agenda-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    .cal-month-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top: var(--border-thin);
+      border-left: var(--border-thin);
+    }
+
+    .cal-dow {
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 900;
+      padding: 7px 2px;
+      background: var(--yellow);
+      border-right: var(--border-thin);
+      border-bottom: var(--border-thin);
+    }
+
+    .cal-dow.sun { color: var(--red); }
+    .cal-dow.sat { color: var(--blue); }
+
+    .cal-cell {
+      min-height: 76px;
+      padding: 5px;
+      background: #ffffff;
+      border-right: var(--border-thin);
+      border-bottom: var(--border-thin);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      transition: background 0.1s ease;
+    }
+
+    .cal-cell:hover {
+      background: #fffbe6;
+    }
+
+    .cal-cell.other-month {
+      background: #f3f1ec;
+      color: #999999;
+    }
+
+    .cal-cell.today {
+      background: #e8f8ff;
+    }
+
+    .cal-cell.selected {
+      outline: 3px solid var(--red);
+      outline-offset: -3px;
+      background: #fff6d6;
+    }
+
+    .cal-day-num {
+      font-size: 0.82rem;
+      font-weight: 900;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cal-day-num.sun { color: var(--red); }
+    .cal-day-num.sat { color: var(--blue); }
+
+    .today-dot {
+      font-size: 0.65rem;
+      background: var(--red);
+      color: #ffffff;
+      padding: 0 4px;
+    }
+
+    .cal-event-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 1px 4px;
+      border: 1.5px solid var(--ink);
+      background: var(--cyan);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cal-event-pill.important {
+      background: var(--yellow);
+    }
+
+    .cal-event-pill.holiday {
+      background: var(--pink);
+    }
+
+    .cal-event-pill.notice-link {
+      background: var(--green);
+    }
+
+    .agenda-item {
+      border: var(--border-thin);
+      padding: 12px;
+      margin-bottom: 10px;
+      background: var(--bg);
+    }
+
+    .agenda-item.important {
+      background: #fff9db;
+      border-left: 6px solid var(--orange);
+    }
+
+    .agenda-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .agenda-date {
+      font-size: 0.78rem;
+      font-weight: 900;
+      color: var(--blue);
+    }
+
+    .agenda-title {
+      font-size: 0.96rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .agenda-desc {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #333333;
+    }
+
+    /* 학급 안내 & 설정 탭 */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .info-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .info-card h3 {
+      font-size: 1.12rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: var(--border-thin);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 8px 11px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: var(--border-thin);
+      background: #ffffff;
+    }
+
+    .form-group textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    /* 모달 공통 */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.72);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: 8px 8px 0 var(--ink);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-box.sm {
+      max-width: 410px;
+    }
+
+    .modal-header {
+      background: var(--yellow);
+      border-bottom: var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .modal-close {
+      width: 30px;
+      height: 30px;
+      background: var(--red);
+      color: #ffffff;
+      border: var(--border-thin);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .pin-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pin-hint-box {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: #fff9db;
+      border: 2px dashed var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      cursor: pointer;
+      margin: 8px 0 12px;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* 토스트 알림 */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink);
+      color: var(--yellow);
+      border: var(--border-thin);
+      box-shadow: 4px 4px 0 var(--red);
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      z-index: 4000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      max-width: calc(100vw - 28px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      background: var(--paper);
+      border: var(--border);
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    @media (max-width: 820px) {
+      .calendar-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .main-tabs {
+        grid-template-columns: 1fr;
+      }
+      .cal-cell {
+        min-height: 62px;
+        padding: 3px;
+      }
+      .notice-card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 상단 학급 헤더 -->
+  <header class="top-header">
+    <div class="header-top-row">
+      <div>
+        <div class="school-badge-row">
+          <span class="badge-pill dark" id="schoolClassBadge">공주부설초등학교 · 5학년 2반</span>
+          <span class="badge-pill" id="teacherNameBadge">담임: 문태양 선생님</span>
+          <span class="badge-pill sync-loading" id="syncStatusBadge">시트 동기화 중...</span>
+        </div>
+        <h1 class="board-title">우리반 스마트 학급 게시판</h1>
+        <p class="board-motto" id="classMottoText">서로 배려하고 함께 성장하는 우리 반</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-cyan" id="refreshBtn" title="구글 시트 최신 데이터 불러오기">새로고침</button>
+        <button type="button" class="btn btn-green" id="installPwaBtn">앱 설치 안내</button>
+        <button type="button" class="btn btn-dark" id="teacherModeBtn">교사 모드 로그인</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 학생 내 정보 빠른 설정 바 -->
+  <section class="student-bar" aria-label="학생 정보 설정">
+    <div class="student-bar-left">
+      <span class="badge-pill" style="background: var(--yellow);">학생 간편 설정</span>
+      <span id="savedStudentDisplay">내 번호와 이름을 저장하면 읽음 확인·댓글을 1초 만에 남길 수 있어요.</span>
+    </div>
+    <div class="student-inputs">
+      <input type="number" min="1" max="50" class="input-box input-num" id="myStudentNum" placeholder="번호 (예: 3)" />
+      <input type="text" class="input-box input-name" id="myStudentName" placeholder="이름 (예: 김서윤)" />
+      <input type="password" maxlength="6" class="input-box input-pin" id="myStudentPin" placeholder="댓글PIN 4자리" />
+      <button type="button" class="btn btn-yellow btn-sm" id="saveStudentBtn">내 정보 저장</button>
+    </div>
+  </section>
+
+  <!-- 교사 모드 전용 관리 바 -->
+  <section class="teacher-ribbon" id="teacherRibbon" aria-label="교사 관리 도구">
+    <div class="teacher-ribbon-title">
+      <span>👩‍🏫 교사 관리 모드 활성화됨</span>
+      <span style="font-size: 0.78rem; color: #dddddd; font-weight: 700;">(공지 작성·고정·수정·삭제 및 달력 일정 관리 가능)</span>
+    </div>
+    <div class="teacher-ribbon-actions">
+      <button type="button" class="btn btn-yellow btn-sm" id="openNewNoticeModalBtn">+ 새 공지 작성</button>
+      <button type="button" class="btn btn-cyan btn-sm" id="openNewEventModalBtn">+ 학급 일정 추가</button>
+      <button type="button" class="btn btn-red btn-sm" id="logoutTeacherBtn">교사 모드 종료</button>
+    </div>
+  </section>
+
+  <!-- 3단 메인 탭 -->
+  <nav class="main-tabs" role="tablist">
+    <button type="button" class="tab-btn active" data-tab="noticesTab" role="tab">
+      <span>📢 공지 · 알림장</span>
+      <span class="tab-count" id="noticeTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="calendarTab" role="tab">
+      <span>📅 월별 학급 달력</span>
+      <span class="tab-count" id="eventTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="settingsTab" role="tab">
+      <span>⚙️ 학급 안내 · 설정</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1: 공지사항 & 알림장 -->
+  <main id="noticesTab" class="tab-panel active">
+    <div class="filter-panel">
+      <div class="filter-chips" id="noticeFilterChips">
+        <button type="button" class="chip-btn active" data-cat="all">전체</button>
+        <button type="button" class="chip-btn" data-cat="pinned">📌 필독만</button>
+        <button type="button" class="chip-btn" data-cat="긴급공지">긴급공지</button>
+        <button type="button" class="chip-btn" data-cat="가정통신문">가정통신문</button>
+        <button type="button" class="chip-btn" data-cat="준비물">준비물</button>
+        <button type="button" class="chip-btn" data-cat="학급행사">학급행사</button>
+        <button type="button" class="chip-btn" data-cat="학급공지">학급공지</button>
+      </div>
+      <input type="search" class="input-box search-box" id="noticeSearchInput" placeholder="공지 제목, 내용 검색..." />
+    </div>
+
+    <div id="pinnedSectionWrap">
+      <div class="sub-section-title"><span>PINNED</span> / 필독 상단 고정 공지</div>
+      <div class="notice-list" id="pinnedNoticeList"></div>
+    </div>
+
+    <div>
+      <div class="sub-section-title"><span>NOTICES</span> / 전체 알림장 목록</div>
+      <div class="notice-list" id="regularNoticeList"></div>
+    </div>
+  </main>
+
+  <!-- TAB 2: 월별 학급 달력 -->
+  <section id="calendarTab" class="tab-panel">
+    <div class="calendar-wrapper">
+      <div class="calendar-card">
+        <div class="cal-header">
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-sm" id="prevMonthBtn">&larr; 이전 달</button>
+            <button type="button" class="btn btn-sm btn-yellow" id="todayMonthBtn">이번 달</button>
+            <button type="button" class="btn btn-sm" id="nextMonthBtn">다음 달 &rarr;</button>
+          </div>
+          <div class="cal-month-title" id="calMonthTitle">2026년 11월</div>
+        </div>
+        <div class="cal-grid" id="calendarGrid"></div>
+      </div>
+
+      <div class="agenda-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px;">
+          <h3 style="font-size:1.05rem; font-weight:900;" id="selectedDateTitle">선택한 날짜 일정</h3>
+          <button type="button" class="btn btn-sm btn-cyan" id="showAllMonthEventsBtn">이번 달 전체 보기</button>
+        </div>
+        <div id="agendaListBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: 학급 안내 & 설정 -->
+  <section id="settingsTab" class="tab-panel">
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>📱 스마트폰 앱(PWA) 설치 및 공유 안내</h3>
+        <p style="font-size:0.9rem; font-weight:600; margin-bottom:12px;">
+          우리반 스마트 학급 게시판은 별도 앱스토어 설치 없이 스마트폰 홈 화면에 바로 추가해 알림장 앱처럼 사용할 수 있습니다.
+        </p>
+        <ul style="font-size:0.86rem; font-weight:700; padding-left:18px; display:flex; flex-direction:column; gap:7px; margin-bottom:14px;">
+          <li><strong>갤럭시 / 안드로이드 (Chrome):</strong> 우측 상단 <code>⋮</code> 메뉴 → <strong>[홈 화면에 추가]</strong> 또는 <strong>[앱 설치]</strong> 선택</li>
+          <li><strong>아이폰 / 아이패드 (Safari):</strong> 하단 <strong>공유 버튼(□↑)</strong> → <strong>[홈 화면에 추가]</strong> 선택</li>
+          <li><strong>실시간 동기화:</strong> 모든 공지, 읽음 확인, 댓글, 학급 일정은 구글 스프레드시트 DB에 안전하게 자동 저장됩니다.</li>
+        </ul>
+        <button type="button" class="btn btn-yellow" id="copyBoardLinkBtn">학급 게시판 주소 복사하기</button>
+      </div>
+
+      <div class="info-card">
+        <h3>🏫 학급 기본 정보 및 교사 설정</h3>
+        <div id="settingsReadOnlyNotice" style="background:#fff9db; border:2px solid var(--ink); padding:10px 12px; font-size:0.84rem; font-weight:800; margin-bottom:12px;">
+          상단의 <strong>[교사 모드 로그인]</strong>을 완료하면 학교명, 학급명, 재적 학생 수, 급훈 및 교사 비밀번호를 수정할 수 있습니다.
+        </div>
+        <form id="classSettingsForm">
+          <div class="form-group">
+            <label for="setSchoolName">학교명</label>
+            <input type="text" id="setSchoolName" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setClassName">학급명</label>
+            <input type="text" id="setClassName" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setTeacherName">담임교사 성명</label>
+            <input type="text" id="setTeacherName" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setTotalStudents">우리 반 전체 학생 수 (읽음률 계산 기준)</label>
+            <input type="number" min="1" max="60" id="setTotalStudents" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setClassMotto">학급 급훈 / 상단 안내 문구</label>
+            <input type="text" id="setClassMotto" disabled />
+          </div>
+          <div class="form-group" id="newPinGroup" style="display:none;">
+            <label for="setNewTeacherPin">새 교사 비밀번호 변경 (변경 시에만 입력, 4자리 이상)</label>
+            <input type="text" id="setNewTeacherPin" placeholder="예: 1234" />
+          </div>
+          <button type="submit" class="btn btn-green" id="saveSettingsBtn" style="display:none; width:100%;">학급 설정 저장하기</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 1. 교사 인증 모달 (기본 교사 비밀번호 1234 미리 입력) -->
+<div class="modal-backdrop" id="teacherLoginModal" role="dialog" aria-modal="true" aria-label="교사 모드 인증">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>👩‍🏫 교사 모드 비밀번호 인증</span>
+      <button type="button" class="modal-close" data-close-modal="teacherLoginModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="teacherLoginForm">
+        <div class="form-group">
+          <label for="teacherPinInput">교사 관리 비밀번호 (PIN)</label>
+          <div class="pin-input-row">
+            <input type="text" id="teacherPinInput" value="1234" placeholder="교사 비밀번호 입력 (기본: 1234)" required />
+            <button type="button" class="btn btn-sm" id="toggleTeacherPinVisBtn">숨기기</button>
+          </div>
+          <div class="pin-hint-box">
+            기본 교사 비밀번호 <strong>1234</strong>가 입력되어 있습니다. 바로 <strong>[교사 모드 시작]</strong>을 누르시면 됩니다.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-dark" style="width:100%; margin-top:6px;">교사 모드 시작</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 공지 작성 / 수정 모달 -->
+<div class="modal-backdrop" id="noticeEditorModal" role="dialog" aria-modal="true" aria-label="공지 작성 및 수정">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span id="noticeEditorModalTitle">📢 새 공지사항 작성</span>
+      <button type="button" class="modal-close" data-close-modal="noticeEditorModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="noticeEditorForm">
+        <input type="hidden" id="editNoticeId" value="" />
+        <div class="form-group">
+          <label for="noticeCatInput">공지 분류</label>
+          <select id="noticeCatInput">
+            <option value="긴급공지">긴급공지</option>
+            <option value="가정통신문">가정통신문</option>
+            <option value="준비물">준비물</option>
+            <option value="학급행사">학급행사</option>
+            <option value="학급공지" selected>학급공지</option>
+          </select>
+        </div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="noticePinnedInput" />
+          <span>📌 필독 공지로 상단 고정하기</span>
+        </label>
+        <div class="form-group">
+          <label for="noticeTitleInput">공지 제목 *</label>
+          <input type="text" id="noticeTitleInput" placeholder="예: [필독] 금요일 현장체험학습 준비물 안내" required />
+        </div>
+        <div class="form-group">
+          <label for="noticeContentInput">공지 내용 *</label>
+          <textarea id="noticeContentInput" placeholder="학생과 학부모님께 전달할 알림장 내용을 자세히 적어주세요." required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="noticeTargetDateInput">관련 날짜 (선택 · 학급 달력에 함께 표시됩니다)</label>
+          <input type="date" id="noticeTargetDateInput" />
+        </div>
+        <div class="form-group">
+          <label for="noticeAttachmentInput">첨부 안내 링크 URL (선택)</label>
+          <input type="url" id="noticeAttachmentInput" placeholder="https://..." />
+        </div>
+        <button type="submit" class="btn btn-yellow" style="width:100%;">구글 시트에 공지 저장하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 학급 일정 추가 모달 -->
+<div class="modal-backdrop" id="eventEditorModal" role="dialog" aria-modal="true" aria-label="학급 일정 추가">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>📅 새 학급 일정 등록</span>
+      <button type="button" class="modal-close" data-close-modal="eventEditorModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="eventEditorForm">
+        <div class="form-group">
+          <label for="eventCategoryInput">일정 구분</label>
+          <select id="eventCategoryInput">
+            <option value="학급행사">학급행사</option>
+            <option value="수행평가">수행평가</option>
+            <option value="체험학습">체험학습</option>
+            <option value="학교일정">학교일정</option>
+            <option value="공휴일·휴업">공휴일·휴업</option>
+          </select>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label for="eventDateInput">시작 날짜 *</label>
+            <input type="date" id="eventDateInput" required />
+          </div>
+          <div class="form-group">
+            <label for="eventEndDateInput">종료 날짜 (선택)</label>
+            <input type="date" id="eventEndDateInput" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="eventTitleInput">일정 제목 *</label>
+          <input type="text" id="eventTitleInput" placeholder="예: 사회 역사 인물 탐구 발표" required />
+        </div>
+        <div class="form-group">
+          <label for="eventDescInput">상세 내용 (선택)</label>
+          <textarea id="eventDescInput" style="min-height:80px;" placeholder="준비물이나 세부 안내 사항을 입력하세요."></textarea>
+        </div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="eventImportantInput" />
+          <span>⭐ 중요 일정으로 강조 표시</span>
+        </label>
+        <button type="submit" class="btn btn-cyan" style="width:100%;">달력에 일정 저장하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 읽음 확인 빠른 입력 모달 (학생 정보가 미저장일 때) -->
+<div class="modal-backdrop" id="readConfirmModal" role="dialog" aria-modal="true" aria-label="공지 읽음 확인">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>✅ 공지 읽음 확인</span>
+      <button type="button" class="modal-close" data-close-modal="readConfirmModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="readConfirmForm">
+        <input type="hidden" id="readTargetNoticeId" value="" />
+        <p style="font-size:0.86rem; font-weight:700; margin-bottom:12px;">
+          번호와 이름을 입력하면 읽음 명단에 체크되며 브라우저에도 자동 저장됩니다.
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:8px;">
+          <div class="form-group">
+            <label for="modalStudentNum">번호 *</label>
+            <input type="number" min="1" max="50" id="modalStudentNum" placeholder="예: 3" required />
+          </div>
+          <div class="form-group">
+            <label for="modalStudentName">이름 *</label>
+            <input type="text" id="modalStudentName" placeholder="예: 김서윤" required />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-green" style="width:100%;">읽음 확인 등록하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 5. 댓글 삭제 비밀번호 확인 모달 -->
+<div class="modal-backdrop" id="deleteCommentModal" role="dialog" aria-modal="true" aria-label="댓글 삭제 확인">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>🗑️ 댓글 삭제 확인</span>
+      <button type="button" class="modal-close" data-close-modal="deleteCommentModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="deleteCommentForm">
+        <input type="hidden" id="deleteTargetCommentId" value="" />
+        <div class="form-group">
+          <label for="deleteCommentPinInput">댓글 작성 시 설정한 4자리 비밀번호 (또는 교사 PIN)</label>
+          <input type="text" id="deleteCommentPinInput" placeholder="4자리 비밀번호 입력" required />
+        </div>
+        <button type="submit" class="btn btn-red" style="width:100%;">댓글 삭제하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastBox" role="status" aria-live="polite"></div>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyzci9Cr_f6l9G1eMilCdl51eyJm5X1XFQSPktYYyXMrPjbIWo38LB7G-9Qotz2sgs9/exec';
+  const DEFAULT_TEACHER_PIN = '1234';
+
+  const STORAGE_KEYS = {
+    STUDENT_PROFILE: 'allimi_student_profile_v1',
+    TEACHER_PIN: 'allimi_teacher_pin_v1'
+  };
+
+  let appState = {
+    settings: {
+      schoolName: '공주부설초등학교',
+      className: '5학년 2반',
+      teacherName: '문태양 선생님',
+      totalStudents: 24,
+      classMotto: '서로 배려하고 함께 성장하는 우리 반'
+    },
+    notices: [],
+    comments: [],
+    events: [],
+    teacherPin: '',
+    noticeCatFilter: 'all',
+    noticeSearch: '',
+    calYear: 2026,
+    calMonth: 10, // 0-indexed (10 = 11월)
+    selectedDate: '',
+    showWholeMonthEvents: false
+  };
+
+  /* ==================== PWA 동적 매니페스트 등록 ==================== */
+  (function registerDynamicPwaManifest() {
+    try {
+      const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="36" fill="#ffd83b"/><rect x="14" y="14" width="164" height="164" rx="26" fill="#ffffff" stroke="#111111" stroke-width="10"/><text x="96" y="116" font-size="82" text-anchor="middle">📢</text></svg>`;
+      const iconUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgIcon);
+      const manifest = {
+        name: '우리반 스마트 학급 게시판',
+        short_name: '우리반 알림장',
+        start_url: window.location.href.split('#')[0],
+        display: 'standalone',
+        background_color: '#fdfbf7',
+        theme_color: '#ffd83b',
+        icons: [
+          { src: iconUrl, sizes: '192x192', type: 'image/svg+xml' },
+          { src: iconUrl, sizes: '512x512', type: 'image/svg+xml' }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      const manifestUrl = URL.createObjectURL(blob);
+      document.getElementById('pwaManifestLink')?.setAttribute('href', manifestUrl);
+    } catch (_) {}
+  })();
+
+  /* ==================== 공통 유틸리티 ==================== */
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toastBox');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => el.classList.remove('show'), 2800);
+  }
+
+  function setSyncBadge(status, text) {
+    const badge = document.getElementById('syncStatusBadge');
+    badge.className = 'badge-pill ' + (status === 'ok' ? 'sync-ok' : status === 'err' ? 'sync-err' : 'sync-loading');
+    badge.textContent = text;
+  }
+
+  function getTodayIso() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function calcDDayBadge(targetDateStr) {
+    if (!targetDateStr) return null;
+    const today = new Date(getTodayIso() + 'T00:00:00');
+    const target = new Date(targetDateStr + 'T00:00:00');
+    if (isNaN(target.getTime())) return null;
+    const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return { text: 'D-DAY (오늘)', isToday: true };
+    if (diffDays > 0) return { text: `D-${diffDays}`, isToday: diffDays <= 2 };
+    return { text: `D+${Math.abs(diffDays)}`, isToday: false };
+  }
+
+  function getSavedStudent() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.STUDENT_PROFILE);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function getStudentLabel(student) {
+    if (!student || !student.num || !student.name) return '';
+    return `${String(student.num).trim()}번 ${String(student.name).trim()}`;
+  }
+
+  function saveStudentProfile(num, name, pin) {
+    const clean = {
+      num: String(num || '').trim(),
+      name: String(name || '').trim(),
+      pin: String(pin || '').trim()
+    };
+    localStorage.setItem(STORAGE_KEYS.STUDENT_PROFILE, JSON.stringify(clean));
+    syncStudentBarUI();
+    return clean;
+  }
+
+  function syncStudentBarUI() {
+    const saved = getSavedStudent();
+    const numEl = document.getElementById('myStudentNum');
+    const nameEl = document.getElementById('myStudentName');
+    const pinEl = document.getElementById('myStudentPin');
+    const labelEl = document.getElementById('savedStudentDisplay');
+
+    if (saved && saved.num && saved.name) {
+      numEl.value = saved.num;
+      nameEl.value = saved.name;
+      if (saved.pin) pinEl.value = saved.pin;
+      labelEl.innerHTML = `현재 설정된 학생: <strong style="background:var(--cyan); padding:1px 6px; border:1.5px solid #111;">${escapeHtml(getStudentLabel(saved))}</strong>`;
+    } else {
+      labelEl.textContent = '내 번호와 이름을 저장하면 읽음 확인·댓글을 1초 만에 남길 수 있어요.';
+    }
+  }
+
+  function openModal(id) {
+    document.getElementById(id)?.classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id)?.classList.remove('open');
+  }
+
+  /* ==================== Google Apps Script API 통신 ==================== */
+  async function fetchAllData(silent = false) {
+    if (!silent) setSyncBadge('loading', '시트 동기화 중...');
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getAll&t=${Date.now()}`);
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.message || '데이터를 불러오지 못했습니다.');
+      applyServerPayload(json.data);
+      setSyncBadge('ok', '시트 실시간 연동됨');
+    } catch (err) {
+      console.error(err);
+      setSyncBadge('err', '연동 오류 (새로고침 필요)');
+      showToast('구글 시트 연결 중 오류가 발생했습니다: ' + err.message);
+    }
+  }
+
+  async function postAction(payload) {
+    setSyncBadge('loading', '저장 및 반영 중...');
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (!json.ok) {
+        setSyncBadge('ok', '시트 실시간 연동됨');
+        throw new Error(json.message || '요청 처리에 실패했습니다.');
+      }
+      if (json.data) {
+        applyServerPayload(json.data);
+      }
+      setSyncBadge('ok', '시트 실시간 연동됨');
+      return json;
+    } catch (err) {
+      setSyncBadge('err', '요청 실패');
+      throw err;
+    }
+  }
+
+  function applyServerPayload(data) {
+    if (!data) return;
+    if (data.settings) appState.settings = { ...appState.settings, ...data.settings };
+    if (Array.isArray(data.notices)) appState.notices = data.notices;
+    if (Array.isArray(data.comments)) appState.comments = data.comments;
+    if (Array.isArray(data.events)) appState.events = data.events;
+
+    // 초기 달력 연·월을 데이터가 있는 최신 월 또는 현재 월로 자연스럽게 맞춤
+    if (!applyServerPayload._initializedMonth) {
+      applyServerPayload._initializedMonth = true;
+      const now = new Date();
+      appState.calYear = now.getFullYear();
+      appState.calMonth = now.getMonth();
+      appState.selectedDate = getTodayIso();
+    }
+
+    renderAll();
+  }
+
+  /* ==================== 전체 화면 렌더링 ==================== */
+  function renderAll() {
+    renderHeaderAndSettings();
+    renderNotices();
+    renderCalendar();
+    renderAgenda();
+  }
+
+  function renderHeaderAndSettings() {
+    const s = appState.settings;
+    document.getElementById('schoolClassBadge').textContent = `${s.schoolName} · ${s.className}`;
+    document.getElementById('teacherNameBadge').textContent = `담임: ${s.teacherName}`;
+    document.getElementById('classMottoText').textContent = s.classMotto;
+    document.title = `${s.className} 스마트 학급 게시판`;
+
+    document.getElementById('noticeTabCount').textContent = appState.notices.length;
+    document.getElementById('eventTabCount').textContent = appState.events.length;
+
+    // 설정 폼 값 채우기
+    document.getElementById('setSchoolName').value = s.schoolName || '';
+    document.getElementById('setClassName').value = s.className || '';
+    document.getElementById('setTeacherName').value = s.teacherName || '';
+    document.getElementById('setTotalStudents').value = s.totalStudents || 24;
+    document.getElementById('setClassMotto').value = s.classMotto || '';
+
+    const isTeacher = Boolean(appState.teacherPin);
+    document.getElementById('teacherRibbon').classList.toggle('active', isTeacher);
+    const teacherBtn = document.getElementById('teacherModeBtn');
+    teacherBtn.textContent = isTeacher ? '👩‍🏫 교사 모드 ON' : '교사 모드 로그인';
+    teacherBtn.className = isTeacher ? 'btn btn-pink' : 'btn btn-dark';
+
+    // 설정 입력창 활성화 여부
+    ['setSchoolName', 'setClassName', 'setTeacherName', 'setTotalStudents', 'setClassMotto'].forEach(id => {
+      document.getElementById(id).disabled = !isTeacher;
+    });
+    document.getElementById('newPinGroup').style.display = isTeacher ? 'block' : 'none';
+    document.getElementById('saveSettingsBtn').style.display = isTeacher ? 'block' : 'none';
+    document.getElementById('settingsReadOnlyNotice').style.display = isTeacher ? 'none' : 'block';
+  }
+
+  function getCategoryBadgeClass(cat) {
+    if (cat === '긴급공지') return 'urgent';
+    if (cat === '가정통신문') return 'letter';
+    if (cat === '준비물') return 'prep';
+    if (cat === '학급행사') return 'event';
+    return '';
+  }
+
+  function renderNotices() {
+    const pinnedContainer = document.getElementById('pinnedNoticeList');
+    const regularContainer = document.getElementById('regularNoticeList');
+    const pinnedWrap = document.getElementById('pinnedSectionWrap');
+
+    const keyword = appState.noticeSearch.trim().toLowerCase();
+    const catFilter = appState.noticeCatFilter;
+
+    const filtered = appState.notices.filter(n => {
+      if (catFilter === 'pinned' && !n.isPinned) return false;
+      if (catFilter !== 'all' && catFilter !== 'pinned' && n.category !== catFilter) return false;
+      if (keyword) {
+        const hay = `${n.title} ${n.content} ${n.category} ${n.author}`.toLowerCase();
+        if (!hay.includes(keyword)) return false;
+      }
+      return true;
+    });
+
+    const pinnedNotices = filtered.filter(n => n.isPinned);
+    const regularNotices = filtered.filter(n => !n.isPinned);
+
+    pinnedWrap.style.display = pinnedNotices.length > 0 ? 'block' : 'none';
+    pinnedContainer.innerHTML = pinnedNotices.map(n => buildNoticeCardHtml(n)).join('');
+
+    if (regularNotices.length > 0) {
+      regularContainer.innerHTML = regularNotices.map(n => buildNoticeCardHtml(n)).join('');
+    } else if (pinnedNotices.length === 0) {
+      regularContainer.innerHTML = `<div class="empty-state">조건에 해당하는 공지사항이 없습니다.</div>`;
+    } else {
+      regularContainer.innerHTML = `<div class="empty-state" style="padding:20px;">상단 고정 공지 외 추가 일반 공지가 없습니다.</div>`;
+    }
+  }
+
+  function buildNoticeCardHtml(notice) {
+    const totalStudents = Math.max(1, Number(appState.settings.totalStudents) || 24);
+    const readCount = notice.readList ? notice.readList.length : 0;
+    const pct = Math.min(100, Math.round((readCount / totalStudents) * 100));
+
+    const savedStudent = getSavedStudent();
+    const myLabel = getStudentLabel(savedStudent);
+    const iHaveRead = myLabel && Array.isArray(notice.readList) && notice.readList.includes(myLabel);
+
+    const dday = calcDDayBadge(notice.targetDate);
+    const noticeComments = appState.comments.filter(c => c.noticeId === notice.noticeId);
+    const isTeacher = Boolean(appState.teacherPin);
+
+    const readChipsHtml = (notice.readList && notice.readList.length > 0)
+      ? notice.readList.map(name => {
+          const isMe = myLabel && name === myLabel;
+          return `<span class="student-read-chip ${isMe ? 'me' : ''}">${escapeHtml(name)}</span>`;
+        }).join('')
+      : `<span style="font-size:0.78rem; color:#666; font-weight:700;">아직 읽음 확인을 누른 학생이 없습니다. 첫 번째로 확인해 보세요!</span>`;
+
+    const commentsHtml = noticeComments.length > 0
+      ? noticeComments.map(c => {
+          const isT = c.authorRole === '교사';
+          return `
+            <div class="comment-item ${isT ? 'teacher-comment' : ''}">
+              <div>
+                <div class="comment-meta">
+                  <span class="role-tag ${isT ? 'teacher' : ''}">${isT ? '👩‍🏫 교사' : '🎒 학생'}</span>
+                  <span>${escapeHtml(c.authorName)}</span>
+                  <span class="comment-time">${escapeHtml(c.createdAt)}</span>
+                </div>
+                <div class="comment-body">${escapeHtml(c.content)}</div>
+              </div>
+              <button type="button" class="btn btn-sm" style="padding:2px 7px; font-size:0.72rem;" data-del-comment="${escapeHtml(c.commentId)}" title="댓글 삭제">&times;</button>
+            </div>
+          `;
+        }).join('')
+      : `<div style="font-size:0.8rem; color:#666; font-weight:700; padding:4px 2px;">등록된 댓글이 없습니다. 궁금한 점이나 다짐을 남겨보세요!</div>`;
+
+    const defaultRole = isTeacher ? '교사' : '학생';
+    const defaultAuthor = isTeacher
+      ? (appState.settings.teacherName || '담임선생님')
+      : (myLabel || '');
+    const defaultPin = isTeacher
+      ? appState.teacherPin
+      : ((savedStudent && savedStudent.pin) ? savedStudent.pin : '');
+
+    return `
+      <article class="notice-card ${notice.isPinned ? 'pinned' : ''}" data-notice-id="${escapeHtml(notice.noticeId)}">
+        <div class="notice-card-top">
+          <div class="notice-badges">
+            ${notice.isPinned ? '<span class="pin-badge">📌 필독 고정</span>' : ''}
+            <span class="cat-badge ${getCategoryBadgeClass(notice.category)}">${escapeHtml(notice.category)}</span>
+            ${dday ? `<span class="dday-badge ${dday.isToday ? 'today' : ''}">${escapeHtml(notice.targetDate)} · ${dday.text}</span>` : ''}
+          </div>
+          <div class="notice-date-meta">작성: ${escapeHtml(notice.author)} · ${escapeHtml(notice.createdAt)}</div>
+        </div>
+
+        <h3 class="notice-title">${escapeHtml(notice.title)}</h3>
+        <div class="notice-content">${escapeHtml(notice.content)}</div>
+
+        ${notice.attachmentUrl ? `
+          <a href="${escapeHtml(notice.attachmentUrl)}" target="_blank" rel="noopener noreferrer" class="notice-attachment">
+            📎 첨부 안내 자료 열기 &nearr;
+          </a>
+        ` : ''}
+
+        <!-- 읽음 확인 영역 -->
+        <div class="read-box">
+          <div class="read-header">
+            <span class="read-stat-text">✅ 읽음 확인 현황: <strong>${readCount} / ${totalStudents}명</strong> (${pct}%)</span>
+            <button type="button" class="btn btn-sm ${iHaveRead ? 'btn-yellow' : 'btn-green'}" data-mark-read="${escapeHtml(notice.noticeId)}">
+              ${iHaveRead ? `✔ ${escapeHtml(myLabel)} 확인 완료` : '🙋‍♂️ 읽음 확인하기'}
+            </button>
+          </div>
+          <div class="read-progress-track">
+            <div class="read-progress-fill" style="width:${pct}%"></div>
+          </div>
+          <div class="read-students-wrap">${readChipsHtml}</div>
+        </div>
+
+        <!-- 댓글 영역 -->
+        <div class="comment-section">
+          <div class="comment-toggle-row">
+            <span style="font-size:0.86rem; font-weight:900;">💬 학급 댓글 (${noticeComments.length})</span>
+          </div>
+          <div class="comment-list">${commentsHtml}</div>
+          <form class="comment-form" data-comment-form="${escapeHtml(notice.noticeId)}">
+            <select class="input-box" name="authorRole" style="padding:6px 8px; font-size:0.82rem;">
+              <option value="학생" ${defaultRole === '학생' ? 'selected' : ''}>학생</option>
+              <option value="교사" ${defaultRole === '교사' ? 'selected' : ''}>교사</option>
+            </select>
+            <input type="text" class="input-box" name="authorName" value="${escapeHtml(defaultAuthor)}" placeholder="번호 이름 (예: 3번 김서윤)" style="width:138px;" required />
+            <input type="password" class="input-box" name="pin" value="${escapeHtml(defaultPin)}" maxlength="6" placeholder="삭제PIN 4자리" style="width:108px;" required />
+            <input type="text" class="input-box input-content" name="content" placeholder="선생님께 질문하거나 확인 댓글을 남겨보세요..." required />
+            <button type="submit" class="btn btn-sm btn-cyan">등록</button>
+          </form>
+        </div>
+
+        ${isTeacher ? `
+          <div class="teacher-card-tools">
+            <button type="button" class="btn btn-sm btn-yellow" data-toggle-pin="${escapeHtml(notice.noticeId)}">
+              ${notice.isPinned ? '고정 해제' : '📌 상단 고정'}
+            </button>
+            <button type="button" class="btn btn-sm" data-edit-notice="${escapeHtml(notice.noticeId)}">✏️ 수정</button>
+            <button type="button" class="btn btn-sm btn-red" data-delete-notice="${escapeHtml(notice.noticeId)}">🗑️ 삭제</button>
+          </div>
+        ` : ''}
+      </article>
+    `;
+  }
+
+  /* ==================== 월별 학급 달력 렌더링 ==================== */
+  function renderCalendar() {
+    const year = appState.calYear;
+    const month = appState.calMonth;
+    document.getElementById('calMonthTitle').textContent = `${year}년 ${month + 1}월`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const prevMonthDays = new Date(year, month, 0).getDate();
+    const todayIso = getTodayIso();
+
+    const dows = ['일', '월', '화', '수', '목', '금', '토'];
+    let html = dows.map((d, idx) =>
+      `<div class="cal-dow ${idx === 0 ? 'sun' : idx === 6 ? 'sat' : ''}">${d}</div>`
+    ).join('');
+
+    const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+    for (let i = 0; i < totalCells; i++) {
+      let cellYear = year;
+      let cellMonth = month;
+      let dayNum = 0;
+      let isOther = false;
+
+      if (i < firstDay) {
+        dayNum = prevMonthDays - firstDay + i + 1;
+        cellMonth = month - 1;
+        if (cellMonth < 0) { cellMonth = 11; cellYear--; }
+        isOther = true;
+      } else if (i >= firstDay + daysInMonth) {
+        dayNum = i - (firstDay + daysInMonth) + 1;
+        cellMonth = month + 1;
+        if (cellMonth > 11) { cellMonth = 0; cellYear++; }
+        isOther = true;
+      } else {
+        dayNum = i - firstDay + 1;
+      }
+
+      const iso = `${cellYear}-${String(cellMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+      const dow = i % 7;
+      const dayItems = getCalendarItemsForDate(iso);
+
+      const pillsHtml = dayItems.slice(0, 3).map(item => {
+        let cls = 'cal-event-pill';
+        if (item.source === 'notice') cls += ' notice-link';
+        else if (item.category === '공휴일·휴업') cls += ' holiday';
+        else if (item.isImportant) cls += ' important';
+        return `<div class="${cls}" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</div>`;
+      }).join('');
+
+      const moreHtml = dayItems.length > 3
+        ? `<div style="font-size:0.65rem; font-weight:900; color:#444;">+${dayItems.length - 3}건 더보기</div>`
+        : '';
+
+      html += `
+        <div class="cal-cell ${isOther ? 'other-month' : ''} ${iso === todayIso ? 'today' : ''} ${iso === appState.selectedDate ? 'selected' : ''}" data-cal-date="${iso}">
+          <div class="cal-day-num ${dow === 0 ? 'sun' : dow === 6 ? 'sat' : ''}">
+            <span>${dayNum}</span>
+            ${iso === todayIso ? '<span class="today-dot">오늘</span>' : ''}
+          </div>
+          ${pillsHtml}
+          ${moreHtml}
+        </div>
+      `;
+    }
+
+    document.getElementById('calendarGrid').innerHTML = html;
+  }
+
+  function getCalendarItemsForDate(isoDate) {
+    const items = [];
+    appState.events.forEach(ev => {
+      const start = ev.date;
+      const end = ev.endDate || ev.date;
+      if (start && isoDate >= start && isoDate <= end) {
+        items.push({
+          source: 'event',
+          id: ev.eventId,
+          date: ev.date,
+          endDate: end,
+          category: ev.category,
+          title: ev.title,
+          description: ev.description,
+          isImportant: ev.isImportant
+        });
+      }
+    });
+
+    appState.notices.forEach(nt => {
+      if (nt.targetDate === isoDate) {
+        items.push({
+          source: 'notice',
+          id: nt.noticeId,
+          date: nt.targetDate,
+          endDate: nt.targetDate,
+          category: `공지·${nt.category}`,
+          title: nt.title,
+          description: nt.content,
+          isImportant: nt.isPinned
+        });
+      }
+    });
+
+    return items;
+  }
+
+  function renderAgenda() {
+    const box = document.getElementById('agendaListBox');
+    const titleEl = document.getElementById('selectedDateTitle');
+    const isTeacher = Boolean(appState.teacherPin);
+
+    let list = [];
+    if (appState.showWholeMonthEvents) {
+      const prefix = `${appState.calYear}-${String(appState.calMonth + 1).padStart(2, '0')}`;
+      titleEl.textContent = `${appState.calYear}년 ${appState.calMonth + 1}월 전체 일정`;
+      list = appState.events
+        .filter(ev => (ev.date && ev.date.startsWith(prefix)) || (ev.endDate && ev.endDate.startsWith(prefix)))
+        .map(ev => ({
+          source: 'event',
+          id: ev.eventId,
+          date: ev.date,
+          endDate: ev.endDate || ev.date,
+          category: ev.category,
+          title: ev.title,
+          description: ev.description,
+          isImportant: ev.isImportant
+        }));
+    } else {
+      const target = appState.selectedDate || getTodayIso();
+      titleEl.textContent = `${target} 학급 일정`;
+      list = getCalendarItemsForDate(target);
+    }
+
+    if (list.length === 0) {
+      box.innerHTML = `<div class="empty-state" style="padding:24px 12px;">등록된 학급 일정이 없습니다.<br><span style="font-size:0.78rem;">다른 날짜를 선택하거나 '이번 달 전체 보기'를 눌러보세요.</span></div>`;
+      return;
+    }
+
+    box.innerHTML = list.map(item => {
+      const rangeText = (item.endDate && item.endDate !== item.date)
+        ? `${item.date} ~ ${item.endDate}`
+        : item.date;
+      return `
+        <div class="agenda-item ${item.isImportant ? 'important' : ''}">
+          <div class="agenda-item-top">
+            <span class="badge-pill" style="font-size:0.72rem; padding:1px 7px; background:${item.source === 'notice' ? 'var(--green)' : 'var(--cyan)'};">
+              ${escapeHtml(item.category)}
+            </span>
+            <span class="agenda-date">${escapeHtml(rangeText)}</span>
+          </div>
+          <div class="agenda-title">${item.isImportant ? '⭐ ' : ''}${escapeHtml(item.title)}</div>
+          ${item.description ? `<div class="agenda-desc">${escapeHtml(item.description)}</div>` : ''}
+          ${isTeacher && item.source === 'event' ? `
+            <div style="margin-top:8px; text-align:right;">
+              <button type="button" class="btn btn-sm btn-red" data-delete-event="${escapeHtml(item.id)}">일정 삭제</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* ==================== 이벤트 바인딩 ==================== */
+  document.addEventListener('DOMContentLoaded', () => {
+    syncStudentBarUI();
+
+    // 세션 저장된 교사 PIN 복원
+    const savedTeacherPin = sessionStorage.getItem(STORAGE_KEYS.TEACHER_PIN);
+    if (savedTeacherPin) {
+      appState.teacherPin = savedTeacherPin;
+    }
+
+    // 초기 시트 데이터 로드
+    fetchAllData();
+
+    // 새로고침
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      fetchAllData();
+      showToast('구글 시트에서 최신 정보를 불러왔습니다.');
+    });
+
+    // 학생 정보 저장
+    document.getElementById('saveStudentBtn').addEventListener('click', () => {
+      const num = document.getElementById('myStudentNum').value.trim();
+      const name = document.getElementById('myStudentName').value.trim();
+      const pin = document.getElementById('myStudentPin').value.trim();
+      if (!num || !name) {
+        showToast('학생 번호와 이름을 모두 입력해 주세요.');
+        return;
+      }
+      saveStudentProfile(num, name, pin);
+      renderNotices();
+      showToast(`${num}번 ${name} 학생 정보가 저장되었습니다.`);
+    });
+
+    // 탭 전환
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab)?.classList.add('active');
+      });
+    });
+
+    // PWA 설치 안내 이동
+    document.getElementById('installPwaBtn').addEventListener('click', () => {
+      document.querySelector('.tab-btn[data-tab="settingsTab"]')?.click();
+      showToast('스마트폰 홈 화면 추가 방법을 확인해 보세요!');
+    });
+
+    // 학급 게시판 주소 복사
+    document.getElementById('copyBoardLinkBtn').addEventListener('click', async () => {
+      const url = window.location.href.split('#')[0];
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('학급 게시판 주소가 복사되었습니다!');
+      } catch (_) {
+        prompt('아래 주소를 복사해 공유해 주세요:', url);
+      }
+    });
+
+    // 공지 필터 & 검색
+    document.querySelectorAll('#noticeFilterChips .chip-btn').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#noticeFilterChips .chip-btn').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        appState.noticeCatFilter = chip.dataset.cat;
+        renderNotices();
+      });
+    });
+
+    document.getElementById('noticeSearchInput').addEventListener('input', (e) => {
+      appState.noticeSearch = e.target.value;
+      renderNotices();
+    });
+
+    // 교사 모드 로그인/로그아웃
+    document.getElementById('teacherModeBtn').addEventListener('click', () => {
+      if (appState.teacherPin) {
+        showToast('이미 교사 모드가 활성화되어 있습니다.');
+        return;
+      }
+      const pinInput = document.getElementById('teacherPinInput');
+      pinInput.value = DEFAULT_TEACHER_PIN;
+      pinInput.type = 'text';
+      document.getElementById('toggleTeacherPinVisBtn').textContent = '숨기기';
+      openModal('teacherLoginModal');
+    });
+
+    document.getElementById('toggleTeacherPinVisBtn').addEventListener('click', (e) => {
+      const inp = document.getElementById('teacherPinInput');
+      if (inp.type === 'text') {
+        inp.type = 'password';
+        e.target.textContent = '보기';
+      } else {
+        inp.type = 'text';
+        e.target.textContent = '숨기기';
+      }
+    });
+
+    document.getElementById('teacherLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pin = document.getElementById('teacherPinInput').value.trim();
+      if (!pin) return;
+      try {
+        await postAction({ action: 'verifyTeacher', pin });
+        appState.teacherPin = pin;
+        sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, pin);
+        closeModal('teacherLoginModal');
+        renderAll();
+        showToast('교사 인증이 완료되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    document.getElementById('logoutTeacherBtn').addEventListener('click', () => {
+      appState.teacherPin = '';
+      sessionStorage.removeItem(STORAGE_KEYS.TEACHER_PIN);
+      renderAll();
+      showToast('교사 모드가 종료되었습니다.');
+    });
+
+    // 새 공지 작성 모달 열기
+    document.getElementById('openNewNoticeModalBtn').addEventListener('click', () => {
+      document.getElementById('noticeEditorModalTitle').textContent = '📢 새 공지사항 작성';
+      document.getElementById('editNoticeId').value = '';
+      document.getElementById('noticeCatInput').value = '학급공지';
+      document.getElementById('noticePinnedInput').checked = false;
+      document.getElementById('noticeTitleInput').value = '';
+      document.getElementById('noticeContentInput').value = '';
+      document.getElementById('noticeTargetDateInput').value = '';
+      document.getElementById('noticeAttachmentInput').value = '';
+      openModal('noticeEditorModal');
+    });
+
+    // 공지 저장 (작성/수정)
+    document.getElementById('noticeEditorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.teacherPin) return;
+      const editId = document.getElementById('editNoticeId').value.trim();
+      const payload = {
+        action: editId ? 'updateNotice' : 'createNotice',
+        pin: appState.teacherPin,
+        noticeId: editId,
+        category: document.getElementById('noticeCatInput').value,
+        isPinned: document.getElementById('noticePinnedInput').checked,
+        title: document.getElementById('noticeTitleInput').value.trim(),
+        content: document.getElementById('noticeContentInput').value.trim(),
+        targetDate: document.getElementById('noticeTargetDateInput').value,
+        attachmentUrl: document.getElementById('noticeAttachmentInput').value.trim()
+      };
+      try {
+        await postAction(payload);
+        closeModal('noticeEditorModal');
+        showToast(editId ? '공지사항이 수정되었습니다.' : '새 공지사항이 등록되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 새 일정 모달 열기 & 저장
+    document.getElementById('openNewEventModalBtn').addEventListener('click', () => {
+      document.getElementById('eventCategoryInput').value = '학급행사';
+      document.getElementById('eventDateInput').value = appState.selectedDate || getTodayIso();
+      document.getElementById('eventEndDateInput').value = '';
+      document.getElementById('eventTitleInput').value = '';
+      document.getElementById('eventDescInput').value = '';
+      document.getElementById('eventImportantInput').checked = false;
+      openModal('eventEditorModal');
+    });
+
+    document.getElementById('eventEditorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.teacherPin) return;
+      const date = document.getElementById('eventDateInput').value;
+      const endDate = document.getElementById('eventEndDateInput').value || date;
+      try {
+        await postAction({
+          action: 'createEvent',
+          pin: appState.teacherPin,
+          category: document.getElementById('eventCategoryInput').value,
+          date,
+          endDate,
+          title: document.getElementById('eventTitleInput').value.trim(),
+          description: document.getElementById('eventDescInput').value.trim(),
+          isImportant: document.getElementById('eventImportantInput').checked
+        });
+        closeModal('eventEditorModal');
+        showToast('학급 일정이 달력에 등록되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 공지 목록 내 동적 버튼 클릭 위임 (읽음 확인, 댓글 삭제, 공지 수정/고정/삭제)
+    document.getElementById('noticesTab').addEventListener('click', async (e) => {
+      // 1) 읽음 확인 버튼
+      const readBtn = e.target.closest('[data-mark-read]');
+      if (readBtn) {
+        const noticeId = readBtn.dataset.markRead;
+        const saved = getSavedStudent();
+        if (saved && saved.num && saved.name) {
+          const label = getStudentLabel(saved);
+          try {
+            const res = await postAction({ action: 'markAsRead', noticeId, studentLabel: label });
+            showToast(res.alreadyRead ? `${label} 학생은 이미 읽음 확인되었습니다.` : `${label} 학생 읽음 확인 완료!`);
+          } catch (err) {
+            showToast(err.message);
+          }
+        } else {
+          document.getElementById('readTargetNoticeId').value = noticeId;
+          document.getElementById('modalStudentNum').value = '';
+          document.getElementById('modalStudentName').value = '';
+          openModal('readConfirmModal');
+        }
+        return;
+      }
+
+      // 2) 댓글 삭제 버튼
+      const delCmtBtn = e.target.closest('[data-del-comment]');
+      if (delCmtBtn) {
+        const commentId = delCmtBtn.dataset.delComment;
+        document.getElementById('deleteTargetCommentId').value = commentId;
+        const saved = getSavedStudent();
+        document.getElementById('deleteCommentPinInput').value =
+          appState.teacherPin || (saved && saved.pin ? saved.pin : '');
+        openModal('deleteCommentModal');
+        return;
+      }
+
+      // 3) 교사 상단 고정 토글
+      const pinBtn = e.target.closest('[data-toggle-pin]');
+      if (pinBtn && appState.teacherPin) {
+        try {
+          await postAction({
+            action: 'togglePinNotice',
+            pin: appState.teacherPin,
+            noticeId: pinBtn.dataset.togglePin
+          });
+          showToast('공지 상단 고정 상태가 변경되었습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+        return;
+      }
+
+      // 4) 교사 공지 수정 모달 열기
+      const editBtn = e.target.closest('[data-edit-notice]');
+      if (editBtn && appState.teacherPin) {
+        const notice = appState.notices.find(n => n.noticeId === editBtn.dataset.editNotice);
+        if (!notice) return;
+        document.getElementById('noticeEditorModalTitle').textContent = '✏️ 공지사항 수정';
+        document.getElementById('editNoticeId').value = notice.noticeId;
+        document.getElementById('noticeCatInput').value = notice.category || '학급공지';
+        document.getElementById('noticePinnedInput').checked = Boolean(notice.isPinned);
+        document.getElementById('noticeTitleInput').value = notice.title || '';
+        document.getElementById('noticeContentInput').value = notice.content || '';
+        document.getElementById('noticeTargetDateInput').value = notice.targetDate || '';
+        document.getElementById('noticeAttachmentInput').value = notice.attachmentUrl || '';
+        openModal('noticeEditorModal');
+        return;
+      }
+
+      // 5) 교사 공지 삭제
+      const delNoticeBtn = e.target.closest('[data-delete-notice]');
+      if (delNoticeBtn && appState.teacherPin) {
+        if (!confirm('이 공지사항과 연결된 댓글을 모두 삭제하시겠습니까?')) return;
+        try {
+          await postAction({
+            action: 'deleteNotice',
+            pin: appState.teacherPin,
+            noticeId: delNoticeBtn.dataset.deleteNotice
+          });
+          showToast('공지사항이 삭제되었습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+      }
+    });
+
+    // 댓글 역할 변경 시 기본 작성자/PIN 자동 보조
+    document.getElementById('noticesTab').addEventListener('change', (e) => {
+      if (e.target.name === 'authorRole') {
+        const form = e.target.closest('form');
+        const nameInput = form.querySelector('input[name="authorName"]');
+        const pinInput = form.querySelector('input[name="pin"]');
+        if (e.target.value === '교사') {
+          nameInput.value = appState.settings.teacherName || '담임선생님';
+          pinInput.value = appState.teacherPin || DEFAULT_TEACHER_PIN;
+        } else {
+          const saved = getSavedStudent();
+          nameInput.value = getStudentLabel(saved);
+          pinInput.value = (saved && saved.pin) ? saved.pin : '';
+        }
+      }
+    });
+
+    // 댓글 등록 폼 제출 위임
+    document.getElementById('noticesTab').addEventListener('submit', async (e) => {
+      const form = e.target.closest('[data-comment-form]');
+      if (!form) return;
+      e.preventDefault();
+
+      const noticeId = form.dataset.commentForm;
+      const authorRole = form.querySelector('[name="authorRole"]').value;
+      const authorName = form.querySelector('[name="authorName"]').value.trim();
+      const pin = form.querySelector('[name="pin"]').value.trim();
+      const contentInput = form.querySelector('[name="content"]');
+      const content = contentInput.value.trim();
+
+      if (!authorName || !content) return;
+      if (authorRole === '학생' && pin.length < 4) {
+        showToast('댓글 삭제용 비밀번호를 4자리 이상 입력해 주세요.');
+        return;
+      }
+
+      try {
+        await postAction({
+          action: 'addComment',
+          noticeId,
+          authorRole,
+          authorName,
+          pin,
+          content
+        });
+        contentInput.value = '';
+        showToast('댓글이 등록되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 빠른 읽음 확인 모달 제출
+    document.getElementById('readConfirmForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const noticeId = document.getElementById('readTargetNoticeId').value;
+      const num = document.getElementById('modalStudentNum').value.trim();
+      const name = document.getElementById('modalStudentName').value.trim();
+      if (!num || !name) return;
+
+      const saved = saveStudentProfile(num, name, getSavedStudent()?.pin || '');
+      const label = getStudentLabel(saved);
+      try {
+        await postAction({ action: 'markAsRead', noticeId, studentLabel: label });
+        closeModal('readConfirmModal');
+        showToast(`${label} 학생 읽음 확인이 완료되었습니다!`);
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 댓글 삭제 모달 제출
+    document.getElementById('deleteCommentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const commentId = document.getElementById('deleteTargetCommentId').value;
+      const pin = document.getElementById('deleteCommentPinInput').value.trim();
+      try {
+        await postAction({ action: 'deleteComment', commentId, pin });
+        closeModal('deleteCommentModal');
+        showToast('댓글이 삭제되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 달력 월 이동 및 날짜 클릭
+    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+      appState.calMonth--;
+      if (appState.calMonth < 0) { appState.calMonth = 11; appState.calYear--; }
+      appState.showWholeMonthEvents = true;
+      renderCalendar();
+      renderAgenda();
+    });
+
+    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+      appState.calMonth++;
+      if (appState.calMonth > 11) { appState.calMonth = 0; appState.calYear++; }
+      appState.showWholeMonthEvents = true;
+      renderCalendar();
+      renderAgenda();
+    });
+
+    document.getElementById('todayMonthBtn').addEventListener('click', () => {
+      const now = new Date();
+      appState.calYear = now.getFullYear();
+      appState.calMonth = now.getMonth();
+      appState.selectedDate = getTodayIso();
+      appState.showWholeMonthEvents = false;
+      renderCalendar();
+      renderAgenda();
+    });
+
+    document.getElementById('showAllMonthEventsBtn').addEventListener('click', () => {
+      appState.showWholeMonthEvents = true;
+      renderAgenda();
+    });
+
+    document.getElementById('calendarGrid').addEventListener('click', (e) => {
+      const cell = e.target.closest('[data-cal-date]');
+      if (!cell) return;
+      appState.selectedDate = cell.dataset.calDate;
+      appState.showWholeMonthEvents = false;
+      renderCalendar();
+      renderAgenda();
+    });
+
+    // 달력 일정 삭제 (교사 모드)
+    document.getElementById('agendaListBox').addEventListener('click', async (e) => {
+      const delBtn = e.target.closest('[data-delete-event]');
+      if (!delBtn || !appState.teacherPin) return;
+      if (!confirm('이 학급 일정을 달력에서 삭제하시겠습니까?')) return;
+      try {
+        await postAction({
+          action: 'deleteEvent',
+          pin: appState.teacherPin,
+          eventId: delBtn.dataset.deleteEvent
+        });
+        showToast('일정이 삭제되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 학급 설정 저장 (교사 모드)
+    document.getElementById('classSettingsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.teacherPin) return;
+      const newPin = document.getElementById('setNewTeacherPin').value.trim();
+      try {
+        await postAction({
+          action: 'updateSettings',
+          pin: appState.teacherPin,
+          schoolName: document.getElementById('setSchoolName').value.trim(),
+          className: document.getElementById('setClassName').value.trim(),
+          teacherName: document.getElementById('setTeacherName').value.trim(),
+          totalStudents: document.getElementById('setTotalStudents').value.trim(),
+          classMotto: document.getElementById('setClassMotto').value.trim(),
+          newTeacherPin: newPin
+        });
+        if (newPin.length >= 4) {
+          appState.teacherPin = newPin;
+          sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, newPin);
+          document.getElementById('setNewTeacherPin').value = '';
+        }
+        showToast('학급 기본 설정이 구글 시트에 저장되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 모달 닫기 공통
+    document.querySelectorAll('[data-close-modal]').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
+    });
+
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) backdrop.classList.remove('open');
+      });
+    });
+  });
+</script>
+</body>
+</html>
