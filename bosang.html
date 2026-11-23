@@ -51,6 +51,174 @@
       color: var(--ink);
     }
 
+    /* 검색 가능한 네오브루탈리즘 학생 목록 피커 */
+    .student-picker {
+      position: relative;
+      width: 100%;
+    }
+
+    .student-picker.inline {
+      width: 245px;
+    }
+
+    .picker-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 11px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      background: #ffffff;
+      border: var(--border-thin);
+      box-shadow: 2px 2px 0 var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .picker-trigger:hover {
+      background: #fffef3;
+    }
+
+    .picker-trigger-main {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .picker-num-chip {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--yellow);
+      font-size: 0.74rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      flex-shrink: 0;
+    }
+
+    .picker-num-chip.all-chip {
+      background: var(--yellow);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+    }
+
+    .picker-arrow {
+      font-size: 0.75rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .picker-popover {
+      display: none;
+      position: fixed;
+      z-index: 5200;
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: 6px 6px 0 var(--ink);
+      padding: 10px;
+    }
+
+    .picker-popover.open {
+      display: block;
+    }
+
+    .picker-search-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .picker-search-input {
+      width: 100%;
+      padding: 8px 32px 8px 10px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      background: #fffef3;
+      border: var(--border-thin);
+      outline: none;
+    }
+
+    .picker-search-input:focus {
+      background: #ffffff;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .picker-clear-btn {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 1.5px solid var(--ink);
+      background: var(--yellow);
+      font-size: 0.72rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      cursor: pointer;
+    }
+
+    .picker-list {
+      max-height: 235px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .picker-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 9px;
+      background: var(--bg);
+      border: 2px solid var(--ink);
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.08s ease, background 0.08s ease;
+    }
+
+    .picker-option:hover,
+    .picker-option.focused {
+      background: var(--yellow);
+      transform: translate(-1px, -1px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .picker-option.selected {
+      background: var(--cyan);
+    }
+
+    .picker-option-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .picker-option-sub {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .picker-empty {
+      padding: 14px 10px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--muted);
+      background: var(--bg);
+      border: 2px dashed var(--ink);
+    }
+
     /* 학생 / 교사 입장 로그인 화면 */
     .login-gate {
       min-height: 100vh;
@@ -1057,6 +1225,7 @@
       .main-tabs { grid-template-columns: repeat(2, 1fr); }
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
       .info-grid { grid-template-columns: 1fr; }
+      .student-picker.inline { width: 100%; }
     }
 
     @media (max-width: 500px) {
@@ -1101,10 +1270,8 @@
       <!-- 학생 로그인 폼 -> 접속 -->
       <form class="gate-pane active" id="gateStudentForm">
         <div class="form-group">
-          <label for="gateStudentSelect">출석 번호 · 이름 선택</label>
-          <select id="gateStudentSelect" required>
-            <option value="">학생 번호·이름 선택</option>
-          </select>
+          <label for="gateStudentPickerTrigger">출석 번호 · 이름 검색 및 선택</label>
+          <div class="student-picker" id="gateStudentPicker"></div>
         </div>
         <div class="form-group">
           <label for="gateStudentPin">학생 비밀번호 (PIN, 초기: 1111)</label>
@@ -1168,12 +1335,10 @@
     <div class="login-bar" id="studentLoginBar">
       <div class="login-bar-info">
         <span class="badge-pill" style="background: var(--yellow);">🎒 학생 로그인</span>
-        <span>내 출석번호와 4자리 비밀번호(초기 PIN: <strong>1111</strong>)로 로그인해 포인트를 확인하세요.</span>
+        <span>내 출석번호·이름 검색과 4자리 비밀번호(초기 PIN: <strong>1111</strong>)로 로그인하세요.</span>
       </div>
       <form class="login-form-inline" id="studentLoginForm">
-        <select class="input-box" id="loginStudentSelect" required>
-          <option value="">학생 번호·이름 선택</option>
-        </select>
+        <div class="student-picker inline" id="inlineStudentPicker"></div>
         <input type="password" maxlength="6" class="input-box" id="loginStudentPin" value="1111" placeholder="PIN 4자리" style="width:105px;" required />
         <button type="submit" class="btn btn-green">내 지갑 열기</button>
       </form>
@@ -1307,7 +1472,7 @@
         <h3>💡 디지털 학급 보상 상점 이용 규칙</h3>
         <ul style="font-size:0.88rem; font-weight:700; padding-left:18px; display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
           <li><strong>포인트 적립:</strong> 수업 적극 참여, 아침 독서, 학급 봉사 및 배려 행동을 실천하면 선생님이 칭찬 포인트를 적립해 줍니다.</li>
-          <li><strong>보상 쿠폰 신청:</strong> 상단에서 본인의 출석 번호와 4자리 비밀번호(초기 PIN: <code>1111</code>)로 로그인한 뒤 원하는 보상 쿠폰을 신청합니다.</li>
+          <li><strong>보상 쿠폰 신청:</strong> 본인의 출석 번호·이름 검색과 4자리 비밀번호(초기 PIN: <code>1111</code>)로 로그인한 뒤 원하는 보상 쿠폰을 신청합니다.</li>
           <li><strong>교사 승인 및 수령:</strong> 신청된 쿠폰은 <code>대기중</code> 상태로 등록되며, 선생님이 확인 후 <code>승인완료</code> 처리하면 쿠폰 혜택을 사용할 수 있습니다.</li>
           <li><strong>신청 반려 시 자동 복구:</strong> 선생님이 신청을 반려하면 사용했던 포인트와 아이템 재고가 자동으로 복구됩니다.</li>
         </ul>
@@ -1432,8 +1597,8 @@
     <div class="modal-body">
       <form id="awardPointsForm">
         <div class="form-group">
-          <label for="awardTargetSelect">지급 대상 학생 *</label>
-          <select id="awardTargetSelect" required></select>
+          <label for="awardTargetPickerTrigger">지급 대상 학생 검색 및 선택 *</label>
+          <div class="student-picker" id="awardTargetPicker"></div>
         </div>
         <div class="form-group">
           <label for="awardAmountInput">지급 포인트 (음수 입력 시 차감) *</label>
@@ -1587,6 +1752,280 @@
     isInitialLoad: true
   };
 
+  const pickerInstances = {};
+  let activeOpenPickerId = null;
+
+  /* ==================== 한글 초성 검색 유틸리티 ==================== */
+  const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  function extractChosung(str) {
+    return Array.from(String(str ?? '')).map(ch => {
+      const code = ch.charCodeAt(0) - 0xAC00;
+      if (code < 0 || code > 11171) return ch.toLowerCase();
+      return CHOSUNG[Math.floor(code / 588)];
+    }).join('');
+  }
+
+  function matchesStudentQuery(student, rawQuery) {
+    const q = String(rawQuery ?? '').trim().toLowerCase();
+    if (!q) return true;
+    const numStr = String(student.studentNum ?? '');
+    const nameStr = String(student.studentName ?? '').toLowerCase();
+    const fullLabel = `${numStr}번 ${nameStr}`;
+    const choStr = extractChosung(student.studentName);
+    return (
+      numStr === q ||
+      numStr.includes(q) ||
+      nameStr.includes(q) ||
+      fullLabel.includes(q) ||
+      choStr.includes(q)
+    );
+  }
+
+  /* ==================== 검색형 학생 목록 피커 컴포넌트 ==================== */
+  function createStudentPicker(containerId, { triggerId, placeholder = '출석번호 · 이름 검색', includeAll = false, onChange = null } = {}) {
+    const container = document.getElementById(containerId);
+    if (!container) return null;
+
+    container.innerHTML = `
+      <button type="button" class="picker-trigger" id="${triggerId}" aria-expanded="false" aria-haspopup="listbox">
+        <span class="picker-trigger-main" data-picker-label>${escapeHtml(placeholder)}</span>
+        <span class="picker-arrow" aria-hidden="true">▼</span>
+      </button>
+    `;
+
+    const popover = document.createElement('div');
+    popover.className = 'picker-popover';
+    popover.setAttribute('role', 'listbox');
+    popover.innerHTML = `
+      <div class="picker-search-wrap">
+        <input type="text" class="picker-search-input" placeholder="번호, 이름, 초성 검색 (예: 3, 서윤, ㄱㅅㅇ)" autocomplete="off" />
+        <button type="button" class="picker-clear-btn" title="검색어 지우기">초기화</button>
+      </div>
+      <div class="picker-list"></div>
+    `;
+    document.body.appendChild(popover);
+
+    const trigger = container.querySelector('.picker-trigger');
+    const labelEl = container.querySelector('[data-picker-label]');
+    const searchInput = popover.querySelector('.picker-search-input');
+    const clearBtn = popover.querySelector('.picker-clear-btn');
+    const listEl = popover.querySelector('.picker-list');
+
+    const inst = {
+      id: containerId,
+      value: includeAll ? 'ALL' : '',
+      query: '',
+      focusedIndex: 0,
+      includeAll,
+      placeholder,
+      onChange,
+      container,
+      trigger,
+      labelEl,
+      popover,
+      searchInput,
+      listEl
+    };
+
+    function getOptions() {
+      const opts = [];
+      if (inst.includeAll) {
+        const allLabel = `우리 반 전체 학생 일괄 지급 (${appState.students.length}명)`;
+        const q = inst.query.trim().toLowerCase();
+        if (!q || allLabel.toLowerCase().includes(q) || '전체'.includes(q) || 'ㅇㄹㅂ'.includes(q)) {
+          opts.push({
+            value: 'ALL',
+            badge: '전체',
+            badgeClass: 'all-chip',
+            name: `우리 반 전체 학생 (${appState.students.length}명)`,
+            sub: '일괄 지급'
+          });
+        }
+      }
+      appState.students
+        .filter(s => matchesStudentQuery(s, inst.query))
+        .forEach(s => {
+          opts.push({
+            value: String(s.studentNum),
+            badge: `${s.studentNum}번`,
+            badgeClass: '',
+            name: s.studentName,
+            sub: `${Number(s.points || 0).toLocaleString()} P`
+          });
+        });
+      return opts;
+    }
+
+    function updateTriggerLabel() {
+      if (inst.value === 'ALL' && inst.includeAll) {
+        inst.labelEl.innerHTML = `<span class="picker-num-chip all-chip">전체</span><span>우리 반 전체 (${appState.students.length}명)</span>`;
+        return;
+      }
+      const found = appState.students.find(s => String(s.studentNum) === String(inst.value));
+      if (found) {
+        inst.labelEl.innerHTML = `<span class="picker-num-chip">${found.studentNum}번</span><span>${escapeHtml(found.studentName)}</span>`;
+      } else {
+        inst.labelEl.textContent = inst.placeholder;
+      }
+    }
+
+    function renderList() {
+      const opts = getOptions();
+      if (opts.length === 0) {
+        inst.listEl.innerHTML = `<div class="picker-empty">"${escapeHtml(inst.query)}" 검색 결과가 없습니다.</div>`;
+        inst.focusedIndex = -1;
+        return;
+      }
+      if (inst.focusedIndex < 0 || inst.focusedIndex >= opts.length) {
+        inst.focusedIndex = 0;
+      }
+
+      inst.listEl.innerHTML = opts.map((opt, idx) => {
+        const isSelected = String(opt.value) === String(inst.value);
+        const isFocused = idx === inst.focusedIndex;
+        return `
+          <button type="button"
+            class="picker-option ${isSelected ? 'selected' : ''} ${isFocused ? 'focused' : ''}"
+            data-picker-val="${escapeHtml(opt.value)}"
+            data-picker-idx="${idx}"
+            role="option"
+            aria-selected="${isSelected}">
+            <span class="picker-option-left">
+              <span class="picker-num-chip ${opt.badgeClass}">${escapeHtml(opt.badge)}</span>
+              <span>${escapeHtml(opt.name)}</span>
+            </span>
+            <span class="picker-option-sub">${escapeHtml(opt.sub)}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function positionPopover() {
+      const rect = inst.trigger.getBoundingClientRect();
+      const desiredWidth = Math.max(rect.width, 270);
+      const left = Math.min(Math.max(10, rect.left), window.innerWidth - desiredWidth - 10);
+      const popoverHeight = 300;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const top = spaceBelow < popoverHeight && rect.top > popoverHeight
+        ? Math.max(10, rect.top - popoverHeight - 6)
+        : Math.min(window.innerHeight - popoverHeight - 10, rect.bottom + 6);
+
+      inst.popover.style.width = `${desiredWidth}px`;
+      inst.popover.style.left = `${left}px`;
+      inst.popover.style.top = `${top}px`;
+    }
+
+    inst.open = () => {
+      closeAllPickers(inst.id);
+      activeOpenPickerId = inst.id;
+      inst.query = '';
+      inst.searchInput.value = '';
+      const opts = getOptions();
+      const selIdx = opts.findIndex(o => String(o.value) === String(inst.value));
+      inst.focusedIndex = selIdx >= 0 ? selIdx : 0;
+      renderList();
+      positionPopover();
+      inst.popover.classList.add('open');
+      inst.trigger.setAttribute('aria-expanded', 'true');
+      setTimeout(() => inst.searchInput.focus(), 10);
+    };
+
+    inst.close = () => {
+      inst.popover.classList.remove('open');
+      inst.trigger.setAttribute('aria-expanded', 'false');
+      if (activeOpenPickerId === inst.id) activeOpenPickerId = null;
+    };
+
+    inst.setValue = (val, fireChange = false) => {
+      inst.value = val == null ? '' : String(val);
+      updateTriggerLabel();
+      if (fireChange && typeof inst.onChange === 'function') {
+        inst.onChange(inst.value);
+      }
+    };
+
+    inst.refresh = () => {
+      if (inst.value && inst.value !== 'ALL') {
+        const exists = appState.students.some(s => String(s.studentNum) === String(inst.value));
+        if (!exists) inst.value = '';
+      }
+      updateTriggerLabel();
+      if (inst.popover.classList.contains('open')) {
+        renderList();
+      }
+    };
+
+    inst.trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (inst.popover.classList.contains('open')) inst.close();
+      else inst.open();
+    });
+
+    inst.searchInput.addEventListener('input', (e) => {
+      inst.query = e.target.value;
+      inst.focusedIndex = 0;
+      renderList();
+    });
+
+    inst.searchInput.addEventListener('keydown', (e) => {
+      const opts = getOptions();
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (opts.length > 0) {
+          inst.focusedIndex = (inst.focusedIndex + 1) % opts.length;
+          renderList();
+          inst.listEl.querySelector('.picker-option.focused')?.scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (opts.length > 0) {
+          inst.focusedIndex = (inst.focusedIndex - 1 + opts.length) % opts.length;
+          renderList();
+          inst.listEl.querySelector('.picker-option.focused')?.scrollIntoView({ block: 'nearest' });
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (opts.length > 0 && inst.focusedIndex >= 0 && opts[inst.focusedIndex]) {
+          inst.setValue(opts[inst.focusedIndex].value, true);
+          inst.close();
+          inst.trigger.focus();
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        inst.close();
+        inst.trigger.focus();
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      inst.query = '';
+      inst.searchInput.value = '';
+      inst.focusedIndex = 0;
+      renderList();
+      inst.searchInput.focus();
+    });
+
+    inst.listEl.addEventListener('click', (e) => {
+      const optBtn = e.target.closest('[data-picker-val]');
+      if (!optBtn) return;
+      inst.setValue(optBtn.dataset.pickerVal, true);
+      inst.close();
+    });
+
+    pickerInstances[containerId] = inst;
+    return inst;
+  }
+
+  function closeAllPickers(exceptId = null) {
+    Object.values(pickerInstances).forEach(inst => {
+      if (inst.id !== exceptId) inst.close();
+    });
+  }
+
+  function refreshAllPickers() {
+    Object.values(pickerInstances).forEach(inst => inst.refresh());
+  }
+
   /* ==================== 공통 유틸리티 & 로딩/구석 동기화 UI ==================== */
   function escapeHtml(str) {
     return String(str ?? '')
@@ -1674,10 +2113,12 @@
   }
 
   function openModal(id) {
+    closeAllPickers();
     document.getElementById(id)?.classList.add('open');
   }
 
   function closeModal(id) {
+    closeAllPickers();
     document.getElementById(id)?.classList.remove('open');
   }
 
@@ -1799,18 +2240,7 @@
   }
 
   function renderStudentWallet() {
-    const optionsHtml = `<option value="">학생 번호·이름 선택</option>` +
-      appState.students.map(s => `<option value="${s.studentNum}">${s.studentNum}번 ${escapeHtml(s.studentName)}</option>`).join('');
-
-    const gateSelect = document.getElementById('gateStudentSelect');
-    const prevGateVal = gateSelect.value;
-    gateSelect.innerHTML = optionsHtml;
-    if (prevGateVal) gateSelect.value = prevGateVal;
-
-    const selectEl = document.getElementById('loginStudentSelect');
-    const prevVal = selectEl.value;
-    selectEl.innerHTML = optionsHtml;
-    if (prevVal) selectEl.value = prevVal;
+    refreshAllPickers();
 
     const stuData = getCurrentStudentData();
     const loginBar = document.getElementById('studentLoginBar');
@@ -2021,6 +2451,36 @@
 
   /* ==================== 이벤트 바인딩 ==================== */
   document.addEventListener('DOMContentLoaded', () => {
+    createStudentPicker('gateStudentPicker', {
+      triggerId: 'gateStudentPickerTrigger',
+      placeholder: '출석번호 · 이름 검색 및 선택',
+      includeAll: false
+    });
+
+    createStudentPicker('inlineStudentPicker', {
+      triggerId: 'inlineStudentPickerTrigger',
+      placeholder: '학생 번호·이름 검색',
+      includeAll: false
+    });
+
+    createStudentPicker('awardTargetPicker', {
+      triggerId: 'awardTargetPickerTrigger',
+      placeholder: '지급 대상 학생 검색 및 선택',
+      includeAll: true
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!activeOpenPickerId) return;
+      const inst = pickerInstances[activeOpenPickerId];
+      if (!inst) return;
+      if (!inst.container.contains(e.target) && !inst.popover.contains(e.target)) {
+        inst.close();
+      }
+    });
+
+    window.addEventListener('resize', () => closeAllPickers());
+    window.addEventListener('scroll', () => closeAllPickers(), true);
+
     try {
       const savedStu = sessionStorage.getItem(STORAGE_KEYS.STUDENT_SESSION);
       if (savedStu) appState.loggedStudent = JSON.parse(savedStu);
@@ -2037,6 +2497,7 @@
     // 입장 화면: 학생 / 교사 탭 전환
     document.querySelectorAll('.gate-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        closeAllPickers();
         const role = btn.dataset.role;
         document.querySelectorAll('.gate-tab-btn').forEach(b => {
           const active = b.dataset.role === role;
@@ -2063,10 +2524,10 @@
     // 입장 화면: 학생으로 접속
     document.getElementById('gateStudentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const studentNum = Number(document.getElementById('gateStudentSelect').value);
+      const studentNum = Number(pickerInstances.gateStudentPicker?.value || '');
       const pin = document.getElementById('gateStudentPin').value.trim();
       if (!studentNum || !pin) {
-        showToast('출석 번호와 4자리 비밀번호를 입력해 주세요.');
+        showToast('목록에서 학생을 검색해 선택한 뒤 비밀번호를 입력해 주세요.');
         return;
       }
       try {
@@ -2104,6 +2565,7 @@
 
     // 상점 상단: 로그인 화면으로 돌아가기
     document.getElementById('backToLoginGateBtn').addEventListener('click', () => {
+      closeAllPickers();
       appState.enteredStore = false;
       syncGateVisibility();
     });
@@ -2116,6 +2578,7 @@
     // 탭 전환
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        closeAllPickers();
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
@@ -2126,10 +2589,10 @@
     // 상점 내부 학생 로그인
     document.getElementById('studentLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const studentNum = Number(document.getElementById('loginStudentSelect').value);
+      const studentNum = Number(pickerInstances.inlineStudentPicker?.value || '');
       const pin = document.getElementById('loginStudentPin').value.trim();
       if (!studentNum || !pin) {
-        showToast('출석 번호와 4자리 비밀번호를 입력해 주세요.');
+        showToast('목록에서 학생을 검색해 선택한 뒤 4자리 비밀번호를 입력해 주세요.');
         return;
       }
       try {
@@ -2237,7 +2700,7 @@
     document.querySelectorAll('#itemFilterChips .chip-btn').forEach(chip => {
       chip.addEventListener('click', () => {
         if (chip.dataset.cat === 'affordable' && !appState.loggedStudent) {
-          showToast('먼저 상단에서 학생 번호와 비밀번호로 로그인해 주세요.');
+          showToast('먼저 학생 번호·이름을 검색해 로그인해 주세요.');
           return;
         }
         document.querySelectorAll('#itemFilterChips .chip-btn').forEach(c => c.classList.remove('active'));
@@ -2257,8 +2720,8 @@
       const needLoginBtn = e.target.closest('[data-need-login-buy]');
       if (needLoginBtn) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        document.getElementById('loginStudentSelect').focus();
-        showToast('상단에서 출석번호와 비밀번호(1111)로 먼저 로그인해 주세요!');
+        pickerInstances.inlineStudentPicker?.open();
+        showToast('목록에서 출석번호·이름을 검색해 선택한 뒤 로그인해 주세요!');
         return;
       }
 
@@ -2356,7 +2819,7 @@
     document.querySelectorAll('#txFilterChips .chip-btn').forEach(chip => {
       chip.addEventListener('click', () => {
         if (chip.dataset.txFilter === 'mine' && !appState.loggedStudent) {
-          showToast('먼저 상단에서 학생 번호와 비밀번호로 로그인해 주세요.');
+          showToast('먼저 학생 번호·이름을 검색해 로그인해 주세요.');
           return;
         }
         document.querySelectorAll('#txFilterChips .chip-btn').forEach(c => c.classList.remove('active'));
@@ -2407,18 +2870,16 @@
     });
 
     // 교사: 칭찬 포인트 지급 모달 열기 & 제출
-    function openAwardModalWithTarget(defaultTarget = '') {
-      const sel = document.getElementById('awardTargetSelect');
-      sel.innerHTML = `<option value="ALL">🌟 우리 반 전체 학생 일괄 지급 (${appState.students.length}명)</option>` +
-        appState.students.map(s => `<option value="${s.studentNum}">${s.studentNum}번 ${escapeHtml(s.studentName)} (현재 ${s.points}P)</option>`).join('');
-      if (defaultTarget) sel.value = String(defaultTarget);
+    function openAwardModalWithTarget(defaultTarget = 'ALL') {
+      pickerInstances.awardTargetPicker?.refresh();
+      pickerInstances.awardTargetPicker?.setValue(defaultTarget || 'ALL', false);
       document.getElementById('awardAmountInput').value = 10;
       document.getElementById('awardNoteInput').value = '';
       openModal('awardPointsModal');
     }
 
     document.getElementById('openAwardPointsModalBtn').addEventListener('click', () => {
-      openAwardModalWithTarget();
+      openAwardModalWithTarget('ALL');
     });
 
     document.querySelectorAll('[data-pts-preset]').forEach(btn => {
@@ -2436,11 +2897,16 @@
     document.getElementById('awardPointsForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!appState.teacherPin) return;
+      const targetVal = pickerInstances.awardTargetPicker?.value || '';
+      if (!targetVal) {
+        showToast('지급 대상 학생을 검색해 선택해 주세요.');
+        return;
+      }
       try {
         const res = await postAction({
           action: 'awardPoints',
           pin: appState.teacherPin,
-          studentNum: document.getElementById('awardTargetSelect').value,
+          studentNum: targetVal,
           amount: Number(document.getElementById('awardAmountInput').value),
           title: document.getElementById('awardTitleInput').value.trim(),
           note: document.getElementById('awardNoteInput').value.trim()
