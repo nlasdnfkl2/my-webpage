@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>나의 활동 성향 알아보기</title>
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
@@ -9,6 +10,7 @@
     :root {
       --bg: #fdfbf7;
       --black: #111111;
+      --border: 3px solid var(--black);
       --border-thick: 4px solid var(--black);
       --yellow: #ffd83b;
       --cyan: #48dbfb;
@@ -44,13 +46,11 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      padding: 44px 24px;
+      padding: 48px 24px;
       border: var(--border-thick);
       box-shadow: 8px 8px 0 var(--black);
       text-decoration: none;
       color: var(--black);
-      font-size: 1.55rem;
-      font-weight: 900;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
@@ -67,22 +67,40 @@
       box-shadow: 3px 3px 0 var(--black);
     }
 
-    .nav-btn .icon {
-      font-size: 2.6rem;
-      line-height: 1;
+    .nav-tag {
+      background: var(--black);
+      color: white;
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 3px 10px;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-title {
+      font-size: 1.6rem;
+      font-weight: 900;
     }
   </style>
 </head>
 <body>
   <div class="launcher">
-    <a href="<?= scriptUrl ?>?page=survey" target="_top" class="nav-btn survey">
-      <span class="icon">📝</span>
-      <span>설문 창</span>
+    <a href="survey.html" class="nav-btn survey">
+      <span class="nav-tag">STUDENT</span>
+      <span class="nav-title">설문 창</span>
     </a>
-    <a href="<?= scriptUrl ?>?page=dashboard" target="_top" class="nav-btn dashboard">
-      <span class="icon">📊</span>
-      <span>통계 창</span>
+    <a href="dashboard.html" class="nav-btn dashboard">
+      <span class="nav-tag">TEACHER</span>
+      <span class="nav-title">통계 창</span>
     </a>
   </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('page') === 'dashboard') {
+      window.location.replace('dashboard.html');
+    } else if (params.get('page') === 'survey') {
+      window.location.replace('survey.html');
+    }
+  </script>
 </body>
 </html>
