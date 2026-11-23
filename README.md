@@ -135,6 +135,7 @@ my-webpage/
 ├── surveyindex.html        # [LAB 26] 나의 활동 성향 알아보기 앱
 ├── allimi.html             # [LAB 27] 우리반 스마트 학급 게시판
 ├── bosang.html             # [LAB 28] 디지털 학급 보상 상점
-└── keep.html               # [LAB 29] 구글 킵 활용 학생 생활기록 앱
+├── keep.html               # [LAB 29] 구글 킵 활용 학생 생활기록 앱
+└── 기타 이미지 파일, pdf
 
 ```
