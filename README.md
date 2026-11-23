@@ -8,7 +8,7 @@
 
 * **GitHub 저장소**: <https://github.com/nlasdnfkl2/my-webpage>
 
-* 네이버 블로그: https://blog.naver.com/nn80300
+* 네이버 블로그: <https://blog.naver.com/nn80300>
 
 * **연락처**: nn80300@naver.com
 
