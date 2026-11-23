@@ -163,6 +163,7 @@
     .picker-list {
       max-height: 235px;
       overflow-y: auto;
+      overscroll-behavior: contain;
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -2479,7 +2480,12 @@
     });
 
     window.addEventListener('resize', () => closeAllPickers());
-    window.addEventListener('scroll', () => closeAllPickers(), true);
+    window.addEventListener('scroll', (e) => {
+      if (!activeOpenPickerId) return;
+      const inst = pickerInstances[activeOpenPickerId];
+      if (inst && inst.popover.contains(e.target)) return;
+      closeAllPickers();
+    }, true);
 
     try {
       const savedStu = sessionStorage.getItem(STORAGE_KEYS.STUDENT_SESSION);
