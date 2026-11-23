@@ -51,6 +51,123 @@
       color: var(--ink);
     }
 
+    /* 첫 접속 전체 로딩 화면 */
+    .initial-loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      background-image:
+        linear-gradient(to right, rgba(17, 17, 17, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(17, 17, 17, 0.045) 1px, transparent 1px);
+      background-size: 26px 26px;
+      z-index: 6000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.28s ease, visibility 0.28s ease;
+    }
+
+    .initial-loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: 8px 8px 0 var(--ink);
+      padding: 28px 26px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .loader-badge {
+      display: inline-block;
+      background: var(--yellow);
+      border: var(--border-thin);
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .loader-spinner {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 14px;
+      border: 4px solid var(--ink);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spinLoader 0.8s linear infinite;
+    }
+
+    @keyframes spinLoader {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-title {
+      font-size: 1.18rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .loader-sub {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* 사용 중 구석 동기화 인디케이터 */
+    .corner-sync-pill {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 4500;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 13px;
+      background: var(--ink);
+      color: var(--yellow);
+      border: var(--border-thin);
+      box-shadow: 3px 3px 0 var(--cyan);
+      font-size: 0.8rem;
+      font-weight: 900;
+      opacity: 0;
+      transform: translateY(14px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .corner-sync-pill.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .corner-sync-pill.done {
+      background: var(--green);
+      color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .corner-sync-pill.error {
+      background: var(--red);
+      color: #ffffff;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .mini-spin {
+      width: 13px;
+      height: 13px;
+      border: 2.5px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spinLoader 0.75s linear infinite;
+    }
+
     .container {
       max-width: 1060px;
       margin: 0 auto;
@@ -877,6 +994,22 @@
 </head>
 <body>
 
+<!-- 첫 접속 시 동기화 완료 전까지 표시되는 전체 로딩 화면 -->
+<div class="initial-loader" id="initialLoader" role="status" aria-live="polite" aria-label="보상 상점 초기 동기화 중">
+  <div class="loader-card">
+    <div class="loader-badge">디지털 학급 보상 상점</div>
+    <div class="loader-spinner" aria-hidden="true"></div>
+    <div class="loader-title">보상 상점 정보를 불러오는 중입니다</div>
+    <div class="loader-sub" id="initialLoaderSub">구글 스프레드시트와 실시간 동기화하고 있어요...</div>
+  </div>
+</div>
+
+<!-- 사용 중 동기화 시 우측 하단 구석에 잠깐 나타나는 인디케이터 -->
+<div class="corner-sync-pill" id="cornerSyncPill" aria-live="polite">
+  <span class="mini-spin" id="cornerSyncSpinner"></span>
+  <span id="cornerSyncText">구글 시트 동기화 중...</span>
+</div>
+
 <div class="container">
   <!-- 상단 헤더 -->
   <header class="top-header">
@@ -1312,15 +1445,16 @@
     students: [],
     items: [],
     transactions: [],
-    loggedStudent: null, // { studentNum, studentName, pin }
+    loggedStudent: null,
     teacherPin: '',
     itemCatFilter: 'all',
     itemSearch: '',
     txFilter: 'all',
-    txSearch: ''
+    txSearch: '',
+    isInitialLoad: true
   };
 
-  /* ==================== 공통 유틸리티 ==================== */
+  /* ==================== 공통 유틸리티 & 로딩/구석 동기화 UI ==================== */
   function escapeHtml(str) {
     return String(str ?? '')
       .replace(/&/g, '&amp;')
@@ -1344,6 +1478,67 @@
     badge.textContent = text;
   }
 
+  function hideInitialLoader() {
+    appState.isInitialLoad = false;
+    document.getElementById('initialLoader')?.classList.add('hidden');
+  }
+
+  function showCornerSync(state, text, autoHideMs = 0) {
+    const pill = document.getElementById('cornerSyncPill');
+    const spinner = document.getElementById('cornerSyncSpinner');
+    const label = document.getElementById('cornerSyncText');
+    if (!pill) return;
+
+    clearTimeout(showCornerSync._hideTimer);
+    pill.classList.remove('done', 'error');
+    if (state === 'done') pill.classList.add('done');
+    if (state === 'error') pill.classList.add('error');
+
+    spinner.style.display = state === 'syncing' ? 'inline-block' : 'none';
+    label.textContent = text;
+    pill.classList.add('show');
+
+    if (autoHideMs > 0) {
+      showCornerSync._hideTimer = setTimeout(() => {
+        pill.classList.remove('show');
+      }, autoHideMs);
+    }
+  }
+
+  function beginSyncActivity(labelText = '구글 시트 동기화 중...') {
+    if (appState.isInitialLoad) {
+      setSyncBadge('loading', '초기 동기화 중...');
+      const sub = document.getElementById('initialLoaderSub');
+      if (sub) sub.textContent = labelText;
+    } else {
+      setSyncBadge('loading', '동기화 중...');
+      showCornerSync('syncing', labelText);
+    }
+  }
+
+  function endSyncActivity(success = true, doneText = '동기화 완료') {
+    if (appState.isInitialLoad) {
+      if (success) {
+        setSyncBadge('ok', '시트 실시간 연동됨');
+        hideInitialLoader();
+      } else {
+        setSyncBadge('err', '연동 오류');
+        const sub = document.getElementById('initialLoaderSub');
+        if (sub) sub.textContent = '시트 연결을 확인한 뒤 잠시 후 다시 시도해 주세요.';
+        setTimeout(hideInitialLoader, 1200);
+      }
+      return;
+    }
+
+    if (success) {
+      setSyncBadge('ok', '시트 실시간 연동됨');
+      showCornerSync('done', `✓ ${doneText}`, 1500);
+    } else {
+      setSyncBadge('err', '동기화 오류');
+      showCornerSync('error', '✕ 동기화 오류', 2400);
+    }
+  }
+
   function openModal(id) {
     document.getElementById(id)?.classList.add('open');
   }
@@ -1358,23 +1553,23 @@
   }
 
   /* ==================== Apps Script 통신 ==================== */
-  async function fetchAllData(silent = false) {
-    if (!silent) setSyncBadge('loading', '시트 동기화 중...');
+  async function fetchAllData(labelText = '구글 시트 동기화 중...') {
+    beginSyncActivity(labelText);
     try {
       const res = await fetch(`${WEB_APP_URL}?action=getAll&t=${Date.now()}`);
       const json = await res.json();
       if (!json.ok) throw new Error(json.message || '데이터를 불러오지 못했습니다.');
       applyServerPayload(json.data);
-      setSyncBadge('ok', '시트 실시간 연동됨');
+      endSyncActivity(true, '상점 데이터 동기화 완료');
     } catch (err) {
       console.error(err);
-      setSyncBadge('err', '연동 오류');
+      endSyncActivity(false, '연동 오류');
       showToast('구글 시트 연결 중 오류가 발생했습니다: ' + err.message);
     }
   }
 
-  async function postAction(payload) {
-    setSyncBadge('loading', '저장 및 반영 중...');
+  async function postAction(payload, labelText = '시트에 저장 및 동기화 중...') {
+    beginSyncActivity(labelText);
     try {
       const res = await fetch(WEB_APP_URL, {
         method: 'POST',
@@ -1383,16 +1578,16 @@
       });
       const json = await res.json();
       if (!json.ok) {
-        setSyncBadge('ok', '시트 실시간 연동됨');
+        endSyncActivity(false, '반영 실패');
         throw new Error(json.message || '요청 처리에 실패했습니다.');
       }
       if (json.data) {
         applyServerPayload(json.data);
       }
-      setSyncBadge('ok', '시트 실시간 연동됨');
+      endSyncActivity(true, '시트 반영 완료');
       return json;
     } catch (err) {
-      setSyncBadge('err', '요청 실패');
+      endSyncActivity(false, '요청 실패');
       throw err;
     }
   }
@@ -1440,7 +1635,6 @@
     teacherBtn.textContent = isTeacher ? '👩‍🏫 교사 모드 ON' : '교사 모드 로그인';
     teacherBtn.className = isTeacher ? 'btn btn-pink' : 'btn btn-dark';
 
-    // 설정 폼 동기화
     document.getElementById('setSchoolName').value = s.schoolName || '';
     document.getElementById('setClassName').value = s.className || '';
     document.getElementById('setTeacherName').value = s.teacherName || '';
@@ -1456,7 +1650,6 @@
   }
 
   function renderStudentWallet() {
-    // 학생 선택 셀렉트 박스 갱신
     const selectEl = document.getElementById('loginStudentSelect');
     const prevVal = selectEl.value;
     selectEl.innerHTML = `<option value="">학생 번호·이름 선택</option>` +
@@ -1563,8 +1756,8 @@
 
   function renderTransactions() {
     const listEl = document.getElementById('txList');
-    const isTeacher = Boolean(appState.teacherPin);
     const stuData = getCurrentStudentData();
+    const isTeacher = Boolean(appState.teacherPin);
     const filter = appState.txFilter;
     const keyword = appState.txSearch.trim().toLowerCase();
 
@@ -1672,7 +1865,6 @@
 
   /* ==================== 이벤트 바인딩 ==================== */
   document.addEventListener('DOMContentLoaded', () => {
-    // 저장된 세션 복원
     try {
       const savedStu = sessionStorage.getItem(STORAGE_KEYS.STUDENT_SESSION);
       if (savedStu) appState.loggedStudent = JSON.parse(savedStu);
@@ -1680,12 +1872,12 @@
       if (savedTeacher) appState.teacherPin = savedTeacher;
     } catch (_) {}
 
-    fetchAllData();
+    // 첫 접속 시 전체 로딩 화면 표시 상태로 초기 데이터 동기화
+    fetchAllData('구글 스프레드시트와 실시간 동기화하고 있어요...');
 
-    // 새로고침
+    // 새로고침 (우측 하단 구석 동기화 뱃지 표시)
     document.getElementById('refreshBtn').addEventListener('click', () => {
-      fetchAllData();
-      showToast('구글 시트에서 최신 상점 정보를 불러왔습니다.');
+      fetchAllData('최신 상점 정보 동기화 중...');
     });
 
     // 탭 전환
@@ -1708,7 +1900,7 @@
         return;
       }
       try {
-        const res = await postAction({ action: 'studentLogin', studentNum, pin });
+        const res = await postAction({ action: 'studentLogin', studentNum, pin }, '학생 지갑 인증 동기화 중...');
         appState.loggedStudent = {
           studentNum: res.student.studentNum,
           studentName: res.student.studentName,
@@ -1749,7 +1941,7 @@
           studentNum: appState.loggedStudent.studentNum,
           oldPin,
           newPin
-        });
+        }, '비밀번호 변경 동기화 중...');
         appState.loggedStudent.pin = newPin;
         sessionStorage.setItem(STORAGE_KEYS.STUDENT_SESSION, JSON.stringify(appState.loggedStudent));
         closeModal('changePinModal');
@@ -1788,7 +1980,7 @@
       const pin = document.getElementById('teacherPinInput').value.trim();
       if (!pin) return;
       try {
-        await postAction({ action: 'verifyTeacher', pin });
+        await postAction({ action: 'verifyTeacher', pin }, '교사 PIN 인증 중...');
         appState.teacherPin = pin;
         sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, pin);
         closeModal('teacherLoginModal');
@@ -1827,7 +2019,6 @@
 
     // 상점 카드 내 버튼 위임
     document.getElementById('itemGrid').addEventListener('click', async (e) => {
-      // 비로그인 상태 신청 유도
       const needLoginBtn = e.target.closest('[data-need-login-buy]');
       if (needLoginBtn) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1836,7 +2027,6 @@
         return;
       }
 
-      // 쿠폰 교환 신청 모달 열기
       const buyBtn = e.target.closest('[data-open-buy]');
       if (buyBtn) {
         const stuData = getCurrentStudentData();
@@ -1854,7 +2044,6 @@
         return;
       }
 
-      // 교사: 아이템 수정
       const editBtn = e.target.closest('[data-edit-item]');
       if (editBtn && appState.teacherPin) {
         const item = appState.items.find(i => i.itemId === editBtn.dataset.editItem);
@@ -1873,7 +2062,6 @@
         return;
       }
 
-      // 교사: 아이템 공개/숨김 토글
       const toggleBtn = e.target.closest('[data-toggle-item]');
       if (toggleBtn && appState.teacherPin) {
         const item = appState.items.find(i => i.itemId === toggleBtn.dataset.toggleItem);
@@ -1884,7 +2072,7 @@
             pin: appState.teacherPin,
             itemId: item.itemId,
             isActive: !item.isActive
-          });
+          }, '아이템 공개 상태 동기화 중...');
           showToast(item.isActive ? '아이템을 상점에서 숨겼습니다.' : '아이템을 상점에 다시 공개했습니다.');
         } catch (err) {
           showToast(err.message);
@@ -1892,7 +2080,6 @@
         return;
       }
 
-      // 교사: 아이템 삭제
       const delBtn = e.target.closest('[data-delete-item]');
       if (delBtn && appState.teacherPin) {
         if (!confirm('이 보상 아이템을 상점에서 삭제하시겠습니까?')) return;
@@ -1901,7 +2088,7 @@
             action: 'deleteItem',
             pin: appState.teacherPin,
             itemId: delBtn.dataset.deleteItem
-          });
+          }, '보상 아이템 삭제 동기화 중...');
           showToast('보상 아이템이 삭제되었습니다.');
         } catch (err) {
           showToast(err.message);
@@ -1922,7 +2109,7 @@
           pin: appState.loggedStudent.pin,
           itemId,
           note
-        });
+        }, '쿠폰 교환 신청 동기화 중...');
         closeModal('purchaseModal');
         showToast('쿠폰 교환 신청이 완료되었습니다! 선생님 승인 후 사용할 수 있어요.');
       } catch (err) {
@@ -1959,7 +2146,7 @@
             pin: appState.teacherPin,
             txId: approveBtn.dataset.approveTx,
             decision: '승인완료'
-          });
+          }, '쿠폰 승인 동기화 중...');
           showToast('쿠폰 신청이 승인 완료 처리되었습니다.');
         } catch (err) {
           showToast(err.message);
@@ -1976,7 +2163,7 @@
             pin: appState.teacherPin,
             txId: rejectBtn.dataset.rejectTx,
             decision: '반려'
-          });
+          }, '신청 반려 및 복구 동기화 중...');
           showToast('신청이 반려되었으며 포인트와 재고가 복구되었습니다.');
         } catch (err) {
           showToast(err.message);
@@ -2022,7 +2209,7 @@
           amount: Number(document.getElementById('awardAmountInput').value),
           title: document.getElementById('awardTitleInput').value.trim(),
           note: document.getElementById('awardNoteInput').value.trim()
-        });
+        }, '칭찬 포인트 반영 동기화 중...');
         closeModal('awardPointsModal');
         showToast(`${res.affectedCount}명의 학생에게 포인트가 반영되었습니다!`);
       } catch (err) {
@@ -2061,7 +2248,7 @@
         isActive: document.getElementById('itemActiveInput').checked
       };
       try {
-        await postAction(payload);
+        await postAction(payload, editId ? '아이템 수정 동기화 중...' : '새 아이템 등록 동기화 중...');
         closeModal('itemEditorModal');
         showToast(editId ? '보상 아이템이 수정되었습니다.' : '새 보상 아이템이 등록되었습니다.');
       } catch (err) {
@@ -2092,7 +2279,7 @@
           studentName: document.getElementById('stuEditName').value.trim(),
           studentPin: document.getElementById('stuEditPin').value.trim() || '1111',
           points: Number(document.getElementById('stuEditPoints').value)
-        });
+        }, '학생 정보 저장 동기화 중...');
         closeModal('studentEditorModal');
         showToast('학생 정보가 구글 시트에 저장되었습니다.');
       } catch (err) {
@@ -2131,7 +2318,7 @@
             action: 'deleteStudent',
             pin: appState.teacherPin,
             studentNum: num
-          });
+          }, '학생 삭제 동기화 중...');
           showToast(`${num}번 학생이 명단에서 삭제되었습니다.`);
         } catch (err) {
           showToast(err.message);
@@ -2154,7 +2341,7 @@
           storeTitle: document.getElementById('setStoreTitle').value.trim(),
           storeNotice: document.getElementById('setStoreNotice').value.trim(),
           newTeacherPin: newPin
-        });
+        }, '상점 설정 동기화 중...');
         if (newPin.length >= 4) {
           appState.teacherPin = newPin;
           sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, newPin);
