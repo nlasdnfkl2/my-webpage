@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>활동 성향 분석 대시보드 - 통계 창</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --black: #111111;
+      --border: 3px solid var(--black);
+      --border-thick: 4px solid var(--black);
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+      padding: 24px 16px 64px;
+    }
+
+    .wrap {
+      max-width: 1020px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 18px;
+      margin-bottom: 28px;
+      border-bottom: var(--border-thick);
+    }
+
+    .brand {
+      background: var(--black);
+      color: var(--cyan);
+      font-weight: 900;
+      padding: 4px 12px;
+      transform: skew(-5deg);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 900;
+      padding: 8px 14px;
+      border: var(--border);
+      background: white;
+      color: var(--black);
+      box-shadow: 4px 4px 0 var(--black);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--black);
+    }
+    .btn-yellow { background: var(--yellow); }
+    .btn-green { background: var(--green); }
+    .btn-cyan { background: var(--cyan); }
+
+    .header-box {
+      margin-bottom: 24px;
+    }
+    .pill {
+      display: inline-block;
+      background: var(--black);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 900;
+      padding: 4px 12px;
+      box-shadow: 4px 4px 0 var(--red);
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+    }
+    h1 span {
+      background: var(--cyan);
+      border: var(--border);
+      padding: 0 8px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 820px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .kpi {
+      border: var(--border-thick);
+      padding: 16px;
+      box-shadow: 6px 6px 0 var(--black);
+      background: white;
+    }
+    .kpi:nth-child(1) { background: #ffeaa7; }
+    .kpi:nth-child(2) { background: var(--cyan); }
+    .kpi:nth-child(3) { background: var(--pink); }
+    .kpi:nth-child(4) { background: var(--green); }
+    .kpi:nth-child(5) { background: var(--yellow); }
+    .kpi-label { font-size: 0.85rem; font-weight: 900; }
+    .kpi-num { font-size: 1.7rem; font-weight: 900; margin-top: 4px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 840px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: white;
+      border: var(--border-thick);
+      box-shadow: 8px 8px 0 var(--black);
+      padding: 24px;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: var(--border);
+    }
+    .card-head h2 {
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .table-wrap {
+      max-height: 460px;
+      overflow-y: auto;
+      border: var(--border);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--black);
+      color: var(--yellow);
+      font-weight: 900;
+      padding: 10px 6px;
+      position: sticky;
+      top: 0;
+    }
+    td {
+      padding: 10px 6px;
+      border-bottom: 2px solid var(--black);
+      font-weight: 700;
+    }
+    tbody tr {
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    tbody tr:hover { background: #fff9db; }
+    tbody tr.selected { background: #ffeaa7; }
+
+    .trait-tag {
+      display: inline-block;
+      background: var(--pink);
+      border: 2px solid var(--black);
+      padding: 1px 8px;
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .detail-badge {
+      display: inline-block;
+      background: var(--yellow);
+      border: var(--border);
+      padding: 4px 12px;
+      font-weight: 900;
+      box-shadow: 3px 3px 0 var(--black);
+      margin-bottom: 16px;
+    }
+    .bar-row { margin-bottom: 14px; }
+    .bar-top {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 900;
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+    .bar-track {
+      height: 20px;
+      border: var(--border);
+      background: var(--bg);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-right: 2px solid var(--black);
+    }
+    .advice-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: var(--bg);
+      border: var(--border);
+      box-shadow: 4px 4px 0 var(--black);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    @media print {
+      .topbar, .nav-actions { display: none !important; }
+      body { background: white; padding: 0; }
+      .card, .kpi { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">실습 26 · 교사용 통계 창</span>
+    <div class="nav-actions">
+      <a href="index.html" class="btn">첫 화면으로</a>
+      <button type="button" class="btn btn-cyan" onclick="loadData()">새로고침</button>
+      <button type="button" class="btn btn-yellow" onclick="window.print()">리포트 PDF 저장</button>
+    </div>
+  </div>
+
+  <div class="header-box">
+    <span class="pill">TEACHER ANALYTICS DASHBOARD</span>
+    <h1>학급 <span>활동 성향</span> 분석 리포트</h1>
+    <p id="updatedInfo" style="font-weight:700; margin-top:6px;">구글 스프레드시트 데이터를 불러오는 중...</p>
+  </div>
+
+  <!-- 학급 전체 성향 분포 KPI -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">전체 참여 학생</div>
+      <div class="kpi-num" id="kpiTotal">0명</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">탐구형</div>
+      <div class="kpi-num" id="kpiExplore">0명</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">표현형</div>
+      <div class="kpi-num" id="kpiExpress">0명</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">협력형</div>
+      <div class="kpi-num" id="kpiCoop">0명</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">계획형</div>
+      <div class="kpi-num" id="kpiPlan">0명</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- 좌측: 학생별 성향 목록 -->
+    <section class="card">
+      <div class="card-head">
+        <h2>학생별 성향 결과 목록</h2>
+        <span style="font-size:0.85rem; font-weight:800;">클릭 시 상세 리포트 표시</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>이름</th>
+              <th>탐구</th>
+              <th>표현</th>
+              <th>협력</th>
+              <th>계획</th>
+              <th>대표 성향</th>
+            </tr>
+          </thead>
+          <tbody id="studentTbody">
+            <tr><td colspan="6">데이터를 불러오는 중입니다...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 우측: 선택한 학생의 개별 상세 리포트 -->
+    <section class="card" id="detailCard">
+      <div class="card-head">
+        <h2 id="detailName">개별 학생 성향 리포트</h2>
+      </div>
+      <div id="detailContent">
+        <p style="font-weight:700;">왼쪽 표에서 학생 이름을 클릭하면 영역별 점수와 맞춤 지도 조언이 표시됩니다.</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzaMNkrxP7xbmCgeRu1iz-f2sxFnb39OiOR7HCGtQAP3NZWjvVqtksk7ObFAn_ibMRvoA/exec';
+  const LOCAL_BACKUP_KEY = 'trait_survey_backup_v1';
+
+  let allStudents = [];
+  let selectedIndex = 0;
+
+  function formatNow() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  async function loadData() {
+    document.getElementById('updatedInfo').textContent = '구글 시트에서 최신 응답을 동기화하는 중...';
+    try {
+      const res = await fetch(`${GAS_URL}?action=get`);
+      const json = await res.json();
+      const students = Array.isArray(json) ? json : (json.students || []);
+      const updatedAt = json.updatedAt || formatNow();
+      renderDashboard({ students, updatedAt, source: '응답결과 시트 실시간 연동' });
+    } catch (err) {
+      const localList = JSON.parse(localStorage.getItem(LOCAL_BACKUP_KEY) || '[]');
+      renderDashboard({
+        students: localList,
+        updatedAt: formatNow(),
+        source: '로컬 백업 데이터 표시 (Apps Script JSON 응답 확인 필요)'
+      });
+    }
+  }
+
+  function renderDashboard(data) {
+    allStudents = data.students || [];
+    document.getElementById('updatedInfo').textContent = `최근 동기화: ${data.updatedAt} (${data.source})`;
+
+    const counts = { 탐구: 0, 표현: 0, 협력: 0, 계획: 0 };
+    allStudents.forEach(st => {
+      if (st.topTrait.includes('탐구')) counts['탐구']++;
+      if (st.topTrait.includes('표현')) counts['표현']++;
+      if (st.topTrait.includes('협력')) counts['협력']++;
+      if (st.topTrait.includes('계획')) counts['계획']++;
+    });
+
+    document.getElementById('kpiTotal').textContent = `${allStudents.length}명`;
+    document.getElementById('kpiExplore').textContent = `${counts['탐구']}명`;
+    document.getElementById('kpiExpress').textContent = `${counts['표현']}명`;
+    document.getElementById('kpiCoop').textContent = `${counts['협력']}명`;
+    document.getElementById('kpiPlan').textContent = `${counts['계획']}명`;
+
+    const tbody = document.getElementById('studentTbody');
+    if (allStudents.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">아직 제출된 설문 응답이 없습니다.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    allStudents.forEach((st, idx) => {
+      const tr = document.createElement('tr');
+      if (idx === selectedIndex) tr.classList.add('selected');
+      tr.onclick = () => {
+        selectedIndex = idx;
+        renderDashboard(data);
+      };
+      tr.innerHTML = `
+        <td><strong>${st.name}</strong></td>
+        <td>${st.scores['탐구']}</td>
+        <td>${st.scores['표현']}</td>
+        <td>${st.scores['협력']}</td>
+        <td>${st.scores['계획']}</td>
+        <td><span class="trait-tag">${st.topTrait}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    renderStudentDetail(allStudents[selectedIndex] || allStudents[0]);
+  }
+
+  function renderStudentDetail(st) {
+    if (!st) return;
+    document.getElementById('detailName').textContent = `${st.name} 학생 상세 분석`;
+
+    const barsHtml = ['탐구', '표현', '협력', '계획'].map(domain => {
+      const sc = st.scores[domain] || 0;
+      const pct = Math.round((sc / 20) * 100);
+      return `
+        <div class="bar-row">
+          <div class="bar-top">
+            <span>${domain} 영역</span>
+            <span>${sc}점 / 20점 (${pct}%)</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('detailContent').innerHTML = `
+      <div class="detail-badge">대표 성향: ${st.topTrait}</div>
+      <p style="font-size:0.85rem; font-weight:700; margin-bottom:14px;">제출 일시: ${st.timestamp}</p>
+      ${barsHtml}
+      <div class="advice-box">
+        <strong>[교사 상담 및 생활·학습 지도 조언]</strong>
+        <p style="margin-top:6px;">${st.advice}</p>
+      </div>
+    `;
+  }
+
+  window.addEventListener('DOMContentLoaded', loadData);
+</script>
+</body>
+</html>
