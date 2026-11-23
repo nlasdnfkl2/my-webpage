@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>나의 활동 성향 알아보기</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --black: #111111;
+      --border-thick: 4px solid var(--black);
+      --yellow: #ffd83b;
+      --cyan: #48dbfb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .launcher {
+      width: 100%;
+      max-width: 560px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 540px) {
+      .launcher { grid-template-columns: 1fr; }
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 44px 24px;
+      border: var(--border-thick);
+      box-shadow: 8px 8px 0 var(--black);
+      text-decoration: none;
+      color: var(--black);
+      font-size: 1.55rem;
+      font-weight: 900;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .nav-btn.survey { background: var(--yellow); }
+    .nav-btn.dashboard { background: var(--cyan); }
+
+    .nav-btn:hover {
+      transform: translate(-4px, -4px);
+      box-shadow: 12px 12px 0 var(--black);
+    }
+
+    .nav-btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .nav-btn .icon {
+      font-size: 2.6rem;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="launcher">
+    <a href="<?= scriptUrl ?>?page=survey" target="_top" class="nav-btn survey">
+      <span class="icon">📝</span>
+      <span>설문 창</span>
+    </a>
+    <a href="<?= scriptUrl ?>?page=dashboard" target="_top" class="nav-btn dashboard">
+      <span class="icon">📊</span>
+      <span>통계 창</span>
+    </a>
+  </div>
+</body>
+</html>
