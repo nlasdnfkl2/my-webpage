@@ -132,10 +132,12 @@ my-webpage/
 ├── gamiart.html            # [LAB 23] R.E.P.O. 멀티플레이 3D 작품 전시관
 ├── jang.html               # [LAB 24] K-에듀파인 반 단위 스마트 행정지원 포털
 ├── tshirt.html             # [LAB 25] 단체 티셔츠 사이즈 조사 앱
-├── surveyindex.html        # [LAB 26] 나의 활동 성향 알아보기 앱
+├── surveyindex.html        # [LAB 26] 나의 활동 성향 알아보기 앱 초기 화면
+├── survey.html             # [LAB 26] 나의 활동 성향 알아보기 앱 설문 페이지
+├── dashboard.html          # [LAB 26] 나의 활동 성향 알아보기 앱 결과 페이지
 ├── allimi.html             # [LAB 27] 우리반 스마트 학급 게시판
 ├── bosang.html             # [LAB 28] 디지털 학급 보상 상점
 ├── keep.html               # [LAB 29] 구글 킵 활용 학생 생활기록 앱
-└── 기타 이미지 파일, pdf
+└── 기타 이미지 파일
 
 ```
