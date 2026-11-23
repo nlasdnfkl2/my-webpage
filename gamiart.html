@@ -50,6 +50,302 @@
       background: radial-gradient(circle at center, transparent 58%, rgba(5, 8, 13, 0.65) 100%);
     }
 
+    /* 첫 접속 시 초기 동기화 완료 전까지 표시되는 전체 로딩 화면 */
+    .initial-loader {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, #111c2d 0%, #0b0f14 70%);
+      z-index: 6000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.28s ease, visibility 0.28s ease;
+    }
+
+    .initial-loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-box {
+      width: 100%;
+      max-width: 390px;
+      background: rgba(12, 18, 26, 0.95);
+      border: 2px solid var(--cyan);
+      border-radius: 10px;
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.75), 0 0 24px rgba(56, 189, 248, 0.2);
+    }
+
+    .loader-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: var(--amber);
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .loader-ring {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      border: 4px solid rgba(56, 189, 248, 0.22);
+      border-top-color: var(--emerald);
+      border-right-color: var(--cyan);
+      border-radius: 50%;
+      animation: spinRepo 0.85s linear infinite;
+    }
+
+    @keyframes spinRepo {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .loader-sub {
+      font-size: 12.5px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* 탐사원 초기 설정 화면 (첫 로딩 후 3D 전시관 시작 전 표시) */
+    .setup-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 20%, rgba(16, 32, 54, 0.94), rgba(8, 12, 18, 0.97));
+      backdrop-filter: blur(8px);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      transition: opacity 0.24s ease, visibility 0.24s ease;
+    }
+
+    .setup-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .setup-card {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(12, 18, 26, 0.96);
+      border: 2px solid var(--emerald);
+      border-radius: 10px;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.8), 0 0 26px rgba(52, 211, 153, 0.22);
+      overflow: hidden;
+    }
+
+    .setup-head {
+      background: rgba(30, 41, 59, 0.85);
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.35);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .setup-head-title {
+      font-size: 14.5px;
+      font-weight: 900;
+      color: var(--emerald);
+    }
+
+    .setup-step {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--amber);
+      background: rgba(251, 191, 36, 0.14);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .setup-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bot-preview-stage {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .bot-avatar-preview {
+      width: 58px;
+      height: 68px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .bot-preview-head {
+      width: 44px;
+      height: 36px;
+      border-radius: 18px 18px 10px 10px;
+      background: var(--cyan);
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+      transition: background 0.15s ease;
+    }
+
+    .bot-preview-eye {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bot-preview-eye::after {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #0f172a;
+    }
+
+    .bot-preview-torso {
+      width: 34px;
+      height: 22px;
+      margin-top: -2px;
+      border-radius: 4px 4px 10px 10px;
+      background: var(--cyan);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      filter: brightness(0.88);
+      transition: background 0.15s ease;
+    }
+
+    .color-chip-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .color-chip {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+
+    .color-chip:hover {
+      transform: scale(1.1);
+    }
+
+    .color-chip.selected {
+      border: 3px solid #ffffff;
+      box-shadow: 0 0 0 2px var(--emerald);
+      transform: scale(1.08);
+    }
+
+    .spawn-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .spawn-btn {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 7px 6px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .spawn-btn.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--cyan);
+      color: #ffffff;
+    }
+
+    /* 사용 중 동기화 시 우측 하단 구석 인디케이터 */
+    .corner-sync-pill {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 4500;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(11, 15, 20, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: var(--cyan);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+      font-size: 11.5px;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .corner-sync-pill.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .corner-sync-pill.done {
+      border-color: rgba(52, 211, 153, 0.65);
+      color: var(--emerald);
+    }
+
+    .corner-sync-pill.error {
+      border-color: rgba(244, 63, 94, 0.7);
+      color: #fda4af;
+    }
+
+    .mini-spin {
+      width: 12px;
+      height: 12px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spinRepo 0.75s linear infinite;
+    }
+
     /* 중앙 조준점 (Crosshair) */
     .reticle {
       position: fixed;
@@ -630,6 +926,78 @@
 </head>
 <body>
 
+<!-- 첫 접속 시 동기화 완료 전까지 표시되는 전체 로딩 화면 -->
+<div class="initial-loader" id="initialLoader" role="status" aria-live="polite" aria-label="3D 전시관 초기 동기화 중">
+  <div class="loader-box">
+    <div class="loader-tag">
+      <span class="live-dot"></span>
+      <span>R.E.P.O. GALLERY BOOT</span>
+    </div>
+    <div class="loader-ring" aria-hidden="true"></div>
+    <div class="loader-title">전시관 월드와 작품을 동기화하는 중입니다</div>
+    <div class="loader-sub" id="initialLoaderSub">구글 스프레드시트 및 멀티플레이 상태를 불러오고 있어요...</div>
+  </div>
+</div>
+
+<!-- 첫 로딩 이후 탐사원 이름·반봇 아바타 초기 설정 화면 -->
+<section class="setup-overlay" id="setupOverlay" aria-label="탐사원 초기 설정">
+  <div class="setup-card">
+    <div class="setup-head">
+      <span class="setup-head-title">🤖 R.E.P.O. 탐사원 초기 설정</span>
+      <span class="setup-step">STEP 1 · 입장 준비</span>
+    </div>
+    <form class="setup-body" id="initialSetupForm">
+      <div class="bot-preview-stage">
+        <div class="bot-avatar-preview" aria-hidden="true">
+          <div class="bot-preview-head" id="previewBotHead">
+            <span class="bot-preview-eye"></span>
+            <span class="bot-preview-eye"></span>
+          </div>
+          <div class="bot-preview-torso" id="previewBotTorso"></div>
+        </div>
+        <div style="min-width:0; flex:1;">
+          <div style="font-size:11px; font-weight:800; color:var(--cyan);">반봇(SEMI-BOT) 아바타 미리보기</div>
+          <div style="font-size:16px; font-weight:900; color:#ffffff; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="previewBotName">탐사원</div>
+          <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;" id="previewSpawnText">출발 위치: 중앙 회수 구역</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="setupNicknameInput">탐사원 이름 (학급 닉네임) *</label>
+        <input type="text" class="repo-input" id="setupNicknameInput" required maxlength="14" placeholder="예: 5번 문태양">
+      </div>
+
+      <div class="form-group">
+        <label>반봇(Semi-bot) 아바타 색상 선택</label>
+        <div class="color-chip-row" id="setupColorChips"></div>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+          <span style="font-size:11.5px; color:var(--text-dim);">직접 색상 지정:</span>
+          <input type="color" class="repo-input" id="setupCustomColor" style="width:52px; height:32px; padding:2px;">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>전시관 입장 시작 위치</label>
+        <div class="spawn-row" id="setupSpawnRow">
+          <button type="button" class="spawn-btn active" data-spawn="center">중앙 회수 구역</button>
+          <button type="button" class="spawn-btn" data-spawn="west">서쪽 전시 홀</button>
+          <button type="button" class="spawn-btn" data-spawn="east">동쪽 전시 홀</button>
+        </div>
+      </div>
+
+      <button type="submit" class="hud-btn primary" style="width:100%; justify-content:center; padding:11px; font-size:13.5px;">
+        🚀 탐사 시작하기 (3D 전시관 입장)
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- 사용 중 동기화 시 우측 하단 구석 인디케이터 -->
+<div class="corner-sync-pill" id="cornerSyncPill" aria-live="polite">
+  <span class="mini-spin" id="cornerSyncSpinner"></span>
+  <span id="cornerSyncText">월드 동기화 중...</span>
+</div>
+
 <div id="canvasContainer"></div>
 <div class="visor-vignette"></div>
 <div class="reticle" id="centerReticle"></div>
@@ -652,7 +1020,7 @@
   </div>
 </div>
 
-<!-- 상단 우측: 전시관 총 가치 & 미니 레이더 -->
+<!-- 상단 우측: 가치 합계 & 미니 레이더 -->
 <div class="hud-top-right">
   <div class="hud-card value-box">
     <div class="value-label">EXHIBITION TOTAL VALUE</div>
@@ -664,7 +1032,7 @@
   </div>
 </div>
 
-<!-- 시야 포커스 작품 자동 설명 HUD (시야에서 벗어나면 자동 소멸) -->
+<!-- 시야 포커스 작품 자동 설명 HUD (시야에 들어올 때만 표시, 벗어나면 자동 소멸) -->
 <aside class="focus-inspector" id="focusInspector" aria-live="polite">
   <div class="fi-header">
     <span class="fi-tag" id="fiStatusTag">SCAN LOCKED</span>
@@ -828,6 +1196,10 @@
   let grabDistance = 3.2;
   let uploadedBase64Data = '';
 
+  let isInitialLoad = true;
+  let hasEnteredWorld = false;
+  let selectedSpawnPreset = 'center';
+
   function showToast(msg) {
     const el = document.getElementById('toastBanner');
     el.textContent = msg;
@@ -851,6 +1223,59 @@
     const m2 = u.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
     if (m2) return `https://lh3.googleusercontent.com/d/${m2[1]}`;
     return u;
+  }
+
+  /* ==================== 로딩 & 구석 동기화 인디케이터 제어 ==================== */
+  function hideInitialLoader() {
+    if (!isInitialLoad) return;
+    isInitialLoad = false;
+    document.getElementById('initialLoader')?.classList.add('hidden');
+  }
+
+  function showCornerSync(state, text, autoHideMs = 0) {
+    if (!hasEnteredWorld) return;
+    const pill = document.getElementById('cornerSyncPill');
+    const spinner = document.getElementById('cornerSyncSpinner');
+    const label = document.getElementById('cornerSyncText');
+    if (!pill) return;
+
+    clearTimeout(showCornerSync._hideTimer);
+    pill.classList.remove('done', 'error');
+    if (state === 'done') pill.classList.add('done');
+    if (state === 'error') pill.classList.add('error');
+
+    spinner.style.display = state === 'syncing' ? 'inline-block' : 'none';
+    label.textContent = text;
+    pill.classList.add('show');
+
+    if (autoHideMs > 0) {
+      showCornerSync._hideTimer = setTimeout(() => {
+        pill.classList.remove('show');
+      }, autoHideMs);
+    }
+  }
+
+  function beginSyncActivity(labelText = '멀티플레이 동기화 중...') {
+    if (isInitialLoad) {
+      const sub = document.getElementById('initialLoaderSub');
+      if (sub) sub.textContent = labelText;
+    } else if (hasEnteredWorld) {
+      showCornerSync('syncing', labelText);
+    }
+  }
+
+  function endSyncActivity(success = true, doneText = '동기화 완료') {
+    if (isInitialLoad) {
+      hideInitialLoader();
+      return;
+    }
+    if (!hasEnteredWorld) return;
+
+    if (success) {
+      showCornerSync('done', `✓ ${doneText}`, 1400);
+    } else {
+      showCornerSync('error', '✕ 동기화 지연', 2000);
+    }
   }
 
   // ==========================================
@@ -952,7 +1377,7 @@
   // ==========================================
   // 3D 작품 오브젝트 생성 및 텍스처 관리
   // ==========================================
-  const artworkMeshes = new Map(); // artworkId -> { group, hitMesh, rimMat, data }
+  const artworkMeshes = new Map();
 
   function createFallbackCardTexture(art) {
     const cvs = document.createElement('canvas');
@@ -1012,7 +1437,6 @@
       mat.needsUpdate = true;
     };
     img.onerror = () => {
-      // 일부 외부 호스트는 crossOrigin 헤더가 없어 실패할 수 있으므로 재시도
       const img2 = new Image();
       img2.onload = () => {
         try {
@@ -1059,7 +1483,6 @@
     if (!entry) {
       const group = new THREE.Group();
 
-      // 외곽 테두리 프레임 (포커스 시 에메랄드/앰버 빛남)
       const rimMat = new THREE.MeshStandardMaterial({
         color: 0x334155,
         emissive: 0x000000,
@@ -1071,7 +1494,6 @@
       frameBox.receiveShadow = true;
       group.add(frameBox);
 
-      // 앞면/뒷면 작품 이미지 캔버스
       const artMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
       applyImageTextureToMaterial(artMat, art);
 
@@ -1084,13 +1506,11 @@
       backPlane.rotation.y = Math.PI;
       group.add(backPlane);
 
-      // 상단 홀로그램 가치($VALUE) 명패
       const plateMat = new THREE.MeshBasicMaterial({ map: createNameplateTexture(art), transparent: true });
       const plateMesh = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.45), plateMat);
       plateMesh.position.set(0, 1.38, 0);
       group.add(plateMesh);
 
-      // 하단 반중력 부유 베이스
       const baseRing = new THREE.Mesh(
         new THREE.CylinderGeometry(0.65, 0.8, 0.14, 24),
         new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.3 })
@@ -1098,7 +1518,6 @@
       baseRing.position.set(0, -1.18, 0);
       group.add(baseRing);
 
-      // 레이캐스트 히트 판정용 투명 박스
       const hitMesh = new THREE.Mesh(
         new THREE.BoxGeometry(2.35, 2.5, 0.6),
         new THREE.MeshBasicMaterial({ visible: false })
@@ -1122,7 +1541,6 @@
       };
       artworkMeshes.set(art.artworkId, entry);
     } else {
-      // 기존 작품 데이터 갱신
       if (entry.data.imageUrl !== art.imageUrl || entry.data.title !== art.title) {
         applyImageTextureToMaterial(entry.artMat, art);
         entry.plateMesh.material.map = createNameplateTexture(art);
@@ -1159,7 +1577,7 @@
   // ==========================================
   // 멀티플레이어 다른 학생 반봇(Semi-bot) 아바타 렌더링
   // ==========================================
-  const remotePlayerMeshes = new Map(); // playerId -> { group, targetPos, targetRotY, color }
+  const remotePlayerMeshes = new Map();
 
   function createNicknameSprite(name, colorHex) {
     const cvs = document.createElement('canvas');
@@ -1193,7 +1611,6 @@
     const others = playersData.filter(p => p.playerId !== myPlayer.playerId);
     const activeIds = new Set(others.map(p => p.playerId));
 
-    // 상단 접속자 명단 업데이트
     document.getElementById('onlineCountText').textContent = `접속 ${others.length + 1}명`;
     const listHtml = [
       `<span class="online-pill" style="border-color:${escapeHtml(myPlayer.avatarColor)};">● ${escapeHtml(myPlayer.nickname)} (나)</span>`,
@@ -1201,7 +1618,6 @@
     ].join('');
     document.getElementById('onlinePlayersList').innerHTML = listHtml;
 
-    // 오프라인 플레이어 제거
     for (const [pid, obj] of remotePlayerMeshes.entries()) {
       if (!activeIds.has(pid)) {
         scene.remove(obj.group);
@@ -1209,7 +1625,6 @@
       }
     }
 
-    // 접속 중인 다른 플레이어 생성 및 목표 좌표 업데이트
     others.forEach(p => {
       let obj = remotePlayerMeshes.get(p.playerId);
       if (!obj) {
@@ -1220,7 +1635,6 @@
           metalness: 0.25
         });
 
-        // R.E.P.O. 스타일 원통형 반봇 몸통 + 둥근 머리
         const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.4, 1.05, 20), bodyMat);
         torso.position.y = 0.65;
         group.add(torso);
@@ -1229,7 +1643,6 @@
         head.position.y = 1.2;
         group.add(head);
 
-        // R.E.P.O. 특징인 큰 왕눈이 두 개 (-Z가 정면)
         const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
         const pupilMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
 
@@ -1274,7 +1687,11 @@
   const centerReticle = document.getElementById('centerReticle');
 
   function updateFocusDetection() {
-    // 이미 작품을 집고 있는 상태면 해당 작품 설명 유지
+    if (!hasEnteredWorld) {
+      clearFocusedArtwork();
+      return;
+    }
+
     if (grabbedArtworkId && artworkMeshes.has(grabbedArtworkId)) {
       const entry = artworkMeshes.get(grabbedArtworkId);
       setFocusedArtwork(grabbedArtworkId, entry.data, true);
@@ -1284,7 +1701,6 @@
     const hitTargets = [];
     artworkMeshes.forEach(entry => hitTargets.push(entry.hitMesh));
 
-    // 1순위: 화면 정중앙 레이캐스트
     raycaster.setFromCamera(centerNDC, camera);
     raycaster.far = 14;
     const intersects = raycaster.intersectObjects(hitTargets, false);
@@ -1293,7 +1709,6 @@
     if (intersects.length > 0) {
       detectedId = intersects[0].object.userData.artworkId;
     } else {
-      // 2순위: 정중앙 시야각(약 14도) & 9m 이내 가장 가까운 작품 포커스 보정
       const camDir = new THREE.Vector3();
       camera.getWorldDirection(camDir);
       let bestScore = -1;
@@ -1322,7 +1737,6 @@
     const changed = (focusedArtworkId !== id);
     focusedArtworkId = id;
 
-    // 모든 작품 테두리 하이라이트 업데이트
     artworkMeshes.forEach((entry, key) => {
       if (key === id) {
         entry.rimMat.emissive.setHex(isHolding ? 0xb45309 : 0x059669);
@@ -1365,7 +1779,8 @@
   // 작품 집기 / 회전 / 내려놓기 (R.E.P.O. 물리 트랙터 빔)
   // ==========================================
   async function toggleGrabArtwork() {
-    // 1) 이미 들고 있는 경우 -> 현재 위치에 배치하고 구글 시트에 좌표 저장
+    if (!hasEnteredWorld) return;
+
     if (grabbedArtworkId) {
       const id = grabbedArtworkId;
       const entry = artworkMeshes.get(id);
@@ -1388,12 +1803,11 @@
           rotY: Number(rotY.toFixed(2)),
           release: true,
           player: getCurrentPlayerPayload()
-        });
+        }, '작품 배치 좌표 동기화 중...');
       }
       return;
     }
 
-    // 2) 시야에 포커스된 작품 집기
     if (!focusedArtworkId || !artworkMeshes.has(focusedArtworkId)) {
       showToast('먼저 화면 중앙 조준점을 작품에 맞춰주세요.');
       return;
@@ -1416,7 +1830,7 @@
       playerId: myPlayer.playerId,
       grabbing: true,
       player: getCurrentPlayerPayload()
-    });
+    }, '작품 집기 상태 동기화 중...');
 
     if (res && res.status === 'locked') {
       grabbedArtworkId = null;
@@ -1446,6 +1860,7 @@
   let pointerMovedDist = 0;
 
   window.addEventListener('keydown', (e) => {
+    if (!hasEnteredWorld || isInitialLoad) return;
     if (document.querySelector('.repo-modal.open')) return;
     keys[e.code] = true;
 
@@ -1465,10 +1880,10 @@
     keys[e.code] = false;
   });
 
-  // 마우스/터치 시점 회전 + 짧은 클릭 시 작품 집기/놓기
   const domEl = renderer.domElement;
 
   domEl.addEventListener('pointerdown', (e) => {
+    if (!hasEnteredWorld || isInitialLoad) return;
     if (document.querySelector('.repo-modal.open')) return;
     isDraggingLook = true;
     lastPointerX = e.clientX;
@@ -1478,6 +1893,7 @@
   });
 
   window.addEventListener('pointermove', (e) => {
+    if (!hasEnteredWorld) return;
     if (document.pointerLockElement === domEl) {
       yaw -= e.movementX * 0.0024;
       pitch = Math.max(-1.1, Math.min(1.1, pitch - e.movementY * 0.0024));
@@ -1497,8 +1913,8 @@
   window.addEventListener('pointerup', (e) => {
     if (!isDraggingLook) return;
     isDraggingLook = false;
+    if (!hasEnteredWorld) return;
     const elapsed = performance.now() - pointerDownTime;
-    // 드래그가 아닌 짧은 클릭이고 작품에 포커스가 맞춰져 있으면 즉시 집기/놓기
     if (elapsed < 240 && pointerMovedDist < 8 && e.target === domEl) {
       if (focusedArtworkId || grabbedArtworkId) {
         toggleGrabArtwork();
@@ -1519,6 +1935,7 @@
   let stickTouchId = null;
 
   stickZone.addEventListener('touchstart', (e) => {
+    if (!hasEnteredWorld) return;
     e.preventDefault();
     const t = e.changedTouches[0];
     stickTouchId = t.identifier;
@@ -1526,6 +1943,7 @@
   }, { passive: false });
 
   stickZone.addEventListener('touchmove', (e) => {
+    if (!hasEnteredWorld) return;
     e.preventDefault();
     for (const t of e.changedTouches) {
       if (t.identifier === stickTouchId) updateStick(t);
@@ -1572,7 +1990,8 @@
     };
   }
 
-  async function postBackend(payload) {
+  async function postBackend(payload, syncLabel = '월드 동기화 중...') {
+    beginSyncActivity(syncLabel);
     try {
       const res = await fetch(BACKEND_URL, {
         method: 'POST',
@@ -1588,19 +2007,20 @@
       if (data && data.players) {
         syncRemotePlayers(data.players);
       }
+      endSyncActivity(true, '동기화 완료');
       return data;
     } catch (err) {
+      endSyncActivity(false, '동기화 지연');
       return { status: 'error', message: err.message };
     }
   }
 
   let isSyncing = false;
-  async function syncWorldState() {
+  async function syncWorldState(customLabel = '') {
     if (isSyncing) return;
     isSyncing = true;
     try {
       const p = getCurrentPlayerPayload();
-      // 작품을 들고 이동 중이면 실시간 이동 좌표도 함께 전송
       if (grabbedArtworkId && artworkMeshes.has(grabbedArtworkId)) {
         const heldPos = artworkMeshes.get(grabbedArtworkId).group.position;
         const heldRot = artworkMeshes.get(grabbedArtworkId).group.rotation.y;
@@ -1613,13 +2033,87 @@
           rotY: Number(heldRot.toFixed(2)),
           release: false,
           player: p
-        });
+        }, customLabel || '운반 좌표 동기화 중...');
       } else {
-        await postBackend({ action: 'sync', player: p });
+        await postBackend({ action: 'sync', player: p }, customLabel || '멀티플레이 동기화 중...');
       }
     } finally {
       isSyncing = false;
     }
+  }
+
+  // ==========================================
+  // 초기 탐사원 설정 화면 제어
+  // ==========================================
+  const SPAWN_PRESETS = {
+    center: { x: 0, z: 6.5, yaw: 0, label: '출발 위치: 중앙 회수 구역' },
+    west:   { x: -6.5, z: 2.0, yaw: -0.45, label: '출발 위치: 서쪽 전시 홀' },
+    east:   { x: 6.5, z: 2.0, yaw: 0.45, label: '출발 위치: 동쪽 전시 홀' }
+  };
+
+  function updateSetupPreview() {
+    const nick = document.getElementById('setupNicknameInput').value.trim() || '탐사원';
+    const col = document.getElementById('setupCustomColor').value || '#38bdf8';
+    document.getElementById('previewBotName').textContent = nick;
+    document.getElementById('previewBotHead').style.background = col;
+    document.getElementById('previewBotTorso').style.background = col;
+    document.getElementById('previewSpawnText').textContent = SPAWN_PRESETS[selectedSpawnPreset]?.label || '';
+
+    document.querySelectorAll('#setupColorChips .color-chip').forEach(chip => {
+      chip.classList.toggle('selected', chip.dataset.color.toLowerCase() === col.toLowerCase());
+    });
+  }
+
+  function initSetupScreen() {
+    const chipsContainer = document.getElementById('setupColorChips');
+    chipsContainer.innerHTML = BOT_COLORS.map(c =>
+      `<button type="button" class="color-chip" data-color="${c}" style="background:${c};" aria-label="색상 ${c}"></button>`
+    ).join('');
+
+    document.getElementById('setupNicknameInput').value = myPlayer.nickname;
+    document.getElementById('setupCustomColor').value = myPlayer.avatarColor;
+    updateSetupPreview();
+
+    document.getElementById('setupNicknameInput').addEventListener('input', updateSetupPreview);
+
+    chipsContainer.addEventListener('click', (e) => {
+      const chip = e.target.closest('.color-chip');
+      if (!chip) return;
+      document.getElementById('setupCustomColor').value = chip.dataset.color;
+      updateSetupPreview();
+    });
+
+    document.getElementById('setupCustomColor').addEventListener('input', updateSetupPreview);
+
+    document.getElementById('setupSpawnRow').addEventListener('click', (e) => {
+      const btn = e.target.closest('.spawn-btn');
+      if (!btn) return;
+      selectedSpawnPreset = btn.dataset.spawn;
+      document.querySelectorAll('#setupSpawnRow .spawn-btn').forEach(b => b.classList.toggle('active', b === btn));
+      updateSetupPreview();
+    });
+
+    document.getElementById('initialSetupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const chosenNick = document.getElementById('setupNicknameInput').value.trim();
+      const chosenColor = document.getElementById('setupCustomColor').value || myPlayer.avatarColor;
+      const preset = SPAWN_PRESETS[selectedSpawnPreset] || SPAWN_PRESETS.center;
+
+      myPlayer.nickname = chosenNick || myPlayer.nickname;
+      myPlayer.avatarColor = chosenColor;
+      localStorage.setItem('repo_nick', myPlayer.nickname);
+      localStorage.setItem('repo_color', myPlayer.avatarColor);
+
+      camera.position.set(preset.x, 1.65, preset.z);
+      yaw = preset.yaw;
+      pitch = 0;
+
+      refreshMyProfileUI();
+      hasEnteredWorld = true;
+      document.getElementById('setupOverlay').classList.add('hidden');
+      showToast(`${myPlayer.nickname} 탐사원, 3D 전시관에 입장했습니다!`);
+      await syncWorldState('탐사원 입장 동기화 중...');
+    });
   }
 
   // ==========================================
@@ -1638,7 +2132,6 @@
     btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
   });
 
-  // 프로필 설정
   function refreshMyProfileUI() {
     document.getElementById('myNicknameDisplay').textContent = myPlayer.nickname;
     document.getElementById('myColorSwatch').style.background = myPlayer.avatarColor;
@@ -1660,11 +2153,10 @@
     localStorage.setItem('repo_color', myPlayer.avatarColor);
     refreshMyProfileUI();
     closeModal('profileModal');
-    syncWorldState();
+    syncWorldState('탐사원 프로필 동기화 중...');
     showToast('탐사원 프로필이 적용되었습니다.');
   });
 
-  // 이미지 파일 리사이즈 압축 (Base64 업로드 최적화)
   function compressImageFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1741,7 +2233,6 @@
       return;
     }
 
-    // 현재 내 캐릭터가 바라보는 앞쪽 좌표 계산
     const forward = new THREE.Vector3();
     camera.getWorldDirection(forward);
     forward.y = 0;
@@ -1768,7 +2259,7 @@
         rotY: Number(yaw.toFixed(2))
       },
       player: getCurrentPlayerPayload()
-    });
+    }, '새 작품 업로드 및 동기화 중...');
 
     btn.disabled = false;
     btn.textContent = '전시관에 작품 등록하기';
@@ -1781,7 +2272,6 @@
     }
   });
 
-  // 삭제 모달 열기 & 검증
   function openDeleteModal(artworkId) {
     const entry = artworkMeshes.get(artworkId);
     if (!entry) {
@@ -1808,7 +2298,7 @@
       artworkId,
       password,
       player: getCurrentPlayerPayload()
-    });
+    }, '작품 삭제 동기화 중...');
 
     btn.disabled = false;
     btn.textContent = '확인 및 영구 삭제';
@@ -1821,7 +2311,6 @@
     }
   });
 
-  // 전체 목록 모달 (텔레포트 및 삭제 지원)
   document.getElementById('openListBtn').addEventListener('click', () => {
     const box = document.getElementById('artworkListContainer');
     if (artworksData.length === 0) {
@@ -1864,7 +2353,6 @@
     }
   });
 
-  // 하단 및 포커스 패널 버튼 연결
   document.getElementById('fiGrabBtn').addEventListener('click', toggleGrabArtwork);
   document.getElementById('bottomGrabBtn').addEventListener('click', toggleGrabArtwork);
   document.getElementById('bottomRotateBtn').addEventListener('click', () => rotateHeldArtwork(-0.35));
@@ -1897,7 +2385,6 @@
 
     radarCtx.clearRect(0, 0, w, h);
 
-    // 동심원 그리드
     radarCtx.strokeStyle = 'rgba(52, 211, 153, 0.25)';
     radarCtx.lineWidth = 1;
     [0.35, 0.7, 1].forEach(r => {
@@ -1906,7 +2393,6 @@
       radarCtx.stroke();
     });
 
-    // 작품 위치 점 (노란색)
     artworkMeshes.forEach((entry, id) => {
       const rx = cx + entry.group.position.x * scale;
       const rz = cy + entry.group.position.z * scale;
@@ -1914,7 +2400,6 @@
       radarCtx.fillRect(rx - 3, rz - 3, 6, 6);
     });
 
-    // 다른 접속 플레이어 점
     remotePlayerMeshes.forEach(obj => {
       const px = cx + obj.group.position.x * scale;
       const pz = cy + obj.group.position.z * scale;
@@ -1924,7 +2409,6 @@
       radarCtx.fill();
     });
 
-    // 내 위치 및 시야 부채꼴
     const mx = cx + camera.position.x * scale;
     const mz = cy + camera.position.z * scale;
 
@@ -1956,37 +2440,36 @@
     const dt = Math.min(0.05, (now - prevTime) / 1000);
     prevTime = now;
 
-    // 1) 카메라 회전 적용
     camera.rotation.y = yaw;
     camera.rotation.x = pitch;
 
-    // 2) 이동 입력 처리 (키보드 + 모바일 스틱)
-    let moveForward = 0;
-    let moveRight = 0;
-    if (keys['KeyW'] || keys['ArrowUp']) moveForward += 1;
-    if (keys['KeyS'] || keys['ArrowDown']) moveForward -= 1;
-    if (keys['KeyD'] || keys['ArrowRight']) moveRight += 1;
-    if (keys['KeyA'] || keys['ArrowLeft']) moveRight -= 1;
+    if (hasEnteredWorld && !isInitialLoad && !document.querySelector('.repo-modal.open')) {
+      let moveForward = 0;
+      let moveRight = 0;
+      if (keys['KeyW'] || keys['ArrowUp']) moveForward += 1;
+      if (keys['KeyS'] || keys['ArrowDown']) moveForward -= 1;
+      if (keys['KeyD'] || keys['ArrowRight']) moveRight += 1;
+      if (keys['KeyA'] || keys['ArrowLeft']) moveRight -= 1;
 
-    moveForward -= stickVec.y;
-    moveRight += stickVec.x;
+      moveForward -= stickVec.y;
+      moveRight += stickVec.x;
 
-    const speed = (keys['ShiftLeft'] || keys['ShiftRight']) ? 9.5 : 5.8;
-    if (Math.hypot(moveForward, moveRight) > 0.05) {
-      const forwardVec = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
-      const rightVec = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
-      const moveDelta = new THREE.Vector3()
-        .addScaledVector(forwardVec, moveForward)
-        .addScaledVector(rightVec, moveRight)
-        .normalize()
-        .multiplyScalar(speed * dt);
+      const speed = (keys['ShiftLeft'] || keys['ShiftRight']) ? 9.5 : 5.8;
+      if (Math.hypot(moveForward, moveRight) > 0.05) {
+        const forwardVec = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
+        const rightVec = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
+        const moveDelta = new THREE.Vector3()
+          .addScaledVector(forwardVec, moveForward)
+          .addScaledVector(rightVec, moveRight)
+          .normalize()
+          .multiplyScalar(speed * dt);
 
-      camera.position.add(moveDelta);
-      camera.position.x = Math.max(-ROOM_HALF + 1.1, Math.min(ROOM_HALF - 1.1, camera.position.x));
-      camera.position.z = Math.max(-ROOM_HALF + 1.1, Math.min(ROOM_HALF - 1.1, camera.position.z));
+        camera.position.add(moveDelta);
+        camera.position.x = Math.max(-ROOM_HALF + 1.1, Math.min(ROOM_HALF - 1.1, camera.position.x));
+        camera.position.z = Math.max(-ROOM_HALF + 1.1, Math.min(ROOM_HALF - 1.1, camera.position.z));
+      }
     }
 
-    // 3) 집고 있는 작품 물리 트랙터 빔 이동 업데이트
     if (grabbedArtworkId && artworkMeshes.has(grabbedArtworkId)) {
       const entry = artworkMeshes.get(grabbedArtworkId);
       const lookDir = new THREE.Vector3();
@@ -1999,7 +2482,6 @@
 
       entry.group.position.lerp(holdTarget, 12 * dt);
 
-      // 트랙터 빔 광선 연결
       const beamStart = camera.position.clone().add(new THREE.Vector3(0, -0.25, 0));
       tractorBeam.geometry.setFromPoints([beamStart, entry.group.position]);
       tractorBeam.visible = true;
@@ -2007,13 +2489,11 @@
       tractorBeam.visible = false;
     }
 
-    // 4) 다른 플레이어가 옮긴 작품 & 원격 플레이어 아바타 부드러운 보간
     artworkMeshes.forEach((entry, id) => {
       if (id !== grabbedArtworkId) {
         entry.group.position.lerp(entry.targetPos, 6 * dt);
         entry.group.rotation.y += (entry.targetRotY - entry.group.rotation.y) * 6 * dt;
       }
-      // 명패가 항상 카메라를 향하도록 빌보드 처리
       entry.plateMesh.lookAt(camera.position);
     });
 
@@ -2022,10 +2502,7 @@
       obj.group.rotation.y += (obj.targetRotY - obj.group.rotation.y) * 6 * dt;
     });
 
-    // 5) 시야 포커스 감지 (설명 자동 표시/소멸)
     updateFocusDetection();
-
-    // 6) 레이더 및 3D 씬 렌더링
     renderRadar();
     renderer.render(scene, camera);
   }
@@ -2036,9 +2513,14 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  // 초기 데이터 로드 및 2.5초 주기 멀티플레이 동기화 시작
-  syncWorldState();
-  setInterval(syncWorldState, 2500);
+  // 초기 설정 화면 준비 -> 첫 로딩 동기화 후 설정 화면 노출 -> 입장 후 2.5초 주기 동기화
+  initSetupScreen();
+  syncWorldState('구글 스프레드시트 및 멀티플레이 상태를 불러오고 있어요...').finally(() => {
+    hideInitialLoader();
+  });
+  setInterval(() => {
+    if (hasEnteredWorld) syncWorldState('멀티플레이 동기화 중...');
+  }, 2500);
   requestAnimationFrame(animate);
 </script>
 
