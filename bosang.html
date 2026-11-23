@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#ffd83b" />
+  <title>디지털 학급 보상 상점</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --paper: #ffffff;
+      --ink: #111111;
+      --muted: #555555;
+      --border: 3px solid #111111;
+      --border-thin: 2px solid #111111;
+      --shadow: 5px 5px 0 #111111;
+      --shadow-sm: 3px 3px 0 #111111;
+
+      --yellow: #ffd83b;
+      --cyan: #48dbfb;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --orange: #ffa502;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(to right, rgba(17, 17, 17, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(17, 17, 17, 0.045) 1px, transparent 1px);
+      background-size: 26px 26px;
+      color: var(--ink);
+      line-height: 1.55;
+      padding-bottom: 72px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: var(--ink);
+    }
+
+    .container {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+    }
+
+    /* 상단 헤더 */
+    .top-header {
+      background: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+
+    .header-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 3px 10px;
+      background: var(--paper);
+      border: var(--border-thin);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .badge-pill.dark { background: var(--ink); color: var(--yellow); }
+    .badge-pill.sync-ok { background: var(--green); }
+    .badge-pill.sync-loading { background: var(--cyan); }
+    .badge-pill.sync-err { background: var(--red); color: #ffffff; }
+
+    .store-title {
+      font-size: clamp(1.55rem, 3.6vw, 2.15rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .store-notice {
+      margin-top: 6px;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #222222;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 공통 버튼 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.86rem;
+      font-weight: 900;
+      padding: 8px 14px;
+      background: var(--paper);
+      border: var(--border-thin);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #e9e9e9;
+      box-shadow: 2px 2px 0 #777777;
+    }
+
+    .btn-yellow { background: var(--yellow); }
+    .btn-cyan { background: var(--cyan); }
+    .btn-green { background: var(--green); }
+    .btn-pink { background: var(--pink); }
+    .btn-red { background: var(--red); color: #ffffff; }
+    .btn-dark { background: var(--ink); color: var(--yellow); }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+
+    /* 학생 지갑 / 로그인 패널 */
+    .wallet-panel {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+
+    .login-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .login-bar-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .login-form-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .input-box {
+      padding: 8px 11px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      background: #ffffff;
+      border: var(--border-thin);
+      outline: none;
+    }
+
+    .input-box:focus {
+      background: #fffef3;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .wallet-active-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .wallet-student-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .wallet-student-name {
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .wallet-stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .point-box {
+      padding: 8px 14px;
+      border: var(--border-thin);
+      box-shadow: 3px 3px 0 var(--ink);
+      background: var(--bg);
+      min-width: 112px;
+    }
+
+    .point-box.main {
+      background: var(--yellow);
+    }
+
+    .point-box-label {
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #333333;
+    }
+
+    .point-box-val {
+      font-size: 1.15rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 교사 관리 리본 */
+    .teacher-ribbon {
+      display: none;
+      background: var(--ink);
+      color: #ffffff;
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .teacher-ribbon.active {
+      display: flex;
+    }
+
+    .teacher-ribbon-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-weight: 900;
+      font-size: 0.92rem;
+      color: var(--yellow);
+    }
+
+    .pending-alert-pill {
+      background: var(--red);
+      color: #ffffff;
+      font-size: 0.78rem;
+      padding: 2px 9px;
+      border: 1.5px solid #ffffff;
+    }
+
+    .teacher-ribbon-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 메인 탭 */
+    .main-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 12px 8px;
+      font-size: 0.92rem;
+      font-weight: 900;
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.12s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--cyan);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .tab-count {
+      background: var(--ink);
+      color: #ffffff;
+      font-size: 0.74rem;
+      padding: 1px 7px;
+      border-radius: 999px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* 필터 바 */
+    .filter-panel {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 13px 15px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      padding: 5px 11px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: var(--bg);
+      border: var(--border-thin);
+      cursor: pointer;
+    }
+
+    .chip-btn.active {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    /* 보상 상점 아이템 그리드 */
+    .item-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(295px, 1fr));
+      gap: 20px;
+    }
+
+    .item-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .item-card:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .item-card.sold-out {
+      opacity: 0.78;
+      background: #f5f5f5;
+    }
+
+    .item-card.inactive-item {
+      border-style: dashed;
+      background: #f3f1ec;
+    }
+
+    .item-card-top {
+      background: var(--bg);
+      border-bottom: var(--border-thin);
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .item-cat-tag {
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      background: var(--cyan);
+      border: 2px solid var(--ink);
+    }
+
+    .item-stock-tag {
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      background: #ffffff;
+      border: 2px solid var(--ink);
+    }
+
+    .item-stock-tag.low {
+      background: var(--pink);
+    }
+
+    .item-stock-tag.zero {
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .item-body {
+      padding: 18px 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-emoji-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .item-emoji-box {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.85rem;
+      background: var(--yellow);
+      border: var(--border-thin);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .item-title {
+      font-size: 1.1rem;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .item-desc {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #333333;
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+
+    .item-footer {
+      padding-top: 12px;
+      border-top: 2px solid rgba(17, 17, 17, 0.14);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-price-badge {
+      font-size: 1.12rem;
+      font-weight: 900;
+      background: var(--yellow);
+      border: var(--border-thin);
+      padding: 4px 11px;
+      box-shadow: 2px 2px 0 var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .teacher-item-tools {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 2px dashed rgba(17, 17, 17, 0.25);
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* 거래 내역 리스트 */
+    .tx-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tx-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 15px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tx-card.pending {
+      background: #fffdf0;
+      border-left: 8px solid var(--orange);
+    }
+
+    .tx-left {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .tx-meta {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .tx-type-badge {
+      padding: 2px 8px;
+      border: 2px solid var(--ink);
+      font-weight: 900;
+    }
+
+    .tx-type-badge.earn { background: var(--green); }
+    .tx-type-badge.buy { background: var(--cyan); }
+    .tx-type-badge.deduct { background: var(--pink); }
+
+    .status-badge {
+      padding: 2px 8px;
+      border: 2px solid var(--ink);
+      font-weight: 900;
+    }
+
+    .status-badge.wait { background: var(--yellow); }
+    .status-badge.approved { background: var(--green); }
+    .status-badge.rejected { background: var(--red); color: #ffffff; }
+    .status-badge.done { background: #e8ecef; }
+
+    .tx-title {
+      font-size: 1.02rem;
+      font-weight: 900;
+    }
+
+    .tx-note {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #444444;
+    }
+
+    .tx-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tx-amount {
+      font-size: 1.15rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      padding: 4px 10px;
+      border: 2px solid var(--ink);
+    }
+
+    .tx-amount.plus { background: #e6ffed; color: #0a6e2d; }
+    .tx-amount.minus { background: #ffeef0; color: #b71c1c; }
+
+    /* 학생 포인트 현황 탭 */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 15px 16px;
+    }
+
+    .kpi-card:nth-child(1) { background: var(--cyan); }
+    .kpi-card:nth-child(2) { background: var(--yellow); }
+    .kpi-card:nth-child(3) { background: var(--green); }
+    .kpi-card:nth-child(4) { background: var(--pink); }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 1.55rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    .student-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .student-card.me {
+      background: #fffbe0;
+      box-shadow: 5px 5px 0 var(--red);
+    }
+
+    .student-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 7px;
+    }
+
+    .student-num-badge {
+      font-size: 0.78rem;
+      font-weight: 900;
+      background: var(--ink);
+      color: var(--yellow);
+      padding: 2px 8px;
+    }
+
+    .student-pts-main {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--blue);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .student-sub-stats {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #444444;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* 설정 탭 */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .info-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .info-card h3 {
+      font-size: 1.12rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: var(--border-thin);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 8px 11px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: var(--border-thin);
+      background: #ffffff;
+    }
+
+    /* 모달 */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.74);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: 8px 8px 0 var(--ink);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-box.sm {
+      max-width: 415px;
+    }
+
+    .modal-header {
+      background: var(--yellow);
+      border-bottom: var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .modal-close {
+      width: 30px;
+      height: 30px;
+      background: var(--red);
+      color: #ffffff;
+      border: var(--border-thin);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .pin-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pin-hint-box {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: #fff9db;
+      border: 2px dashed var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .preset-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      cursor: pointer;
+      margin: 8px 0 12px;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink);
+      color: var(--yellow);
+      border: var(--border-thin);
+      box-shadow: 4px 4px 0 var(--red);
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      z-index: 4000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      max-width: calc(100vw - 28px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      background: var(--paper);
+      border: var(--border);
+      font-weight: 800;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 820px) {
+      .main-tabs { grid-template-columns: repeat(2, 1fr); }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 500px) {
+      .main-tabs { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 상단 헤더 -->
+  <header class="top-header">
+    <div class="header-top-row">
+      <div>
+        <div class="badge-row">
+          <span class="badge-pill dark" id="schoolClassBadge">공주부설초등학교 · 5학년 2반</span>
+          <span class="badge-pill" id="teacherNameBadge">담임: 문태양 선생님</span>
+          <span class="badge-pill sync-loading" id="syncStatusBadge">시트 동기화 중...</span>
+        </div>
+        <h1 class="store-title" id="storeTitleHeading">우리반 칭찬 포인트 보상 상점</h1>
+        <p class="store-notice" id="storeNoticeText">수업 참여, 독서, 배려 행동으로 모은 칭찬 포인트로 원하는 보상 쿠폰을 신청해 보세요!</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-cyan" id="refreshBtn">새로고침</button>
+        <button type="button" class="btn btn-dark" id="teacherModeBtn">교사 모드 로그인</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 학생 지갑 / 로그인 패널 -->
+  <section class="wallet-panel" aria-label="학생 포인트 지갑">
+    <!-- 비로그인 상태 -->
+    <div class="login-bar" id="studentLoginBar">
+      <div class="login-bar-info">
+        <span class="badge-pill" style="background: var(--yellow);">🎒 학생 로그인</span>
+        <span>내 출석번호와 4자리 비밀번호(초기 PIN: <strong>1111</strong>)로 로그인해 포인트를 확인하세요.</span>
+      </div>
+      <form class="login-form-inline" id="studentLoginForm">
+        <select class="input-box" id="loginStudentSelect" required>
+          <option value="">학생 번호·이름 선택</option>
+        </select>
+        <input type="password" maxlength="6" class="input-box" id="loginStudentPin" value="1111" placeholder="PIN 4자리" style="width:105px;" required />
+        <button type="submit" class="btn btn-green">내 지갑 열기</button>
+      </form>
+    </div>
+
+    <!-- 로그인 완료 상태 -->
+    <div class="wallet-active-wrap" id="studentWalletActive" style="display:none;">
+      <div>
+        <div class="wallet-student-title">
+          <span class="badge-pill dark" id="walletNumBadge">3번</span>
+          <span class="wallet-student-name" id="walletNameText">김서윤 학생</span>
+          <span class="badge-pill" style="background:var(--cyan);" id="walletPendingBadge">승인 대기 0건</span>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm" id="openChangePinModalBtn">🔑 비밀번호 변경</button>
+          <button type="button" class="btn btn-sm btn-red" id="studentLogoutBtn">로그아웃</button>
+        </div>
+      </div>
+      <div class="wallet-stats">
+        <div class="point-box main">
+          <div class="point-box-label">현재 사용 가능</div>
+          <div class="point-box-val" id="walletPointsVal">0 P</div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-label">누적 칭찬 적립</div>
+          <div class="point-box-val" id="walletEarnedVal">0 P</div>
+        </div>
+        <div class="point-box">
+          <div class="point-box-label">누적 쿠폰 사용</div>
+          <div class="point-box-val" id="walletSpentVal">0 P</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 교사 관리 리본 -->
+  <section class="teacher-ribbon" id="teacherRibbon" aria-label="교사 관리 도구">
+    <div class="teacher-ribbon-left">
+      <span>👩‍🏫 교사 관리 모드 활성화됨</span>
+      <span class="pending-alert-pill" id="teacherPendingCountBadge">승인 대기 0건</span>
+    </div>
+    <div class="teacher-ribbon-actions">
+      <button type="button" class="btn btn-green btn-sm" id="openAwardPointsModalBtn">+ 칭찬 포인트 지급</button>
+      <button type="button" class="btn btn-yellow btn-sm" id="openNewItemModalBtn">+ 보상 아이템 등록</button>
+      <button type="button" class="btn btn-cyan btn-sm" id="openUpsertStudentModalBtn">+ 학생 추가/수정</button>
+      <button type="button" class="btn btn-red btn-sm" id="logoutTeacherBtn">교사 모드 종료</button>
+    </div>
+  </section>
+
+  <!-- 4단 메인 탭 -->
+  <nav class="main-tabs" role="tablist">
+    <button type="button" class="tab-btn active" data-tab="storeTab" role="tab">
+      <span>🏪 보상 상점</span>
+      <span class="tab-count" id="storeTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="historyTab" role="tab">
+      <span>📜 적립·구매 내역</span>
+      <span class="tab-count" id="historyTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="studentsTab" role="tab">
+      <span>🏆 우리반 포인트 현황</span>
+      <span class="tab-count" id="studentsTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="settingsTab" role="tab">
+      <span>⚙️ 상점 안내 · 설정</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1: 보상 상점 -->
+  <main id="storeTab" class="tab-panel active">
+    <div class="filter-panel">
+      <div class="filter-chips" id="itemFilterChips">
+        <button type="button" class="chip-btn active" data-cat="all">전체 보상</button>
+        <button type="button" class="chip-btn" data-cat="affordable">✨ 내 포인트 교환 가능</button>
+        <button type="button" class="chip-btn" data-cat="시간·자유">시간·자유</button>
+        <button type="button" class="chip-btn" data-cat="자리·역할">자리·역할</button>
+        <button type="button" class="chip-btn" data-cat="학습·과제">학습·과제</button>
+        <button type="button" class="chip-btn" data-cat="급식·생활">급식·생활</button>
+        <button type="button" class="chip-btn" data-cat="간식·문구">간식·문구</button>
+      </div>
+      <input type="search" class="input-box" id="itemSearchInput" placeholder="보상 쿠폰 검색..." style="min-width:210px;" />
+    </div>
+
+    <div class="item-grid" id="itemGrid"></div>
+  </main>
+
+  <!-- TAB 2: 적립·구매 내역 및 승인 -->
+  <section id="historyTab" class="tab-panel">
+    <div class="filter-panel">
+      <div class="filter-chips" id="txFilterChips">
+        <button type="button" class="chip-btn active" data-tx-filter="all">전체 내역</button>
+        <button type="button" class="chip-btn" data-tx-filter="pending">⏳ 승인 대기중</button>
+        <button type="button" class="chip-btn" data-tx-filter="approved">✅ 승인완료</button>
+        <button type="button" class="chip-btn" data-tx-filter="earn">⭐ 칭찬 적립</button>
+        <button type="button" class="chip-btn" data-tx-filter="mine">🎒 내 내역만</button>
+      </div>
+      <input type="search" class="input-box" id="txSearchInput" placeholder="학생 이름, 보상명 검색..." style="min-width:210px;" />
+    </div>
+
+    <div class="tx-list" id="txList"></div>
+  </section>
+
+  <!-- TAB 3: 우리반 포인트 현황 -->
+  <section id="studentsTab" class="tab-panel">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">등록 학생 수</div>
+        <div class="kpi-value" id="kpiTotalStudents">0명</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">학급 현재 보유 합계</div>
+        <div class="kpi-value" id="kpiCurrentPoints">0 P</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">학급 누적 적립 합계</div>
+        <div class="kpi-value" id="kpiEarnedPoints">0 P</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">쿠폰 승인 대기 건수</div>
+        <div class="kpi-value" id="kpiPendingTx">0건</div>
+      </div>
+    </div>
+
+    <div class="student-grid" id="studentGrid"></div>
+  </section>
+
+  <!-- TAB 4: 상점 안내 & 설정 -->
+  <section id="settingsTab" class="tab-panel">
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>💡 디지털 학급 보상 상점 이용 규칙</h3>
+        <ul style="font-size:0.88rem; font-weight:700; padding-left:18px; display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+          <li><strong>포인트 적립:</strong> 수업 적극 참여, 아침 독서, 학급 봉사 및 배려 행동을 실천하면 선생님이 칭찬 포인트를 적립해 줍니다.</li>
+          <li><strong>보상 쿠폰 신청:</strong> 상단에서 본인의 출석 번호와 4자리 비밀번호(초기 PIN: <code>1111</code>)로 로그인한 뒤 원하는 보상 쿠폰을 신청합니다.</li>
+          <li><strong>교사 승인 및 수령:</strong> 신청된 쿠폰은 <code>대기중</code> 상태로 등록되며, 선생님이 확인 후 <code>승인완료</code> 처리하면 쿠폰 혜택을 사용할 수 있습니다.</li>
+          <li><strong>신청 반려 시 자동 복구:</strong> 선생님이 신청을 반려하면 사용했던 포인트와 아이템 재고가 자동으로 복구됩니다.</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h3>🏫 상점 기본 정보 및 교사 설정</h3>
+        <div id="settingsReadOnlyNotice" style="background:#fff9db; border:2px solid var(--ink); padding:10px 12px; font-size:0.84rem; font-weight:800; margin-bottom:12px;">
+          상단의 <strong>[교사 모드 로그인]</strong>을 완료하면 학교명, 학급명, 상점 안내 문구 및 교사 비밀번호를 수정할 수 있습니다.
+        </div>
+        <form id="storeSettingsForm">
+          <div class="form-group">
+            <label for="setSchoolName">학교명</label>
+            <input type="text" id="setSchoolName" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setClassName">학급명</label>
+            <input type="text" id="setClassName" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setTeacherName">담임교사 성명</label>
+            <input type="text" id="setTeacherName" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setStoreTitle">상점 메인 타이틀</label>
+            <input type="text" id="setStoreTitle" disabled />
+          </div>
+          <div class="form-group">
+            <label for="setStoreNotice">상점 상단 안내 문구</label>
+            <input type="text" id="setStoreNotice" disabled />
+          </div>
+          <div class="form-group" id="newTeacherPinGroup" style="display:none;">
+            <label for="setNewTeacherPin">새 교사 비밀번호 변경 (변경 시에만 입력, 4자리 이상)</label>
+            <input type="text" id="setNewTeacherPin" placeholder="예: 1234" />
+          </div>
+          <button type="submit" class="btn btn-green" id="saveSettingsBtn" style="display:none; width:100%;">상점 설정 저장하기</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 1. 교사 인증 모달 (기본 교사 비밀번호 1234 미리 입력) -->
+<div class="modal-backdrop" id="teacherLoginModal" role="dialog" aria-modal="true" aria-label="교사 모드 인증">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>👩‍🏫 교사 모드 비밀번호 인증</span>
+      <button type="button" class="modal-close" data-close-modal="teacherLoginModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="teacherLoginForm">
+        <div class="form-group">
+          <label for="teacherPinInput">교사 관리 비밀번호 (PIN)</label>
+          <div class="pin-input-row">
+            <input type="text" id="teacherPinInput" value="1234" placeholder="교사 비밀번호 입력 (기본: 1234)" required />
+            <button type="button" class="btn btn-sm" id="toggleTeacherPinVisBtn">숨기기</button>
+          </div>
+          <div class="pin-hint-box">
+            기본 교사 비밀번호 <strong>1234</strong>가 입력되어 있습니다. 바로 <strong>[교사 모드 시작]</strong>을 누르시면 됩니다.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-dark" style="width:100%; margin-top:6px;">교사 모드 시작</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 보상 쿠폰 구매 확인 모달 -->
+<div class="modal-backdrop" id="purchaseModal" role="dialog" aria-modal="true" aria-label="보상 쿠폰 교환 신청">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>🎁 보상 쿠폰 교환 신청</span>
+      <button type="button" class="modal-close" data-close-modal="purchaseModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="purchaseForm">
+        <input type="hidden" id="purchaseItemId" value="" />
+        <div style="background:var(--bg); border:2px solid var(--ink); padding:12px; margin-bottom:12px;">
+          <div style="font-size:1.1rem; font-weight:900; margin-bottom:4px;" id="purchaseItemSummary">🎲 쉬는 시간 10분 보드게임 이용권</div>
+          <div style="font-size:0.86rem; font-weight:800; color:#333;" id="purchasePointCalc">차감 포인트: 30P (잔여 예정: 80P)</div>
+        </div>
+        <div class="form-group">
+          <label for="purchaseNoteInput">선생님께 전할 요청 메모 (선택)</label>
+          <input type="text" id="purchaseNoteInput" placeholder="예: 오늘 점심시간에 사용하고 싶어요!" />
+        </div>
+        <button type="submit" class="btn btn-yellow" style="width:100%;">포인트 차감 및 쿠폰 신청하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 학생 비밀번호 변경 모달 -->
+<div class="modal-backdrop" id="changePinModal" role="dialog" aria-modal="true" aria-label="학생 비밀번호 변경">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>🔑 학생 비밀번호(PIN) 변경</span>
+      <button type="button" class="modal-close" data-close-modal="changePinModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="changePinForm">
+        <div class="form-group">
+          <label for="oldStudentPinInput">현재 비밀번호</label>
+          <input type="password" id="oldStudentPinInput" maxlength="6" required />
+        </div>
+        <div class="form-group">
+          <label for="newStudentPinInput">새 비밀번호 (4자리 이상)</label>
+          <input type="password" id="newStudentPinInput" maxlength="6" minlength="4" placeholder="새 4자리 숫자" required />
+        </div>
+        <button type="submit" class="btn btn-green" style="width:100%;">비밀번호 변경 저장</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 교사 칭찬 포인트 지급/차감 모달 -->
+<div class="modal-backdrop" id="awardPointsModal" role="dialog" aria-modal="true" aria-label="칭찬 포인트 지급">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>⭐ 칭찬 포인트 지급 / 조정</span>
+      <button type="button" class="modal-close" data-close-modal="awardPointsModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="awardPointsForm">
+        <div class="form-group">
+          <label for="awardTargetSelect">지급 대상 학생 *</label>
+          <select id="awardTargetSelect" required></select>
+        </div>
+        <div class="form-group">
+          <label for="awardAmountInput">지급 포인트 (음수 입력 시 차감) *</label>
+          <input type="number" id="awardAmountInput" value="10" required />
+          <div class="preset-row">
+            <button type="button" class="btn btn-sm btn-green" data-pts-preset="5">+5P</button>
+            <button type="button" class="btn btn-sm btn-green" data-pts-preset="10">+10P</button>
+            <button type="button" class="btn btn-sm btn-green" data-pts-preset="20">+20P</button>
+            <button type="button" class="btn btn-sm btn-yellow" data-pts-preset="30">+30P</button>
+            <button type="button" class="btn btn-sm btn-pink" data-pts-preset="-10">-10P</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="awardTitleInput">적립 사유 제목 *</label>
+          <input type="text" id="awardTitleInput" value="수업 발표 및 적극 참여 칭찬" required />
+          <div class="preset-row">
+            <button type="button" class="btn btn-sm" data-reason-preset="수업 발표 및 적극 참여 칭찬">수업 발표</button>
+            <button type="button" class="btn btn-sm" data-reason-preset="아침 독서 및 배움공책 우수">아침 독서</button>
+            <button type="button" class="btn btn-sm" data-reason-preset="친구 배려 및 학급 봉사 모범">학급 봉사</button>
+            <button type="button" class="btn btn-sm" data-reason-preset="과제 성실 제출 보상">과제 완료</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="awardNoteInput">세부 메모 (선택)</label>
+          <input type="text" id="awardNoteInput" placeholder="예: 모둠 토의에서 친구 의견을 잘 경청함" />
+        </div>
+        <button type="submit" class="btn btn-green" style="width:100%;">구글 시트에 포인트 즉시 반영하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 5. 교사 보상 아이템 등록 / 수정 모달 -->
+<div class="modal-backdrop" id="itemEditorModal" role="dialog" aria-modal="true" aria-label="보상 아이템 관리">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span id="itemEditorModalTitle">🎁 새 보상 아이템 등록</span>
+      <button type="button" class="modal-close" data-close-modal="itemEditorModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="itemEditorForm">
+        <input type="hidden" id="editItemId" value="" />
+        <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label for="itemCatInput">보상 분류</label>
+            <select id="itemCatInput">
+              <option value="시간·자유">시간·자유</option>
+              <option value="자리·역할">자리·역할</option>
+              <option value="학습·과제">학습·과제</option>
+              <option value="급식·생활">급식·생활</option>
+              <option value="간식·문구">간식·문구</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="itemEmojiInput">대표 이모지</label>
+            <input type="text" id="itemEmojiInput" value="🎁" maxlength="4" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="itemTitleInput">보상 쿠폰 이름 *</label>
+          <input type="text" id="itemTitleInput" placeholder="예: 쉬는 시간 10분 보드게임 이용권" required />
+        </div>
+        <div class="form-group">
+          <label for="itemDescInput">쿠폰 사용 혜택 설명</label>
+          <textarea id="itemDescInput" style="min-height:74px;" placeholder="쿠폰을 사용했을 때의 혜택과 사용 규칙을 적어주세요."></textarea>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label for="itemPriceInput">필요 포인트 (P) *</label>
+            <input type="number" min="1" id="itemPriceInput" value="30" required />
+          </div>
+          <div class="form-group">
+            <label for="itemStockInput">남은 수량 (개) *</label>
+            <input type="number" min="0" id="itemStockInput" value="10" required />
+          </div>
+        </div>
+        <label class="checkbox-row" id="itemActiveRow" style="display:none;">
+          <input type="checkbox" id="itemActiveInput" checked />
+          <span>상점에 공개하여 학생 교환 허용하기</span>
+        </label>
+        <button type="submit" class="btn btn-yellow" style="width:100%;">보상 아이템 저장하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 6. 교사 학생 추가 / 수정 모달 -->
+<div class="modal-backdrop" id="studentEditorModal" role="dialog" aria-modal="true" aria-label="학생 정보 관리">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>🎒 학생 명단 추가 / 정보 수정</span>
+      <button type="button" class="modal-close" data-close-modal="studentEditorModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="studentEditorForm">
+        <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:10px;">
+          <div class="form-group">
+            <label for="stuEditNum">출석 번호 *</label>
+            <input type="number" min="1" max="60" id="stuEditNum" placeholder="예: 13" required />
+          </div>
+          <div class="form-group">
+            <label for="stuEditName">학생 이름 *</label>
+            <input type="text" id="stuEditName" placeholder="예: 정다온" required />
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label for="stuEditPin">비밀번호 (PIN)</label>
+            <input type="text" id="stuEditPin" value="1111" maxlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="stuEditPoints">보유 포인트 (P)</label>
+            <input type="number" min="0" id="stuEditPoints" value="50" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-cyan" style="width:100%;">학생 정보 저장하기</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastBox" role="status" aria-live="polite"></div>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby7b-YMS20EDQl_Sa2cZM8KvXQK1JOy45anGGaaCqh9cbeCeGe_9VnPS9NaS5eWGVqZ/exec';
+  const DEFAULT_TEACHER_PIN = '1234';
+
+  const STORAGE_KEYS = {
+    STUDENT_SESSION: 'bosang_student_session_v1',
+    TEACHER_PIN: 'bosang_teacher_pin_v1'
+  };
+
+  let appState = {
+    settings: {
+      schoolName: '공주부설초등학교',
+      className: '5학년 2반',
+      teacherName: '문태양 선생님',
+      storeTitle: '우리반 칭찬 포인트 보상 상점',
+      storeNotice: '수업 참여, 독서, 배려 행동으로 모은 칭찬 포인트로 원하는 보상 쿠폰을 신청해 보세요!'
+    },
+    students: [],
+    items: [],
+    transactions: [],
+    loggedStudent: null, // { studentNum, studentName, pin }
+    teacherPin: '',
+    itemCatFilter: 'all',
+    itemSearch: '',
+    txFilter: 'all',
+    txSearch: ''
+  };
+
+  /* ==================== 공통 유틸리티 ==================== */
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toastBox');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => el.classList.remove('show'), 2900);
+  }
+
+  function setSyncBadge(status, text) {
+    const badge = document.getElementById('syncStatusBadge');
+    badge.className = 'badge-pill ' + (status === 'ok' ? 'sync-ok' : status === 'err' ? 'sync-err' : 'sync-loading');
+    badge.textContent = text;
+  }
+
+  function openModal(id) {
+    document.getElementById(id)?.classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id)?.classList.remove('open');
+  }
+
+  function getCurrentStudentData() {
+    if (!appState.loggedStudent) return null;
+    return appState.students.find(s => Number(s.studentNum) === Number(appState.loggedStudent.studentNum)) || null;
+  }
+
+  /* ==================== Apps Script 통신 ==================== */
+  async function fetchAllData(silent = false) {
+    if (!silent) setSyncBadge('loading', '시트 동기화 중...');
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getAll&t=${Date.now()}`);
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.message || '데이터를 불러오지 못했습니다.');
+      applyServerPayload(json.data);
+      setSyncBadge('ok', '시트 실시간 연동됨');
+    } catch (err) {
+      console.error(err);
+      setSyncBadge('err', '연동 오류');
+      showToast('구글 시트 연결 중 오류가 발생했습니다: ' + err.message);
+    }
+  }
+
+  async function postAction(payload) {
+    setSyncBadge('loading', '저장 및 반영 중...');
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (!json.ok) {
+        setSyncBadge('ok', '시트 실시간 연동됨');
+        throw new Error(json.message || '요청 처리에 실패했습니다.');
+      }
+      if (json.data) {
+        applyServerPayload(json.data);
+      }
+      setSyncBadge('ok', '시트 실시간 연동됨');
+      return json;
+    } catch (err) {
+      setSyncBadge('err', '요청 실패');
+      throw err;
+    }
+  }
+
+  function applyServerPayload(data) {
+    if (!data) return;
+    if (data.settings) appState.settings = { ...appState.settings, ...data.settings };
+    if (Array.isArray(data.students)) appState.students = data.students;
+    if (Array.isArray(data.items)) appState.items = data.items;
+    if (Array.isArray(data.transactions)) appState.transactions = data.transactions;
+    renderAll();
+  }
+
+  /* ==================== 전체 화면 렌더링 ==================== */
+  function renderAll() {
+    renderHeaderAndSettings();
+    renderStudentWallet();
+    renderItems();
+    renderTransactions();
+    renderStudentsOverview();
+  }
+
+  function renderHeaderAndSettings() {
+    const s = appState.settings;
+    document.getElementById('schoolClassBadge').textContent = `${s.schoolName} · ${s.className}`;
+    document.getElementById('teacherNameBadge').textContent = `담임: ${s.teacherName}`;
+    document.getElementById('storeTitleHeading').textContent = s.storeTitle;
+    document.getElementById('storeNoticeText').textContent = s.storeNotice;
+    document.title = `${s.className} · ${s.storeTitle}`;
+
+    const isTeacher = Boolean(appState.teacherPin);
+    const activeItemsCount = isTeacher
+      ? appState.items.length
+      : appState.items.filter(i => i.isActive).length;
+
+    document.getElementById('storeTabCount').textContent = activeItemsCount;
+    document.getElementById('historyTabCount').textContent = appState.transactions.length;
+    document.getElementById('studentsTabCount').textContent = appState.students.length;
+
+    const pendingCount = appState.transactions.filter(t => t.status === '대기중').length;
+    document.getElementById('teacherPendingCountBadge').textContent = `승인 대기 ${pendingCount}건`;
+
+    document.getElementById('teacherRibbon').classList.toggle('active', isTeacher);
+    const teacherBtn = document.getElementById('teacherModeBtn');
+    teacherBtn.textContent = isTeacher ? '👩‍🏫 교사 모드 ON' : '교사 모드 로그인';
+    teacherBtn.className = isTeacher ? 'btn btn-pink' : 'btn btn-dark';
+
+    // 설정 폼 동기화
+    document.getElementById('setSchoolName').value = s.schoolName || '';
+    document.getElementById('setClassName').value = s.className || '';
+    document.getElementById('setTeacherName').value = s.teacherName || '';
+    document.getElementById('setStoreTitle').value = s.storeTitle || '';
+    document.getElementById('setStoreNotice').value = s.storeNotice || '';
+
+    ['setSchoolName', 'setClassName', 'setTeacherName', 'setStoreTitle', 'setStoreNotice'].forEach(id => {
+      document.getElementById(id).disabled = !isTeacher;
+    });
+    document.getElementById('newTeacherPinGroup').style.display = isTeacher ? 'block' : 'none';
+    document.getElementById('saveSettingsBtn').style.display = isTeacher ? 'block' : 'none';
+    document.getElementById('settingsReadOnlyNotice').style.display = isTeacher ? 'none' : 'block';
+  }
+
+  function renderStudentWallet() {
+    // 학생 선택 셀렉트 박스 갱신
+    const selectEl = document.getElementById('loginStudentSelect');
+    const prevVal = selectEl.value;
+    selectEl.innerHTML = `<option value="">학생 번호·이름 선택</option>` +
+      appState.students.map(s => `<option value="${s.studentNum}">${s.studentNum}번 ${escapeHtml(s.studentName)}</option>`).join('');
+    if (prevVal) selectEl.value = prevVal;
+
+    const stuData = getCurrentStudentData();
+    const loginBar = document.getElementById('studentLoginBar');
+    const activeWrap = document.getElementById('studentWalletActive');
+
+    if (appState.loggedStudent && stuData) {
+      loginBar.style.display = 'none';
+      activeWrap.style.display = 'flex';
+      document.getElementById('walletNumBadge').textContent = `${stuData.studentNum}번`;
+      document.getElementById('walletNameText').textContent = `${stuData.studentName} 학생`;
+      document.getElementById('walletPointsVal').textContent = `${stuData.points.toLocaleString()} P`;
+      document.getElementById('walletEarnedVal').textContent = `${stuData.totalEarned.toLocaleString()} P`;
+      document.getElementById('walletSpentVal').textContent = `${stuData.totalSpent.toLocaleString()} P`;
+
+      const myPending = appState.transactions.filter(
+        t => Number(t.studentNum) === Number(stuData.studentNum) && t.status === '대기중'
+      ).length;
+      document.getElementById('walletPendingBadge').textContent = `승인 대기 ${myPending}건`;
+    } else {
+      loginBar.style.display = 'flex';
+      activeWrap.style.display = 'none';
+    }
+  }
+
+  function renderItems() {
+    const grid = document.getElementById('itemGrid');
+    const isTeacher = Boolean(appState.teacherPin);
+    const stuData = getCurrentStudentData();
+    const keyword = appState.itemSearch.trim().toLowerCase();
+    const catFilter = appState.itemCatFilter;
+
+    const filtered = appState.items.filter(item => {
+      if (!isTeacher && !item.isActive) return false;
+      if (catFilter === 'affordable') {
+        if (!stuData || stuData.points < item.price || item.stock <= 0) return false;
+      } else if (catFilter !== 'all' && item.category !== catFilter) {
+        return false;
+      }
+      if (keyword) {
+        const hay = `${item.title} ${item.description} ${item.category}`.toLowerCase();
+        if (!hay.includes(keyword)) return false;
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">조건에 해당하는 보상 아이템이 없습니다.</div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(item => {
+      const isSoldOut = item.stock <= 0;
+      const stockClass = isSoldOut ? 'zero' : item.stock <= 3 ? 'low' : '';
+      const stockLabel = isSoldOut ? '품절됨' : `남은 수량 ${item.stock}개`;
+
+      let actionBtnHtml = '';
+      if (isSoldOut) {
+        actionBtnHtml = `<button type="button" class="btn btn-sm" disabled>품절</button>`;
+      } else if (!stuData) {
+        actionBtnHtml = `<button type="button" class="btn btn-sm btn-cyan" data-need-login-buy="${escapeHtml(item.itemId)}">로그인 후 신청</button>`;
+      } else if (stuData.points < item.price) {
+        const diff = item.price - stuData.points;
+        actionBtnHtml = `<button type="button" class="btn btn-sm" disabled>${diff}P 부족</button>`;
+      } else {
+        actionBtnHtml = `<button type="button" class="btn btn-sm btn-green" data-open-buy="${escapeHtml(item.itemId)}">쿠폰 교환 신청 &rarr;</button>`;
+      }
+
+      return `
+        <article class="item-card ${isSoldOut ? 'sold-out' : ''} ${!item.isActive ? 'inactive-item' : ''}">
+          <div class="item-card-top">
+            <span class="item-cat-tag">${escapeHtml(item.category)}</span>
+            <div style="display:flex; gap:5px; align-items:center;">
+              ${!item.isActive ? '<span class="badge-pill" style="background:var(--red); color:#fff; font-size:0.7rem; padding:1px 6px;">비공개</span>' : ''}
+              <span class="item-stock-tag ${stockClass}">${stockLabel}</span>
+            </div>
+          </div>
+          <div class="item-body">
+            <div class="item-emoji-title">
+              <div class="item-emoji-box">${escapeHtml(item.emoji || '🎁')}</div>
+              <h3 class="item-title">${escapeHtml(item.title)}</h3>
+            </div>
+            <p class="item-desc">${escapeHtml(item.description || '선생님 승인 후 사용할 수 있는 학급 보상 쿠폰입니다.')}</p>
+            <div class="item-footer">
+              <span class="item-price-badge">${item.price.toLocaleString()} P</span>
+              ${actionBtnHtml}
+            </div>
+            ${isTeacher ? `
+              <div class="teacher-item-tools">
+                <button type="button" class="btn btn-sm" data-edit-item="${escapeHtml(item.itemId)}">✏️ 수정</button>
+                <button type="button" class="btn btn-sm btn-yellow" data-toggle-item="${escapeHtml(item.itemId)}">${item.isActive ? '숨김' : '공개'}</button>
+                <button type="button" class="btn btn-sm btn-red" data-delete-item="${escapeHtml(item.itemId)}">삭제</button>
+              </div>
+            ` : ''}
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function renderTransactions() {
+    const listEl = document.getElementById('txList');
+    const isTeacher = Boolean(appState.teacherPin);
+    const stuData = getCurrentStudentData();
+    const filter = appState.txFilter;
+    const keyword = appState.txSearch.trim().toLowerCase();
+
+    const filtered = appState.transactions.filter(tx => {
+      if (filter === 'pending' && tx.status !== '대기중') return false;
+      if (filter === 'approved' && tx.status !== '승인완료') return false;
+      if (filter === 'earn' && tx.type !== '적립') return false;
+      if (filter === 'mine') {
+        if (!stuData || Number(tx.studentNum) !== Number(stuData.studentNum)) return false;
+      }
+      if (keyword) {
+        const hay = `${tx.studentNum}번 ${tx.studentName} ${tx.itemTitle} ${tx.note} ${tx.status}`.toLowerCase();
+        if (!hay.includes(keyword)) return false;
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = `<div class="empty-state">조건에 해당하는 적립·구매 내역이 없습니다.</div>`;
+      return;
+    }
+
+    listEl.innerHTML = filtered.map(tx => {
+      const isPending = tx.status === '대기중';
+      const typeClass = tx.type === '적립' ? 'earn' : tx.type === '구매' ? 'buy' : 'deduct';
+      let statusClass = 'done';
+      if (tx.status === '대기중') statusClass = 'wait';
+      else if (tx.status === '승인완료') statusClass = 'approved';
+      else if (tx.status === '반려') statusClass = 'rejected';
+
+      const amtText = tx.amount > 0 ? `+${tx.amount} P` : `${tx.amount} P`;
+      const amtClass = tx.amount >= 0 ? 'plus' : 'minus';
+
+      return `
+        <article class="tx-card ${isPending ? 'pending' : ''}">
+          <div class="tx-left">
+            <div class="tx-meta">
+              <span class="tx-type-badge ${typeClass}">${escapeHtml(tx.type)}</span>
+              <span class="status-badge ${statusClass}">${escapeHtml(tx.status)}</span>
+              <span><strong>${tx.studentNum}번 ${escapeHtml(tx.studentName)}</strong></span>
+              <span style="color:var(--muted);">· ${escapeHtml(tx.createdAt)}</span>
+            </div>
+            <div class="tx-title">${escapeHtml(tx.itemTitle)}</div>
+            ${tx.note ? `<div class="tx-note">메모: ${escapeHtml(tx.note)}</div>` : ''}
+          </div>
+          <div class="tx-right">
+            <span class="tx-amount ${amtClass}">${amtText}</span>
+            ${isTeacher && isPending ? `
+              <button type="button" class="btn btn-sm btn-green" data-approve-tx="${escapeHtml(tx.txId)}">✔ 승인 완료</button>
+              <button type="button" class="btn btn-sm btn-red" data-reject-tx="${escapeHtml(tx.txId)}">✖ 반려</button>
+            ` : ''}
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function renderStudentsOverview() {
+    const isTeacher = Boolean(appState.teacherPin);
+    const myNum = appState.loggedStudent ? Number(appState.loggedStudent.studentNum) : -1;
+
+    const totalStudents = appState.students.length;
+    const sumCurrent = appState.students.reduce((acc, s) => acc + (Number(s.points) || 0), 0);
+    const sumEarned = appState.students.reduce((acc, s) => acc + (Number(s.totalEarned) || 0), 0);
+    const pendingCount = appState.transactions.filter(t => t.status === '대기중').length;
+
+    document.getElementById('kpiTotalStudents').textContent = `${totalStudents}명`;
+    document.getElementById('kpiCurrentPoints').textContent = `${sumCurrent.toLocaleString()} P`;
+    document.getElementById('kpiEarnedPoints').textContent = `${sumEarned.toLocaleString()} P`;
+    document.getElementById('kpiPendingTx').textContent = `${pendingCount}건`;
+
+    const grid = document.getElementById('studentGrid');
+    if (totalStudents === 0) {
+      grid.innerHTML = `<div class="empty-state">등록된 학생 명단이 없습니다.</div>`;
+      return;
+    }
+
+    grid.innerHTML = appState.students.map(s => {
+      const isMe = Number(s.studentNum) === myNum;
+      return `
+        <article class="student-card ${isMe ? 'me' : ''}">
+          <div class="student-card-head">
+            <div>
+              <span class="student-num-badge">${s.studentNum}번</span>
+              <strong style="font-size:1.05rem; margin-left:5px;">${escapeHtml(s.studentName)}</strong>
+            </div>
+            ${isMe ? '<span class="badge-pill" style="background:var(--yellow); font-size:0.7rem; padding:1px 6px;">나</span>' : ''}
+          </div>
+          <div class="student-pts-main">${s.points.toLocaleString()} P</div>
+          <div class="student-sub-stats">
+            <span>누적 적립: ${s.totalEarned.toLocaleString()}P</span>
+            <span>사용: ${s.totalSpent.toLocaleString()}P</span>
+          </div>
+          ${isTeacher ? `
+            <div style="margin-top:6px; padding-top:8px; border-top:1.5px dashed #111; display:flex; gap:5px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm btn-green" data-quick-award="${s.studentNum}">+10P 지급</button>
+              <button type="button" class="btn btn-sm" data-edit-student="${s.studentNum}">수정</button>
+              <button type="button" class="btn btn-sm btn-red" data-delete-student="${s.studentNum}">삭제</button>
+            </div>
+          ` : ''}
+        </article>
+      `;
+    }).join('');
+  }
+
+  /* ==================== 이벤트 바인딩 ==================== */
+  document.addEventListener('DOMContentLoaded', () => {
+    // 저장된 세션 복원
+    try {
+      const savedStu = sessionStorage.getItem(STORAGE_KEYS.STUDENT_SESSION);
+      if (savedStu) appState.loggedStudent = JSON.parse(savedStu);
+      const savedTeacher = sessionStorage.getItem(STORAGE_KEYS.TEACHER_PIN);
+      if (savedTeacher) appState.teacherPin = savedTeacher;
+    } catch (_) {}
+
+    fetchAllData();
+
+    // 새로고침
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      fetchAllData();
+      showToast('구글 시트에서 최신 상점 정보를 불러왔습니다.');
+    });
+
+    // 탭 전환
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab)?.classList.add('active');
+      });
+    });
+
+    // 학생 로그인
+    document.getElementById('studentLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const studentNum = Number(document.getElementById('loginStudentSelect').value);
+      const pin = document.getElementById('loginStudentPin').value.trim();
+      if (!studentNum || !pin) {
+        showToast('출석 번호와 4자리 비밀번호를 입력해 주세요.');
+        return;
+      }
+      try {
+        const res = await postAction({ action: 'studentLogin', studentNum, pin });
+        appState.loggedStudent = {
+          studentNum: res.student.studentNum,
+          studentName: res.student.studentName,
+          pin
+        };
+        sessionStorage.setItem(STORAGE_KEYS.STUDENT_SESSION, JSON.stringify(appState.loggedStudent));
+        renderAll();
+        showToast(`${res.student.studentNum}번 ${res.student.studentName} 학생 환영합니다!`);
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 학생 로그아웃
+    document.getElementById('studentLogoutBtn').addEventListener('click', () => {
+      appState.loggedStudent = null;
+      sessionStorage.removeItem(STORAGE_KEYS.STUDENT_SESSION);
+      renderAll();
+      showToast('학생 지갑에서 로그아웃되었습니다.');
+    });
+
+    // 학생 비밀번호 변경 모달
+    document.getElementById('openChangePinModalBtn').addEventListener('click', () => {
+      if (!appState.loggedStudent) return;
+      document.getElementById('oldStudentPinInput').value = appState.loggedStudent.pin || '';
+      document.getElementById('newStudentPinInput').value = '';
+      openModal('changePinModal');
+    });
+
+    document.getElementById('changePinForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.loggedStudent) return;
+      const oldPin = document.getElementById('oldStudentPinInput').value.trim();
+      const newPin = document.getElementById('newStudentPinInput').value.trim();
+      try {
+        await postAction({
+          action: 'changeStudentPin',
+          studentNum: appState.loggedStudent.studentNum,
+          oldPin,
+          newPin
+        });
+        appState.loggedStudent.pin = newPin;
+        sessionStorage.setItem(STORAGE_KEYS.STUDENT_SESSION, JSON.stringify(appState.loggedStudent));
+        closeModal('changePinModal');
+        showToast('비밀번호가 변경되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 교사 모드 로그인/로그아웃
+    document.getElementById('teacherModeBtn').addEventListener('click', () => {
+      if (appState.teacherPin) {
+        showToast('이미 교사 모드가 활성화되어 있습니다.');
+        return;
+      }
+      const pinInput = document.getElementById('teacherPinInput');
+      pinInput.value = DEFAULT_TEACHER_PIN;
+      pinInput.type = 'text';
+      document.getElementById('toggleTeacherPinVisBtn').textContent = '숨기기';
+      openModal('teacherLoginModal');
+    });
+
+    document.getElementById('toggleTeacherPinVisBtn').addEventListener('click', (e) => {
+      const inp = document.getElementById('teacherPinInput');
+      if (inp.type === 'text') {
+        inp.type = 'password';
+        e.target.textContent = '보기';
+      } else {
+        inp.type = 'text';
+        e.target.textContent = '숨기기';
+      }
+    });
+
+    document.getElementById('teacherLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pin = document.getElementById('teacherPinInput').value.trim();
+      if (!pin) return;
+      try {
+        await postAction({ action: 'verifyTeacher', pin });
+        appState.teacherPin = pin;
+        sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, pin);
+        closeModal('teacherLoginModal');
+        renderAll();
+        showToast('교사 관리 모드가 활성화되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    document.getElementById('logoutTeacherBtn').addEventListener('click', () => {
+      appState.teacherPin = '';
+      sessionStorage.removeItem(STORAGE_KEYS.TEACHER_PIN);
+      renderAll();
+      showToast('교사 모드가 종료되었습니다.');
+    });
+
+    // 상점 필터 & 검색
+    document.querySelectorAll('#itemFilterChips .chip-btn').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (chip.dataset.cat === 'affordable' && !appState.loggedStudent) {
+          showToast('먼저 상단에서 학생 번호와 비밀번호로 로그인해 주세요.');
+          return;
+        }
+        document.querySelectorAll('#itemFilterChips .chip-btn').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        appState.itemCatFilter = chip.dataset.cat;
+        renderItems();
+      });
+    });
+
+    document.getElementById('itemSearchInput').addEventListener('input', (e) => {
+      appState.itemSearch = e.target.value;
+      renderItems();
+    });
+
+    // 상점 카드 내 버튼 위임
+    document.getElementById('itemGrid').addEventListener('click', async (e) => {
+      // 비로그인 상태 신청 유도
+      const needLoginBtn = e.target.closest('[data-need-login-buy]');
+      if (needLoginBtn) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('loginStudentSelect').focus();
+        showToast('상단에서 출석번호와 비밀번호(1111)로 먼저 로그인해 주세요!');
+        return;
+      }
+
+      // 쿠폰 교환 신청 모달 열기
+      const buyBtn = e.target.closest('[data-open-buy]');
+      if (buyBtn) {
+        const stuData = getCurrentStudentData();
+        if (!stuData) return;
+        const item = appState.items.find(i => i.itemId === buyBtn.dataset.openBuy);
+        if (!item) return;
+
+        document.getElementById('purchaseItemId').value = item.itemId;
+        document.getElementById('purchaseItemSummary').textContent = `${item.emoji} ${item.title}`;
+        const afterPts = stuData.points - item.price;
+        document.getElementById('purchasePointCalc').textContent =
+          `필요 포인트: ${item.price}P (현재 ${stuData.points}P → 신청 후 ${afterPts}P)`;
+        document.getElementById('purchaseNoteInput').value = '';
+        openModal('purchaseModal');
+        return;
+      }
+
+      // 교사: 아이템 수정
+      const editBtn = e.target.closest('[data-edit-item]');
+      if (editBtn && appState.teacherPin) {
+        const item = appState.items.find(i => i.itemId === editBtn.dataset.editItem);
+        if (!item) return;
+        document.getElementById('itemEditorModalTitle').textContent = '✏️ 보상 아이템 수정';
+        document.getElementById('editItemId').value = item.itemId;
+        document.getElementById('itemCatInput').value = item.category;
+        document.getElementById('itemEmojiInput').value = item.emoji;
+        document.getElementById('itemTitleInput').value = item.title;
+        document.getElementById('itemDescInput').value = item.description;
+        document.getElementById('itemPriceInput').value = item.price;
+        document.getElementById('itemStockInput').value = item.stock;
+        document.getElementById('itemActiveRow').style.display = 'flex';
+        document.getElementById('itemActiveInput').checked = Boolean(item.isActive);
+        openModal('itemEditorModal');
+        return;
+      }
+
+      // 교사: 아이템 공개/숨김 토글
+      const toggleBtn = e.target.closest('[data-toggle-item]');
+      if (toggleBtn && appState.teacherPin) {
+        const item = appState.items.find(i => i.itemId === toggleBtn.dataset.toggleItem);
+        if (!item) return;
+        try {
+          await postAction({
+            action: 'updateItem',
+            pin: appState.teacherPin,
+            itemId: item.itemId,
+            isActive: !item.isActive
+          });
+          showToast(item.isActive ? '아이템을 상점에서 숨겼습니다.' : '아이템을 상점에 다시 공개했습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+        return;
+      }
+
+      // 교사: 아이템 삭제
+      const delBtn = e.target.closest('[data-delete-item]');
+      if (delBtn && appState.teacherPin) {
+        if (!confirm('이 보상 아이템을 상점에서 삭제하시겠습니까?')) return;
+        try {
+          await postAction({
+            action: 'deleteItem',
+            pin: appState.teacherPin,
+            itemId: delBtn.dataset.deleteItem
+          });
+          showToast('보상 아이템이 삭제되었습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+      }
+    });
+
+    // 쿠폰 교환 신청 제출
+    document.getElementById('purchaseForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.loggedStudent) return;
+      const itemId = document.getElementById('purchaseItemId').value;
+      const note = document.getElementById('purchaseNoteInput').value.trim();
+      try {
+        await postAction({
+          action: 'purchaseItem',
+          studentNum: appState.loggedStudent.studentNum,
+          pin: appState.loggedStudent.pin,
+          itemId,
+          note
+        });
+        closeModal('purchaseModal');
+        showToast('쿠폰 교환 신청이 완료되었습니다! 선생님 승인 후 사용할 수 있어요.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 거래 내역 필터 & 검색
+    document.querySelectorAll('#txFilterChips .chip-btn').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (chip.dataset.txFilter === 'mine' && !appState.loggedStudent) {
+          showToast('먼저 상단에서 학생 번호와 비밀번호로 로그인해 주세요.');
+          return;
+        }
+        document.querySelectorAll('#txFilterChips .chip-btn').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        appState.txFilter = chip.dataset.txFilter;
+        renderTransactions();
+      });
+    });
+
+    document.getElementById('txSearchInput').addEventListener('input', (e) => {
+      appState.txSearch = e.target.value;
+      renderTransactions();
+    });
+
+    // 거래 내역 교사 승인 / 반려 처리
+    document.getElementById('txList').addEventListener('click', async (e) => {
+      const approveBtn = e.target.closest('[data-approve-tx]');
+      if (approveBtn && appState.teacherPin) {
+        try {
+          await postAction({
+            action: 'processTransaction',
+            pin: appState.teacherPin,
+            txId: approveBtn.dataset.approveTx,
+            decision: '승인완료'
+          });
+          showToast('쿠폰 신청이 승인 완료 처리되었습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+        return;
+      }
+
+      const rejectBtn = e.target.closest('[data-reject-tx]');
+      if (rejectBtn && appState.teacherPin) {
+        if (!confirm('이 신청을 반려하시겠습니까? 차감된 포인트와 재고가 자동으로 복구됩니다.')) return;
+        try {
+          await postAction({
+            action: 'processTransaction',
+            pin: appState.teacherPin,
+            txId: rejectBtn.dataset.rejectTx,
+            decision: '반려'
+          });
+          showToast('신청이 반려되었으며 포인트와 재고가 복구되었습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+      }
+    });
+
+    // 교사: 칭찬 포인트 지급 모달 열기 & 제출
+    function openAwardModalWithTarget(defaultTarget = '') {
+      const sel = document.getElementById('awardTargetSelect');
+      sel.innerHTML = `<option value="ALL">🌟 우리 반 전체 학생 일괄 지급 (${appState.students.length}명)</option>` +
+        appState.students.map(s => `<option value="${s.studentNum}">${s.studentNum}번 ${escapeHtml(s.studentName)} (현재 ${s.points}P)</option>`).join('');
+      if (defaultTarget) sel.value = String(defaultTarget);
+      document.getElementById('awardAmountInput').value = 10;
+      document.getElementById('awardNoteInput').value = '';
+      openModal('awardPointsModal');
+    }
+
+    document.getElementById('openAwardPointsModalBtn').addEventListener('click', () => {
+      openAwardModalWithTarget();
+    });
+
+    document.querySelectorAll('[data-pts-preset]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('awardAmountInput').value = btn.dataset.ptsPreset;
+      });
+    });
+
+    document.querySelectorAll('[data-reason-preset]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('awardTitleInput').value = btn.dataset.reasonPreset;
+      });
+    });
+
+    document.getElementById('awardPointsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.teacherPin) return;
+      try {
+        const res = await postAction({
+          action: 'awardPoints',
+          pin: appState.teacherPin,
+          studentNum: document.getElementById('awardTargetSelect').value,
+          amount: Number(document.getElementById('awardAmountInput').value),
+          title: document.getElementById('awardTitleInput').value.trim(),
+          note: document.getElementById('awardNoteInput').value.trim()
+        });
+        closeModal('awardPointsModal');
+        showToast(`${res.affectedCount}명의 학생에게 포인트가 반영되었습니다!`);
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 교사: 새 보상 아이템 모달 열기 & 저장
+    document.getElementById('openNewItemModalBtn').addEventListener('click', () => {
+      document.getElementById('itemEditorModalTitle').textContent = '🎁 새 보상 아이템 등록';
+      document.getElementById('editItemId').value = '';
+      document.getElementById('itemCatInput').value = '시간·자유';
+      document.getElementById('itemEmojiInput').value = '🎁';
+      document.getElementById('itemTitleInput').value = '';
+      document.getElementById('itemDescInput').value = '';
+      document.getElementById('itemPriceInput').value = 30;
+      document.getElementById('itemStockInput').value = 10;
+      document.getElementById('itemActiveRow').style.display = 'none';
+      openModal('itemEditorModal');
+    });
+
+    document.getElementById('itemEditorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.teacherPin) return;
+      const editId = document.getElementById('editItemId').value.trim();
+      const payload = {
+        action: editId ? 'updateItem' : 'createItem',
+        pin: appState.teacherPin,
+        itemId: editId,
+        category: document.getElementById('itemCatInput').value,
+        emoji: document.getElementById('itemEmojiInput').value.trim() || '🎁',
+        title: document.getElementById('itemTitleInput').value.trim(),
+        description: document.getElementById('itemDescInput').value.trim(),
+        price: Number(document.getElementById('itemPriceInput').value),
+        stock: Number(document.getElementById('itemStockInput').value),
+        isActive: document.getElementById('itemActiveInput').checked
+      };
+      try {
+        await postAction(payload);
+        closeModal('itemEditorModal');
+        showToast(editId ? '보상 아이템이 수정되었습니다.' : '새 보상 아이템이 등록되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 교사: 학생 추가 / 수정 모달
+    document.getElementById('openUpsertStudentModalBtn').addEventListener('click', () => {
+      const nextNum = appState.students.length > 0
+        ? Math.max(...appState.students.map(s => s.studentNum)) + 1
+        : 1;
+      document.getElementById('stuEditNum').value = nextNum;
+      document.getElementById('stuEditName').value = '';
+      document.getElementById('stuEditPin').value = '1111';
+      document.getElementById('stuEditPoints').value = 50;
+      openModal('studentEditorModal');
+    });
+
+    document.getElementById('studentEditorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.teacherPin) return;
+      try {
+        await postAction({
+          action: 'upsertStudent',
+          pin: appState.teacherPin,
+          studentNum: Number(document.getElementById('stuEditNum').value),
+          studentName: document.getElementById('stuEditName').value.trim(),
+          studentPin: document.getElementById('stuEditPin').value.trim() || '1111',
+          points: Number(document.getElementById('stuEditPoints').value)
+        });
+        closeModal('studentEditorModal');
+        showToast('학생 정보가 구글 시트에 저장되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 학생 현황 탭 내 교사 버튼 위임
+    document.getElementById('studentGrid').addEventListener('click', async (e) => {
+      if (!appState.teacherPin) return;
+
+      const awardBtn = e.target.closest('[data-quick-award]');
+      if (awardBtn) {
+        openAwardModalWithTarget(awardBtn.dataset.quickAward);
+        return;
+      }
+
+      const editBtn = e.target.closest('[data-edit-student]');
+      if (editBtn) {
+        const s = appState.students.find(st => Number(st.studentNum) === Number(editBtn.dataset.editStudent));
+        if (!s) return;
+        document.getElementById('stuEditNum').value = s.studentNum;
+        document.getElementById('stuEditName').value = s.studentName;
+        document.getElementById('stuEditPin').value = '1111';
+        document.getElementById('stuEditPoints').value = s.points;
+        openModal('studentEditorModal');
+        return;
+      }
+
+      const delBtn = e.target.closest('[data-delete-student]');
+      if (delBtn) {
+        const num = Number(delBtn.dataset.deleteStudent);
+        if (!confirm(`${num}번 학생을 명단에서 삭제하시겠습니까?`)) return;
+        try {
+          await postAction({
+            action: 'deleteStudent',
+            pin: appState.teacherPin,
+            studentNum: num
+          });
+          showToast(`${num}번 학생이 명단에서 삭제되었습니다.`);
+        } catch (err) {
+          showToast(err.message);
+        }
+      }
+    });
+
+    // 상점 설정 저장
+    document.getElementById('storeSettingsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!appState.teacherPin) return;
+      const newPin = document.getElementById('setNewTeacherPin').value.trim();
+      try {
+        await postAction({
+          action: 'updateSettings',
+          pin: appState.teacherPin,
+          schoolName: document.getElementById('setSchoolName').value.trim(),
+          className: document.getElementById('setClassName').value.trim(),
+          teacherName: document.getElementById('setTeacherName').value.trim(),
+          storeTitle: document.getElementById('setStoreTitle').value.trim(),
+          storeNotice: document.getElementById('setStoreNotice').value.trim(),
+          newTeacherPin: newPin
+        });
+        if (newPin.length >= 4) {
+          appState.teacherPin = newPin;
+          sessionStorage.setItem(STORAGE_KEYS.TEACHER_PIN, newPin);
+          document.getElementById('setNewTeacherPin').value = '';
+        }
+        showToast('상점 기본 설정이 저장되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 모달 닫기 공통
+    document.querySelectorAll('[data-close-modal]').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
+    });
+
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) backdrop.classList.remove('open');
+      });
+    });
+  });
+</script>
+</body>
+</html>
