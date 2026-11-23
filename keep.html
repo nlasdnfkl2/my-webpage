@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#ffd83b" />
+  <title>구글 킵(Keep) 스타일 스마트 학생 생활기록부</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --paper: #ffffff;
+      --ink: #111111;
+      --muted: #555555;
+      --border: 3px solid #111111;
+      --border-thin: 2px solid #111111;
+      --shadow: 5px 5px 0 #111111;
+      --shadow-sm: 3px 3px 0 #111111;
+
+      --yellow: #ffd83b;
+      --cyan: #48dbfb;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --orange: #ffa502;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(to right, rgba(17, 17, 17, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(17, 17, 17, 0.045) 1px, transparent 1px);
+      background-size: 26px 26px;
+      color: var(--ink);
+      line-height: 1.55;
+      padding-bottom: 72px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      color: var(--ink);
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+    }
+
+    /* 상단 헤더 */
+    .top-header {
+      background: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+
+    .header-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 3px 10px;
+      background: var(--paper);
+      border: var(--border-thin);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .badge-pill.dark { background: var(--ink); color: var(--yellow); }
+    .badge-pill.local-ai { background: var(--pink); }
+    .badge-pill.sync-ok { background: var(--green); }
+    .badge-pill.sync-loading { background: var(--cyan); }
+    .badge-pill.sync-err { background: var(--red); color: #ffffff; }
+
+    .app-title {
+      font-size: clamp(1.5rem, 3.4vw, 2.08rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 공통 버튼 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      padding: 8px 14px;
+      background: var(--paper);
+      border: var(--border-thin);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #e9e9e9;
+      box-shadow: 2px 2px 0 #777777;
+    }
+
+    .btn-yellow { background: var(--yellow); }
+    .btn-cyan { background: var(--cyan); }
+    .btn-green { background: var(--green); }
+    .btn-pink { background: var(--pink); }
+    .btn-red { background: var(--red); color: #ffffff; }
+    .btn-dark { background: var(--ink); color: var(--yellow); }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
+
+    /* 빠른 관찰 메모 작성 카드 (Keep 스타일) */
+    .quick-note-box {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      margin-bottom: 18px;
+    }
+
+    .quick-note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(17, 17, 17, 0.14);
+    }
+
+    .quick-note-title {
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .quick-form-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .input-box, select.input-box, textarea.input-box {
+      width: 100%;
+      padding: 8px 11px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      background: #ffffff;
+      border: var(--border-thin);
+      outline: none;
+    }
+
+    .input-box:focus {
+      background: #fffef3;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .quick-textarea {
+      min-height: 78px;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+
+    .quick-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .color-palette {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .color-dot {
+      width: 26px;
+      height: 26px;
+      border: 2px solid var(--ink);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .color-dot.active {
+      box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--ink);
+      transform: scale(1.08);
+    }
+
+    .suggested-tags-bar {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .tag-pill-btn {
+      padding: 2px 8px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      background: var(--bg);
+      border: 1.5px solid var(--ink);
+      cursor: pointer;
+    }
+
+    .tag-pill-btn:hover {
+      background: var(--yellow);
+    }
+
+    /* 메인 탭 */
+    .main-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 12px 8px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.12s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--cyan);
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .tab-count {
+      background: var(--ink);
+      color: #ffffff;
+      font-size: 0.74rem;
+      padding: 1px 7px;
+      border-radius: 999px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* 필터 바 */
+    .filter-panel {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 13px 15px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      padding: 5px 11px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      background: var(--bg);
+      border: var(--border-thin);
+      cursor: pointer;
+    }
+
+    .chip-btn.active {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    /* 킵 노트 카드 그리드 */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
+      gap: 18px;
+    }
+
+    .keep-card {
+      background: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .keep-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 var(--ink);
+    }
+
+    .keep-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .keep-student-badge {
+      background: var(--ink);
+      color: var(--yellow);
+      font-size: 0.8rem;
+      font-weight: 900;
+      padding: 3px 9px;
+    }
+
+    .keep-domain-badge {
+      background: rgba(255, 255, 255, 0.88);
+      border: 2px solid var(--ink);
+      font-size: 0.76rem;
+      font-weight: 900;
+      padding: 2px 8px;
+    }
+
+    .keep-text {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #111111;
+      white-space: pre-line;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1.5px solid rgba(17, 17, 17, 0.25);
+      padding: 10px 12px;
+    }
+
+    .keep-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .keep-tag {
+      font-size: 0.74rem;
+      font-weight: 900;
+      background: #ffffff;
+      border: 1.5px solid var(--ink);
+      padding: 1px 7px;
+    }
+
+    .keep-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+      border-top: 2px solid rgba(17, 17, 17, 0.2);
+      font-size: 0.76rem;
+      font-weight: 800;
+    }
+
+    .keep-actions {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    /* 로컬 AI 문안 구조화 스튜디오 */
+    .ai-studio-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 1.15fr;
+      gap: 18px;
+    }
+
+    .studio-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .studio-card h3 {
+      font-size: 1.12rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: var(--border-thin);
+    }
+
+    .selectable-note-item {
+      border: 2px solid var(--ink);
+      background: var(--bg);
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+
+    .selectable-note-item.checked {
+      background: #fff9db;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .selectable-note-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .draft-textarea {
+      width: 100%;
+      min-height: 215px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.7;
+      border: var(--border-thin);
+      background: #fffef7;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+
+    .meter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: var(--bg);
+      border: 2px solid var(--ink);
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    /* 저장된 생기부 초안 목록 */
+    .drafts-section {
+      margin-top: 24px;
+    }
+
+    .draft-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 16px 18px;
+      margin-bottom: 12px;
+    }
+
+    /* 학생별 기록 현황 그리드 */
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+      gap: 14px;
+    }
+
+    .student-card {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .student-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 7px;
+    }
+
+    .student-num-badge {
+      background: var(--ink);
+      color: var(--yellow);
+      font-size: 0.78rem;
+      font-weight: 900;
+      padding: 2px 8px;
+    }
+
+    /* 설정 그리드 */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 8px 11px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border: var(--border-thin);
+      background: #ffffff;
+    }
+
+    /* 모달 */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.74);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--paper);
+      border: var(--border);
+      box-shadow: 8px 8px 0 var(--ink);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-box.sm {
+      max-width: 410px;
+    }
+
+    .modal-header {
+      background: var(--yellow);
+      border-bottom: var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 900;
+      font-size: 1rem;
+    }
+
+    .modal-close {
+      width: 30px;
+      height: 30px;
+      background: var(--red);
+      color: #ffffff;
+      border: var(--border-thin);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 18px;
+    }
+
+    .pin-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pin-hint-box {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: #fff9db;
+      border: 2px dashed var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink);
+      color: var(--yellow);
+      border: var(--border-thin);
+      box-shadow: 4px 4px 0 var(--red);
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 900;
+      z-index: 4000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      max-width: calc(100vw - 28px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      background: var(--paper);
+      border: var(--border);
+      font-weight: 800;
+      color: var(--muted);
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 880px) {
+      .quick-form-grid { grid-template-columns: repeat(2, 1fr); }
+      .main-tabs { grid-template-columns: repeat(2, 1fr); }
+      .ai-studio-grid, .settings-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .quick-form-grid { grid-template-columns: 1fr; }
+      .main-tabs { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 상단 헤더 -->
+  <header class="top-header">
+    <div class="header-top-row">
+      <div>
+        <div class="badge-row">
+          <span class="badge-pill dark" id="schoolClassBadge">공주부설초등학교 · 5학년 2반</span>
+          <span class="badge-pill" id="teacherNameBadge">담임: 문태양 선생님</span>
+          <span class="badge-pill local-ai">🧠 로컬 규칙·합성 AI 엔진</span>
+          <span class="badge-pill sync-loading" id="syncStatusBadge">시트 동기화 중...</span>
+        </div>
+        <h1 class="app-title" id="appTitleHeading">구글 킵(Keep) 스타일 스마트 학생 생활기록부</h1>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn btn-cyan" id="refreshBtn">새로고침</button>
+        <button type="button" class="btn btn-dark" id="teacherModeBtn">교사 모드 로그인</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 구글 킵 스타일 빠른 관찰 메모 작성 카드 -->
+  <section class="quick-note-box" aria-label="관찰 메모 작성">
+    <div class="quick-note-header">
+      <span class="quick-note-title">📌 새 관찰 메모 카드 남기기 (작성 시 키워드·역량 태그 자동 추천)</span>
+      <span id="teacherAuthStatusPill" class="badge-pill" style="background:#ffeef0;">🔒 교사 인증 필요 (기본 PIN: 1234)</span>
+    </div>
+
+    <form id="quickNoteForm">
+      <div class="quick-form-grid">
+        <select class="input-box" id="noteStudentSelect" required>
+          <option value="">학생 선택</option>
+        </select>
+        <select class="input-box" id="noteDomainSelect">
+          <option value="행동발달">행동발달</option>
+          <option value="교과세특">교과세특</option>
+          <option value="창의적체험활동">창의적체험활동</option>
+          <option value="독서활동">독서활동</option>
+        </select>
+        <input type="text" class="input-box" id="noteSubjectInput" value="학급생활" placeholder="과목·활동명 (예: 사회, 독서)" />
+        <input type="date" class="input-box" id="noteDateInput" />
+      </div>
+
+      <textarea class="input-box quick-textarea" id="noteRawTextInput" placeholder="학생의 수업 태도, 발표·실험·독서·친구 배려·갈등 해결 장면을 편하게 적어보세요. (예: 모둠 토의에서 친구 의견을 경청하고 핵심을 정리해 발표함)"></textarea>
+
+      <div class="quick-bottom-row">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <input type="text" class="input-box" id="noteTagsInput" placeholder="태그 (쉼표 구분, 예: 발표우수,협업)" style="width:220px;" />
+          <div class="color-palette" id="colorPalette" title="포스트잇 색상 선택">
+            <button type="button" class="color-dot active" data-color="#fff9b1" style="background:#fff9b1;"></button>
+            <button type="button" class="color-dot" data-color="#cbf0f8" style="background:#cbf0f8;"></button>
+            <button type="button" class="color-dot" data-color="#ccff90" style="background:#ccff90;"></button>
+            <button type="button" class="color-dot" data-color="#fdcfe8" style="background:#fdcfe8;"></button>
+            <button type="button" class="color-dot" data-color="#e6c9a8" style="background:#e6c9a8;"></button>
+            <button type="button" class="color-dot" data-color="#fbbc04" style="background:#fbbc04;"></button>
+          </div>
+          <label style="display:inline-flex; align-items:center; gap:5px; font-size:0.84rem; font-weight:800; cursor:pointer;">
+            <input type="checkbox" id="notePinnedInput" />
+            <span>상단 고정</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-green">메모 카드 저장</button>
+      </div>
+
+      <div class="suggested-tags-bar" id="suggestedTagsBar">
+        <span>💡 추천 역량 태그:</span>
+      </div>
+    </form>
+  </section>
+
+  <!-- 4단 메인 탭 -->
+  <nav class="main-tabs" role="tablist">
+    <button type="button" class="tab-btn active" data-tab="notesTab" role="tab">
+      <span>🗂️ 관찰 메모 보드</span>
+      <span class="tab-count" id="notesTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="aiStudioTab" role="tab">
+      <span>✍️ 로컬 AI 생기부 생성기</span>
+      <span class="tab-count" id="draftsTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="studentsTab" role="tab">
+      <span>👩‍🎓 학생별 기록 현황</span>
+      <span class="tab-count" id="studentsTabCount">0</span>
+    </button>
+    <button type="button" class="tab-btn" data-tab="settingsTab" role="tab">
+      <span>⚙️ 학급·명단 설정</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1: 관찰 메모 보드 -->
+  <main id="notesTab" class="tab-panel active">
+    <div class="filter-panel">
+      <div class="filter-chips" id="noteDomainChips">
+        <button type="button" class="chip-btn active" data-domain="all">전체 영역</button>
+        <button type="button" class="chip-btn" data-domain="교과세특">교과세특</button>
+        <button type="button" class="chip-btn" data-domain="행동발달">행동발달</button>
+        <button type="button" class="chip-btn" data-domain="창의적체험활동">창의적체험활동</button>
+        <button type="button" class="chip-btn" data-domain="독서활동">독서활동</button>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <select class="input-box" id="noteStudentFilter" style="width:170px;">
+          <option value="all">전체 학생 보기</option>
+        </select>
+        <input type="search" class="input-box" id="noteSearchInput" placeholder="메모·태그·과목 검색..." style="width:200px;" />
+      </div>
+    </div>
+
+    <div class="notes-grid" id="notesGrid"></div>
+  </main>
+
+  <!-- TAB 2: 로컬 AI 생활기록부 문안 구조화·합성 스튜디오 -->
+  <section id="aiStudioTab" class="tab-panel">
+    <div class="ai-studio-grid">
+      <!-- 왼쪽: 대상 학생·영역·분량 선택 및 메모 조합 -->
+      <div class="studio-card">
+        <h3>1. 대상 학생 및 관찰 메모 선택</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="aiStudentSelect">대상 학생</label>
+            <select id="aiStudentSelect"></select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="aiDomainSelect">생기부 기재 영역</label>
+            <select id="aiDomainSelect">
+              <option value="행동발달">행동발달</option>
+              <option value="교과세특">교과세특</option>
+              <option value="창의적체험활동">창의적체험활동</option>
+              <option value="독서활동">독서활동</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:10px; margin-bottom:12px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="aiSubjectInput">과목 / 세부 영역명</label>
+            <input type="text" id="aiSubjectInput" value="행동특성 및 종합의견" />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label for="aiStyleSelect">문장 밀도·분량 모드</label>
+            <select id="aiStyleSelect">
+              <option value="standard">표준 종합형 (균형 잡힌 문단)</option>
+              <option value="concise">간결 요약형 (핵심 압축)</option>
+              <option value="detailed">심화 서술형 (과정·역량 상세화)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:0.84rem; font-weight:900;">선택한 학생의 관찰 메모 (합성할 카드 체크)</span>
+          <button type="button" class="btn btn-sm" id="selectAllStudentNotesBtn">전체 선택</button>
+        </div>
+
+        <div id="aiStudentNotesList" style="max-height:240px; overflow-y:auto; margin-bottom:12px;"></div>
+
+        <button type="button" class="btn btn-yellow" id="generateLocalDraftBtn" style="width:100%;">
+          🧠 로컬 AI로 생기부 문안 구조화·생성하기
+        </button>
+      </div>
+
+      <!-- 오른쪽: 생성된 초안 편집, 글자수·바이트 체크, 시트 저장 -->
+      <div class="studio-card">
+        <h3>2. 생성된 생활기록부 초안 검토 및 저장</h3>
+        <textarea id="aiGeneratedTextarea" class="draft-textarea" placeholder="왼쪽에서 학생과 관찰 메모를 선택한 뒤 [로컬 AI로 생기부 문안 구조화·생성하기]를 누르면, 외부 API 없이 브라우저 내장 엔진이 문장을 분석·결합하여 표준 생기부 문안을 만듭니다."></textarea>
+
+        <div class="meter-bar">
+          <span id="charByteCounter">글자 수: 0자 · NEIS 기준: 0 Byte</span>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-sm btn-cyan" id="polishAgainBtn">문장 다듬기</button>
+            <button type="button" class="btn btn-sm" id="copyDraftBtn">복사</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-green" id="saveDraftToSheetBtn" style="width:100%;">
+          💾 구글 시트(Drafts)에 생기부 초안 저장하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 저장된 초안 목록 -->
+    <div class="drafts-section">
+      <h3 style="font-size:1.12rem; font-weight:900; margin-bottom:12px;">📄 저장된 생활기록부 문안 초안 목록</h3>
+      <div id="draftsList"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: 학생별 기록 현황 -->
+  <section id="studentsTab" class="tab-panel">
+    <div class="student-grid" id="studentGrid"></div>
+  </section>
+
+  <!-- TAB 4: 학급·명단 설정 -->
+  <section id="settingsTab" class="tab-panel">
+    <div class="settings-grid">
+      <div class="studio-card">
+        <h3>🏫 학교·학급 및 교사 설정</h3>
+        <form id="appSettingsForm">
+          <div class="form-group">
+            <label for="setSchoolName">학교명</label>
+            <input type="text" id="setSchoolName" />
+          </div>
+          <div class="form-group">
+            <label for="setClassName">학급명</label>
+            <input type="text" id="setClassName" />
+          </div>
+          <div class="form-group">
+            <label for="setTeacherName">담임교사 성명</label>
+            <input type="text" id="setTeacherName" />
+          </div>
+          <div class="form-group">
+            <label for="setAppTitle">웹 앱 메인 타이틀</label>
+            <input type="text" id="setAppTitle" />
+          </div>
+          <div class="form-group">
+            <label for="setNewTeacherPin">새 교사 비밀번호 변경 (변경 시에만 입력, 4자리 이상)</label>
+            <input type="text" id="setNewTeacherPin" placeholder="예: 1234" />
+          </div>
+          <button type="submit" class="btn btn-green" style="width:100%;">학급 설정 저장하기</button>
+        </form>
+      </div>
+
+      <div class="studio-card">
+        <h3>👩‍🎓 학급 학생 명단 추가 / 수정</h3>
+        <form id="upsertStudentForm">
+          <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:10px;">
+            <div class="form-group">
+              <label for="stuNumInput">출석 번호 *</label>
+              <input type="number" min="1" max="60" id="stuNumInput" placeholder="예: 13" required />
+            </div>
+            <div class="form-group">
+              <label for="stuNameInput">학생 이름 *</label>
+              <input type="text" id="stuNameInput" placeholder="예: 정다온" required />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-cyan" style="width:100%;">학생 명단 저장하기</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 1. 교사 인증 모달 (기본 교사 비밀번호 1234 미리 입력) -->
+<div class="modal-backdrop" id="teacherLoginModal" role="dialog" aria-modal="true" aria-label="교사 모드 인증">
+  <div class="modal-box sm">
+    <div class="modal-header">
+      <span>👩‍🏫 교사 모드 비밀번호 인증</span>
+      <button type="button" class="modal-close" data-close-modal="teacherLoginModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="teacherLoginForm">
+        <div class="form-group">
+          <label for="teacherPinInput">교사 관리 비밀번호 (PIN)</label>
+          <div class="pin-input-row">
+            <input type="text" id="teacherPinInput" value="1234" placeholder="교사 비밀번호 입력 (기본: 1234)" required />
+            <button type="button" class="btn btn-sm" id="toggleTeacherPinVisBtn">숨기기</button>
+          </div>
+          <div class="pin-hint-box">
+            기본 교사 비밀번호 <strong>1234</strong>가 입력되어 있습니다. 바로 <strong>[교사 모드 시작]</strong>을 누르시면 됩니다.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-dark" style="width:100%; margin-top:6px;">교사 모드 시작</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 2. 메모 수정 모달 -->
+<div class="modal-backdrop" id="editNoteModal" role="dialog" aria-modal="true" aria-label="관찰 메모 수정">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>✏️ 관찰 메모 수정</span>
+      <button type="button" class="modal-close" data-close-modal="editNoteModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="editNoteForm">
+        <input type="hidden" id="editNoteId" value="" />
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-group">
+            <label for="editNoteDomain">영역</label>
+            <select id="editNoteDomain">
+              <option value="행동발달">행동발달</option>
+              <option value="교과세특">교과세특</option>
+              <option value="창의적체험활동">창의적체험활동</option>
+              <option value="독서활동">독서활동</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editNoteSubject">과목·활동명</label>
+            <input type="text" id="editNoteSubject" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editNoteRawText">관찰 메모 내용 *</label>
+          <textarea id="editNoteRawText" style="min-height:95px;" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editNoteTags">태그 (쉼표 구분)</label>
+          <input type="text" id="editNoteTags" />
+        </div>
+        <button type="submit" class="btn btn-yellow" style="width:100%;">메모 수정 저장</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastBox" role="status" aria-live="polite"></div>
+
+<script>
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbygmD8GLAYEBqyvRj6IfPcGmkUYCBtt9HysEMw6_x1FxQEDA651r-z64FHHNsCyKOZHmA/exec';
+  const DEFAULT_TEACHER_PIN = '1234';
+  const TEACHER_SESSION_KEY = 'keep_teacher_pin_v1';
+
+  let appState = {
+    settings: {
+      schoolName: '공주부설초등학교',
+      className: '5학년 2반',
+      teacherName: '문태양 선생님',
+      appTitle: '구글 킵(Keep) 스타일 스마트 학생 생활기록부'
+    },
+    notes: [],
+    students: [],
+    drafts: [],
+    teacherPin: '',
+    selectedColor: '#fff9b1',
+    domainFilter: 'all',
+    studentFilter: 'all',
+    searchKeyword: '',
+    selectedAiNoteIds: new Set()
+  };
+
+  /* ==================== 100% 브라우저 로컬 AI 구조화·합성 엔진 ==================== */
+  const COMPETENCY_LEXICON = [
+    { keywords: ['발표', '설명', '소통', '질문', '답변', '토론'], tag: '의사소통·발표', phrase: '핵심 내용을 논리적으로 구조화하여 전달하고 소통하는 역량' },
+    { keywords: ['탐구', '실험', '가설', '분석', '조사', '관찰', '원리'], tag: '자기주도탐구', phrase: '스스로 탐구 질문을 세우고 근거를 바탕으로 원리를 분석하는 힘' },
+    { keywords: ['배려', '경청', '친절', '도움', '봉사', '정리', '나눔'], tag: '배려·공동체', phrase: '타인의 입장을 먼저 헤아리고 공동체를 위해 기꺼이 실천하는 태도' },
+    { keywords: ['리더', '서기', '이끌', '조율', '합의', '중재', '책임'], tag: '리더십·책임감', phrase: '맡은 역할을 끝까지 책임지고 구성원의 의견을 조율하며 합의를 이끄는 역량' },
+    { keywords: ['독서', '책', '읽', '비평', '감상', '글쓰기', '일기'], tag: '독서·비판적사고', phrase: '책 속 맥락과 주제를 깊이 있게 성찰하고 자신의 관점으로 재구성하는 능력' },
+    { keywords: ['창의', '아이디어', '디자인', '포스터', '시각화', '만들', '기획'], tag: '창의·융합', phrase: '새로운 시각으로 아이디어를 구상하고 이를 구체적인 결과물로 구현하는 창의성' },
+    { keywords: ['감정', '조절', '면담', '변화', '성장', '극복', '노력', '성실'], tag: '자기조절·성장', phrase: '스스로 행동을 돌아보며 한계를 극복하고 꾸준히 성장해 나가는 자기조절력' },
+    { keywords: ['협업', '모둠', '협력', '함께', '팀', '짝꿍'], tag: '협업능력', phrase: '모둠 구성원과 서로 협력하며 공동의 목표를 함께 달성하는 협업 역량' }
+  ];
+
+  function extractLocalTagsAndInsights(text) {
+    const clean = String(text || '').trim();
+    const matchedTags = [];
+    const matchedInsights = [];
+
+    COMPETENCY_LEXICON.forEach(entry => {
+      const hit = entry.keywords.some(kw => clean.includes(kw));
+      if (hit) {
+        matchedTags.push(entry.tag);
+        matchedInsights.push(entry.phrase);
+      }
+    });
+
+    if (matchedTags.length === 0 && clean.length > 0) {
+      matchedTags.push('성실·참여');
+      matchedInsights.push('학습과 학급 활동에 성실히 참여하며 긍정적인 태도를 보이는 역량');
+    }
+
+    return { tags: matchedTags, insights: matchedInsights };
+  }
+
+  function convertSentenceToFormalRecord(rawSentence, domain, styleMode) {
+    let s = String(rawSentence || '')
+      .trim()
+      .replace(/[.!?]+$/g, '')
+      .trim();
+
+    if (!s) return '';
+
+    // 구어체·일기체 종결어미를 생활기록부 서술체로 변환
+    const replacements = [
+      [/했음$/g, '하였음'],
+      [/됨$/g, '되었음'],
+      [/보임$/g, '보였음'],
+      [/잘함$/g, '우수하게 수행함'],
+      [/함$/g, '함'],
+      [/다$/g, '임'],
+      [/음$/g, '음']
+    ];
+    for (const [pat, rep] of replacements) {
+      if (pat.test(s)) {
+        s = s.replace(pat, rep);
+        break;
+      }
+    }
+
+    if (styleMode === 'concise') {
+      return `${s}.`;
+    }
+
+    const domainSuffixMap = {
+      '교과세특': '학습 과정에서의 이해도와 탐구 태도가 돋보임.',
+      '행동발달': '바른 인성과 공동체 의식을 바탕으로 모범적인 학급 생활을 이어감.',
+      '창의적체험활동': '활동 과정에 주도적으로 참여하며 구성원들과 조화롭게 협력함.',
+      '독서활동': '독서를 통해 사고의 폭을 넓히고 생각을 조리 있게 표현함.'
+    };
+
+    if (styleMode === 'detailed') {
+      return `${s}으로써, ${domainSuffixMap[domain] || '꾸준한 성장이 돋보임.'}`;
+    }
+
+    return `${s}.`;
+  }
+
+  function synthesizeLocalSchoolRecord({ studentName, domain, subject, selectedNotes, styleMode }) {
+    if (!selectedNotes || selectedNotes.length === 0) {
+      return `${studentName} 학생은 ${subject} 활동에 성실히 참여하며 긍정적인 태도로 임함.`;
+    }
+
+    const connectors = ['또한, ', '아울러 ', '이와 더불어 ', '나아가 '];
+    const allInsightsSet = new Set();
+    const convertedClauses = [];
+
+    selectedNotes.forEach((note, idx) => {
+      const { insights } = extractLocalTagsAndInsights(note.rawText);
+      insights.forEach(ins => allInsightsSet.add(ins));
+
+      const baseSent = convertSentenceToFormalRecord(note.rawText, domain, styleMode).replace(/\.$/, '');
+      const prefix = idx === 0 ? '' : connectors[(idx - 1) % connectors.length];
+      convertedClauses.push(`${prefix}${baseSent}`);
+    });
+
+    const bodyParagraph = convertedClauses.join('. ') + '.';
+    const insightsArr = Array.from(allInsightsSet);
+    const topCompetency = insightsArr.slice(0, 2).join('과 ');
+
+    if (styleMode === 'concise') {
+      return `${bodyParagraph} ${topCompetency}이 돋보임.`;
+    }
+
+    const closingByDomain = {
+      '교과세특': `${studentName} 학생은 ${subject} 영역에서 ${topCompetency}이 두드러지며, 배운 개념을 실제 과제에 적용하는 능력이 뛰어남.`,
+      '행동발달': `${studentName} 학생은 평소 ${topCompetency}을 바탕으로 학급의 신뢰를 얻었으며, 주변 친구들에게 긍정적인 영향을 주는 학생임.`,
+      '창의적체험활동': `${studentName} 학생은 ${subject} 활동 속에서 ${topCompetency}을 발휘하여 공동체 활동의 완성도를 높임.`,
+      '독서활동': `${studentName} 학생은 독서 경험을 통해 ${topCompetency}을 기르며 깊이 있는 읽기·쓰기 역량을 보여줌.`
+    };
+
+    const closingSentence = closingByDomain[domain] || `${studentName} 학생은 ${topCompetency}이 돋보임.`;
+    return `${bodyParagraph} ${closingSentence}`;
+  }
+
+  function calculateNeisBytes(str) {
+    let bytes = 0;
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      // 한글 및 한자/특수문자 3바이트, ASCII 1바이트 근사
+      bytes += code > 127 ? 3 : 1;
+    }
+    return bytes;
+  }
+
+  function updateCharByteMeter() {
+    const text = document.getElementById('aiGeneratedTextarea').value || '';
+    const chars = text.length;
+    const bytes = calculateNeisBytes(text);
+    document.getElementById('charByteCounter').textContent =
+      `글자 수: ${chars.toLocaleString()}자 · NEIS 기준: ${bytes.toLocaleString()} / 1,500 Byte`;
+  }
+
+  /* ==================== 공통 유틸리티 ==================== */
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toastBox');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => el.classList.remove('show'), 2900);
+  }
+
+  function setSyncBadge(status, text) {
+    const badge = document.getElementById('syncStatusBadge');
+    badge.className = 'badge-pill ' + (status === 'ok' ? 'sync-ok' : status === 'err' ? 'sync-err' : 'sync-loading');
+    badge.textContent = text;
+  }
+
+  function openModal(id) {
+    document.getElementById(id)?.classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id)?.classList.remove('open');
+  }
+
+  function ensureTeacherOrPrompt() {
+    if (appState.teacherPin) return true;
+    const pinInput = document.getElementById('teacherPinInput');
+    pinInput.value = DEFAULT_TEACHER_PIN;
+    pinInput.type = 'text';
+    document.getElementById('toggleTeacherPinVisBtn').textContent = '숨기기';
+    openModal('teacherLoginModal');
+    showToast('교사 모드 인증(기본 PIN: 1234) 후 이용해 주세요.');
+    return false;
+  }
+
+  /* ==================== Apps Script 통신 ==================== */
+  async function fetchAllData(silent = false) {
+    if (!silent) setSyncBadge('loading', '시트 동기화 중...');
+    try {
+      const res = await fetch(`${WEB_APP_URL}?action=getAll&t=${Date.now()}`);
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.message || '데이터를 불러오지 못했습니다.');
+      applyServerPayload(json.data);
+      setSyncBadge('ok', '시트 실시간 연동됨');
+    } catch (err) {
+      console.error(err);
+      setSyncBadge('err', '연동 오류');
+      showToast('구글 시트 연결 오류: ' + err.message);
+    }
+  }
+
+  async function postAction(payload) {
+    setSyncBadge('loading', '저장 및 동기화 중...');
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (!json.ok) {
+        setSyncBadge('ok', '시트 실시간 연동됨');
+        throw new Error(json.message || '요청 처리에 실패했습니다.');
+      }
+      if (json.data) {
+        applyServerPayload(json.data);
+      }
+      setSyncBadge('ok', '시트 실시간 연동됨');
+      return json;
+    } catch (err) {
+      setSyncBadge('err', '요청 실패');
+      throw err;
+    }
+  }
+
+  function applyServerPayload(data) {
+    if (!data) return;
+    if (data.settings) appState.settings = { ...appState.settings, ...data.settings };
+    if (Array.isArray(data.notes)) appState.notes = data.notes;
+    if (Array.isArray(data.students)) appState.students = data.students;
+    if (Array.isArray(data.drafts)) appState.drafts = data.drafts;
+    renderAll();
+  }
+
+  /* ==================== 렌더링 ==================== */
+  function renderAll() {
+    renderHeaderAndTeacherStatus();
+    populateStudentSelectors();
+    renderSuggestedTags();
+    renderNotesGrid();
+    renderAiStudioNotesList();
+    renderDraftsList();
+    renderStudentsGrid();
+    populateSettingsForm();
+  }
+
+  function renderHeaderAndTeacherStatus() {
+    const s = appState.settings;
+    document.getElementById('schoolClassBadge').textContent = `${s.schoolName} · ${s.className}`;
+    document.getElementById('teacherNameBadge').textContent = `담임: ${s.teacherName}`;
+    document.getElementById('appTitleHeading').textContent = s.appTitle;
+    document.title = `${s.className} · ${s.appTitle}`;
+
+    document.getElementById('notesTabCount').textContent = appState.notes.length;
+    document.getElementById('draftsTabCount').textContent = appState.drafts.length;
+    document.getElementById('studentsTabCount').textContent = appState.students.length;
+
+    const isTeacher = Boolean(appState.teacherPin);
+    const pill = document.getElementById('teacherAuthStatusPill');
+    pill.textContent = isTeacher ? '🔓 교사 인증 완료 (수정·저장 가능)' : '🔒 교사 인증 필요 (기본 PIN: 1234)';
+    pill.style.background = isTeacher ? 'var(--green)' : '#ffeef0';
+
+    const tBtn = document.getElementById('teacherModeBtn');
+    tBtn.textContent = isTeacher ? '👩‍🏫 교사 모드 ON (종료)' : '교사 모드 로그인';
+    tBtn.className = isTeacher ? 'btn btn-pink' : 'btn btn-dark';
+  }
+
+  function populateStudentSelectors() {
+    const noteSel = document.getElementById('noteStudentSelect');
+    const filterSel = document.getElementById('noteStudentFilter');
+    const aiSel = document.getElementById('aiStudentSelect');
+
+    const prevNoteStu = noteSel.value;
+    const prevFilterStu = filterSel.value;
+    const prevAiStu = aiSel.value;
+
+    const optsHtml = appState.students
+      .map(s => `<option value="${s.studentNum}">${s.studentNum}번 ${escapeHtml(s.studentName)}</option>`)
+      .join('');
+
+    noteSel.innerHTML = `<option value="">학생 선택</option>${optsHtml}`;
+    filterSel.innerHTML = `<option value="all">전체 학생 보기</option>${optsHtml}`;
+    aiSel.innerHTML = optsHtml || `<option value="">등록 학생 없음</option>`;
+
+    if (prevNoteStu) noteSel.value = prevNoteStu;
+    if (prevFilterStu) filterSel.value = prevFilterStu;
+    if (prevAiStu) aiSel.value = prevAiStu;
+    else if (appState.students.length > 0) aiSel.value = String(appState.students[0].studentNum);
+  }
+
+  function renderSuggestedTags() {
+    const text = document.getElementById('noteRawTextInput').value;
+    const { tags } = extractLocalTagsAndInsights(text);
+    const bar = document.getElementById('suggestedTagsBar');
+    bar.innerHTML = `<span>💡 추천 역량 태그:</span>` +
+      tags.map(t => `<button type="button" class="tag-pill-btn" data-add-tag="${escapeHtml(t)}">+ ${escapeHtml(t)}</button>`).join('');
+  }
+
+  function renderNotesGrid() {
+    const grid = document.getElementById('notesGrid');
+    const domain = appState.domainFilter;
+    const stuFilter = appState.studentFilter;
+    const kw = appState.searchKeyword.trim().toLowerCase();
+
+    const filtered = appState.notes.filter(n => {
+      if (domain !== 'all' && n.domain !== domain) return false;
+      if (stuFilter !== 'all' && Number(n.studentNum) !== Number(stuFilter)) return false;
+      if (kw) {
+        const hay = `${n.studentNum}번 ${n.studentName} ${n.domain} ${n.subject} ${n.rawText} ${n.tags}`.toLowerCase();
+        if (!hay.includes(kw)) return false;
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty-state">조건에 맞는 관찰 메모 카드가 없습니다.</div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(n => {
+      const tagsArr = String(n.tags || '')
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean);
+
+      return `
+        <article class="keep-card" style="background:${escapeHtml(n.color || '#fff9b1')};">
+          <div>
+            <div class="keep-card-top" style="margin-bottom:10px;">
+              <span class="keep-student-badge">${n.studentNum}번 ${escapeHtml(n.studentName)}</span>
+              <span class="keep-domain-badge">${n.isPinned ? '📌 ' : ''}${escapeHtml(n.domain)} · ${escapeHtml(n.subject)}</span>
+            </div>
+            <div class="keep-text">${escapeHtml(n.rawText)}</div>
+            ${tagsArr.length > 0 ? `
+              <div class="keep-tags" style="margin-top:10px;">
+                ${tagsArr.map(t => `<span class="keep-tag">#${escapeHtml(t)}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="keep-footer">
+            <span>${escapeHtml(n.observedDate || n.createdAt.slice(0, 10))}</span>
+            <div class="keep-actions">
+              <button type="button" class="btn btn-sm btn-cyan" data-go-ai-note="${escapeHtml(n.noteId)}">AI 문안화</button>
+              <button type="button" class="btn btn-sm" data-edit-note="${escapeHtml(n.noteId)}">수정</button>
+              <button type="button" class="btn btn-sm btn-red" data-delete-note="${escapeHtml(n.noteId)}">삭제</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  function renderAiStudioNotesList() {
+    const stuNum = Number(document.getElementById('aiStudentSelect').value);
+    const container = document.getElementById('aiStudentNotesList');
+    const stuNotes = appState.notes.filter(n => Number(n.studentNum) === stuNum);
+
+    if (stuNotes.length === 0) {
+      container.innerHTML = `<div style="padding:16px; background:var(--bg); border:2px dashed var(--ink); font-size:0.86rem; font-weight:700; color:var(--muted);">
+        이 학생의 관찰 메모가 아직 없습니다. 상단에서 메모를 먼저 작성해 보세요.
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = stuNotes.map(n => {
+      const checked = appState.selectedAiNoteIds.has(n.noteId);
+      return `
+        <label class="selectable-note-item ${checked ? 'checked' : ''}">
+          <input type="checkbox" data-ai-note-check="${escapeHtml(n.noteId)}" ${checked ? 'checked' : ''} />
+          <div style="font-size:0.84rem;">
+            <div style="font-weight:900; margin-bottom:2px;">
+              [${escapeHtml(n.domain)} · ${escapeHtml(n.subject)}] <span style="color:var(--muted);">${escapeHtml(n.observedDate)}</span>
+            </div>
+            <div style="font-weight:700;">${escapeHtml(n.rawText)}</div>
+          </div>
+        </label>
+      `;
+    }).join('');
+  }
+
+  function renderDraftsList() {
+    const container = document.getElementById('draftsList');
+    if (appState.drafts.length === 0) {
+      container.innerHTML = `<div class="empty-state">저장된 생활기록부 초안이 없습니다.</div>`;
+      return;
+    }
+
+    container.innerHTML = appState.drafts.map(d => `
+      <article class="draft-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+          <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
+            <span class="keep-student-badge">${d.studentNum}번 ${escapeHtml(d.studentName)}</span>
+            <span class="keep-domain-badge">${escapeHtml(d.domain)} · ${escapeHtml(d.subject)}</span>
+            <span style="font-size:0.78rem; font-weight:800; color:var(--muted);">${d.charCount}자 · ${escapeHtml(d.updatedAt)}</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-sm btn-cyan" data-load-draft="${escapeHtml(d.draftId)}">불러오기</button>
+            <button type="button" class="btn btn-sm btn-red" data-delete-draft="${escapeHtml(d.draftId)}">삭제</button>
+          </div>
+        </div>
+        <p style="font-size:0.92rem; font-weight:700; white-space:pre-line;">${escapeHtml(d.generatedText)}</p>
+      </article>
+    `).join('');
+  }
+
+  function renderStudentsGrid() {
+    const grid = document.getElementById('studentGrid');
+    if (appState.students.length === 0) {
+      grid.innerHTML = `<div class="empty-state">등록된 학생 명단이 없습니다.</div>`;
+      return;
+    }
+
+    grid.innerHTML = appState.students.map(s => `
+      <article class="student-card">
+        <div class="student-card-head">
+          <div>
+            <span class="student-num-badge">${s.studentNum}번</span>
+            <strong style="font-size:1.05rem; margin-left:5px;">${escapeHtml(s.studentName)}</strong>
+          </div>
+          <span class="badge-pill" style="background:var(--yellow);">메모 ${s.noteCount}건</span>
+        </div>
+        <div style="font-size:0.78rem; font-weight:700; color:var(--muted);">
+          최근 기록: ${escapeHtml(s.lastUpdated || '-')}
+        </div>
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <button type="button" class="btn btn-sm btn-cyan" data-filter-student="${s.studentNum}">메모 보기</button>
+          <button type="button" class="btn btn-sm btn-yellow" data-open-ai-student="${s.studentNum}">AI 초안</button>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function populateSettingsForm() {
+    const s = appState.settings;
+    document.getElementById('setSchoolName').value = s.schoolName || '';
+    document.getElementById('setClassName').value = s.className || '';
+    document.getElementById('setTeacherName').value = s.teacherName || '';
+    document.getElementById('setAppTitle').value = s.appTitle || '';
+  }
+
+  /* ==================== 이벤트 바인딩 ==================== */
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('noteDateInput').value = new Date().toISOString().slice(0, 10);
+
+    try {
+      const savedPin = sessionStorage.getItem(TEACHER_SESSION_KEY);
+      if (savedPin) appState.teacherPin = savedPin;
+    } catch (_) {}
+
+    fetchAllData();
+
+    // 새로고침
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      fetchAllData();
+      showToast('구글 시트와 동기화했습니다.');
+    });
+
+    // 탭 전환
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab)?.classList.add('active');
+        if (btn.dataset.tab === 'aiStudioTab') {
+          renderAiStudioNotesList();
+          updateCharByteMeter();
+        }
+      });
+    });
+
+    // 교사 인증 모달
+    document.getElementById('teacherModeBtn').addEventListener('click', () => {
+      if (appState.teacherPin) {
+        appState.teacherPin = '';
+        sessionStorage.removeItem(TEACHER_SESSION_KEY);
+        renderAll();
+        showToast('교사 모드가 종료되었습니다.');
+        return;
+      }
+      const pinInput = document.getElementById('teacherPinInput');
+      pinInput.value = DEFAULT_TEACHER_PIN;
+      pinInput.type = 'text';
+      document.getElementById('toggleTeacherPinVisBtn').textContent = '숨기기';
+      openModal('teacherLoginModal');
+    });
+
+    document.getElementById('toggleTeacherPinVisBtn').addEventListener('click', (e) => {
+      const inp = document.getElementById('teacherPinInput');
+      if (inp.type === 'text') {
+        inp.type = 'password';
+        e.target.textContent = '보기';
+      } else {
+        inp.type = 'text';
+        e.target.textContent = '숨기기';
+      }
+    });
+
+    document.getElementById('teacherLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pin = document.getElementById('teacherPinInput').value.trim();
+      if (!pin) return;
+      try {
+        await postAction({ action: 'verifyTeacher', pin });
+        appState.teacherPin = pin;
+        sessionStorage.setItem(TEACHER_SESSION_KEY, pin);
+        closeModal('teacherLoginModal');
+        renderAll();
+        showToast('교사 모드 인증이 완료되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 메모 입력 시 추천 태그 갱신 및 태그 추가 클릭
+    document.getElementById('noteRawTextInput').addEventListener('input', renderSuggestedTags);
+    document.getElementById('suggestedTagsBar').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-add-tag]');
+      if (!btn) return;
+      const tag = btn.dataset.addTag;
+      const tagInp = document.getElementById('noteTagsInput');
+      const current = tagInp.value.split(',').map(s => s.trim()).filter(Boolean);
+      if (!current.includes(tag)) {
+        current.push(tag);
+        tagInp.value = current.join(',');
+      }
+    });
+
+    // 색상 선택
+    document.querySelectorAll('#colorPalette .color-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        document.querySelectorAll('#colorPalette .color-dot').forEach(d => d.classList.remove('active'));
+        dot.classList.add('active');
+        appState.selectedColor = dot.dataset.color;
+      });
+    });
+
+    // 새 관찰 메모 카드 저장
+    document.getElementById('quickNoteForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!ensureTeacherOrPrompt()) return;
+
+      const studentNum = Number(document.getElementById('noteStudentSelect').value);
+      const stu = appState.students.find(s => Number(s.studentNum) === studentNum);
+      const rawText = document.getElementById('noteRawTextInput').value.trim();
+
+      if (!stu || !rawText) {
+        showToast('학생과 관찰 메모 내용을 입력해 주세요.');
+        return;
+      }
+
+      let tags = document.getElementById('noteTagsInput').value.trim();
+      if (!tags) {
+        tags = extractLocalTagsAndInsights(rawText).tags.join(',');
+      }
+
+      try {
+        await postAction({
+          action: 'createNote',
+          pin: appState.teacherPin,
+          studentNum: stu.studentNum,
+          studentName: stu.studentName,
+          domain: document.getElementById('noteDomainSelect').value,
+          subject: document.getElementById('noteSubjectInput').value.trim() || '학급생활',
+          rawText,
+          tags,
+          color: appState.selectedColor,
+          isPinned: document.getElementById('notePinnedInput').checked,
+          observedDate: document.getElementById('noteDateInput').value
+        });
+        document.getElementById('noteRawTextInput').value = '';
+        document.getElementById('noteTagsInput').value = '';
+        document.getElementById('notePinnedInput').checked = false;
+        renderSuggestedTags();
+        showToast(`${stu.studentNum}번 ${stu.studentName} 학생의 관찰 메모가 저장되었습니다.`);
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 메모 보드 필터 & 검색
+    document.querySelectorAll('#noteDomainChips .chip-btn').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('#noteDomainChips .chip-btn').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        appState.domainFilter = chip.dataset.domain;
+        renderNotesGrid();
+      });
+    });
+
+    document.getElementById('noteStudentFilter').addEventListener('change', (e) => {
+      appState.studentFilter = e.target.value;
+      renderNotesGrid();
+    });
+
+    document.getElementById('noteSearchInput').addEventListener('input', (e) => {
+      appState.searchKeyword = e.target.value;
+      renderNotesGrid();
+    });
+
+    // 메모 카드 버튼 위임 (AI 문안화 이동, 수정, 삭제)
+    document.getElementById('notesGrid').addEventListener('click', async (e) => {
+      const goAiBtn = e.target.closest('[data-go-ai-note]');
+      if (goAiBtn) {
+        const note = appState.notes.find(n => n.noteId === goAiBtn.dataset.goAiNote);
+        if (!note) return;
+        document.getElementById('aiStudentSelect').value = String(note.studentNum);
+        document.getElementById('aiDomainSelect').value = note.domain;
+        document.getElementById('aiSubjectInput').value = note.subject;
+        appState.selectedAiNoteIds.clear();
+        appState.selectedAiNoteIds.add(note.noteId);
+
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'aiStudioTab'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'aiStudioTab'));
+        renderAiStudioNotesList();
+
+        const stu = appState.students.find(s => Number(s.studentNum) === Number(note.studentNum));
+        const generated = synthesizeLocalSchoolRecord({
+          studentName: stu ? stu.studentName : note.studentName,
+          domain: note.domain,
+          subject: note.subject,
+          selectedNotes: [note],
+          styleMode: document.getElementById('aiStyleSelect').value
+        });
+        document.getElementById('aiGeneratedTextarea').value = generated;
+        updateCharByteMeter();
+        showToast('선택한 관찰 메모를 로컬 AI로 문안화했습니다.');
+        return;
+      }
+
+      const editBtn = e.target.closest('[data-edit-note]');
+      if (editBtn) {
+        if (!ensureTeacherOrPrompt()) return;
+        const note = appState.notes.find(n => n.noteId === editBtn.dataset.editNote);
+        if (!note) return;
+        document.getElementById('editNoteId').value = note.noteId;
+        document.getElementById('editNoteDomain').value = note.domain;
+        document.getElementById('editNoteSubject').value = note.subject;
+        document.getElementById('editNoteRawText').value = note.rawText;
+        document.getElementById('editNoteTags').value = note.tags;
+        openModal('editNoteModal');
+        return;
+      }
+
+      const delBtn = e.target.closest('[data-delete-note]');
+      if (delBtn) {
+        if (!ensureTeacherOrPrompt()) return;
+        if (!confirm('이 관찰 메모 카드를 삭제하시겠습니까?')) return;
+        try {
+          await postAction({
+            action: 'deleteNote',
+            pin: appState.teacherPin,
+            noteId: delBtn.dataset.deleteNote
+          });
+          showToast('관찰 메모가 삭제되었습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+      }
+    });
+
+    // 메모 수정 폼 저장
+    document.getElementById('editNoteForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!ensureTeacherOrPrompt()) return;
+      try {
+        await postAction({
+          action: 'updateNote',
+          pin: appState.teacherPin,
+          noteId: document.getElementById('editNoteId').value,
+          domain: document.getElementById('editNoteDomain').value,
+          subject: document.getElementById('editNoteSubject').value.trim(),
+          rawText: document.getElementById('editNoteRawText').value.trim(),
+          tags: document.getElementById('editNoteTags').value.trim()
+        });
+        closeModal('editNoteModal');
+        showToast('관찰 메모가 수정되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // AI 스튜디오 이벤트
+    document.getElementById('aiStudentSelect').addEventListener('change', () => {
+      appState.selectedAiNoteIds.clear();
+      renderAiStudioNotesList();
+    });
+
+    document.getElementById('aiStudentNotesList').addEventListener('change', (e) => {
+      const cb = e.target.closest('[data-ai-note-check]');
+      if (!cb) return;
+      if (cb.checked) appState.selectedAiNoteIds.add(cb.dataset.aiNoteCheck);
+      else appState.selectedAiNoteIds.delete(cb.dataset.aiNoteCheck);
+      renderAiStudioNotesList();
+    });
+
+    document.getElementById('selectAllStudentNotesBtn').addEventListener('click', () => {
+      const stuNum = Number(document.getElementById('aiStudentSelect').value);
+      const stuNotes = appState.notes.filter(n => Number(n.studentNum) === stuNum);
+      if (stuNotes.length === 0) return;
+      const allSelected = stuNotes.every(n => appState.selectedAiNoteIds.has(n.noteId));
+      appState.selectedAiNoteIds.clear();
+      if (!allSelected) stuNotes.forEach(n => appState.selectedAiNoteIds.add(n.noteId));
+      renderAiStudioNotesList();
+    });
+
+    function runLocalGeneration() {
+      const stuNum = Number(document.getElementById('aiStudentSelect').value);
+      const stu = appState.students.find(s => Number(s.studentNum) === stuNum);
+      const domain = document.getElementById('aiDomainSelect').value;
+      const subject = document.getElementById('aiSubjectInput').value.trim() || domain;
+      const styleMode = document.getElementById('aiStyleSelect').value;
+
+      let chosen = appState.notes.filter(
+        n => Number(n.studentNum) === stuNum && appState.selectedAiNoteIds.has(n.noteId)
+      );
+      if (chosen.length === 0) {
+        chosen = appState.notes.filter(n => Number(n.studentNum) === stuNum);
+      }
+
+      const generated = synthesizeLocalSchoolRecord({
+        studentName: stu ? stu.studentName : '학생',
+        domain,
+        subject,
+        selectedNotes: chosen,
+        styleMode
+      });
+
+      document.getElementById('aiGeneratedTextarea').value = generated;
+      updateCharByteMeter();
+      showToast('로컬 AI 엔진이 생기부 문안을 구조화했습니다.');
+    }
+
+    document.getElementById('generateLocalDraftBtn').addEventListener('click', runLocalGeneration);
+    document.getElementById('polishAgainBtn').addEventListener('click', runLocalGeneration);
+    document.getElementById('aiGeneratedTextarea').addEventListener('input', updateCharByteMeter);
+
+    document.getElementById('copyDraftBtn').addEventListener('click', () => {
+      const txt = document.getElementById('aiGeneratedTextarea').value;
+      if (!txt) return;
+      navigator.clipboard?.writeText(txt);
+      showToast('생기부 초안이 클립보드에 복사되었습니다.');
+    });
+
+    document.getElementById('saveDraftToSheetBtn').addEventListener('click', async () => {
+      if (!ensureTeacherOrPrompt()) return;
+      const stuNum = Number(document.getElementById('aiStudentSelect').value);
+      const stu = appState.students.find(s => Number(s.studentNum) === stuNum);
+      const generatedText = document.getElementById('aiGeneratedTextarea').value.trim();
+
+      if (!stu || !generatedText) {
+        showToast('학생과 저장할 생기부 초안 문장을 확인해 주세요.');
+        return;
+      }
+
+      try {
+        await postAction({
+          action: 'saveDraft',
+          pin: appState.teacherPin,
+          studentNum: stu.studentNum,
+          studentName: stu.studentName,
+          domain: document.getElementById('aiDomainSelect').value,
+          subject: document.getElementById('aiSubjectInput').value.trim() || '행동특성 및 종합의견',
+          generatedText
+        });
+        showToast(`${stu.studentNum}번 ${stu.studentName} 학생의 생기부 초안이 시트에 저장되었습니다.`);
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 저장된 초안 불러오기/삭제
+    document.getElementById('draftsList').addEventListener('click', async (e) => {
+      const loadBtn = e.target.closest('[data-load-draft]');
+      if (loadBtn) {
+        const d = appState.drafts.find(item => item.draftId === loadBtn.dataset.loadDraft);
+        if (!d) return;
+        document.getElementById('aiStudentSelect').value = String(d.studentNum);
+        document.getElementById('aiDomainSelect').value = d.domain || '행동발달';
+        document.getElementById('aiSubjectInput').value = d.subject || '';
+        document.getElementById('aiGeneratedTextarea').value = d.generatedText;
+        renderAiStudioNotesList();
+        updateCharByteMeter();
+        window.scrollTo({ top: 220, behavior: 'smooth' });
+        showToast('초안을 편집창으로 불러왔습니다.');
+        return;
+      }
+
+      const delBtn = e.target.closest('[data-delete-draft]');
+      if (delBtn) {
+        if (!ensureTeacherOrPrompt()) return;
+        if (!confirm('저장된 생기부 초안을 삭제하시겠습니까?')) return;
+        try {
+          await postAction({
+            action: 'deleteDraft',
+            pin: appState.teacherPin,
+            draftId: delBtn.dataset.deleteDraft
+          });
+          showToast('생기부 초안이 삭제되었습니다.');
+        } catch (err) {
+          showToast(err.message);
+        }
+      }
+    });
+
+    // 학생 현황 탭 버튼 위임
+    document.getElementById('studentGrid').addEventListener('click', (e) => {
+      const filterBtn = e.target.closest('[data-filter-student]');
+      if (filterBtn) {
+        appState.studentFilter = filterBtn.dataset.filterStudent;
+        document.getElementById('noteStudentFilter').value = filterBtn.dataset.filterStudent;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'notesTab'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'notesTab'));
+        renderNotesGrid();
+        return;
+      }
+
+      const aiBtn = e.target.closest('[data-open-ai-student]');
+      if (aiBtn) {
+        document.getElementById('aiStudentSelect').value = aiBtn.dataset.openAiStudent;
+        appState.selectedAiNoteIds.clear();
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'aiStudioTab'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'aiStudioTab'));
+        renderAiStudioNotesList();
+        runLocalGeneration();
+      }
+    });
+
+    // 학급 설정 저장
+    document.getElementById('appSettingsForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!ensureTeacherOrPrompt()) return;
+      const newPin = document.getElementById('setNewTeacherPin').value.trim();
+      try {
+        await postAction({
+          action: 'updateSettings',
+          pin: appState.teacherPin,
+          schoolName: document.getElementById('setSchoolName').value.trim(),
+          className: document.getElementById('setClassName').value.trim(),
+          teacherName: document.getElementById('setTeacherName').value.trim(),
+          appTitle: document.getElementById('setAppTitle').value.trim(),
+          newTeacherPin: newPin
+        });
+        if (newPin.length >= 4) {
+          appState.teacherPin = newPin;
+          sessionStorage.setItem(TEACHER_SESSION_KEY, newPin);
+          document.getElementById('setNewTeacherPin').value = '';
+        }
+        showToast('학급 설정이 저장되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 학생 명단 추가/수정
+    document.getElementById('upsertStudentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!ensureTeacherOrPrompt()) return;
+      try {
+        await postAction({
+          action: 'upsertStudent',
+          pin: appState.teacherPin,
+          studentNum: Number(document.getElementById('stuNumInput').value),
+          studentName: document.getElementById('stuNameInput').value.trim()
+        });
+        document.getElementById('stuNumInput').value = '';
+        document.getElementById('stuNameInput').value = '';
+        showToast('학생 명단이 구글 시트에 반영되었습니다.');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // 모달 닫기
+    document.querySelectorAll('[data-close-modal]').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
+    });
+
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) backdrop.classList.remove('open');
+      });
+    });
+  });
+</script>
+</body>
+</html>
