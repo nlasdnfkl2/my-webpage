@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나의 활동 성향 알아보기 - 설문 창</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+    :root {
+      --bg: #fdfbf7;
+      --black: #111111;
+      --border: 3px solid var(--black);
+      --border-thick: 4px solid var(--black);
+      --yellow: #ffd83b;
+      --red: #ff4757;
+      --blue: #3e51ff;
+      --green: #2ed573;
+      --pink: #ff9ff3;
+      --cyan: #48dbfb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      line-height: 1.6;
+      padding: 24px 16px 64px;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 28px;
+      border-bottom: var(--border-thick);
+    }
+
+    .brand {
+      background: var(--black);
+      color: var(--yellow);
+      font-weight: 900;
+      padding: 4px 12px;
+      transform: skew(-5deg);
+    }
+
+    .btn-home {
+      font-size: 0.9rem;
+      font-weight: 900;
+      padding: 6px 14px;
+      border: var(--border);
+      background: white;
+      box-shadow: 4px 4px 0 var(--black);
+      text-decoration: none;
+      color: var(--black);
+    }
+    .btn-home:hover { background: var(--yellow); }
+
+    .card {
+      background: white;
+      border: var(--border-thick);
+      box-shadow: 8px 8px 0 var(--black);
+      padding: 28px 24px;
+      margin-bottom: 24px;
+    }
+
+    .pill {
+      display: inline-block;
+      background: var(--black);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 900;
+      padding: 4px 12px;
+      box-shadow: 4px 4px 0 var(--red);
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    h1 span {
+      background: var(--yellow);
+      border: var(--border);
+      padding: 0 8px;
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 12px 14px;
+      border: var(--border);
+      background: var(--bg);
+      box-shadow: 4px 4px 0 var(--black);
+      outline: none;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      background: #fff9db;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 1.05rem;
+      font-weight: 900;
+      padding: 14px 22px;
+      border: var(--border-thick);
+      background: var(--green);
+      color: var(--black);
+      box-shadow: 6px 6px 0 var(--black);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 var(--black);
+    }
+    .btn:disabled {
+      background: #dfe4ea;
+      color: #747d8c;
+      box-shadow: 3px 3px 0 #747d8c;
+      border-color: #747d8c;
+      cursor: not-allowed;
+    }
+    .btn-full { width: 100%; }
+    .btn-yellow { background: var(--yellow); }
+    .btn-cyan { background: var(--cyan); }
+
+    .error-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--red);
+      color: white;
+      font-weight: 800;
+      border: var(--border);
+    }
+
+    .progress-bar-wrap {
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+      background: var(--yellow);
+      border: var(--border-thick);
+      box-shadow: 6px 6px 0 var(--black);
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .progress-track {
+      flex: 1;
+      height: 16px;
+      background: white;
+      border: 2px solid var(--black);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--blue);
+      transition: width 0.25s ease;
+    }
+
+    .q-card {
+      background: white;
+      border: var(--border);
+      box-shadow: 5px 5px 0 var(--black);
+      padding: 20px;
+      margin-bottom: 18px;
+      transition: background 0.15s;
+    }
+    .q-card.answered {
+      background: #f8fff9;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .q-num {
+      background: var(--black);
+      color: white;
+      font-weight: 900;
+      font-size: 0.85rem;
+      padding: 2px 10px;
+    }
+    .q-domain {
+      font-size: 0.82rem;
+      font-weight: 900;
+      padding: 2px 8px;
+      border: 2px solid var(--black);
+      background: var(--cyan);
+    }
+    .q-text {
+      font-size: 1.08rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .scale-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 600px) {
+      .scale-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .scale-opt input[type="radio"] {
+      display: none;
+    }
+    .scale-opt label {
+      display: block;
+      text-align: center;
+      padding: 10px 6px;
+      border: 2px solid var(--black);
+      background: var(--bg);
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin: 0;
+      box-shadow: 2px 2px 0 var(--black);
+      transition: all 0.1s;
+    }
+    .scale-opt input[type="radio"]:checked + label {
+      background: var(--yellow);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .result-badge {
+      display: inline-block;
+      background: var(--pink);
+      border: var(--border-thick);
+      padding: 8px 18px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      box-shadow: 5px 5px 0 var(--black);
+      margin: 12px 0 20px;
+    }
+    .bar-row { margin-bottom: 14px; }
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .bar-bg {
+      height: 22px;
+      border: var(--border);
+      background: var(--bg);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+    .bar-val {
+      height: 100%;
+      background: var(--cyan);
+      border-right: 2px solid var(--black);
+    }
+    .advice-box {
+      margin-top: 20px;
+      padding: 18px;
+      background: #ffeaa7;
+      border: var(--border);
+      box-shadow: 4px 4px 0 var(--black);
+      font-weight: 700;
+    }
+    .sync-notice {
+      margin-top: 14px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #2d3436;
+    }
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .hidden { display: none !important; }
+
+    @media print {
+      .topbar, .result-actions { display: none !important; }
+      body { background: white; padding: 0; }
+      .card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">실습 26 · 활동 성향 검사</span>
+    <a href="index.html" class="btn-home">첫 화면으로</a>
+  </div>
+
+  <!-- 1단계: 학생 로그인 화면 (이름 + 암호 2026) -->
+  <section id="loginSection" class="card">
+    <span class="pill">STUDENT LOGIN</span>
+    <h1>나의 <span>활동 성향</span> 알아보기</h1>
+    <p style="font-weight:600; margin-bottom:20px;">이름과 선생님이 알려주신 학급 암호를 입력하고 설문을 시작하세요.</p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="studentName">학생 이름</label>
+        <input type="text" id="studentName" placeholder="예: 김민준" required>
+      </div>
+      <div class="form-group">
+        <label for="classCode">학급 암호</label>
+        <input type="password" id="classCode" placeholder="암호 4자리 입력 (2026)" required>
+      </div>
+      <button type="submit" class="btn btn-full">설문 시작하기 &rarr;</button>
+      <div id="loginError" class="error-msg">학급 암호가 올바르지 않습니다. (암호: 2026)</div>
+    </form>
+  </section>
+
+  <!-- 2단계: 설문 응답 화면 (20문항 4점 척도) -->
+  <section id="surveySection" class="hidden">
+    <div class="progress-bar-wrap">
+      <strong id="studentGreeting">학생 응답 중</strong>
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <strong id="progressText">0 / 20문항</strong>
+    </div>
+
+    <div id="questionContainer"></div>
+
+    <div class="card" style="text-align:center;">
+      <p id="submitHint" style="font-weight:800; margin-bottom:14px; color:#d63031;">
+        [안내] 모든 문항(20개)에 응답해야 [제출 결과] 버튼이 활성화됩니다.
+      </p>
+      <button type="button" id="submitBtn" class="btn btn-full" disabled onclick="submitAnswers()">
+        제출 결과 확인하기 &rarr;
+      </button>
+    </div>
+  </section>
+
+  <!-- 3단계: 개인 활동 성향 시각화 리포트 -->
+  <section id="resultSection" class="card hidden">
+    <span class="pill">MY ACTIVITY REPORT</span>
+    <h1 id="resultTitle">활동 성향 분석 결과</h1>
+    <div id="topTraitBadge" class="result-badge">대표 성향</div>
+
+    <div id="resultBars"></div>
+
+    <div id="adviceBox" class="advice-box"></div>
+    <p id="syncNotice" class="sync-notice"></p>
+
+    <div class="result-actions">
+      <button type="button" class="btn btn-yellow" onclick="window.print()">리포트 PDF 저장</button>
+      <a href="index.html" class="btn btn-cyan" style="text-decoration:none;">첫 화면으로 돌아가기</a>
+    </div>
+  </section>
+</div>
+
+<script>
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzaMNkrxP7xbmCgeRu1iz-f2sxFnb39OiOR7HCGtQAP3NZWjvVqtksk7ObFAn_ibMRvoA/exec';
+  const LOCAL_BACKUP_KEY = 'trait_survey_backup_v1';
+
+  const QUESTIONS = [
+    // 탐구 (Q1~Q5)
+    { domain: '탐구', text: '나는 새로운 원리나 이유를 끝까지 찾아보는 것을 좋아한다.' },
+    { domain: '탐구', text: '나는 궁금한 점이 생기면 책이나 인터넷으로 바로 찾아본다.' },
+    { domain: '탐구', text: '나는 퍼즐이나 규칙을 찾는 문제를 풀 때 재미를 느낀다.' },
+    { domain: '탐구', text: '나는 관찰하거나 실험하면서 새로운 사실을 알아내는 것이 즐겁다.' },
+    { domain: '탐구', text: '나는 숙제할 때 "왜 그럴까?"를 스스로 생각하며 정리한다.' },
+    // 표현 (Q6~Q10)
+    { domain: '표현', text: '나는 내 생각이나 느낌을 그림, 글, 말로 나타내는 것을 좋아한다.' },
+    { domain: '표현', text: '나는 발표하거나 아이디어를 낼 때 나만의 색깔로 꾸미는 것이 즐겁다.' },
+    { domain: '표현', text: '나는 만들기, 그리기, 글쓰기 같은 창작 활동 시간에 시간이 빨리 간다.' },
+    { domain: '표현', text: '나는 재미있는 이야기를 상상하거나 새로운 방법을 떠올리는 것을 좋아한다.' },
+    { domain: '표현', text: '나는 배운 내용을 마인드맵이나 그림으로 정리하면 기억이 잘 난다.' },
+    // 협력 (Q11~Q15)
+    { domain: '협력', text: '나는 친구들과 함께 어울려 모둠 활동을 하는 것을 좋아한다.' },
+    { domain: '협력', text: '나는 어려움을 겪는 친구가 있으면 먼저 다가가 도와주고 싶다.' },
+    { domain: '협력', text: '나는 토의할 때 친구들의 이야기를 끝까지 잘 들어주는 편이다.' },
+    { domain: '협력', text: '나는 우리 반이나 모둠의 분위기가 즐거워지도록 노력한다.' },
+    { domain: '협력', text: '나는 친구와 의견이 다를 때 서로 양보하며 해결하려고 한다.' },
+    // 계획 (Q16~Q20)
+    { domain: '계획', text: '나는 할 일을 미리 순서대로 정해 놓고 실천하는 것을 좋아한다.' },
+    { domain: '계획', text: '나는 준비물이나 알림장 내용을 빠뜨리지 않고 꼼꼼히 챙긴다.' },
+    { domain: '계획', text: '나는 공부나 숙제를 미루지 않고 정해진 시간에 끝내려고 노력한다.' },
+    { domain: '계획', text: '나는 책상이나 사물함을 깔끔하게 정리 정돈하는 것이 편하다.' },
+    { domain: '계획', text: '나는 모둠 활동에서 시간과 역할을 나누어 진행하는 것을 잘한다.' }
+  ];
+
+  const SCALE_LABELS = [
+    { val: 1, label: '1. 전혀 그렇지 않다' },
+    { val: 2, label: '2. 그렇지 않다' },
+    { val: 3, label: '3. 그렇다' },
+    { val: 4, label: '4. 매우 그렇다' }
+  ];
+
+  const ADVICE_MAP = {
+    '탐구': '호기심이 많고 깊이 생각하는 탐구형입니다. 공부할 때 핵심 질문을 공책에 적어보고, 과학 실험이나 자료 조사 활동에서 리더 역할을 맡아보면 더욱 성장할 수 있습니다.',
+    '표현': '상상력이 풍부하고 자기 생각이 뚜렷한 표현형입니다. 배운 내용을 그림, 포스터, 발표 자료로 만들어 친구들에게 설명하는 학습 습관을 기르면 실력이 크게 향상됩니다.',
+    '협력': '친구들의 마음을 잘 헤아리고 함께할 때 힘이 나는 협력형입니다. 모둠 토의의 진행자나 배려 도우미 역할을 맡고, 친구와 서로 퀴즈를 내며 공부하면 효과가 높습니다.',
+    '계획': '시간 약속을 잘 지키고 꼼꼼하게 실천하는 계획형입니다. 오늘 할 일 체크리스트를 작성하고 모둠 활동의 일정 관리와 기록 역할을 맡으면 학급의 든든한 중심이 됩니다.'
+  };
+
+  let currentStudent = '';
+  const answers = new Array(QUESTIONS.length).fill(0);
+
+  // 1. 로그인 검증 (암호: 2026)
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('studentName').value.trim();
+    const code = document.getElementById('classCode').value.trim();
+    const err = document.getElementById('loginError');
+
+    if (code !== '2026') {
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+    currentStudent = name;
+
+    document.getElementById('loginSection').classList.add('hidden');
+    document.getElementById('surveySection').classList.remove('hidden');
+    document.getElementById('studentGreeting').textContent = `${currentStudent} 학생`;
+    renderQuestions();
+  });
+
+  // 2. 20문항 렌더링
+  function renderQuestions() {
+    const container = document.getElementById('questionContainer');
+    container.innerHTML = '';
+
+    QUESTIONS.forEach((q, idx) => {
+      const card = document.createElement('div');
+      card.className = 'q-card';
+      card.id = `qcard_${idx}`;
+
+      const optionsHtml = SCALE_LABELS.map(opt => `
+        <div class="scale-opt">
+          <input type="radio" name="q_${idx}" id="q_${idx}_${opt.val}" value="${opt.val}" onchange="handleSelect(${idx}, ${opt.val})">
+          <label for="q_${idx}_${opt.val}">${opt.label}</label>
+        </div>
+      `).join('');
+
+      card.innerHTML = `
+        <div class="q-header">
+          <span class="q-num">Q${idx + 1}</span>
+          <span class="q-domain">${q.domain} 영역</span>
+        </div>
+        <div class="q-text">${q.text}</div>
+        <div class="scale-grid">${optionsHtml}</div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // 3. 응답 체크 및 미응답 시 제출 버튼 비활성화 유지
+  function handleSelect(qIdx, val) {
+    answers[qIdx] = val;
+    document.getElementById(`qcard_${qIdx}`).classList.add('answered');
+
+    const answeredCount = answers.filter(v => v > 0).length;
+    const pct = Math.round((answeredCount / QUESTIONS.length) * 100);
+    document.getElementById('progressFill').style.width = `${pct}%`;
+    document.getElementById('progressText').textContent = `${answeredCount} / ${QUESTIONS.length}문항`;
+
+    const submitBtn = document.getElementById('submitBtn');
+    const hint = document.getElementById('submitHint');
+
+    if (answeredCount === QUESTIONS.length) {
+      submitBtn.disabled = false;
+      hint.style.color = '#111111';
+      hint.textContent = '[완료] 모든 문항에 응답했습니다. 아래 버튼을 눌러 결과를 확인하세요.';
+    } else {
+      submitBtn.disabled = true;
+      hint.style.color = '#d63031';
+      hint.textContent = `[안내] 아직 ${QUESTIONS.length - answeredCount}개 문항이 남았습니다. 모두 체크해야 제출할 수 있습니다.`;
+    }
+  }
+
+  function formatNow() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  function saveLocalBackup(record) {
+    try {
+      const list = JSON.parse(localStorage.getItem(LOCAL_BACKUP_KEY)) || [];
+      const idx = list.findIndex(item => item.name === record.name);
+      if (idx >= 0) {
+        list[idx] = record;
+      } else {
+        list.push(record);
+      }
+      localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(list));
+    } catch (e) {}
+  }
+
+  // 4. 결과 계산 및 구글 시트(Apps Script) 전송
+  async function submitAnswers() {
+    if (answers.some(v => v === 0)) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '결과 분석 및 저장 중...';
+
+    const scores = { 탐구: 0, 표현: 0, 협력: 0, 계획: 0 };
+    QUESTIONS.forEach((q, idx) => {
+      scores[q.domain] += answers[idx];
+    });
+
+    const maxScore = Math.max(...Object.values(scores));
+    const topDomains = Object.keys(scores).filter(k => scores[k] === maxScore);
+    const topTrait = topDomains.map(d => `${d}형`).join(' · ');
+    const primaryDomain = topDomains[0];
+    const advice = ADVICE_MAP[primaryDomain];
+    const timestamp = formatNow();
+
+    const payload = {
+      action: 'submit',
+      timestamp: timestamp,
+      name: currentStudent,
+      scores: scores,
+      topTrait: topTrait,
+      advice: advice,
+      answers: answers
+    };
+
+    saveLocalBackup(payload);
+
+    let cloudSaved = false;
+    try {
+      const res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        cloudSaved = true;
+      }
+    } catch (err) {
+      console.warn('Apps Script 전송 확인 필요:', err);
+    }
+
+    showReport(scores, topTrait, advice, cloudSaved);
+  }
+
+  // 5. 시각화 리포트 출력
+  function showReport(scores, topTrait, advice, cloudSaved) {
+    document.getElementById('surveySection').classList.add('hidden');
+    document.getElementById('resultSection').classList.remove('hidden');
+    document.getElementById('resultTitle').innerHTML = `<span>${currentStudent}</span> 학생의 활동 성향`;
+    document.getElementById('topTraitBadge').textContent = `대표 성향: ${topTrait}`;
+
+    const barsWrap = document.getElementById('resultBars');
+    barsWrap.innerHTML = '';
+
+    ['탐구', '표현', '협력', '계획'].forEach(domain => {
+      const sc = scores[domain];
+      const pct = Math.round((sc / 20) * 100);
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <div class="bar-label">
+          <span>${domain} 성향</span>
+          <span>${sc}점 / 20점 (${pct}%)</span>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-val" style="width:${pct}%"></div>
+        </div>
+      `;
+      barsWrap.appendChild(row);
+    });
+
+    document.getElementById('adviceBox').innerHTML = `
+      <strong>[학습 및 생활 습관 맞춤 조언]</strong>
+      <p style="margin-top:6px;">${advice}</p>
+    `;
+
+    document.getElementById('syncNotice').textContent = cloudSaved
+      ? '구글 스프레드시트(응답결과 시트)에 데이터가 정상 저장되었습니다.'
+      : '결과 분석이 완료되었습니다. (브라우저에 임시 백업됨)';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
