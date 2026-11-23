@@ -74,6 +74,9 @@
     .sync-badge.connected {
       background: var(--green);
     }
+    .sync-badge.syncing {
+      background: var(--yellow);
+    }
 
     .view-tabs {
       display: flex;
@@ -454,7 +457,7 @@
   <header class="topbar">
     <div class="brand">
       <span class="brand-tag">실습 25 · CLASS TEE</span>
-      <span id="syncStatus" class="sync-badge">로컬 저장 모드</span>
+      <span id="syncStatus" class="sync-badge connected">구글 시트 연동됨</span>
     </div>
     <nav class="view-tabs">
       <button type="button" id="tabSurvey" class="tab-btn active" onclick="switchView('survey')">📝 학생 설문지</button>
@@ -523,7 +526,7 @@
       <div class="dash-actions">
         <button type="button" class="btn-action btn-sm" onclick="downloadExcel()">📥 엑셀(.xlsx) 다운로드</button>
         <button type="button" class="btn-action btn-sm btn-yellow" onclick="toggleConfig()">⚙️ 구글 시트 연동</button>
-        <button type="button" class="btn-action btn-sm btn-cyan" onclick="syncFromCloud()">🔄 새로고침</button>
+        <button type="button" class="btn-action btn-sm btn-cyan" onclick="syncFromCloud(true)">🔄 새로고침</button>
         <button type="button" class="btn-action btn-sm btn-red" onclick="resetAllData()">🗑️ 초기화</button>
       </div>
     </div>
@@ -599,6 +602,7 @@
   const TOTAL_STUDENTS = 20;
   const STORAGE_KEY = 'brutal_tshirt_responses_v1';
   const GAS_URL_KEY = 'brutal_tshirt_gas_url_v1';
+  const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbyxzlNR-rVN9jZOF3_ndcsgLriDClPmi2PT5u_B-dNLK9Tb9xecy3HdV9nibrf0Y1kf/exec';
 
   // 번호 드롭다운 생성 (1~20번)
   const studentSelect = document.getElementById('studentNum');
@@ -621,7 +625,9 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
   }
   function getGasUrl() {
-    return localStorage.getItem(GAS_URL_KEY) || '';
+    const saved = localStorage.getItem(GAS_URL_KEY);
+    if (saved === 'DISABLED') return '';
+    return saved || DEFAULT_GAS_URL;
   }
 
   function formatNow() {
@@ -671,6 +677,7 @@
   function renderAll() {
     const gasUrl = getGasUrl();
     const syncBadge = document.getElementById('syncStatus');
+    syncBadge.classList.remove('syncing');
     if (gasUrl) {
       syncBadge.textContent = '구글 시트 연동됨';
       syncBadge.classList.add('connected');
@@ -776,6 +783,7 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'submit', studentNum: num, size, timestamp })
         });
+        await syncFromCloud(false);
       } catch (err) {
         console.warn('구글 시트 동기화 지연:', err);
       }
@@ -791,14 +799,18 @@
   });
 
   // 구글 시트에서 최신 데이터 불러오기
-  async function syncFromCloud() {
+  async function syncFromCloud(manual = false) {
     const gasUrl = getGasUrl();
     if (!gasUrl) {
       renderAll();
       return;
     }
+    const syncBadge = document.getElementById('syncStatus');
     try {
+      syncBadge.textContent = '동기화 중...';
+      syncBadge.classList.add('syncing');
       document.getElementById('dashUpdatedAt').textContent = '동기화 중...';
+
       const res = await fetch(`${gasUrl}?action=get`);
       const json = await res.json();
       if (json && json.responses) {
@@ -807,7 +819,10 @@
         document.getElementById('dashUpdatedAt').textContent = `동기화 완료 (${formatNow().slice(11)})`;
       }
     } catch (err) {
-      alert('구글 시트 데이터를 불러오지 못했습니다. URL과 배포 권한을 확인해 주세요.');
+      renderAll();
+      if (manual) {
+        alert('구글 시트 데이터를 불러오지 못했습니다. URL과 배포 권한을 확인해 주세요.');
+      }
     }
   }
 
@@ -842,7 +857,7 @@
     document.getElementById('dashboardView').classList.toggle('hidden', !isDash);
     document.getElementById('tabSurvey').classList.toggle('active', !isDash);
     document.getElementById('tabDashboard').classList.toggle('active', isDash);
-    if (isDash && getGasUrl()) syncFromCloud();
+    if (isDash && getGasUrl()) syncFromCloud(false);
   }
 
   // 구글 시트 연동 설정창 제어
@@ -856,11 +871,11 @@
     if (!val) return alert('Apps Script 웹 앱 URL을 입력해 주세요.');
     localStorage.setItem(GAS_URL_KEY, val);
     document.getElementById('configPanel').classList.remove('open');
-    syncFromCloud();
+    syncFromCloud(true);
     alert('구글 시트 웹 앱 URL이 연결되었습니다.');
   }
   function clearGasUrl() {
-    localStorage.removeItem(GAS_URL_KEY);
+    localStorage.setItem(GAS_URL_KEY, 'DISABLED');
     document.getElementById('gasUrlInput').value = '';
     renderAll();
     alert('구글 시트 연동이 해제되었습니다. (로컬 저장 모드)');
@@ -883,14 +898,14 @@
     }
   }
 
-  // 초기 로드 시 ?page=dashboard 파라미터 확인
+  // 초기 로드 시 ?page=dashboard 파라미터 확인 및 구글 시트 자동 동기화
   window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('page') === 'dashboard') {
       switchView('dashboard');
     }
     renderAll();
-    if (getGasUrl()) syncFromCloud();
+    if (getGasUrl()) syncFromCloud(false);
   });
 </script>
 </body>
