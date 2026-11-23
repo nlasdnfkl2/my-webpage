@@ -772,6 +772,7 @@
     .app-card[data-cat="sheets"] .browser-bar { background: var(--yellow); }
     .app-card[data-cat="util"] .browser-bar { background: var(--green); }
     .app-card[data-cat="edu"] .browser-bar { background: var(--cyan); }
+    .app-card[data-cat="secret"] .browser-bar { background: #dcd6f7; }
 
     .browser-dot {
       width: 10px; height: 10px;
@@ -830,6 +831,39 @@
     .app-card:hover .mockup-hover-badge {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    /* 비밀 프로젝트 ? 미리보기 박스 */
+    .secret-preview-box {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(255, 216, 59, 0.35), transparent 45%),
+        radial-gradient(circle at 80% 75%, rgba(72, 219, 251, 0.35), transparent 45%),
+        #18181b;
+      color: var(--yellow);
+    }
+    .secret-q-mark {
+      font-size: 2.6rem;
+      font-weight: 900;
+      line-height: 1;
+      background: var(--yellow);
+      color: var(--black);
+      border: 3px solid var(--black);
+      box-shadow: 4px 4px 0 var(--red);
+      padding: 6px 18px;
+      transform: rotate(-3deg);
+    }
+    .secret-q-sub {
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.06em;
     }
 
     /* 카드 본문 레이아웃 통일 */
@@ -1204,8 +1238,8 @@
   <div class="nav-dot active" data-tooltip="Intro" data-target="intro"></div>
   <div class="nav-dot" data-tooltip="About" data-target="about"></div>
   <div class="nav-dot" data-tooltip="01. Visual Design" data-target="work-visual"></div>
-  <div class="nav-dot" data-tooltip="02. Policy & Research" data-target="work-policy"></div>
-  <div class="nav-dot" data-tooltip="03. Web Apps (24)" data-target="work-web"></div>
+  <div class="nav-dot" data-tooltip="02. Policy & Research (2)" data-target="work-policy"></div>
+  <div class="nav-dot" data-tooltip="03. Web Apps (26)" data-target="work-web"></div>
   <div class="nav-dot" data-tooltip="Contact" data-target="contact"></div>
 </div>
 
@@ -1216,7 +1250,7 @@
       <a href="#about">소개</a>
       <a href="#work-visual">시각 디자인</a>
       <a href="#work-policy">학술·기획</a>
-      <a href="#work-web">웹 앱 (24)</a>
+      <a href="#work-web">웹 앱 (26)</a>
       <a href="#contact">연락</a>
     </nav>
   </div>
@@ -1234,7 +1268,7 @@
         <span>#기획 및 웹 앱 개발</span>
       </div>
       <div class="hero-cta-group">
-        <a href="#work-web" class="brutal-cta-btn">웹 앱 24종 둘러보기 &darr;</a>
+        <a href="#work-web" class="brutal-cta-btn">웹 앱 26종 둘러보기 &darr;</a>
       </div>
     </div>
   </header>
@@ -1246,12 +1280,12 @@
     <span>INFORMATION &amp; EDUCATION</span><span class="marquee-dot">✦</span>
     <span>VISUAL &amp; 3D GRAPHIC DESIGN</span><span class="marquee-dot">✦</span>
     <span>OPEN-QUAL LIBRARY RESEARCH</span><span class="marquee-dot">✦</span>
-    <span>24 INTERACTIVE WEB APPS (LAB 01–29)</span><span class="marquee-dot">✦</span>
+    <span>26 INTERACTIVE WEB APPS (LAB 01–29+)</span><span class="marquee-dot">✦</span>
     <span>GOOGLE SHEETS FULL-STACK SYNC</span><span class="marquee-dot">✦</span>
     <span>INFORMATION &amp; EDUCATION</span><span class="marquee-dot">✦</span>
     <span>VISUAL &amp; 3D GRAPHIC DESIGN</span><span class="marquee-dot">✦</span>
     <span>OPEN-QUAL LIBRARY RESEARCH</span><span class="marquee-dot">✦</span>
-    <span>24 INTERACTIVE WEB APPS (LAB 01–29)</span><span class="marquee-dot">✦</span>
+    <span>26 INTERACTIVE WEB APPS (LAB 01–29+)</span><span class="marquee-dot">✦</span>
     <span>GOOGLE SHEETS FULL-STACK SYNC</span><span class="marquee-dot">✦</span>
   </div>
 </div>
@@ -1278,7 +1312,7 @@
   <section id="work">
     <p class="section-kicker"><span>ARCHIVE</span> / ACTIVITIES</p>
     <h2 class="brutal-reveal">해본 것</h2>
-    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 학술 연구, 그리고 실습 1부터 29까지 구현·연결한 24종의 웹 앱 프로젝트 아카이브입니다.</p>
+    <p class="lead brutal-reveal">공모전 기획과 시각 디자인, 학술 연구·제어 프로젝트, 그리고 실습 1부터 29까지 구현·연결한 웹 앱 프로젝트 아카이브입니다.</p>
 
     <!-- Group 1: 시각 디자인 -->
     <div class="work-group scroll-section brutal-reveal" id="work-visual">
@@ -1435,14 +1469,28 @@
       </article>
     </div>
 
-    <!-- Group 2: 정책 및 논문 -->
+    <!-- Group 2: 정책, 논문 및 시스템 제어 -->
     <div class="work-group scroll-section brutal-reveal" id="work-policy">
       <div class="work-group-header">
         <div class="work-group-title">
           <span class="group-index-pill">SECTION 02</span>
-          <span>정책 기획 및 학술 연구 (1)</span>
+          <span>정책 기획, 학술 연구 및 시스템 제어 (2)</span>
         </div>
       </div>
+
+      <article class="work brutal-reveal">
+        <div class="work-head">
+          <h3>노트북 제어 프로그램: OmenMax16_plus</h3>
+          <a href="https://github.com/nlasdnfkl2/OmenMax16_plus" target="_blank" rel="noopener noreferrer" class="project-link">GitHub 저장소 열기 &rarr;</a>
+        </div>
+        <div class="work-meta-row">
+          <span class="when">시스템 제어 · 하드웨어 모니터링 &amp; 팬 제어</span>
+          <span class="work-tag">#노트북 제어</span>
+          <span class="work-tag">#GitHub</span>
+        </div>
+        <p class="work-desc">노트북의 팬 속도, 전력 제한 및 발열·성능 상태를 세밀하게 제어·모니터링하기 위해 개발 중인 노트북 제어 프로그램 저장소입니다.</p>
+      </article>
+
       <article class="work brutal-reveal">
         <div class="work-head">
           <h3>학술 소논문: 도서관 평가 모형 개선 방안 연구</h3>
@@ -1463,12 +1511,12 @@
       </article>
     </div>
 
-    <!-- Group 3: 웹 앱 (실습 1 ~ 29 통일 규격) -->
+    <!-- Group 3: 웹 앱 (실습 1 ~ 29 + 비밀 프로젝트 2종) -->
     <div class="work-group scroll-section brutal-reveal" id="work-web">
       <div class="work-group-header">
         <div class="work-group-title">
           <span class="group-index-pill">SECTION 03</span>
-          <span>바이브코딩 및 웹 앱 프로젝트 (24)</span>
+          <span>바이브코딩 및 웹 앱 프로젝트 (26)</span>
         </div>
       </div>
 
@@ -1476,18 +1524,19 @@
       <div class="app-controls-panel brutal-reveal">
         <div class="app-filter-top">
           <div class="app-filter-bar" id="appFilterBar">
-            <button type="button" class="app-filter-btn active" data-filter="all">전체 (24)</button>
+            <button type="button" class="app-filter-btn active" data-filter="all">전체 (26)</button>
             <button type="button" class="app-filter-btn" data-filter="ai">AI · 시각화 (5)</button>
             <button type="button" class="app-filter-btn" data-filter="edu">교육 · 교구 (5)</button>
             <button type="button" class="app-filter-btn" data-filter="sheets">시트 연동 · DB (9)</button>
             <button type="button" class="app-filter-btn" data-filter="util">유틸리티 · 생활 (5)</button>
+            <button type="button" class="app-filter-btn" data-filter="secret">비밀 프로젝트 (2)</button>
           </div>
           <div class="app-search-wrap">
             <input type="search" class="app-search-input" id="appSearchInput" placeholder="앱 제목, 실습 번호, 파일명 검색... (단축키 /)">
           </div>
         </div>
         <div class="app-result-status">
-          <span id="appVisibleStatus">표시 중인 프로젝트: 24 / 24개</span>
+          <span id="appVisibleStatus">표시 중인 프로젝트: 26 / 26개</span>
           <span>카드 상단 파일명 태그 및 우측 QR 버튼으로 모바일 즉시 연결 가능</span>
         </div>
       </div>
@@ -2071,6 +2120,56 @@
           </div>
         </article>
 
+        <!-- 25: 비밀 프로젝트 #1 -->
+        <article class="app-card brutal-reveal" data-cat="secret">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">secret-01.html</span>
+          </div>
+          <div class="mockup-window">
+            <div class="secret-preview-box">
+              <span class="secret-q-mark">?</span>
+              <span class="secret-q-sub">SECRET ARCHIVE #01</span>
+            </div>
+          </div>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">비밀 프로젝트</span>
+              <span class="lab-badge">SECRET #01</span>
+            </div>
+            <h3>비밀 프로젝트 01</h3>
+            <p>비공개로 다듬고 있는 실험적 웹 앱 프로젝트입니다. 공개 시점에 맞춰 상세 내용이 열립니다.</p>
+            <div class="app-link-group">
+              <span class="app-link-btn" style="opacity:0.65; cursor:default;">비공개 준비 중</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 26: 비밀 프로젝트 #2 -->
+        <article class="app-card brutal-reveal" data-cat="secret">
+          <div class="browser-bar">
+            <div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div>
+            <span class="slot-file-tag">secret-02.html</span>
+          </div>
+          <div class="mockup-window">
+            <div class="secret-preview-box">
+              <span class="secret-q-mark">?</span>
+              <span class="secret-q-sub">SECRET ARCHIVE #02</span>
+            </div>
+          </div>
+          <div class="app-info">
+            <div class="app-meta-row">
+              <span class="tech">비밀 프로젝트</span>
+              <span class="lab-badge">SECRET #02</span>
+            </div>
+            <h3>비밀 프로젝트 02</h3>
+            <p>다음 업데이트를 위해 준비 중인 두 번째 비밀 프로젝트입니다. 곧 새로운 기능으로 찾아옵니다.</p>
+            <div class="app-link-group">
+              <span class="app-link-btn" style="opacity:0.65; cursor:default;">비공개 준비 중</span>
+            </div>
+          </div>
+        </article>
+
         <div class="empty-filter-box" id="emptyFilterBox">
           검색 조건과 일치하는 웹 앱 프로젝트가 없습니다. 필터를 초기화해 주세요.
         </div>
@@ -2110,7 +2209,7 @@
   </div>
 </div>
 
-<!-- QR코드 스마트폰 연결 모달 (24종 전체 프로젝트 지원) -->
+<!-- QR코드 스마트폰 연결 모달 -->
 <div class="lightbox-modal" id="qrConnectModal" role="dialog" aria-modal="true" aria-label="QR코드로 스마트폰 연결">
   <div class="lightbox-box qr-box-modal">
     <div class="lightbox-bar">
@@ -2533,7 +2632,7 @@
       if (e.target === lightboxModal) closeLightbox();
     });
 
-    // QR코드 스마트폰 연결 모달 제어 (24종 전체 프로젝트 지원)
+    // QR코드 스마트폰 연결 모달 제어
     const qrConnectModal = document.getElementById('qrConnectModal');
     const qrCodeRenderBox = document.getElementById('qrCodeRenderBox');
     const qrModalTitle = document.getElementById('qrModalTitle');
